@@ -1,4 +1,4 @@
-package com.example.ff_media
+package com.faithForward.media
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

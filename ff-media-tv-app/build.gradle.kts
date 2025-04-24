@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ff_media"
+    namespace = "com.faithForward.media"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.ff_media"
+        applicationId = "com.faithForward.media"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

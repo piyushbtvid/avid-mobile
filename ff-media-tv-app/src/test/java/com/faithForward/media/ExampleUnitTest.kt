@@ -1,4 +1,4 @@
-package com.example.ff_media
+package com.faithForward.media
 
 import org.junit.Test
 
