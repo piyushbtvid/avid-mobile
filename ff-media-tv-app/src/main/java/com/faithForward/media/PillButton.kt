@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.ui.theme.buttonBackgroundShadowColor
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.textUnFocusColor
@@ -77,7 +76,7 @@ fun PillButton(
 fun ButtonPreview() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         PillButton(
-            focusState = FocusState.UNFOCUSED
+            focusState = FocusState.FOCUSED
         )
     }
 }
