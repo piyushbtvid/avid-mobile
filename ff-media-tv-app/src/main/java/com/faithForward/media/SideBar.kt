@@ -1,14 +1,21 @@
 package com.faithForward.media
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -19,59 +26,58 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SideBar(
     modifier: Modifier = Modifier,
-    focusedItemIndex: Int,
-    rowList: List<SideBarItem>
+    rowList: List<SideBarItem>,
 ) {
+    var sideBarFocusedIndex by remember { mutableStateOf(-1) }
 
+    // Animate width and height based on focus state
+    val animatedWidth by animateDpAsState(
+        targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        label = "widthAnimation"
+    )
+    val animatedHeight by animateDpAsState(
+        targetValue = if (sideBarFocusedIndex != -1) 540.dp else 350.dp,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        label = "heightAnimation"
+    )
 
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxHeight()
+            .padding(start = 15.dp, top = 17.dp, bottom = 17.dp),
         contentAlignment = Alignment.Center
     ) {
-
-
-        AnimatedVisibility(
-            visible = focusedItemIndex != -1,
-            enter = slideInHorizontally(initialOffsetX = { -it }), // Slide in from left
-            exit = slideOutHorizontally(targetOffsetX = { -it }) // Slide out to right
-        ) {
+        // Single Image with animated size and crossfade
+        Crossfade(
+            targetState = sideBarFocusedIndex != -1,
+            animationSpec = tween(durationMillis = 150),
+            label = "imageCrossfade"
+        ) { isFocused ->
             Image(
-                painter = painterResource(R.drawable.side_bar_focused_background),
+                painter = painterResource(
+                    if (isFocused) R.drawable.side_bar_focused_background
+                    else R.drawable.side_bar_unfocused_background
+                ),
                 contentDescription = "",
                 modifier = Modifier
-                    .width(122.dp)
-                    .height(506.dp),
+                    .width(animatedWidth)
+                    .height(animatedHeight),
                 contentScale = ContentScale.FillBounds
             )
         }
 
-        AnimatedVisibility(
-            visible = focusedItemIndex == -1,
-            enter = slideInHorizontally(initialOffsetX = { -it }), // Slide in from left
-            exit = slideOutHorizontally(targetOffsetX = { -it }) // Slide out to right
-        ) {
-            Image(
-                painter = painterResource(R.drawable.side_bar_unfocused_background),
-                contentDescription = "",
-                modifier = Modifier
-                    .width(56.dp)
-                    .height(313.dp),
-                contentScale = ContentScale.FillBounds
-            )
-        }
-
-
+        // SideBarColumn centered in the Box
         SideBarColumn(
             rowItems = rowList,
-            focusedIndex = focusedItemIndex,
-            modifier = Modifier
+            focusedIndex = sideBarFocusedIndex,
+            modifier = Modifier.align(Alignment.Center),
+            onFocusChange = { num ->
+                sideBarFocusedIndex = num
+            }
         )
-
     }
-
-
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -82,23 +88,19 @@ fun SideBarPreview() {
             name = "Home",
             img = R.drawable.home_ic,
             tag = "home",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "Search",
             img = R.drawable.search_ic,
             tag = "search",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "MyList",
             img = R.drawable.plus_ic,
             tag = "myList",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "Creators",
             img = R.drawable.group_person_ic,
             tag = "creators",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "Home",
             img = R.drawable.home_ic,
             tag = "home",
@@ -106,12 +108,11 @@ fun SideBarPreview() {
     )
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.CenterStart
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart
     ) {
         SideBar(
-            focusedItemIndex = 2 ,
             rowList = sideBarTestList,
+            // sideBarFocusedIndex = -1
         )
     }
 }

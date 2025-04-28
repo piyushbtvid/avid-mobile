@@ -9,7 +9,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,9 +44,13 @@ fun SideBarUiItem(
                 color = if (focusState == FocusState.FOCUSED) focusedBackGroundColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
-            .width(114.dp)
+            .width(
+                if (focusedSideBarItem == -1) {
+                    56.dp
+                } else 114.dp
+            )
             .height(38.dp)
-    // optional: give fixed height to keep text truly centered
+        // optional: give fixed height to keep text truly centered
     ) {
         val (iconRef, textRef) = createRefs()
 
@@ -58,14 +61,19 @@ fun SideBarUiItem(
             modifier = Modifier
                 .size(18.dp)
                 .constrainAs(iconRef) {
-                    end.linkTo(textRef.start, margin = 8.dp)
-                    top.linkTo(textRef.top)
-                    bottom.linkTo(textRef.bottom)
+                    if (focusedSideBarItem == -1) {
+                        centerTo(parent)
+                    } else {
+                        end.linkTo(textRef.start, margin = 8.dp)
+                        top.linkTo(textRef.top)
+                        bottom.linkTo(textRef.bottom)
+                    }
                 },
             colorFilter = ColorFilter.tint(
                 if (focusState == FocusState.FOCUSED) focusedColor else unFocusedColor
             )
         )
+
 
         // Text (centered in parent)
         androidx.compose.animation.AnimatedVisibility(
@@ -91,17 +99,17 @@ fun SideBarUiItem(
         }
 
         // Invisible placeholder
-        if (focusedSideBarItem == -1) {
-            Text(
-                text = txt,
-                color = Color.Transparent,
-                fontSize = 12.sp,
-                modifier = Modifier.constrainAs(createRef()) {
-                    centerTo(parent)
-                },
-                textAlign = TextAlign.Center
-            )
-        }
+//        if (focusedSideBarItem == -1) {
+//            Text(
+//                text = txt,
+//                color = Color.Transparent,
+//                fontSize = 15.sp,
+//                modifier = Modifier.constrainAs(transprentRef) {
+//                    centerTo(parent)
+//                },
+//                textAlign = TextAlign.Center
+//            )
+//        }
     }
 }
 
