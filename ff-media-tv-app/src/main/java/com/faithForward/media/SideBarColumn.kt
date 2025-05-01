@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -23,11 +22,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SideBarColumn(
     modifier: Modifier = Modifier,
-    rowItems: List<SideBarItem>,
+    columnItems: List<SideBarItem>,
     focusedIndex: Int,
     onFocusChange: (index: Int) -> Unit
 ) {
-    val itemFocusRequesters = remember { List(rowItems.size) { FocusRequester() } }
+    val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
 
     LazyColumn(
         modifier = modifier
@@ -38,7 +37,7 @@ fun SideBarColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        itemsIndexed(rowItems) { index, item ->
+        itemsIndexed(columnItems) { index, item ->
             val uiState = when (index) {
                 focusedIndex -> FocusState.FOCUSED
                 else -> FocusState.UNFOCUSED

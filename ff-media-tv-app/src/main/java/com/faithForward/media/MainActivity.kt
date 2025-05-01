@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import com.faithForward.media.ui.theme.FfmediaTheme
+import com.faithForward.media.ui.theme.unFocusMainColor
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +84,8 @@ fun TestScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Color.Black)
+            .background(color = unFocusMainColor),
+        contentAlignment = Alignment.TopStart
     ) {
         var isFocused by remember { mutableStateOf(false) }
 
@@ -94,17 +97,25 @@ fun TestScreen(modifier: Modifier = Modifier) {
                     isFocused = focusState.isFocused
                 },
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isFocused) Color.Red else Color.LightGray // Focused Red, else LightGray
+                containerColor = if (isFocused) Color.Red else Color.LightGray
             )
         ) {
             Text(
                 text = "Click Me",
-                color = if (isFocused) Color.White else Color.Black // Text White when focused, else Black
+                color = if (isFocused) Color.White else Color.Black
             )
         }
 
         SideBar(
-            rowList = sideBarTestList
+            columnList = sideBarTestList,
+            modifier = Modifier.align(Alignment.TopStart) // Explicitly align SideBar to TopStart
         )
     }
+}
+
+
+@Composable
+@Preview(showBackground = true , showSystemUi = true)
+fun MainPreview(){
+    TestScreen()
 }

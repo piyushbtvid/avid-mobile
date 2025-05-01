@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,11 +25,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SideBar(
     modifier: Modifier = Modifier,
-    rowList: List<SideBarItem>,
+    columnList: List<SideBarItem>,
 ) {
     var sideBarFocusedIndex by remember { mutableStateOf(-1) }
 
-    // Animate width and height based on focus state
     val animatedWidth by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
         animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
@@ -44,11 +42,11 @@ fun SideBar(
 
     Box(
         modifier = modifier
-            .fillMaxHeight()
+            .width(if (sideBarFocusedIndex != -1) 175.dp else 71.dp)
+            .height(if (sideBarFocusedIndex != -1) 574.dp else 384.dp)
             .padding(start = 15.dp, top = 17.dp, bottom = 17.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopStart // Change to TopStart to align content correctly
     ) {
-        // Single Image with animated size and crossfade
         Crossfade(
             targetState = sideBarFocusedIndex != -1,
             animationSpec = tween(durationMillis = 150),
@@ -67,9 +65,8 @@ fun SideBar(
             )
         }
 
-        // SideBarColumn centered in the Box
         SideBarColumn(
-            rowItems = rowList,
+            columnItems = columnList,
             focusedIndex = sideBarFocusedIndex,
             modifier = Modifier.align(Alignment.Center),
             onFocusChange = { num ->
@@ -111,7 +108,7 @@ fun SideBarPreview() {
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart
     ) {
         SideBar(
-            rowList = sideBarTestList,
+            columnList = sideBarTestList,
             // sideBarFocusedIndex = -1
         )
     }

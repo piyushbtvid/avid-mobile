@@ -79,7 +79,7 @@ fun SideBarUiItem(
         androidx.compose.animation.AnimatedVisibility(
             visible = focusedSideBarItem != -1,
             enter = slideInHorizontally(
-                animationSpec = tween(500, easing = LinearOutSlowInEasing),
+                animationSpec = tween(100, easing = LinearOutSlowInEasing),
                 initialOffsetX = { -it / 3 }
             ),
             exit = slideOutHorizontally(
