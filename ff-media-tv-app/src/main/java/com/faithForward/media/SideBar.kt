@@ -1,7 +1,7 @@
 package com.faithForward.media
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -27,16 +27,16 @@ fun SideBar(
     modifier: Modifier = Modifier,
     columnList: List<SideBarItem>,
 ) {
-    var sideBarFocusedIndex by remember { mutableStateOf(-1) }
+    var sideBarFocusedIndex by remember { mutableStateOf(2) }
 
     val animatedWidth by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
-        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing),
         label = "widthAnimation"
     )
     val animatedHeight by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 540.dp else 350.dp,
-        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing),
         label = "heightAnimation"
     )
 
@@ -49,7 +49,7 @@ fun SideBar(
     ) {
         Crossfade(
             targetState = sideBarFocusedIndex != -1,
-            animationSpec = tween(durationMillis = 150),
+            animationSpec = tween(durationMillis = 300),
             label = "imageCrossfade"
         ) { isFocused ->
             Image(
@@ -68,7 +68,7 @@ fun SideBar(
         SideBarColumn(
             columnItems = columnList,
             focusedIndex = sideBarFocusedIndex,
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 40.dp),
             onFocusChange = { num ->
                 sideBarFocusedIndex = num
             }
@@ -105,11 +105,10 @@ fun SideBarPreview() {
     )
 
     Box(
-        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart
     ) {
         SideBar(
             columnList = sideBarTestList,
-            // sideBarFocusedIndex = -1
         )
     }
 }
