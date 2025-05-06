@@ -1,8 +1,6 @@
 package com.faithForward.media
 
 
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -44,11 +42,7 @@ fun SideBarUiItem(
                 color = if (focusState == FocusState.FOCUSED) focusedBackGroundColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
-            .width(
-                if (focusedSideBarItem == -1) {
-                    56.dp
-                } else 114.dp
-            )
+            .width(if (focusedSideBarItem == -1) 56.dp else 114.dp)
             .height(38.dp)
     ) {
         val (iconRef, textRef) = createRefs()
@@ -73,21 +67,26 @@ fun SideBarUiItem(
             )
         )
 
-        androidx.compose.animation.AnimatedVisibility(visible = focusedSideBarItem != -1,
-            enter = slideInHorizontally(animationSpec = tween(150, easing = FastOutLinearInEasing),
-                initialOffsetX = { -it / 2 }),
-            exit = slideOutHorizontally(animationSpec = tween(150, easing = FastOutLinearInEasing),
-                targetOffsetX = { -it / 3 }),
+        androidx.compose.animation.AnimatedVisibility(
+            visible = focusedSideBarItem != -1,
+            enter = slideInHorizontally(
+                animationSpec = tween(400),
+                initialOffsetX = { -it / 4 }
+            ),
+            exit = slideOutHorizontally(
+                animationSpec = tween(40),
+                targetOffsetX = { -it / 4 }
+            ),
             modifier = Modifier.constrainAs(textRef) {
                 start.linkTo(iconRef.end, margin = 8.dp)
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
-            })
-
-        {
+            }
+        ) {
             Text(
                 text = txt,
                 color = if (focusState == FocusState.FOCUSED) focusedColor else unFocusedColor,
+                maxLines = 1,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )

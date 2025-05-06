@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -21,7 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.theme.FfmediaTheme
 import com.faithForward.media.ui.theme.unFocusMainColor
 
@@ -89,6 +94,16 @@ fun TestScreen(modifier: Modifier = Modifier) {
     ) {
         var isFocused by remember { mutableStateOf(false) }
 
+        Image(
+            painter = painterResource(R.drawable.banner_test_img),
+            modifier = Modifier
+                .padding(start = 88.dp)
+                .width(945.dp)
+                .height(541.dp),
+            contentDescription = null,
+            alignment = Alignment.TopCenter
+        )
+
         Button(
             onClick = { /* TODO: Handle button click */ },
             modifier = Modifier
@@ -115,7 +130,7 @@ fun TestScreen(modifier: Modifier = Modifier) {
 
 
 @Composable
-@Preview(showBackground = true , showSystemUi = true)
-fun MainPreview(){
+@Preview(showBackground = true, showSystemUi = true)
+fun MainPreview() {
     TestScreen()
 }
