@@ -49,14 +49,14 @@ fun TestScreen(modifier: Modifier = Modifier) {
 
     val sideBarTestList = listOf(
         SideBarItem(
-            name = "Home",
-            img = R.drawable.home_ic,
-            tag = "home",
-        ),
-        SideBarItem(
             name = "Search",
             img = R.drawable.search_ic,
             tag = "search",
+        ),
+        SideBarItem(
+            name = "Home",
+            img = R.drawable.home_ic,
+            tag = "home",
         ),
         SideBarItem(
             name = "MyList",

@@ -24,6 +24,8 @@ fun SideBarColumn(
     modifier: Modifier = Modifier,
     columnItems: List<SideBarItem>,
     focusedIndex: Int,
+    selectedPosition: Int,
+    onSelectedPositionChange: (Int) -> Unit,
     onFocusChange: (index: Int) -> Unit
 ) {
     val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
@@ -34,12 +36,13 @@ fun SideBarColumn(
             .onFocusChanged {
                 Log.e("SIDE_BAR", "is Focused is ${it.isFocused} and has focused is ${it.hasFocus}")
             },
-        verticalArrangement = Arrangement.spacedBy(5.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         itemsIndexed(columnItems) { index, item ->
             val uiState = when (index) {
                 focusedIndex -> FocusState.FOCUSED
+                selectedPosition -> FocusState.SELECTED
                 else -> FocusState.UNFOCUSED
             }
 
@@ -56,7 +59,10 @@ fun SideBarColumn(
                         }
                     }
                     .focusable()
-                    .clickable(interactionSource = null, indication = null, onClick = {}),
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onSelectedPositionChange.invoke(index)
+                        onFocusChange.invoke(-1)
+                    }),
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,
                 img = item.img,

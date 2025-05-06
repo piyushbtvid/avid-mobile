@@ -1,7 +1,6 @@
 package com.faithForward.media
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -30,13 +29,14 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.theme.sideBarShadowColor
 import com.faithForward.media.ui.theme.sideBarShadowLightColor
 
-@OptIn(ExperimentalAnimationApi::class)
+
 @Composable
 fun SideBar(
     modifier: Modifier = Modifier,
     columnList: List<SideBarItem>,
 ) {
     var sideBarFocusedIndex by remember { mutableStateOf(-1) }
+    var sideBarSelectedPosition by remember { mutableStateOf(-1) }
 
     val animatedWidth by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
@@ -80,7 +80,7 @@ fun SideBar(
                 .width(if (sideBarFocusedIndex != -1) 175.dp else 71.dp)
                 .height(if (sideBarFocusedIndex != -1) 574.dp else 384.dp)
                 .padding(start = 15.dp, top = 17.dp, bottom = 17.dp),
-            contentAlignment = Alignment.TopStart // Change to TopStart to align content correctly
+            contentAlignment = Alignment.TopStart
         ) {
             Box(
                 modifier = Modifier
@@ -121,7 +121,11 @@ fun SideBar(
                 focusedIndex = sideBarFocusedIndex,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 40.dp),
+                    .padding(top = 39.dp),
+                selectedPosition = sideBarSelectedPosition,
+                onSelectedPositionChange = { index ->
+                    sideBarSelectedPosition = index
+                },
                 onFocusChange = { num ->
                     sideBarFocusedIndex = num
                 }

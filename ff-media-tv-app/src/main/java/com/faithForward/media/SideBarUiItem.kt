@@ -1,12 +1,15 @@
 package com.faithForward.media
 
 
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,10 +39,12 @@ fun SideBarUiItem(
     focusedSideBarItem: Int,
     img: Int
 ) {
+
     ConstraintLayout(
         modifier = modifier
+            .padding(horizontal = 4.dp)
             .background(
-                color = if (focusState == FocusState.FOCUSED) focusedBackGroundColor else Color.Transparent,
+                color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedBackGroundColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
             .width(if (focusedSideBarItem == -1) 56.dp else 114.dp)
@@ -63,18 +68,24 @@ fun SideBarUiItem(
                     }
                 },
             colorFilter = ColorFilter.tint(
-                if (focusState == FocusState.FOCUSED) focusedColor else unFocusedColor
+                if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedColor else unFocusedColor
             )
         )
 
         androidx.compose.animation.AnimatedVisibility(
             visible = focusedSideBarItem != -1,
             enter = slideInHorizontally(
-                animationSpec = tween(400),
+                animationSpec = tween(
+                    800,
+                    easing = LinearOutSlowInEasing
+                ),
                 initialOffsetX = { -it / 4 }
             ),
             exit = slideOutHorizontally(
-                animationSpec = tween(40),
+                animationSpec = tween(
+                    100,
+                    easing = FastOutLinearInEasing
+                ),
                 targetOffsetX = { -it / 4 }
             ),
             modifier = Modifier.constrainAs(textRef) {
@@ -85,7 +96,7 @@ fun SideBarUiItem(
         ) {
             Text(
                 text = txt,
-                color = if (focusState == FocusState.FOCUSED) focusedColor else unFocusedColor,
+                color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedColor else unFocusedColor,
                 maxLines = 1,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center

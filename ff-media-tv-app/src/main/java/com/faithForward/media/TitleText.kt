@@ -21,7 +21,7 @@ fun TitleText(
 ) {
     Text(
         text = text,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         color = color,
         fontSize = textSize.sp
     )
