@@ -102,7 +102,7 @@ fun SideBar(
 
                 AnimatedVisibility(
                     visible = sideBarFocusedIndex != -1,
-                    enter = fadeIn(animationSpec = tween(800)),
+                    enter = fadeIn(animationSpec = tween(600)),
                     exit = fadeOut(animationSpec = tween(800)),
                 ) {
                     Image(

@@ -1,6 +1,7 @@
 package com.faithForward.media
 
 
+import android.util.Log
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -40,14 +43,22 @@ fun SideBarUiItem(
     img: Int
 ) {
 
+    LaunchedEffect(focusState) {
+        Log.e("SIDE_BAR", "focus state when changed is $focusState")
+    }
+
     ConstraintLayout(
         modifier = modifier
-            .padding(horizontal = 4.dp)
             .background(
                 color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedBackGroundColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
-            .width(if (focusedSideBarItem == -1) 56.dp else 114.dp)
+            .width(
+                when {
+                    focusedSideBarItem == -1 -> 38.dp
+                    else -> 114.dp
+                }
+            )
             .height(38.dp)
     ) {
         val (iconRef, textRef) = createRefs()
@@ -72,28 +83,18 @@ fun SideBarUiItem(
             )
         )
 
-        androidx.compose.animation.AnimatedVisibility(
-            visible = focusedSideBarItem != -1,
-            enter = slideInHorizontally(
-                animationSpec = tween(
-                    800,
-                    easing = LinearOutSlowInEasing
-                ),
-                initialOffsetX = { -it / 4 }
-            ),
-            exit = slideOutHorizontally(
-                animationSpec = tween(
-                    100,
-                    easing = FastOutLinearInEasing
-                ),
-                targetOffsetX = { -it / 4 }
-            ),
+        androidx.compose.animation.AnimatedVisibility(visible = focusedSideBarItem != -1,
+            enter = slideInHorizontally(animationSpec = tween(
+                800, easing = LinearOutSlowInEasing
+            ), initialOffsetX = { -it / 4 }),
+            exit = slideOutHorizontally(animationSpec = tween(
+                100, easing = FastOutLinearInEasing
+            ), targetOffsetX = { -it / 4 }),
             modifier = Modifier.constrainAs(textRef) {
                 start.linkTo(iconRef.end, margin = 8.dp)
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
-            }
-        ) {
+            }) {
             Text(
                 text = txt,
                 color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedColor else unFocusedColor,
