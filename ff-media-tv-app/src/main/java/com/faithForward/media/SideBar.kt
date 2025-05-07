@@ -80,7 +80,7 @@ fun SideBar(
                 .width(if (sideBarFocusedIndex != -1) 175.dp else 71.dp)
                 .height(if (sideBarFocusedIndex != -1) 574.dp else 384.dp)
                 .padding(start = 15.dp, top = 17.dp, bottom = 17.dp),
-            contentAlignment = Alignment.TopStart
+            contentAlignment = Alignment.TopCenter
         ) {
             Box(
                 modifier = Modifier
