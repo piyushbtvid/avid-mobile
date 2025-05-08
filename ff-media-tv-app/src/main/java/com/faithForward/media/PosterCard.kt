@@ -31,13 +31,14 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
+import com.faithForward.media.util.FocusState
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.ui.theme.cardShadowColor
 
 @Composable
 fun PosterCard(
     modifier: Modifier = Modifier,
-    posterImageSrc: String,
+    posterImageSrc: String? = null,
     focusState: FocusState,
     buttonShadowColor: Color = cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
@@ -83,7 +84,7 @@ fun PosterCard(
     {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(posterImageSrc.ifBlank { null }) // fallback if blank
+                .data(posterImageSrc?.ifBlank { null }) // fallback if blank
                 .placeholder(placeholderRes)
                 .error(placeholderRes)
                 .crossfade(true)

@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.sidebar.SideBar
+import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.ui.theme.FfmediaTheme
 import com.faithForward.media.ui.theme.unFocusMainColor
 

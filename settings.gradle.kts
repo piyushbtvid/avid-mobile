@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ff-media"
 include(":ff-media-tv-app")
- 
+include(":ff-media-Data")

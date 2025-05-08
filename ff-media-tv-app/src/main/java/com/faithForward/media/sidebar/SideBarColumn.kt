@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.sidebar
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -17,6 +17,8 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.util.FocusState
+import com.faithForward.media.R
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.sidebar
 
 data class SideBarItem(
     var name: String,

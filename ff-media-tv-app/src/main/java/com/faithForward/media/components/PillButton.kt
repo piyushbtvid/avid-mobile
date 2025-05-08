@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +19,7 @@ import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.textUnFocusColor
 import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.util.FocusState
 
 @Composable
 fun PillButton(

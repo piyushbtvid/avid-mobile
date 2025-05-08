@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.sidebar
 
 
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -23,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.faithForward.media.util.FocusState
+import com.faithForward.media.R
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.ui.theme.sideBarFocusedTextColor

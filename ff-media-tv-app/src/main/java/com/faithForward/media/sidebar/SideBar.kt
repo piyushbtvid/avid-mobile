@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.sidebar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.R
 import com.faithForward.media.ui.theme.sideBarShadowColor
 import com.faithForward.media.ui.theme.sideBarShadowLightColor
 
@@ -67,8 +68,7 @@ fun SideBar(
                 )
             )
     } else {
-        Modifier
-            .wrapContentSize()
+        Modifier.wrapContentSize()
 
     }
 
