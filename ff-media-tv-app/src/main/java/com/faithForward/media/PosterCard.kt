@@ -33,14 +33,13 @@ import coil3.request.error
 import coil3.request.placeholder
 import com.faithForward.media.util.FocusState
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.ui.theme.cardShadowColor
 
 @Composable
 fun PosterCard(
     modifier: Modifier = Modifier,
     posterImageSrc: String? = null,
     focusState: FocusState,
-    buttonShadowColor: Color = cardShadowColor,
+    cardShadowColor: Color = com.faithForward.media.ui.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
 ) {
     val scale by animateFloatAsState(
@@ -54,7 +53,7 @@ fun PosterCard(
     val posterModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier.shadow(
-                color = buttonShadowColor,
+                color = cardShadowColor,
                 borderRadius = 23.dp,
                 blurRadius = 18.dp,
                 offsetY = 8.dp,

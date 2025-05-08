@@ -1,6 +1,7 @@
 package com.faithForward.media
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,11 +29,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.ui.theme.FfmediaTheme
 import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.util.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +47,27 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val homeViewModel: HomeViewModel = hiltViewModel()
                     TestScreen(modifier = Modifier.padding(innerPadding))
+                    val sectionResponse = homeViewModel.sectionData.collectAsStateWithLifecycle()
+                    LaunchedEffect(sectionResponse) {
+                        when (val response = sectionResponse.value) {
+                            is Resource.Success -> {
+                                Log.e("SECTION_API_RESPONSE", "Success: ${response.data}")
+                            }
+
+                            is Resource.Error -> {
+                                Log.e("SECTION_API_RESPONSE", "Error: ${response.message}")
+                            }
+
+                            else -> {
+                                Log.e("SECTION_API_RESPONSE", "Unhandled state: $response")
+                            }
+                        }
+                    }
+
+                    homeViewModel.getGivenSectionData(1)
+
                 }
             }
         }

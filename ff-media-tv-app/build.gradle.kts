@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.org.jetbrains.kotlin.kapt)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -54,6 +57,38 @@ dependencies {
     implementation(libs.coil.compose)
    //constraintlayout
     implementation(libs.androidx.constraintlayout.compose)
+
+    // Dependency injection
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.ui.graphics.android)
+    kapt(libs.hilt.compiler)
+
+    //navigation for compose
+    implementation("androidx.navigation:navigation-compose:2.8.7")
+
+    // data module
+    implementation(project(":ff-media-Data"))
+
+    //media
+    val media3 = "1.1.1"
+    implementation("androidx.media3:media3-exoplayer:$media3")
+    implementation("androidx.media3:media3-ui:$media3")
+    implementation("androidx.media3:media3-common:$media3")
+    implementation("androidx.media3:media3-exoplayer-dash:$media3")
+    implementation("androidx.media3:media3-exoplayer-hls:$media3")
+
+   // implementation(libs.kotlinx.coroutines.android)
+
+    //kotlin ktx viewmodel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    //viewmodel with hilt
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
