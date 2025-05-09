@@ -1,6 +1,7 @@
 package com.faithForward.media
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,14 +12,17 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
 import com.faithForward.network.dto.Item
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ContentRow(
     modifier: Modifier = Modifier,
@@ -31,8 +35,14 @@ fun ContentRow(
     val itemFocusRequesters = remember { List(contentList.size) { FocusRequester() } }
 
     LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(start = 88.dp)
+        modifier =
+        modifier
+            .fillMaxWidth()
+            .focusRestorer {
+                itemFocusRequesters[0]
+            },
+        contentPadding = PaddingValues(start = 88.dp, end = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(9.dp)
     )
     {
         itemsIndexed(contentList) { index, contentItem ->
@@ -61,7 +71,7 @@ fun ContentRow(
                         }
                     }
                     .focusable(),
-                posterImageSrc = contentItem.thumbnailImage,
+                posterImageSrc = contentItem.posterImage,
                 focusState = uiState
             )
         }

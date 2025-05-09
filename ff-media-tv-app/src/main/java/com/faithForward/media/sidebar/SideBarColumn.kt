@@ -34,10 +34,7 @@ fun SideBarColumn(
 
     LazyColumn(
         modifier = modifier
-            .focusRestorer { itemFocusRequesters[0] }
-            .onFocusChanged {
-                Log.e("SIDE_BAR", "is Focused is ${it.isFocused} and has focused is ${it.hasFocus}")
-            },
+        ,
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -49,22 +46,6 @@ fun SideBarColumn(
             }
 
             SideBarUiItem(
-                modifier = Modifier
-                    .focusRequester(itemFocusRequesters[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            onFocusChange.invoke(index)
-                        } else {
-                            if (focusedIndex == index) {
-                                onFocusChange.invoke(-1)
-                            }
-                        }
-                    }
-                    .focusable()
-                    .clickable(interactionSource = null, indication = null, onClick = {
-                        onSelectedPositionChange.invoke(index)
-                        onFocusChange.invoke(-1)
-                    }),
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,
                 img = item.img,

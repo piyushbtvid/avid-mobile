@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,8 +22,7 @@ import com.faithForward.media.viewModel.HomeViewModel
 
 @Composable
 fun HomeContentSections(
-    modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel
+    modifier: Modifier = Modifier, homeViewModel: HomeViewModel
 ) {
 
     val homeSectionData by homeViewModel.sectionData.collectAsStateWithLifecycle()
@@ -40,22 +40,20 @@ fun HomeContentSections(
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(bottom = 30.dp)
         ) {
             if (homeSectionData.data != null) {
                 itemsIndexed(homeSectionData.data!!.data) { rowIndex, item ->
                     Column {
                         TitleText(
-                            text = item.title,
-                            modifier = Modifier.padding(start = 88.dp)
+                            text = item.title, modifier = Modifier.padding(start = 88.dp)
                         )
-                        Spacer(modifier = Modifier.padding(top = 20.dp))
-                        ContentRow(
-                            contentList = item.items,
+                        Spacer(modifier = Modifier.padding(top = 10.dp))
+                        ContentRow(contentList = item.items,
                             onChangeContentRowFocusedIndex = { index ->
                                 homeViewModel.onContentRowFocusedIndexChange(index)
-                            }
-                        )
+                            })
                     }
                 }
             }

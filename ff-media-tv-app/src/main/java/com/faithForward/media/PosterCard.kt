@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,10 +31,8 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import coil3.request.error
-import coil3.request.placeholder
-import com.faithForward.media.util.FocusState
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.util.FocusState
 
 @Composable
 fun PosterCard(
@@ -46,13 +43,9 @@ fun PosterCard(
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
 ) {
 
-    LaunchedEffect(Unit) {
-        Log.e("IMG", "poster image is $posterImageSrc")
-    }
-
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.1f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.11f
             else -> 1f
         },
         animationSpec = tween(300), label = ""
@@ -76,7 +69,6 @@ fun PosterCard(
     Column(
         modifier = posterModifier
             .width(135.dp)
-            .padding(end = 10.dp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
