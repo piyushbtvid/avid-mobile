@@ -58,7 +58,9 @@ fun CarouselItem(
 
         )
         CarouselContent(
-            modifier = Modifier.align(alignment = Alignment.TopStart).padding(top = 40.dp),
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .padding(top = 40.dp),
             description = description,
             genre = genre,
             seasons = seasons,
