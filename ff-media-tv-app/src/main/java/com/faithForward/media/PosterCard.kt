@@ -1,5 +1,6 @@
 package com.faithForward.media
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -10,10 +11,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +40,16 @@ import com.faithForward.media.extensions.shadow
 @Composable
 fun PosterCard(
     modifier: Modifier = Modifier,
-    posterImageSrc: String? = null,
+    posterImageSrc: String,
     focusState: FocusState,
     cardShadowColor: Color = com.faithForward.media.ui.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
 ) {
+
+    LaunchedEffect(Unit) {
+        Log.e("IMG", "poster image is $posterImageSrc")
+    }
+
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
             FocusState.SELECTED, FocusState.FOCUSED -> 1.1f
@@ -64,9 +72,11 @@ fun PosterCard(
             modifier
         }
 
+
     Column(
         modifier = posterModifier
             .width(135.dp)
+            .padding(end = 10.dp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
@@ -83,9 +93,15 @@ fun PosterCard(
     {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(posterImageSrc?.ifBlank { null }) // fallback if blank
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
+                .data(posterImageSrc) // fallback if blank
+                .listener(
+                    onError = { request, throwable ->
+                        Log.e("CoilError", "Image load failed ${throwable.throwable}")
+                    },
+                    onSuccess = { _, _ ->
+                        Log.e("CoilSuccess", "Image loaded successfully")
+                    }
+                )
                 .crossfade(true)
                 .build(),
             contentDescription = "Poster Image",
