@@ -1,10 +1,9 @@
-package com.faithForward.media
+package com.faithForward.media.carousel
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -25,15 +24,13 @@ import com.faithForward.network.dto.Item
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ContentRow(
+fun CarouselContentRow(
     modifier: Modifier = Modifier,
-    contentList: List<Item>,
-    onChangeContentRowFocusedIndex: (Int) -> Unit
+    carouselList: List<Item>,
 ) {
 
-    var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-
-    val itemFocusRequesters = remember { List(contentList.size) { FocusRequester() } }
+    var carouselRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    val itemFocusRequesters = remember { List(carouselList.size) { FocusRequester() } }
 
     LazyRow(
         modifier =
@@ -46,35 +43,37 @@ fun ContentRow(
         horizontalArrangement = Arrangement.spacedBy(9.dp)
     )
     {
-        itemsIndexed(contentList) { index, contentItem ->
+        itemsIndexed(carouselList) { index, contentItem ->
 
             val uiState = when (index) {
-                contentRowFocusedIndex -> FocusState.FOCUSED
+                carouselRowFocusedIndex -> FocusState.FOCUSED
                 else -> FocusState.UNFOCUSED
             }
 
-            PosterCard(
+            CarouselItem(
                 modifier = Modifier
                     .focusRequester(itemFocusRequesters[index])
                     .onFocusChanged {
                         if (it.hasFocus) {
                             //    onItemFocused(Pair(rowIndex, index))
-                            contentRowFocusedIndex = index
+                            carouselRowFocusedIndex = index
                             //  onChangeContentRowFocusedIndex.invoke(index)
                             //  playListItemFocusedIndex = index
                             //onBackgroundChange.invoke(playlistItem.landscape ?: "")
                         } else {
-                            if (contentRowFocusedIndex == index) {
-                                contentRowFocusedIndex = -1
+                            if (carouselRowFocusedIndex == index) {
+                                carouselRowFocusedIndex = -1
                                 //  onChangeContentRowFocusedIndex.invoke(index)
                                 // playListItemFocusedIndex = -1
                             }
                         }
                     }
                     .focusable(),
-                posterImageSrc = contentItem.posterImage,
-                focusState = uiState
+                imgSrc = contentItem.posterImage,
+                imdbRating = contentItem.imdbRating,
+                description = contentItem.description
             )
         }
     }
+
 }

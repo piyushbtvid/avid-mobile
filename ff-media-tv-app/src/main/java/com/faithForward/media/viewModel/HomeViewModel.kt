@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.R
 import com.faithForward.media.sidebar.SideBarItem
+import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.SectionApiResponse
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
@@ -27,6 +28,9 @@ class HomeViewModel
     private val _sectionData: MutableStateFlow<Resource<SectionApiResponse?>> =
         MutableStateFlow(Resource.Unspecified())
     val sectionData = _sectionData.asStateFlow()
+
+    private val _carouselList: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
+    val carouselList = _carouselList.asStateFlow()
 
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
@@ -56,6 +60,9 @@ class HomeViewModel
                 val data = networkRepository.getGivenSectionData(sectionId)
                 if (data.isSuccessful) {
                     _sectionData.emit(Resource.Success(data.body()))
+                    val allSections = data.body()?.data.orEmpty()
+                    val carouselSections = allSections.filter { it.type == "Carousel" }
+                    _carouselList.emit(carouselSections[0].items)
                 } else {
                     _sectionData.emit(Resource.Error(data.message()))
                 }
@@ -69,5 +76,6 @@ class HomeViewModel
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
+
 
 }

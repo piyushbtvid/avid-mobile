@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faithForward.media.carousel.CarouselContentRow
 import com.faithForward.media.components.TitleText
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomeViewModel
@@ -26,6 +27,7 @@ fun HomeContentSections(
 ) {
 
     val homeSectionData by homeViewModel.sectionData.collectAsStateWithLifecycle()
+    val carouselList by homeViewModel.carouselList.collectAsStateWithLifecycle()
 
     val contentRowFocusedIndex = homeViewModel.contentRowFocusedIndex
 
@@ -40,20 +42,27 @@ fun HomeContentSections(
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(21.dp),
             contentPadding = PaddingValues(bottom = 30.dp)
         ) {
             if (homeSectionData.data != null) {
                 itemsIndexed(homeSectionData.data!!.data) { rowIndex, item ->
                     Column {
+                        if (carouselList.isNotEmpty() && rowIndex == 0) {
+                            CarouselContentRow(
+                                carouselList = carouselList,
+                            )
+                        }
                         TitleText(
                             text = item.title, modifier = Modifier.padding(start = 88.dp)
                         )
                         Spacer(modifier = Modifier.padding(top = 10.dp))
-                        ContentRow(contentList = item.items,
+                        ContentRow(
+                            contentList = item.items,
                             onChangeContentRowFocusedIndex = { index ->
                                 homeViewModel.onContentRowFocusedIndexChange(index)
-                            })
+                            }
+                        )
                     }
                 }
             }

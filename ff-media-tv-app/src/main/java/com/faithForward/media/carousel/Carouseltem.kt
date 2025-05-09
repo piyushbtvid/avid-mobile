@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,8 +41,8 @@ fun CarouselItem(
 
     Box(
         modifier = modifier
-            .wrapContentSize()
-            .offset(y = (-183).dp)
+            .size(width = 945.dp, height = 541.dp)
+
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -54,13 +56,13 @@ fun CarouselItem(
             modifier = Modifier
                 .width(945.dp)
                 .height(541.dp)
+                .offset(y = (-183).dp)
                 .clip(RoundedCornerShape(10.dp))
 
         )
         CarouselContent(
             modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .padding(top = 40.dp),
+                .align(alignment = Alignment.TopStart),
             description = description,
             genre = genre,
             seasons = seasons,

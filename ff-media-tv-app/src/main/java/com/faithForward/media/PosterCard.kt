@@ -45,7 +45,7 @@ fun PosterCard(
 
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.11f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
             else -> 1f
         },
         animationSpec = tween(300), label = ""
