@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -28,11 +29,13 @@ fun HomeContentSections(
 
     val homeSectionData by homeViewModel.sectionData.collectAsStateWithLifecycle()
     val carouselList by homeViewModel.carouselList.collectAsStateWithLifecycle()
+    val categoryList by homeViewModel.categoriesList.collectAsStateWithLifecycle()
 
     val contentRowFocusedIndex = homeViewModel.contentRowFocusedIndex
 
     LaunchedEffect(Unit) {
         homeViewModel.getGivenSectionData(1)
+        homeViewModel.getCategoriesList()
     }
 
     Box(
@@ -46,13 +49,29 @@ fun HomeContentSections(
             contentPadding = PaddingValues(bottom = 30.dp)
         ) {
             if (homeSectionData.data != null) {
-                itemsIndexed(homeSectionData.data!!.data) { rowIndex, item ->
-                    Column {
-                        if (carouselList.isNotEmpty() && rowIndex == 0) {
-                            CarouselContentRow(
-                                carouselList = carouselList,
-                            )
-                        }
+
+                if (carouselList.isNotEmpty()) {
+                    item {
+                        CarouselContentRow(
+                            carouselList = carouselList,
+                        )
+                    }
+                }
+                if (categoryList.data?.data?.isNotEmpty() == true) {
+                    item {
+                        CategoryRow(
+                            list = categoryList.data?.data!!
+                        )
+                    }
+                }
+
+                itemsIndexed(
+                    homeSectionData.data!!.data
+                ) { rowIndex, item ->
+                    Column(
+                        modifier = Modifier
+                    )
+                    {
                         TitleText(
                             text = item.title, modifier = Modifier.padding(start = 88.dp)
                         )

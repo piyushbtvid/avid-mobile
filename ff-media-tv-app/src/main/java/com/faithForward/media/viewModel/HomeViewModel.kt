@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.R
 import com.faithForward.media.sidebar.SideBarItem
+import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.SectionApiResponse
 import com.faithForward.repository.NetworkRepository
@@ -31,6 +32,10 @@ class HomeViewModel
 
     private val _carouselList: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
     val carouselList = _carouselList.asStateFlow()
+
+    private val _categoriesList: MutableStateFlow<Resource<CategoryResponse?>> =
+        MutableStateFlow(Resource.Unspecified())
+    val categoriesList = _categoriesList.asStateFlow()
 
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
@@ -75,6 +80,22 @@ class HomeViewModel
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
+    }
+
+    fun getCategoriesList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _categoriesList.emit(Resource.Loading())
+            try {
+                val data = networkRepository.getCategories()
+                if (data.isSuccessful) {
+                    _categoriesList.emit(Resource.Success(data.body()))
+                } else {
+                    _categoriesList.emit(Resource.Error(data.message()))
+                }
+            } catch (ex: Exception) {
+                _categoriesList.emit(Resource.Error(ex.message ?: "something went wrong"))
+            }
+        }
     }
 
 

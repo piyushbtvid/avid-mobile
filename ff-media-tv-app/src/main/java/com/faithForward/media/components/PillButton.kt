@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.ui.theme.btnShadowColor
+import com.faithForward.media.ui.theme.cardShadowColor
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.textUnFocusColor
@@ -53,7 +55,14 @@ fun PillButton(
                 spread = 4.dp
             )
         } else {
-            modifier
+            modifier.shadow(
+                color = btnShadowColor,
+                borderRadius = 20.dp,
+                blurRadius = 10.dp,
+                offsetY = 3.dp,
+                offsetX = 0.dp,
+                spread = 1.dp
+            )
         }
 
     Button(
@@ -77,7 +86,7 @@ fun PillButton(
 fun ButtonPreview() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         PillButton(
-            focusState = FocusState.FOCUSED
+            focusState = FocusState.UNFOCUSED
         )
     }
 }
