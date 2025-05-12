@@ -20,6 +20,10 @@ android {
         }
     }
 
+    lint {
+        disable.add("NullSafeMutableLiveData")
+    }
+
     defaultConfig {
         applicationId = "com.faithForward.media"
         minSdk = 24
