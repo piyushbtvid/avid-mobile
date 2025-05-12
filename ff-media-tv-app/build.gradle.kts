@@ -55,6 +55,7 @@ dependencies {
 
     //coil
     implementation(libs.coil.compose)
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
    //constraintlayout
     implementation(libs.androidx.constraintlayout.compose)
 

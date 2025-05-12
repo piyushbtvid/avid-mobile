@@ -1,13 +1,23 @@
 package com.faithForward.media.viewModel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.R
+import com.faithForward.media.sidebar.SideBarItem
+import com.faithForward.network.dto.CategoryResponse
+import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.SectionApiResponse
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,26 +28,87 @@ class HomeViewModel
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
 
-    private val _sectionData: MutableStateFlow<Resource<SectionApiResponse?>> =
+    private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
         MutableStateFlow(Resource.Unspecified())
-    val sectionData = _sectionData.asStateFlow()
+    val homePageData: StateFlow<Resource<List<HomePageItem>>> = _homepageData
 
 
-    fun getGivenSectionData(sectionId: Int) {
+    private val _categoriesList: MutableStateFlow<Resource<CategoryResponse?>> =
+        MutableStateFlow(Resource.Unspecified())
+    val categoriesList = _categoriesList.asStateFlow()
+
+    var contentRowFocusedIndex by mutableStateOf(-1)
+        private set
+
+    var sideBarItems = mutableStateListOf<SideBarItem>()
+        private set
+
+    init {
+        sideBarItems.addAll(
+            listOf(
+                SideBarItem("Search", R.drawable.search_ic, "search"),
+                SideBarItem("Home", R.drawable.home_ic, "home"),
+                SideBarItem("MyList", R.drawable.plus_ic, "myList"),
+                SideBarItem("Creators", R.drawable.group_person_ic, "creators"),
+                SideBarItem("Series", R.drawable.screen_ic, "series"),
+                SideBarItem("Movies", R.drawable.film_ic, "movie"),
+                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
+            )
+        )
+    }
+
+
+
+    fun onContentRowFocusedIndexChange(value: Int) {
+        contentRowFocusedIndex = value
+    }
+    fun fetchHomePageData(sectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _sectionData.emit(Resource.Loading())
+            _homepageData.emit(Resource.Loading())
             try {
-                val data = networkRepository.getGivenSectionData(sectionId)
-                if (data.isSuccessful) {
-                    _sectionData.emit(Resource.Success(data.body()))
+                // Fetch both APIs concurrently
+                val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
+                val categoriesDataDeferred = async { networkRepository.getCategories() }
+
+                val sectionData = sectionDataDeferred.await()
+                val categoriesData = categoriesDataDeferred.await()
+
+                // Process section data (Carousel and Poster rows)
+                val sectionItems = if (sectionData.isSuccessful) {
+                    sectionData.body()?.toHomePageItems() ?: listOf()
                 } else {
-                    _sectionData.emit(Resource.Error(data.message()))
+                    listOf()
                 }
+
+                // Process category data
+                val categoryRow = if (categoriesData.isSuccessful) {
+                    categoriesData.body()?.toCategoryRow()
+                } else {
+                    null
+                }
+
+                // Combine the data with CategoryRow at index 1
+                val combinedItems = buildList {
+                    // Add Carousel first (if it exists)
+                    val carousel = sectionItems.find { it is HomePageItem.CarouselRow }
+                    if (carousel != null) {
+                        add(carousel)
+                    }
+
+                    // Add CategoryRow second (if it exists)
+                    if (categoryRow != null) {
+                        add(categoryRow)
+                    }
+
+                    // Add remaining items (PosterRows)
+                    addAll(sectionItems.filter { it !is HomePageItem.CarouselRow })
+                }
+
+                _homepageData.emit(Resource.Success(combinedItems))
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                _sectionData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
+                _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
             }
         }
     }
-
 }

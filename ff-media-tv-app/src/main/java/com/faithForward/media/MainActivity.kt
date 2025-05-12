@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faithForward.media.home.HomePage
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.ui.theme.FfmediaTheme
@@ -48,26 +49,10 @@ class MainActivity : ComponentActivity() {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val homeViewModel: HomeViewModel = hiltViewModel()
-                    TestScreen(modifier = Modifier.padding(innerPadding))
-                    val sectionResponse = homeViewModel.sectionData.collectAsStateWithLifecycle()
-                    LaunchedEffect(sectionResponse) {
-                        when (val response = sectionResponse.value) {
-                            is Resource.Success -> {
-                                Log.e("SECTION_API_RESPONSE", "Success: ${response.data}")
-                            }
-
-                            is Resource.Error -> {
-                                Log.e("SECTION_API_RESPONSE", "Error: ${response.message}")
-                            }
-
-                            else -> {
-                                Log.e("SECTION_API_RESPONSE", "Unhandled state: $response")
-                            }
-                        }
-                    }
-
-                    homeViewModel.getGivenSectionData(1)
-
+                    HomePage(
+                        modifier = Modifier.padding(innerPadding),
+                        homeViewModel = homeViewModel
+                    )
                 }
             }
         }
@@ -127,7 +112,7 @@ fun TestScreen(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(R.drawable.banner_test_img),
             modifier = Modifier
-                .padding(start = 88.dp)
+                .padding(start = 176.dp)
                 .width(945.dp)
                 .height(541.dp),
             contentDescription = null,
@@ -158,9 +143,3 @@ fun TestScreen(modifier: Modifier = Modifier) {
     }
 }
 
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun MainPreview() {
-    TestScreen()
-}

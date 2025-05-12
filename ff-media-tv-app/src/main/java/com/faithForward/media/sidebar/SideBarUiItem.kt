@@ -43,7 +43,7 @@ fun SideBarUiItem(
 
 
     ConstraintLayout(
-        modifier = modifier
+        modifier = Modifier
             .background(
                 color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedBackGroundColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
@@ -62,7 +62,7 @@ fun SideBarUiItem(
         Image(
             painter = painterResource(id = img),
             contentDescription = null,
-            modifier = Modifier
+            modifier = modifier
                 .size(18.dp)
                 .constrainAs(iconRef) {
                     if (focusedSideBarItem == -1) {

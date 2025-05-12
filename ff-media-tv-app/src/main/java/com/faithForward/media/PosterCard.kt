@@ -1,5 +1,6 @@
 package com.faithForward.media
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -10,10 +11,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,22 +32,25 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import coil3.request.error
-import coil3.request.placeholder
-import com.faithForward.media.util.FocusState
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.util.FocusState
+
+data class PosterCardDto(
+    val posterImageSrc: String,
+)
 
 @Composable
 fun PosterCard(
     modifier: Modifier = Modifier,
-    posterImageSrc: String? = null,
+    posterCardDto: PosterCardDto,
     focusState: FocusState,
     cardShadowColor: Color = com.faithForward.media.ui.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
 ) {
+
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.1f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
             else -> 1f
         },
         animationSpec = tween(300), label = ""
@@ -58,11 +64,13 @@ fun PosterCard(
                 blurRadius = 18.dp,
                 offsetY = 8.dp,
                 offsetX = 0.dp,
-                spread = 10.dp
+                spread = 3.dp,
+                scale = scale
             )
         } else {
             modifier
         }
+
 
     Column(
         modifier = posterModifier
@@ -70,22 +78,29 @@ fun PosterCard(
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-                transformOrigin = TransformOrigin(0.5f, 0f) // X-center, Y-top
+                transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
             }
             .zIndex(
                 when (focusState) {
                     FocusState.SELECTED, FocusState.FOCUSED -> 1f
                     else -> 0f
                 }
-            ),
+            )
+            ,
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(posterImageSrc?.ifBlank { null }) // fallback if blank
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
+                .data(posterCardDto.posterImageSrc) // fallback if blank
+                .listener(
+                    onError = { request, throwable ->
+                        Log.e("CoilError", "Image load failed ${throwable.throwable}")
+                    },
+                    onSuccess = { _, _ ->
+                        Log.e("CoilSuccess", "Image loaded successfully")
+                    }
+                )
                 .crossfade(true)
                 .build(),
             contentDescription = "Poster Image",
@@ -112,7 +127,7 @@ fun PosterCardLazyRowPreview() {
         ) {
             items(3) { index ->
                 PosterCard(
-                    posterImageSrc = "", // Leave blank to test drawable fallback
+                    posterCardDto = PosterCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
                     focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
             }

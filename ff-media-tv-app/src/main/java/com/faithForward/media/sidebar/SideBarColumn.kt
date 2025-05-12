@@ -34,10 +34,7 @@ fun SideBarColumn(
 
     LazyColumn(
         modifier = modifier
-            .focusRestorer { itemFocusRequesters[0] }
-            .onFocusChanged {
-                Log.e("SIDE_BAR", "is Focused is ${it.isFocused} and has focused is ${it.hasFocus}")
-            },
+        ,
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
