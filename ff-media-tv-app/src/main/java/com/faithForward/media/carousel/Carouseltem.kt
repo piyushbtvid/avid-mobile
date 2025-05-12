@@ -62,7 +62,11 @@ fun CarouselItem(
                     .width(945.dp)
                     .height(358.dp)
 //                    .offset(y = (-183).dp)
-                    .clip(RoundedCornerShape(10.dp)),
+                    .clip(
+                        RoundedCornerShape(
+                            bottomStart = 10.dp
+                        )
+                    ),
                 alignment = Alignment.TopCenter
 
             )

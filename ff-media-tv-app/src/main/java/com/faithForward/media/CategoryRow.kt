@@ -50,7 +50,7 @@ fun CategoryRow(
             contentPadding = PaddingValues(
                 top = 17.5.dp,
                 start = 25.dp,
-                end = 40.dp,
+                end = 20.dp,
                 bottom = 15.dp
             ),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
