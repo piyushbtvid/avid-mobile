@@ -15,21 +15,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.ui.theme.btnShadowColor
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.textUnFocusColor
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.util.FocusState
 
+
+data class CategoryComposeDto(
+    val btnText: String
+)
+
 @Composable
-fun PillButton(
+fun CategoryCompose(
     modifier: Modifier = Modifier,
     backgroundFocusedColor: Color = focusedMainColor,
     backgroundUnFocusedColor: Color = unFocusMainColor,
     buttonShadowColor: Color = focusedMainColor,
     textFocusedColor: Color = textFocusedMainColor,
     textUnFocusedColor: Color = textUnFocusColor,
-    btnText: String = "Podcasts",
+    categoryComposeDto: CategoryComposeDto,
     focusState: FocusState
 ) {
     val containerColor = when (focusState) {
@@ -53,7 +59,14 @@ fun PillButton(
                 spread = 4.dp
             )
         } else {
-            modifier
+            modifier.shadow(
+                color = btnShadowColor,
+                borderRadius = 20.dp,
+                blurRadius = 10.dp,
+                offsetY = 3.dp,
+                offsetX = 0.dp,
+                spread = 1.dp
+            )
         }
 
     Button(
@@ -63,7 +76,7 @@ fun PillButton(
         modifier = buttonModifier.height(38.dp)
     ) {
         Text(
-            btnText,
+            categoryComposeDto.btnText,
             color = textColor,
             fontSize = 15.sp
         )
@@ -76,8 +89,9 @@ fun PillButton(
 @Composable
 fun ButtonPreview() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        PillButton(
-            focusState = FocusState.FOCUSED
+        CategoryCompose(
+            focusState = FocusState.UNFOCUSED,
+            categoryComposeDto = CategoryComposeDto("Poscasts"),
         )
     }
 }

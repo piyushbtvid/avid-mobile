@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -31,7 +32,7 @@ fun HomeContentSections(
 ) {
 
     LaunchedEffect(Unit) {
-        homeViewModel.getGivenSectionData(1)
+        homeViewModel.fetchHomePageData(sectionId = 1)
     }
 
     val homePageItemsResource by homeViewModel.homePageData.collectAsStateWithLifecycle()
@@ -47,7 +48,7 @@ fun HomeContentSections(
 
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(unFocusMainColor),
         verticalArrangement = Arrangement.spacedBy(21.dp),
@@ -56,21 +57,22 @@ fun HomeContentSections(
 
 
         itemsIndexed(homePageItems) { rowIndex, homePageItem ->
-            if (homePageItem is HomePageItem.CarouselRow) {
-                CarouselContentRow(
+
+            when (homePageItem) {
+                is HomePageItem.CarouselRow -> CarouselContentRow(
                     carouselList = homePageItem.dto.carouselItemsDto,
                 )
-            }
 
-            if (homePageItem is HomePageItem.PosterRow) {
-                ContentRow(
+                is HomePageItem.CategoryRow -> CategoryRow(
+                    categoryRowDto = homePageItem.dto
+                )
+
+                is HomePageItem.PosterRow -> ContentRow(
                     posterRowDto = homePageItem.dto,
                     onChangeContentRowFocusedIndex = { index ->
                         homeViewModel.onContentRowFocusedIndexChange(index)
-                    }
-                )
+                    })
             }
         }
     }
-
 }
