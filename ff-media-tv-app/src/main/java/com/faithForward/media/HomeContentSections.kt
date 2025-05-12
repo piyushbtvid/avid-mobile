@@ -52,6 +52,7 @@ fun HomeContentSections(
             .fillMaxSize()
             .background(unFocusMainColor)
             .padding(start = 63.dp),
+        contentPadding = PaddingValues(bottom = 20.dp)
     ) {
 
 

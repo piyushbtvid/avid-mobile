@@ -1,5 +1,6 @@
 package com.faithForward.media.carousel
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,7 +28,7 @@ data class CarouselContentRowDto(
     val carouselItemsDto: List<CarouselItemDto>
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun CarouselContentRow(
     modifier: Modifier = Modifier,
@@ -37,46 +38,51 @@ fun CarouselContentRow(
     var carouselRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     val itemFocusRequesters = remember { List(carouselList.size) { FocusRequester() } }
 
-    LazyRow(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .focusRestorer {
-                    itemFocusRequesters[0]
-                },
-        contentPadding = PaddingValues(start =25.dp, end = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(9.dp)
-    )
-    {
-        itemsIndexed(carouselList) { index, carouselItem ->
-
-            val uiState = when (index) {
-                carouselRowFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            CarouselItem(
-                modifier = Modifier
-                    .focusRequester(itemFocusRequesters[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            //    onItemFocused(Pair(rowIndex, index))
-                            carouselRowFocusedIndex = index
-                            //  onChangeContentRowFocusedIndex.invoke(index)
-                            //  playListItemFocusedIndex = index
-                            //onBackgroundChange.invoke(playlistItem.landscape ?: "")
-                        } else {
-                            if (carouselRowFocusedIndex == index) {
-                                carouselRowFocusedIndex = -1
-                                //  onChangeContentRowFocusedIndex.invoke(index)
-                                // playListItemFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                carouselItemDto = carouselItem
+    PositionFocusedItemInLazyLayout(
+        parentFraction = 0f,
+        content = {
+            LazyRow(
+                modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(start = 25.dp)
+                    .focusRestorer {
+                        itemFocusRequesters[0]
+                    },
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
             )
+            {
+                itemsIndexed(carouselList) { index, carouselItem ->
+
+                    val uiState = when (index) {
+                        carouselRowFocusedIndex -> FocusState.FOCUSED
+                        else -> FocusState.UNFOCUSED
+                    }
+
+                    CarouselItem(
+                        modifier = Modifier
+                            .focusRequester(itemFocusRequesters[index])
+                            .onFocusChanged {
+                                if (it.hasFocus) {
+                                    //    onItemFocused(Pair(rowIndex, index))
+                                    carouselRowFocusedIndex = index
+                                    //  onChangeContentRowFocusedIndex.invoke(index)
+                                    //  playListItemFocusedIndex = index
+                                    //onBackgroundChange.invoke(playlistItem.landscape ?: "")
+                                } else {
+                                    if (carouselRowFocusedIndex == index) {
+                                        carouselRowFocusedIndex = -1
+                                        //  onChangeContentRowFocusedIndex.invoke(index)
+                                        // playListItemFocusedIndex = -1
+                                    }
+                                }
+                            }
+                            .focusable(),
+                        carouselItemDto = carouselItem
+                    )
+                }
+            }
         }
-    }
+    )
 
 }

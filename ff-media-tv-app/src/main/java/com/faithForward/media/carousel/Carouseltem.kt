@@ -74,6 +74,7 @@ fun CarouselItem(
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart),
                 description = description,
+                releaseDate = releaseDate,
                 genre = genre,
                 seasons = seasons,
                 duration = duration,
