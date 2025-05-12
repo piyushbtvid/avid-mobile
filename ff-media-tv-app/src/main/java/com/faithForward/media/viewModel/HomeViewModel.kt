@@ -15,6 +15,7 @@ import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,12 +26,10 @@ class HomeViewModel
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
 
-    private val _sectionData: MutableStateFlow<Resource<SectionApiResponse?>> =
+    private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
         MutableStateFlow(Resource.Unspecified())
-    val sectionData = _sectionData.asStateFlow()
+    val homePageData: StateFlow<Resource<List<HomePageItem>>> = _homepageData
 
-    private val _carouselList: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
-    val carouselList = _carouselList.asStateFlow()
 
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
@@ -55,20 +54,18 @@ class HomeViewModel
 
     fun getGivenSectionData(sectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _sectionData.emit(Resource.Loading())
+            _homepageData.emit(Resource.Loading())
             try {
                 val data = networkRepository.getGivenSectionData(sectionId)
                 if (data.isSuccessful) {
-                    _sectionData.emit(Resource.Success(data.body()))
-                    val allSections = data.body()?.data.orEmpty()
-                    val carouselSections = allSections.filter { it.type == "Carousel" }
-                    _carouselList.emit(carouselSections[0].items)
+                    val homePageItems = data.body()?.toHomePageItems() ?: listOf()
+                    _homepageData.emit(Resource.Success(homePageItems))
                 } else {
-                    _sectionData.emit(Resource.Error(data.message()))
+                    _homepageData.emit(Resource.Error(data.message()))
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                _sectionData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
+                _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
             }
         }
     }

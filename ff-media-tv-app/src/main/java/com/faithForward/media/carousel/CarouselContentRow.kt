@@ -22,11 +22,15 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
 import com.faithForward.network.dto.Item
 
+data class CarouselContentRowDto(
+    val carouselItemsDto: List<CarouselItemDto>
+)
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CarouselContentRow(
     modifier: Modifier = Modifier,
-    carouselList: List<Item>,
+    carouselList: List<CarouselItemDto>,
 ) {
 
     var carouselRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -43,7 +47,7 @@ fun CarouselContentRow(
         horizontalArrangement = Arrangement.spacedBy(9.dp)
     )
     {
-        itemsIndexed(carouselList) { index, contentItem ->
+        itemsIndexed(carouselList) { index, carouselItem ->
 
             val uiState = when (index) {
                 carouselRowFocusedIndex -> FocusState.FOCUSED
@@ -69,9 +73,7 @@ fun CarouselContentRow(
                         }
                     }
                     .focusable(),
-                imgSrc = contentItem.posterImage,
-                imdbRating = contentItem.imdbRating,
-                description = contentItem.description
+                carouselItemDto = carouselItem
             )
         }
     }
