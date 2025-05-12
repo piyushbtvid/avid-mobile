@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -50,14 +52,15 @@ fun ContentRow(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         TitleText(
-            text = posterRowDto.heading, modifier = Modifier.padding(start = 88.dp)
+            text = posterRowDto.heading, modifier = Modifier.padding(start = 25.dp)
         )
         LazyRow(
             modifier = Modifier
-                    .focusRestorer {
-                        itemFocusRequesters[0]
-                    },
-            contentPadding = PaddingValues(start = 88.dp, end = 20.dp),
+                .fillMaxWidth()
+                .focusRestorer {
+                    itemFocusRequesters[0]
+                },
+            contentPadding = PaddingValues(start = 25.dp, end = 80.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp)
         )
         {
@@ -90,6 +93,9 @@ fun ContentRow(
                     posterCardDto = posterCardDto,
                     focusState = uiState
                 )
+            }
+            item {
+                Spacer(modifier = Modifier.width(100.dp))
             }
         }
     }

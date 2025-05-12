@@ -4,6 +4,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -38,12 +39,12 @@ fun CarouselContentRow(
 
     LazyRow(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .focusRestorer {
-                itemFocusRequesters[0]
-            },
-        contentPadding = PaddingValues(start = 88.dp, end = 20.dp),
+            modifier
+                .fillMaxWidth()
+                .focusRestorer {
+                    itemFocusRequesters[0]
+                },
+        contentPadding = PaddingValues(start =25.dp, end = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(9.dp)
     )
     {

@@ -50,9 +50,8 @@ fun HomeContentSections(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(unFocusMainColor),
-        verticalArrangement = Arrangement.spacedBy(21.dp),
-        contentPadding = PaddingValues(bottom = 30.dp)
+            .background(unFocusMainColor)
+            .padding(start = 63.dp),
     ) {
 
 

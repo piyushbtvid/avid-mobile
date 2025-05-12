@@ -46,6 +46,22 @@ fun SideBarColumn(
             }
 
             SideBarUiItem(
+                modifier = Modifier
+                    .focusRequester(itemFocusRequesters[index])
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            onFocusChange.invoke(index)
+                        } else {
+                            if (focusedIndex == index) {
+                                onFocusChange.invoke(-1)
+                            }
+                        }
+                    }
+                    .focusable()
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onSelectedPositionChange.invoke(index)
+                        onFocusChange.invoke(-1)
+                    }),
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,
                 img = item.img,

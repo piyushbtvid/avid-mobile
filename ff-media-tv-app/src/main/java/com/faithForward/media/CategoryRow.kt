@@ -47,7 +47,12 @@ fun CategoryRow(
                 .focusRestorer {
                     itemFocusRequesters[0]
                 },
-            contentPadding = PaddingValues(start = 88.dp, end = 20.dp),
+            contentPadding = PaddingValues(
+                top = 17.5.dp,
+                start = 25.dp,
+                end = 40.dp,
+                bottom = 15.dp
+            ),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             itemsIndexed(categories) { index, categoryComposeDto ->
@@ -59,23 +64,23 @@ fun CategoryRow(
 
                 CategoryCompose(
                     modifier = Modifier
-                    .focusRequester(itemFocusRequesters[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            //    onItemFocused(Pair(rowIndex, index))
-                            categoryRowFocusedIndex = index
-                            //  onChangeContentRowFocusedIndex.invoke(index)
-                            //  playListItemFocusedIndex = index
-                            //onBackgroundChange.invoke(playlistItem.landscape ?: "")
-                        } else {
-                            if (categoryRowFocusedIndex == index) {
-                                categoryRowFocusedIndex = -1
+                        .focusRequester(itemFocusRequesters[index])
+                        .onFocusChanged {
+                            if (it.hasFocus) {
+                                //    onItemFocused(Pair(rowIndex, index))
+                                categoryRowFocusedIndex = index
                                 //  onChangeContentRowFocusedIndex.invoke(index)
-                                // playListItemFocusedIndex = -1
+                                //  playListItemFocusedIndex = index
+                                //onBackgroundChange.invoke(playlistItem.landscape ?: "")
+                            } else {
+                                if (categoryRowFocusedIndex == index) {
+                                    categoryRowFocusedIndex = -1
+                                    //  onChangeContentRowFocusedIndex.invoke(index)
+                                    // playListItemFocusedIndex = -1
+                                }
                             }
                         }
-                    }
-                    .focusable(), categoryComposeDto = categoryComposeDto, focusState = uiState)
+                        .focusable(), categoryComposeDto = categoryComposeDto, focusState = uiState)
             }
         }
     }

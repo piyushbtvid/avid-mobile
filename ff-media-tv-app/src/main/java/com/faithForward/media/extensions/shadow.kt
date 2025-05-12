@@ -17,11 +17,11 @@ fun Modifier.shadow(
     blurRadius: Dp = 0.dp,
     offsetY: Dp = 0.dp,
     offsetX: Dp = 0.dp,
-    spread: Dp = 0f.dp,
-    modifier: Modifier = Modifier
+    spread: Dp = 0.dp,
+    scale: Float = 1f // Add scale parameter to match graphicsLayer scaling
 ) = this.then(
-    modifier.drawBehind {
-        this.drawIntoCanvas {
+    Modifier.drawBehind {
+        this.drawIntoCanvas { canvas ->
             val paint = Paint()
             val frameworkPaint = paint.asFrameworkPaint()
             val spreadPixel = spread.toPx()
@@ -32,11 +32,17 @@ fun Modifier.shadow(
 
             if (blurRadius != 0.dp) {
                 frameworkPaint.maskFilter =
-                    (BlurMaskFilter(blurRadius.toPx(), BlurMaskFilter.Blur.NORMAL))
+                    BlurMaskFilter(blurRadius.toPx(), BlurMaskFilter.Blur.NORMAL)
             }
 
             frameworkPaint.color = color.toArgb()
-            it.drawRoundRect(
+
+            // Save the canvas state
+            canvas.save()
+            // Apply scaling to the canvas, with transformOrigin at (0, 0) to match graphicsLayer
+            canvas.scale(scale, scale)
+            // Draw the shadow with scaled coordinates
+            canvas.drawRoundRect(
                 left = leftPixel,
                 top = topPixel,
                 right = rightPixel,
@@ -45,6 +51,8 @@ fun Modifier.shadow(
                 radiusY = borderRadius.toPx(),
                 paint
             )
+            // Restore the canvas state
+            canvas.restore()
         }
     }
 )

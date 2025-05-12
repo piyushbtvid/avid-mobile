@@ -51,7 +51,7 @@ fun CategoryCompose(
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier.shadow(
-                color = backgroundFocusedColor,
+                color = backgroundFocusedColor.copy(alpha = .56f),
                 borderRadius = 20.dp,
                 blurRadius = 15.dp,
                 offsetY = 4.dp,

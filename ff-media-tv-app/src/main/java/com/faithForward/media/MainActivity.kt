@@ -112,7 +112,7 @@ fun TestScreen(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(R.drawable.banner_test_img),
             modifier = Modifier
-                .padding(start = 88.dp)
+                .padding(start = 176.dp)
                 .width(945.dp)
                 .height(541.dp),
             contentDescription = null,

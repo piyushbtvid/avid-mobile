@@ -46,7 +46,7 @@ fun CarouselItem(
     with(carouselItemDto) {
         Box(
             modifier = modifier
-                .size(width = 945.dp, height = 541.dp)
+                .size(width = 945.dp, height = 358.dp)
 
         ) {
             AsyncImage(
@@ -60,9 +60,10 @@ fun CarouselItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(945.dp)
-                    .height(541.dp)
-                    .offset(y = (-183).dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .height(358.dp)
+//                    .offset(y = (-183).dp)
+                    .clip(RoundedCornerShape(10.dp)),
+                alignment = Alignment.TopCenter
 
             )
             CarouselContent(

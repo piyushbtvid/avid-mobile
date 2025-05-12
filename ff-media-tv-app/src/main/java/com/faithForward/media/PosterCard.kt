@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,7 +64,8 @@ fun PosterCard(
                 blurRadius = 18.dp,
                 offsetY = 8.dp,
                 offsetX = 0.dp,
-                spread = 10.dp
+                spread = 3.dp,
+                scale = scale
             )
         } else {
             modifier
@@ -76,14 +78,15 @@ fun PosterCard(
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-                transformOrigin = TransformOrigin(0.5f, 0f) // X-center, Y-top
+                transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
             }
             .zIndex(
                 when (focusState) {
                     FocusState.SELECTED, FocusState.FOCUSED -> 1f
                     else -> 0f
                 }
-            ),
+            )
+            ,
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
