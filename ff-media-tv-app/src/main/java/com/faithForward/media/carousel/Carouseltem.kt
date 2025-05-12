@@ -26,49 +26,55 @@ import coil3.request.error
 import coil3.request.placeholder
 import com.faithForward.media.R
 
+data class CarouselItemDto(
+    val imgSrc: String? = null,
+    val description: String? = null,
+    val releaseDate: String? = null,
+    val genre: String? = null,
+    val seasons: Int? = null,
+    val duration: String? = null,
+    val imdbRating: String? = null,
+)
+
 @Composable
 fun CarouselItem(
     modifier: Modifier = Modifier,
-    imgSrc: String? = null,
-    description: String? = null,
-    releaseDate: String? = null,
-    genre: String? = null,
-    seasons: Int? = null,
-    duration: String? = null,
-    imdbRating: String? = null,
+    carouselItemDto: CarouselItemDto,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster
 ) {
 
-    Box(
-        modifier = modifier
-            .size(width = 945.dp, height = 541.dp)
+    with(carouselItemDto) {
+        Box(
+            modifier = modifier
+                .size(width = 945.dp, height = 541.dp)
 
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imgSrc?.ifBlank { null }) // fallback if blank
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .crossfade(true)
-                .build(),
-            contentDescription = "banner Image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .width(945.dp)
-                .height(541.dp)
-                .offset(y = (-183).dp)
-                .clip(RoundedCornerShape(10.dp))
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imgSrc?.ifBlank { null }) // fallback if blank
+                    .placeholder(placeholderRes)
+                    .error(placeholderRes)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "banner Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(945.dp)
+                    .height(541.dp)
+                    .offset(y = (-183).dp)
+                    .clip(RoundedCornerShape(10.dp))
 
-        )
-        CarouselContent(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart),
-            description = description,
-            genre = genre,
-            seasons = seasons,
-            duration = duration,
-            imdbRating = imdbRating
-        )
+            )
+            CarouselContent(
+                modifier = Modifier
+                    .align(alignment = Alignment.TopStart),
+                description = description,
+                genre = genre,
+                seasons = seasons,
+                duration = duration,
+                imdbRating = imdbRating
+            )
+        }
     }
 }
 
@@ -82,11 +88,13 @@ fun CarouseItemPreview(modifier: Modifier = Modifier) {
     ) {
 
         CarouselItem(
-            description = "The crafty Bad Guys crew embarks on a high-stakes Halloween heist to swipe a priceless amulet from a spooky mansion. What could go wrong?",
-            genre = "jgvsdvc",
-            seasons = 5,
-            duration = "2.5h",
-            imdbRating = "4.4"
+            carouselItemDto = CarouselItemDto(
+                description = "The crafty Bad Guys crew embarks on a high-stakes Halloween heist to swipe a priceless amulet from a spooky mansion. What could go wrong?",
+                genre = "jgvsdvc",
+                seasons = 5,
+                duration = "2.5h",
+                imdbRating = "4.4"
+            )
         )
 
     }

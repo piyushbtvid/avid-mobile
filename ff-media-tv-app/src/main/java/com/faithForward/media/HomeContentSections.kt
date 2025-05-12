@@ -18,72 +18,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.carousel.CarouselContentRow
+import com.faithForward.media.carousel.CarouselContentRowDto
+import com.faithForward.media.carousel.CarouselItemDto
 import com.faithForward.media.components.TitleText
 import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.viewModel.HomePageItem
 import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.util.Resource
 
 @Composable
 fun HomeContentSections(
     modifier: Modifier = Modifier, homeViewModel: HomeViewModel
 ) {
 
-    val homeSectionData by homeViewModel.sectionData.collectAsStateWithLifecycle()
-    val carouselList by homeViewModel.carouselList.collectAsStateWithLifecycle()
-    val categoryList by homeViewModel.categoriesList.collectAsStateWithLifecycle()
-
-    val contentRowFocusedIndex = homeViewModel.contentRowFocusedIndex
-
     LaunchedEffect(Unit) {
-        homeViewModel.getGivenSectionData(1)
-        homeViewModel.getCategoriesList()
+        homeViewModel.fetchHomePageData(sectionId = 1)
     }
 
-    Box(
+    val homePageItemsResource by homeViewModel.homePageData.collectAsStateWithLifecycle()
+
+    if (homePageItemsResource is Resource.Unspecified
+        || homePageItemsResource is Resource.Error
+        || homePageItemsResource is Resource.Loading
+    ) return
+
+    val homePageItems = homePageItemsResource.data ?: return
+
+
+
+
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(unFocusMainColor)
+            .background(unFocusMainColor),
+        verticalArrangement = Arrangement.spacedBy(21.dp),
+        contentPadding = PaddingValues(bottom = 30.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(21.dp),
-            contentPadding = PaddingValues(bottom = 30.dp)
-        ) {
-            if (homeSectionData.data != null) {
 
-                if (carouselList.isNotEmpty()) {
-                    item {
-                        CarouselContentRow(
-                            carouselList = carouselList,
-                        )
-                    }
-                }
-                if (categoryList.data?.data?.isNotEmpty() == true) {
-                    item {
-                        CategoryRow(
-                            list = categoryList.data?.data!!
-                        )
-                    }
-                }
 
-                itemsIndexed(
-                    homeSectionData.data!!.data
-                ) { rowIndex, item ->
-                    Column(
-                        modifier = Modifier
-                    )
-                    {
-                        TitleText(
-                            text = item.title, modifier = Modifier.padding(start = 88.dp)
-                        )
-                        Spacer(modifier = Modifier.padding(top = 10.dp))
-                        ContentRow(
-                            contentList = item.items,
-                            onChangeContentRowFocusedIndex = { index ->
-                                homeViewModel.onContentRowFocusedIndexChange(index)
-                            }
-                        )
-                    }
-                }
+        itemsIndexed(homePageItems) { rowIndex, homePageItem ->
+
+            when (homePageItem) {
+                is HomePageItem.CarouselRow -> CarouselContentRow(
+                    carouselList = homePageItem.dto.carouselItemsDto,
+                )
+
+                is HomePageItem.CategoryRow -> CategoryRow(
+                    categoryRowDto = homePageItem.dto
+                )
+
+                is HomePageItem.PosterRow -> ContentRow(
+                    posterRowDto = homePageItem.dto,
+                    onChangeContentRowFocusedIndex = { index ->
+                        homeViewModel.onContentRowFocusedIndexChange(index)
+                    })
             }
         }
     }

@@ -19,54 +19,64 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.components.PillButton
+import com.faithForward.media.components.CategoryCompose
+import com.faithForward.media.components.CategoryComposeDto
 import com.faithForward.media.util.FocusState
 import com.faithForward.network.dto.Category
+
+data class CategoryRowDto(
+    val categories: List<CategoryComposeDto>
+)
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CategoryRow(
-    modifier: Modifier = Modifier, list: List<Category>
+    modifier: Modifier = Modifier,
+    categoryRowDto: CategoryRowDto
 ) {
 
-    var categoryRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    val itemFocusRequesters = remember { List(list.size) { FocusRequester() } }
+    with(categoryRowDto) {
+
+        var categoryRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+        val itemFocusRequesters = remember { List(categories.size) { FocusRequester() } }
 
 
-    LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-            .focusRestorer {
-                itemFocusRequesters[0]
-            },
-        contentPadding = PaddingValues(start = 88.dp, end = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        itemsIndexed(list) { index, contentItem ->
+        LazyRow(
+            modifier = modifier
+                .fillMaxWidth()
+                .focusRestorer {
+                    itemFocusRequesters[0]
+                },
+            contentPadding = PaddingValues(start = 88.dp, end = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            itemsIndexed(categories) { index, categoryComposeDto ->
 
-            val uiState = when (index) {
-                categoryRowFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
+                val uiState = when (index) {
+                    categoryRowFocusedIndex -> FocusState.FOCUSED
+                    else -> FocusState.UNFOCUSED
+                }
 
-            PillButton(modifier = Modifier
-                .focusRequester(itemFocusRequesters[index])
-                .onFocusChanged {
-                    if (it.hasFocus) {
-                        //    onItemFocused(Pair(rowIndex, index))
-                        categoryRowFocusedIndex = index
-                        //  onChangeContentRowFocusedIndex.invoke(index)
-                        //  playListItemFocusedIndex = index
-                        //onBackgroundChange.invoke(playlistItem.landscape ?: "")
-                    } else {
-                        if (categoryRowFocusedIndex == index) {
-                            categoryRowFocusedIndex = -1
+                CategoryCompose(
+                    modifier = Modifier
+                    .focusRequester(itemFocusRequesters[index])
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            //    onItemFocused(Pair(rowIndex, index))
+                            categoryRowFocusedIndex = index
                             //  onChangeContentRowFocusedIndex.invoke(index)
-                            // playListItemFocusedIndex = -1
+                            //  playListItemFocusedIndex = index
+                            //onBackgroundChange.invoke(playlistItem.landscape ?: "")
+                        } else {
+                            if (categoryRowFocusedIndex == index) {
+                                categoryRowFocusedIndex = -1
+                                //  onChangeContentRowFocusedIndex.invoke(index)
+                                // playListItemFocusedIndex = -1
+                            }
                         }
                     }
-                }
-                .focusable(), btnText = contentItem.name, focusState = uiState)
+                    .focusable(), categoryComposeDto = categoryComposeDto, focusState = uiState)
+            }
         }
     }
 

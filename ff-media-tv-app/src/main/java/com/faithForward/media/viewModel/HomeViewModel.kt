@@ -15,7 +15,9 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,12 +28,10 @@ class HomeViewModel
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
 
-    private val _sectionData: MutableStateFlow<Resource<SectionApiResponse?>> =
+    private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
         MutableStateFlow(Resource.Unspecified())
-    val sectionData = _sectionData.asStateFlow()
+    val homePageData: StateFlow<Resource<List<HomePageItem>>> = _homepageData
 
-    private val _carouselList: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
-    val carouselList = _carouselList.asStateFlow()
 
     private val _categoriesList: MutableStateFlow<Resource<CategoryResponse?>> =
         MutableStateFlow(Resource.Unspecified())
@@ -58,45 +58,57 @@ class HomeViewModel
     }
 
 
-    fun getGivenSectionData(sectionId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _sectionData.emit(Resource.Loading())
-            try {
-                val data = networkRepository.getGivenSectionData(sectionId)
-                if (data.isSuccessful) {
-                    _sectionData.emit(Resource.Success(data.body()))
-                    val allSections = data.body()?.data.orEmpty()
-                    val carouselSections = allSections.filter { it.type == "Carousel" }
-                    _carouselList.emit(carouselSections[0].items)
-                } else {
-                    _sectionData.emit(Resource.Error(data.message()))
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                _sectionData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
-            }
-        }
-    }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
-
-    fun getCategoriesList() {
+    fun fetchHomePageData(sectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _categoriesList.emit(Resource.Loading())
+            _homepageData.emit(Resource.Loading())
             try {
-                val data = networkRepository.getCategories()
-                if (data.isSuccessful) {
-                    _categoriesList.emit(Resource.Success(data.body()))
+                // Fetch both APIs concurrently
+                val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
+                val categoriesDataDeferred = async { networkRepository.getCategories() }
+
+                val sectionData = sectionDataDeferred.await()
+                val categoriesData = categoriesDataDeferred.await()
+
+                // Process section data (Carousel and Poster rows)
+                val sectionItems = if (sectionData.isSuccessful) {
+                    sectionData.body()?.toHomePageItems() ?: listOf()
                 } else {
-                    _categoriesList.emit(Resource.Error(data.message()))
+                    listOf()
                 }
+
+                // Process category data
+                val categoryRow = if (categoriesData.isSuccessful) {
+                    categoriesData.body()?.toCategoryRow()
+                } else {
+                    null
+                }
+
+                // Combine the data with CategoryRow at index 1
+                val combinedItems = buildList {
+                    // Add Carousel first (if it exists)
+                    val carousel = sectionItems.find { it is HomePageItem.CarouselRow }
+                    if (carousel != null) {
+                        add(carousel)
+                    }
+
+                    // Add CategoryRow second (if it exists)
+                    if (categoryRow != null) {
+                        add(categoryRow)
+                    }
+
+                    // Add remaining items (PosterRows)
+                    addAll(sectionItems.filter { it !is HomePageItem.CarouselRow })
+                }
+
+                _homepageData.emit(Resource.Success(combinedItems))
             } catch (ex: Exception) {
-                _categoriesList.emit(Resource.Error(ex.message ?: "something went wrong"))
+                ex.printStackTrace()
+                _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
             }
         }
     }
-
-
 }

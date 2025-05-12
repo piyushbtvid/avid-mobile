@@ -34,10 +34,14 @@ import coil3.request.crossfade
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState
 
+data class PosterCardDto(
+    val posterImageSrc: String,
+)
+
 @Composable
 fun PosterCard(
     modifier: Modifier = Modifier,
-    posterImageSrc: String,
+    posterCardDto: PosterCardDto,
     focusState: FocusState,
     cardShadowColor: Color = com.faithForward.media.ui.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
@@ -85,7 +89,7 @@ fun PosterCard(
     {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(posterImageSrc) // fallback if blank
+                .data(posterCardDto.posterImageSrc) // fallback if blank
                 .listener(
                     onError = { request, throwable ->
                         Log.e("CoilError", "Image load failed ${throwable.throwable}")
@@ -120,7 +124,7 @@ fun PosterCardLazyRowPreview() {
         ) {
             items(3) { index ->
                 PosterCard(
-                    posterImageSrc = "", // Leave blank to test drawable fallback
+                    posterCardDto = PosterCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
                     focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
             }
