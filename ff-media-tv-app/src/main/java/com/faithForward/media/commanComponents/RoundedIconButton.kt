@@ -1,4 +1,4 @@
-package com.faithForward.media.components
+package com.faithForward.media.commanComponents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
-import com.faithForward.media.ui.theme.textFocusedMainColor
+import com.faithForward.media.theme.textFocusedMainColor
 
 @Composable
 fun RoundedIconButton(

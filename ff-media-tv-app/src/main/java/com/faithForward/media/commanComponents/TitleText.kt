@@ -1,4 +1,4 @@
-package com.faithForward.media.components
+package com.faithForward.media.commanComponents
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.faithForward.media.ui.theme.focusedMainColor
+import com.faithForward.media.theme.focusedMainColor
 
 @Composable
 fun TitleText(

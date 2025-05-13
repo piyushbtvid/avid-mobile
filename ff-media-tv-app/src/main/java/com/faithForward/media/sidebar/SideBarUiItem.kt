@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.faithForward.media.util.FocusState
 import com.faithForward.media.R
-import com.faithForward.media.ui.theme.focusedMainColor
-import com.faithForward.media.ui.theme.sideBarFocusedBackgroundColor
-import com.faithForward.media.ui.theme.sideBarFocusedTextColor
+import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.sideBarFocusedBackgroundColor
+import com.faithForward.media.theme.sideBarFocusedTextColor
 
 @Composable
 fun SideBarUiItem(

@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,8 +9,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.carousel.CarouselContentRow
-import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.home.carousel.CarouselContentRow
+import com.faithForward.media.home.category.CategoryRow
+import com.faithForward.media.home.content.ContentRow
+import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomePageItem
 
 @Composable
