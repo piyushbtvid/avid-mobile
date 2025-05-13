@@ -1,5 +1,6 @@
 package com.faithForward.media
 
+import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -32,13 +34,25 @@ data class CategoryRowDto(
 @Composable
 fun CategoryRow(
     modifier: Modifier = Modifier,
-    categoryRowDto: CategoryRowDto
+    categoryRowDto: CategoryRowDto,
+    shouldFocusOnFirstItem: Boolean = false
 ) {
+
 
     with(categoryRowDto) {
 
         var categoryRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
         val itemFocusRequesters = remember { List(categories.size) { FocusRequester() } }
+
+        LaunchedEffect(shouldFocusOnFirstItem) {
+            if (shouldFocusOnFirstItem) {
+                try {
+                    itemFocusRequesters[0].requestFocus()
+                } catch (ex: Exception) {
+                    Log.e("FOCUS_ISSUE", "${ex.message}")
+                }
+            }
+        }
 
 
         LazyRow(

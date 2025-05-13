@@ -7,37 +7,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.carousel.CarouselContentRow
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomePageItem
-import com.faithForward.media.viewModel.HomeViewModel
-import com.faithForward.util.Resource
 
 @Composable
 fun HomeContentSections(
-    modifier: Modifier = Modifier, homeViewModel: HomeViewModel
+    modifier: Modifier = Modifier,
+    homePageItems: List<HomePageItem>,
+    onChangeContentRowFocusedIndex: (Int) -> Unit
 ) {
-
-    LaunchedEffect(Unit) {
-        homeViewModel.fetchHomePageData(sectionId = 1)
-    }
-
-    val homePageItemsResource by homeViewModel.homePageData.collectAsStateWithLifecycle()
-
-    if (homePageItemsResource is Resource.Unspecified
-        || homePageItemsResource is Resource.Error
-        || homePageItemsResource is Resource.Loading
-    ) return
-
-    val homePageItems = homePageItemsResource.data ?: return
-
-
-
 
     LazyColumn(
         modifier = modifier
@@ -49,22 +30,28 @@ fun HomeContentSections(
 
 
         itemsIndexed(homePageItems) { rowIndex, homePageItem ->
+            val shouldFocusOnFirstItem = rowIndex == 0
 
             when (homePageItem) {
                 is HomePageItem.CarouselRow -> CarouselContentRow(
                     carouselList = homePageItem.dto.carouselItemsDto,
+                    shouldFocusOnFirstItem = shouldFocusOnFirstItem
                 )
 
                 is HomePageItem.CategoryRow -> CategoryRow(
-                    categoryRowDto = homePageItem.dto
+                    categoryRowDto = homePageItem.dto,
+                    shouldFocusOnFirstItem = shouldFocusOnFirstItem
                 )
 
                 is HomePageItem.PosterRow -> ContentRow(
                     posterRowDto = homePageItem.dto,
+                    shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                     onChangeContentRowFocusedIndex = { index ->
-                        homeViewModel.onContentRowFocusedIndexChange(index)
-                    })
+                        onChangeContentRowFocusedIndex.invoke(index)
+                    }
+                )
             }
         }
+
     }
 }

@@ -34,7 +34,7 @@ fun SideBarColumn(
 
     LazyColumn(
         modifier = modifier
-        ,
+            .focusRestorer(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
