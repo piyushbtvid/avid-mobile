@@ -1,19 +1,16 @@
 package com.faithForward.media.viewModel
 
-import com.faithForward.media.CategoryRowDto
-import com.faithForward.media.PosterCardDto
-import com.faithForward.media.PosterRowDto
-import com.faithForward.media.carousel.CarouselContentRowDto
-import com.faithForward.media.carousel.CarouselItemDto
-import com.faithForward.media.components.CategoryComposeDto
+import com.faithForward.media.home.category.CategoryRowDto
+import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.home.content.PosterRowDto
+import com.faithForward.media.home.carousel.CarouselContentRowDto
+import com.faithForward.media.home.carousel.CarouselItemDto
+import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.Section
 import com.faithForward.network.dto.SectionApiResponse
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 

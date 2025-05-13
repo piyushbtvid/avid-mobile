@@ -1,10 +1,9 @@
-package com.faithForward.media.carousel
+package com.faithForward.media.home.carousel
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,8 +22,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.extensions.PositionFocusedItemInLazyLayout
 import com.faithForward.media.util.FocusState
-import com.faithForward.network.dto.Item
 
 data class CarouselContentRowDto(
     val carouselItemsDto: List<CarouselItemDto>

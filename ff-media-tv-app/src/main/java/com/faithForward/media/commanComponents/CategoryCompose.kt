@@ -1,4 +1,4 @@
-package com.faithForward.media.components
+package com.faithForward.media.commanComponents
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,11 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.ui.theme.btnShadowColor
-import com.faithForward.media.ui.theme.focusedMainColor
-import com.faithForward.media.ui.theme.textFocusedMainColor
-import com.faithForward.media.ui.theme.textUnFocusColor
-import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.theme.btnShadowColor
+import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.textUnFocusColor
+import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.util.FocusState
 
 
