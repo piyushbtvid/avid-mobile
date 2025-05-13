@@ -44,7 +44,7 @@
         android:theme="@style/Theme.Ffmedia"
         android:usesCleartextTraffic="true" >
         <activity
-            android:name="com.faithForward.media.MainActivity"
+            android:name="com.faithForward.media.activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Ffmedia" >

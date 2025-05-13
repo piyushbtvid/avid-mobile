@@ -79,8 +79,8 @@
 45-->C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:18:9-44
 46        <activity
 46-->C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:28:9-39:20
-47            android:name="com.faithForward.media.MainActivity"
-47-->C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:29:13-41
+47            android:name="com.faithForward.media.activity.MainActivity"
+47-->C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:29:13-50
 48            android:exported="true"
 48-->C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:30:13-36
 49            android:label="@string/app_name"

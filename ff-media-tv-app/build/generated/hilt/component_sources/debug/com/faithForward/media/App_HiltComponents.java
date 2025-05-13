@@ -2,6 +2,7 @@ package com.faithForward.media;
 
 import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
 import com.faithForward.di.AppModule;
+import com.faithForward.media.activity.MainActivity_GeneratedInjector;
 import com.faithForward.media.viewModel.HomeViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;

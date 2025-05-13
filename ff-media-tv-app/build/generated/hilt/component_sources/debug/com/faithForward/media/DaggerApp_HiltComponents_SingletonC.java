@@ -10,6 +10,7 @@ import com.faithForward.di.AppModule;
 import com.faithForward.di.AppModule_ProvideNetworkRepositoryFactory;
 import com.faithForward.di.AppModule_ProvidesApiServiceInterfaceFactory;
 import com.faithForward.di.AppModule_ProvidesRetrofitInstanceFactory;
+import com.faithForward.media.activity.MainActivity;
 import com.faithForward.media.viewModel.HomeViewModel;
 import com.faithForward.media.viewModel.HomeViewModel_HiltModules;
 import com.faithForward.network.ApiServiceInterface;
@@ -583,7 +584,7 @@ public final class DaggerApp_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectApp(App arg0) {
+    public void injectApp(App app) {
     }
 
     @Override
