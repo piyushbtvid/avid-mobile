@@ -18,6 +18,7 @@ drawable home_ic
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable microphone_ic
+drawable play_ic
 drawable plus_ic
 drawable plus_icon
 drawable screen_ic

@@ -39,7 +39,6 @@ fun CarouselContent(
         // Main content inside Column
         Column(
             modifier = Modifier
-                .padding(16.dp)
         ) {
             val metaList = listOfNotNull(
                 releaseDate,

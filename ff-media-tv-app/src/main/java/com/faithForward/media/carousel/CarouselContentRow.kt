@@ -91,7 +91,8 @@ fun CarouselContentRow(
                                 }
                             }
                             .focusable(),
-                        carouselItemDto = carouselItem
+                        carouselItemDto = carouselItem,
+                        focusState = uiState
                     )
                 }
             }

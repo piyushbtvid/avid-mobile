@@ -1,6 +1,7 @@
 package com.faithForward.media.carousel
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +33,12 @@ import coil3.request.error
 import coil3.request.placeholder
 import com.faithForward.media.R
 import com.faithForward.media.components.ContentDescription
+import com.faithForward.media.components.RoundedIconButton
+import com.faithForward.media.extensions.shadow
+import com.faithForward.media.ui.theme.btnShadowColor
+import com.faithForward.media.ui.theme.playButtonBackgroundColor
+import com.faithForward.media.ui.theme.textFocusedMainColor
+import com.faithForward.media.util.FocusState
 
 data class CarouselItemDto(
     val imgSrc: String? = null,
@@ -47,8 +55,28 @@ data class CarouselItemDto(
 fun CarouselItem(
     modifier: Modifier = Modifier,
     carouselItemDto: CarouselItemDto,
+    focusState: FocusState,
     @DrawableRes placeholderRes: Int = R.drawable.banner_test_img
 ) {
+
+    val buttonModifier =
+        if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
+            Modifier
+                .padding(start = 20.dp, bottom = 20.dp)
+                .shadow(
+                    color = Color.White.copy(alpha = .46f),
+                    borderRadius = 40.dp,
+                    blurRadius = 7.dp,
+                    spread = 5.dp,
+                )
+                .border(
+                    width = 1.dp,
+                    color = textFocusedMainColor,
+                    shape = RoundedCornerShape(40.dp)
+                )
+        } else {
+            modifier.padding(start = 20.dp, bottom = 20.dp)
+        }
 
     with(carouselItemDto) {
         Box(
@@ -80,6 +108,7 @@ fun CarouselItem(
             CarouselContent(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(start = 20.dp, top = 20.dp)
                     .align(alignment = Alignment.TopStart),
                 description = description,
                 releaseDate = releaseDate,
@@ -94,7 +123,7 @@ fun CarouselItem(
                 ContentDescription(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
-                        .padding(top = 16.dp, end = 26.dp)
+                        .padding(top = 15.dp, end = 26.dp)
                         .align(Alignment.TopEnd),
                     text = title,
                     textSize = 28,
@@ -103,6 +132,18 @@ fun CarouselItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+
+            RoundedIconButton(
+                modifier = buttonModifier
+                    .align(alignment = Alignment.BottomStart)
+//
+                ,
+                imageId = R.drawable.play_ic,
+                iconHeight = 30,
+                boxSize = 62,
+                iconWidth = 21,
+                backgroundColor = playButtonBackgroundColor
+            )
         }
     }
 }
@@ -124,7 +165,8 @@ fun CarouseItemPreview(modifier: Modifier = Modifier) {
                 duration = "2.5h",
                 imdbRating = "4.4",
                 title = "khbshbslihbfv"
-            )
+            ),
+            focusState = FocusState.FOCUSED
         )
 
     }
