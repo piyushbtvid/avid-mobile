@@ -1,5 +1,6 @@
 package com.faithForward.media
 
+import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +41,23 @@ data class PosterRowDto(
 fun ContentRow(
     modifier: Modifier = Modifier,
     posterRowDto: PosterRowDto,
+    shouldFocusOnFirstItem: Boolean = false,
     onChangeContentRowFocusedIndex: (Int) -> Unit
 ) {
 
     var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     val itemFocusRequesters = remember { List(posterRowDto.dtos.size) { FocusRequester() } }
+
+    LaunchedEffect(shouldFocusOnFirstItem) {
+        if (shouldFocusOnFirstItem) {
+            try {
+                itemFocusRequesters[0].requestFocus()
+            } catch (ex: Exception) {
+                Log.e("FOCUS_ISSUE", "${ex.message}")
+            }
+        }
+    }
 
     Column(
         modifier = modifier

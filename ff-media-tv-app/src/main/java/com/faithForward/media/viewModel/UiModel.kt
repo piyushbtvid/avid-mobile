@@ -72,7 +72,7 @@ fun Item.toCarouselItemDto(): CarouselItemDto {
             minutes > 0 -> "%d min %02d s".format(minutes, seconds)
             else -> "%d s".format(seconds)
         }
-    } ?: "N/A"
+    } ?: ""
 
 
     // Convert releaseDate (epoch seconds → "dd MMM yyyy")
@@ -84,7 +84,7 @@ fun Item.toCarouselItemDto(): CarouselItemDto {
         )
         formatter.format(date)
     } catch (e: Exception) {
-        "Unknown"
+        ""
     }
 
 
