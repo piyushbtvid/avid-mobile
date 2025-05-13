@@ -66,8 +66,11 @@ fun CarouselContent(
         // Description
         description?.let {
             ContentDescription(
-                modifier = Modifier.width(289.dp),
+                modifier = Modifier
+                    .width(289.dp)
+                    .height(60.dp),
                 text = it,
+                lineHeight = 13,
                 overflow = TextOverflow.Ellipsis,
                 textSize = 12
             )
