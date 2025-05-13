@@ -1,4 +1,4 @@
-package com.faithForward.media.carousel
+package com.faithForward.media.extensions
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi

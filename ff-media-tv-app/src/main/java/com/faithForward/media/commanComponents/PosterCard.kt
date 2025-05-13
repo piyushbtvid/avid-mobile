@@ -1,4 +1,4 @@
-package com.faithForward.media
+package com.faithForward.media.commanComponents
 
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -11,12 +11,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +30,7 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState
 
@@ -44,7 +43,7 @@ fun PosterCard(
     modifier: Modifier = Modifier,
     posterCardDto: PosterCardDto,
     focusState: FocusState,
-    cardShadowColor: Color = com.faithForward.media.ui.theme.cardShadowColor,
+    cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
 ) {
 

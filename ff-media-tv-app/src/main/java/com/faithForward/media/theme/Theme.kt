@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.theme
+package com.faithForward.media.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

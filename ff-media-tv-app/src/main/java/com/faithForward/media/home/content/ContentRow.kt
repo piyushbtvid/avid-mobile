@@ -1,10 +1,14 @@
-package com.faithForward.media
+package com.faithForward.media.home.content
 
 import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -21,82 +25,92 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.components.CategoryCompose
-import com.faithForward.media.components.CategoryComposeDto
+import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.commanComponents.PosterCard
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.util.FocusState
-import com.faithForward.network.dto.Category
 
-data class CategoryRowDto(
-    val categories: List<CategoryComposeDto>
+data class PosterRowDto(
+    val heading: String,
+    val dtos: List<PosterCardDto>
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CategoryRow(
+fun ContentRow(
     modifier: Modifier = Modifier,
-    categoryRowDto: CategoryRowDto,
-    shouldFocusOnFirstItem: Boolean = false
+    posterRowDto: PosterRowDto,
+    shouldFocusOnFirstItem: Boolean = false,
+    onChangeContentRowFocusedIndex: (Int) -> Unit
 ) {
 
+    var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
-    with(categoryRowDto) {
+    val itemFocusRequesters = remember { List(posterRowDto.dtos.size) { FocusRequester() } }
 
-        var categoryRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-        val itemFocusRequesters = remember { List(categories.size) { FocusRequester() } }
-
-        LaunchedEffect(shouldFocusOnFirstItem) {
-            if (shouldFocusOnFirstItem) {
-                try {
-                    itemFocusRequesters[0].requestFocus()
-                } catch (ex: Exception) {
-                    Log.e("FOCUS_ISSUE", "${ex.message}")
-                }
+    LaunchedEffect(shouldFocusOnFirstItem) {
+        if (shouldFocusOnFirstItem) {
+            try {
+                itemFocusRequesters[0].requestFocus()
+            } catch (ex: Exception) {
+                Log.e("FOCUS_ISSUE", "${ex.message}")
             }
         }
+    }
 
-
+    Column(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        TitleText(
+            text = posterRowDto.heading, modifier = Modifier.padding(start = 25.dp)
+        )
         LazyRow(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .focusRestorer {
                     itemFocusRequesters[0]
                 },
-            contentPadding = PaddingValues(
-                top = 17.5.dp,
-                start = 25.dp,
-                end = 20.dp,
-                bottom = 15.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            itemsIndexed(categories) { index, categoryComposeDto ->
+            contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(9.dp)
+        )
+        {
+            itemsIndexed(posterRowDto.dtos) { index, posterCardDto ->
 
                 val uiState = when (index) {
-                    categoryRowFocusedIndex -> FocusState.FOCUSED
+                    contentRowFocusedIndex -> FocusState.FOCUSED
                     else -> FocusState.UNFOCUSED
                 }
 
-                CategoryCompose(
+                PosterCard(
                     modifier = Modifier
                         .focusRequester(itemFocusRequesters[index])
                         .onFocusChanged {
                             if (it.hasFocus) {
                                 //    onItemFocused(Pair(rowIndex, index))
-                                categoryRowFocusedIndex = index
+                                contentRowFocusedIndex = index
                                 //  onChangeContentRowFocusedIndex.invoke(index)
                                 //  playListItemFocusedIndex = index
                                 //onBackgroundChange.invoke(playlistItem.landscape ?: "")
                             } else {
-                                if (categoryRowFocusedIndex == index) {
-                                    categoryRowFocusedIndex = -1
+                                if (contentRowFocusedIndex == index) {
+                                    contentRowFocusedIndex = -1
                                     //  onChangeContentRowFocusedIndex.invoke(index)
                                     // playListItemFocusedIndex = -1
                                 }
                             }
                         }
-                        .focusable(), categoryComposeDto = categoryComposeDto, focusState = uiState)
+                        .focusable(),
+                    posterCardDto = posterCardDto,
+                    focusState = uiState
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.width(100.dp))
             }
         }
     }
+
 
 }
