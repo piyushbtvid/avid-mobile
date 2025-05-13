@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -24,11 +23,11 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.ui.theme.cardShadowColor
-import com.faithForward.media.ui.theme.creatorShadowColor
-import com.faithForward.media.ui.theme.focusedMainColor
-import com.faithForward.media.ui.theme.text100
-import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.theme.cardShadowColor
+import com.faithForward.media.theme.creatorShadowColor
+import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.text100
+import com.faithForward.media.theme.unFocusMainColor
 
 
 data class CreatorCardDto(
