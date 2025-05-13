@@ -40,7 +40,7 @@ data class CarouselItemDto(
 fun CarouselItem(
     modifier: Modifier = Modifier,
     carouselItemDto: CarouselItemDto,
-    @DrawableRes placeholderRes: Int = R.drawable.test_poster
+    @DrawableRes placeholderRes: Int = R.drawable.banner_test_img
 ) {
 
     with(carouselItemDto) {
@@ -51,7 +51,7 @@ fun CarouselItem(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(imgSrc?.ifBlank { null }) // fallback if blank
+                    .data( null ) // fallback if blank
                     .placeholder(placeholderRes)
                     .error(placeholderRes)
                     .crossfade(true)

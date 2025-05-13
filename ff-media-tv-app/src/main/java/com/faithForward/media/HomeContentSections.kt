@@ -1,13 +1,8 @@
 package com.faithForward.media
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,9 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.carousel.CarouselContentRow
-import com.faithForward.media.carousel.CarouselContentRowDto
-import com.faithForward.media.carousel.CarouselItemDto
-import com.faithForward.media.components.TitleText
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomePageItem
 import com.faithForward.media.viewModel.HomeViewModel

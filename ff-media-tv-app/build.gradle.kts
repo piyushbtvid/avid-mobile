@@ -11,6 +11,19 @@ android {
     namespace = "com.faithForward.media"
     compileSdk = 35
 
+    signingConfigs {
+        create("release") {
+            keyAlias = "ff-media-keyStore"
+            keyPassword = "12345678"
+            storeFile = file("../keystore/ff-media-keyStore.jks")
+            storePassword = "12345678"
+        }
+    }
+
+    lint {
+        disable.add("NullSafeMutableLiveData")
+    }
+
     defaultConfig {
         applicationId = "com.faithForward.media"
         minSdk = 24
@@ -23,7 +36,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
