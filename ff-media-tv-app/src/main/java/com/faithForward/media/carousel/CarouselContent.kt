@@ -30,74 +30,80 @@ fun CarouselContent(
     genre: String? = null,
     seasons: Int? = null,
     duration: String? = null,
-    imdbRating: String? = null
+    imdbRating: String? = null,
+    title: String?
 ) {
-    Column(
+    Box(
         modifier = modifier
-            .padding(16.dp)
     ) {
-        val metaList = listOfNotNull(
-            releaseDate,
-            genre,
-            seasons?.let { "$it Season${if (it > 1) "s" else ""}" },
-            duration,
-            imdbRating?.let { "IMDB $it" }
-        )
+        // Main content inside Column
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            val metaList = listOfNotNull(
+                releaseDate,
+                genre,
+                seasons?.let { "$it Season${if (it > 1) "s" else ""}" },
+                duration,
+                imdbRating?.let { "IMDB $it" }
+            )
 
-
-        // Show metadata row only if there's something to display
-        if (metaList.isNotEmpty()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                metaList.forEachIndexed { index, item ->
-                    ContentDescription(text = item)
-                    if (index < metaList.lastIndex) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        ContentDescription(text = "|")
-                        Spacer(modifier = Modifier.width(8.dp))
+            // Show metadata row only if there's something to display
+            if (metaList.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    metaList.forEachIndexed { index, item ->
+                        ContentDescription(text = item)
+                        if (index < metaList.lastIndex) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            ContentDescription(text = "|")
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-        }
+            // Description
+            description?.let {
+                ContentDescription(
+                    modifier = Modifier
+                        .width(289.dp)
+                        .height(60.dp),
+                    text = it,
+                    lineHeight = 13,
+                    overflow = TextOverflow.Ellipsis,
+                    textSize = 12
+                )
 
-        // Description
-        description?.let {
-            ContentDescription(
-                modifier = Modifier
-                    .width(289.dp)
-                    .height(60.dp),
-                text = it,
-                lineHeight = 13,
-                overflow = TextOverflow.Ellipsis,
-                textSize = 12
-            )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        // Icon buttons
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(R.drawable.plus_icon),
-                contentDescription = null
-            )    // Replace with actual drawable
-            Image(
-                painter = painterResource(R.drawable.fi_sr_thumbs_up),
-                contentDescription = null
-            )
-            Image(
-                painter = painterResource(R.drawable.fi_sr_thumbs_down),
-                contentDescription = null
-            )
-
+            // Icon buttons
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.plus_icon),
+                    contentDescription = null
+                )
+                Image(
+                    painter = painterResource(R.drawable.fi_sr_thumbs_up),
+                    contentDescription = null
+                )
+                Image(
+                    painter = painterResource(R.drawable.fi_sr_thumbs_down),
+                    contentDescription = null
+                )
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -108,6 +114,6 @@ fun CarouselPreview(modifier: Modifier = Modifier) {
             .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        CarouselContent()
+        CarouselContent(title = "")
     }
 }

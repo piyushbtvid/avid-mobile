@@ -3,12 +3,15 @@ package com.faithForward.media.carousel
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -25,6 +30,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import coil3.request.placeholder
 import com.faithForward.media.R
+import com.faithForward.media.components.ContentDescription
 
 data class CarouselItemDto(
     val imgSrc: String? = null,
@@ -34,6 +40,7 @@ data class CarouselItemDto(
     val seasons: Int? = null,
     val duration: String? = null,
     val imdbRating: String? = null,
+    val title: String? = null
 )
 
 @Composable
@@ -46,12 +53,12 @@ fun CarouselItem(
     with(carouselItemDto) {
         Box(
             modifier = modifier
-                .size(width = 945.dp, height = 358.dp)
-
+                .fillMaxWidth()
+                .height(358.dp),
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data( null ) // fallback if blank
+                    .data(null) // fallback if blank
                     .placeholder(placeholderRes)
                     .error(placeholderRes)
                     .crossfade(true)
@@ -59,7 +66,7 @@ fun CarouselItem(
                 contentDescription = "banner Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(945.dp)
+                    .fillMaxWidth()
                     .height(358.dp)
 //                    .offset(y = (-183).dp)
                     .clip(
@@ -72,14 +79,30 @@ fun CarouselItem(
             )
             CarouselContent(
                 modifier = Modifier
+                    .fillMaxSize()
                     .align(alignment = Alignment.TopStart),
                 description = description,
                 releaseDate = releaseDate,
                 genre = genre,
                 seasons = seasons,
                 duration = duration,
-                imdbRating = imdbRating
+                imdbRating = imdbRating,
+                title = title
             )
+
+            title?.let {
+                ContentDescription(
+                    modifier = Modifier
+                        .widthIn(max = 400.dp)
+                        .padding(top = 16.dp, end = 26.dp)
+                        .align(Alignment.TopEnd),
+                    text = title,
+                    textSize = 28,
+                    lineHeight = 29,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -99,7 +122,8 @@ fun CarouseItemPreview(modifier: Modifier = Modifier) {
                 genre = "jgvsdvc",
                 seasons = 5,
                 duration = "2.5h",
-                imdbRating = "4.4"
+                imdbRating = "4.4",
+                title = "khbshbslihbfv"
             )
         )
 

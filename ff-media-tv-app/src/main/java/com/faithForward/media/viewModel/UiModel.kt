@@ -94,7 +94,8 @@ fun Item.toCarouselItemDto(): CarouselItemDto {
         duration = formattedDuration,
         imdbRating = imdbRating,
         imgSrc = posterImage,
-        releaseDate = formattedReleaseDate
+        releaseDate = formattedReleaseDate,
+        title = title
     )
 }
 
