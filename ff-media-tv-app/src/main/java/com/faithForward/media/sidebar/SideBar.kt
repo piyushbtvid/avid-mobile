@@ -35,9 +35,10 @@ import com.faithForward.media.theme.sideBarShadowLightColor
 fun SideBar(
     modifier: Modifier = Modifier,
     columnList: List<SideBarItem>,
+    onSideBarItemClick: (SideBarItem) -> Unit
 ) {
     var sideBarFocusedIndex by remember { mutableStateOf(-1) }
-    var sideBarSelectedPosition by remember { mutableStateOf(-1) }
+    var sideBarSelectedPosition by remember { mutableStateOf(1) }
 
     val animatedWidth by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
@@ -127,6 +128,8 @@ fun SideBar(
                 selectedPosition = sideBarSelectedPosition,
                 onSelectedPositionChange = { index ->
                     sideBarSelectedPosition = index
+                    val sideBarItem = columnList.get(index)
+                    onSideBarItemClick.invoke(sideBarItem)
                 },
                 onFocusChange = { num ->
                     sideBarFocusedIndex = num
@@ -170,6 +173,9 @@ fun SideBarPreview() {
     ) {
         SideBar(
             columnList = sideBarTestList,
+            onSideBarItemClick = {
+
+            }
         )
     }
 }

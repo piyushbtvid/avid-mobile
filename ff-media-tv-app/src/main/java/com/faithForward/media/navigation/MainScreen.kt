@@ -61,7 +61,12 @@ fun MainScreen(
                 )
                 SideBar(
                     columnList = sideBarItems,
-                    modifier = Modifier.align(Alignment.TopStart)
+                    modifier = Modifier.align(Alignment.TopStart),
+                    onSideBarItemClick = { item ->
+                        navController.navigate(item.tag) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
 

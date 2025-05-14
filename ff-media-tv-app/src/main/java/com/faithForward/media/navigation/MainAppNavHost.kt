@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.faithForward.media.home.HomePage
+import com.faithForward.media.home.creator.CreatorScreen
 import com.faithForward.media.viewModel.HomePageItem
 
 
@@ -25,6 +26,10 @@ fun MainAppNavHost(
                 homePageItems = homePageItems,
                 onChangeContentRowFocusedIndex = onChangeContentRowFocusedIndex
             )
+        }
+
+        composable(route = Routes.Creator.route) {
+            CreatorScreen()
         }
 
     }
