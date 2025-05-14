@@ -26,14 +26,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.faithForward.media.R
-import com.faithForward.media.home.HomePage
+import com.faithForward.media.navigation.MainScreen
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.theme.FfmediaTheme
 import com.faithForward.media.theme.unFocusMainColor
-import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,10 +44,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val homeViewModel: HomeViewModel = hiltViewModel()
-                    HomePage(
+                    val sideBarViewModel: SideBarViewModel = viewModel()
+                    MainScreen(
                         modifier = Modifier.padding(innerPadding),
-                        homeViewModel = homeViewModel
+                        sideBarViewModel = sideBarViewModel
                     )
                 }
             }
@@ -134,7 +134,10 @@ fun TestScreen(modifier: Modifier = Modifier) {
 
         SideBar(
             columnList = sideBarTestList,
-            modifier = Modifier.align(Alignment.TopStart) // Explicitly align SideBar to TopStart
+            modifier = Modifier.align(Alignment.TopStart),
+            onSideBarItemClick = {
+
+            }
         )
     }
 }

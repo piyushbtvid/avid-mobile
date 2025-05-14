@@ -1,6 +1,5 @@
 package com.faithForward.media.sidebar
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +16,8 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.util.FocusState
 import com.faithForward.media.R
+import com.faithForward.media.util.FocusState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -34,7 +33,9 @@ fun SideBarColumn(
 
     LazyColumn(
         modifier = modifier
-            .focusRestorer(),
+            .focusRestorer {
+                itemFocusRequesters[1]
+            },
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
