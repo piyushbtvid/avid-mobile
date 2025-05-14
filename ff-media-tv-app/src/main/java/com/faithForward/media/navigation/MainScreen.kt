@@ -28,6 +28,7 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         homeViewModel.fetchHomePageData(sectionId = 1)
+        homeViewModel.fetchCreatorPageData()
     }
 
     val navController = rememberNavController()
