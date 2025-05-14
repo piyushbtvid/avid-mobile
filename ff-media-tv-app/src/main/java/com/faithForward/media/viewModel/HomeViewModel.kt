@@ -12,6 +12,7 @@ import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.SectionApiResponse
+import com.faithForward.network.dto.creator.UserData
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,22 +34,17 @@ class HomeViewModel
         MutableStateFlow(Resource.Unspecified())
     val homePageData: StateFlow<Resource<List<HomePageItem>>> = _homepageData
 
+    private val _creatorList: MutableStateFlow<Resource<List<UserData>>> =
+        MutableStateFlow(Resource.Unspecified())
+    val creatorList = _creatorList.asStateFlow()
 
     private val _categoriesList: MutableStateFlow<Resource<CategoryResponse?>> =
         MutableStateFlow(Resource.Unspecified())
     val categoriesList = _categoriesList.asStateFlow()
 
-    private val _isLoadingMainScreen = MutableStateFlow(true)
-    val isLoadingMainScreen: StateFlow<Boolean> = _isLoadingMainScreen.asStateFlow()
-
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
 
-
-    fun onIsLoadingMainScreenChange(boolean: Boolean) {
-        Log.e("LOADER", "ON is loading main screen is called with $boolean")
-        _isLoadingMainScreen.value = boolean
-    }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
@@ -95,13 +91,32 @@ class HomeViewModel
                     // Add remaining items (PosterRows)
                     addAll(sectionItems.filter { it !is HomePageItem.CarouselRow })
                 }
-
-                _isLoadingMainScreen.emit(false)
                 _homepageData.emit(Resource.Success(combinedItems))
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
-                _isLoadingMainScreen.emit(false)
+            }
+        }
+    }
+
+    fun fetchCreatorPageData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _creatorList.emit(Resource.Loading())
+            try {
+                val creatorDataResponse = networkRepository.getCreatorsList()
+                // Process creator data
+                val creatorRow = if (creatorDataResponse.isSuccessful) {
+                    creatorDataResponse.body()?.data
+                } else {
+                    null
+                }
+                if (creatorRow != null) {
+                    Log.e("CREATOR", "creator api response when sucess is $creatorRow")
+                    _creatorList.emit(Resource.Success(creatorRow))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("CREATOR", "creator api error is ${ex.message}")
             }
         }
     }

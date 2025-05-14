@@ -15,5 +15,6 @@ class NetworkRepository @Inject constructor(
     suspend fun getGivenCategoryDetail(categoryId: Int) =
         apiServiceInterface.getGivenSectionData(categoryId)
 
+    suspend fun getCreatorsList() = apiServiceInterface.getCreatorsList()
 
 }
