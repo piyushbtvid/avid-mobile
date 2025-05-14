@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,31 +38,22 @@ class HomeViewModel
         MutableStateFlow(Resource.Unspecified())
     val categoriesList = _categoriesList.asStateFlow()
 
+    private val _isLoadingMainScreen = MutableStateFlow(true)
+    val isLoadingMainScreen: StateFlow<Boolean> = _isLoadingMainScreen.asStateFlow()
+
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
 
-    var sideBarItems = mutableStateListOf<SideBarItem>()
-        private set
 
-    init {
-        sideBarItems.addAll(
-            listOf(
-                SideBarItem("Search", R.drawable.search_ic, "search"),
-                SideBarItem("Home", R.drawable.home_ic, "home"),
-                SideBarItem("MyList", R.drawable.plus_ic, "myList"),
-                SideBarItem("Creators", R.drawable.group_person_ic, "creators"),
-                SideBarItem("Series", R.drawable.screen_ic, "series"),
-                SideBarItem("Movies", R.drawable.film_ic, "movie"),
-                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
-            )
-        )
+    fun onIsLoadingMainScreenChange(boolean: Boolean) {
+        Log.e("LOADER", "ON is loading main screen is called with $boolean")
+        _isLoadingMainScreen.value = boolean
     }
-
-
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
+
     fun fetchHomePageData(sectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _homepageData.emit(Resource.Loading())
@@ -104,10 +96,12 @@ class HomeViewModel
                     addAll(sectionItems.filter { it !is HomePageItem.CarouselRow })
                 }
 
+                _isLoadingMainScreen.emit(false)
                 _homepageData.emit(Resource.Success(combinedItems))
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
+                _isLoadingMainScreen.emit(false)
             }
         }
     }

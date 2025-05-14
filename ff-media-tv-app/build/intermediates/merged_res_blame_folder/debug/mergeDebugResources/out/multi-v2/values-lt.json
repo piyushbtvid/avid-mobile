@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.faithForward.media.ff-media-tv-app-mergeDebugResources-76:/values-lt/values-lt.xml",
+            "outputFile": "com.faithForward.media.ff-media-tv-app-mergeDebugResources-75:/values-lt/values-lt.xml",
             "map": [
                 {
                     "source": "C:\\Users\\hp\\.gradle\\caches\\8.9\\transforms\\74d89eaa4ce1de356a0dd845f11864b9\\transformed\\media3-ui-1.1.1\\res\\values-lt\\values-lt.xml",

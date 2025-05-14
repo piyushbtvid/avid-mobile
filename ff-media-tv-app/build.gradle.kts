@@ -81,7 +81,7 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     //navigation for compose
-    implementation("androidx.navigation:navigation-compose:2.8.7")
+    implementation("androidx.navigation:navigation-compose:2.9.0")
 
     // data module
     implementation(project(":ff-media-Data"))
