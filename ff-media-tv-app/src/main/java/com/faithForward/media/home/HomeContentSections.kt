@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
+import com.faithForward.media.home.creator.list.CreatorCardGrid
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomePageItem
 
@@ -52,6 +53,12 @@ fun HomeContentSections(
                         onChangeContentRowFocusedIndex.invoke(index)
                     }
                 )
+
+                is HomePageItem.CreatorGrid -> {
+                    CreatorCardGrid(
+                        creators = homePageItem.dto
+                    )
+                }
             }
         }
 
