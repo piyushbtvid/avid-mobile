@@ -3,6 +3,7 @@ package com.faithForward.media.home.creator.list
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.home.creator.card.CreatorCard
 import com.faithForward.media.home.creator.card.CreatorCardDto
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreatorCardGrid(
@@ -31,8 +33,8 @@ fun CreatorCardGrid(
     var focusedIndex by remember { mutableIntStateOf(-1) }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 136.dp),
-        modifier = modifier,
-        contentPadding = PaddingValues(bottom = 50.dp),
+        modifier = modifier.heightIn(max = 600.dp),
+        contentPadding = PaddingValues(top = 47.dp, bottom = 50.dp, start = 63.dp, end = 70.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 10.dp, Alignment.CenterHorizontally),
         verticalArrangement = Arrangement.spacedBy(space = 10.dp, Alignment.CenterVertically)
     ) {

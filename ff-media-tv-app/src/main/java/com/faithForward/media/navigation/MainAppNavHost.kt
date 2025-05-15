@@ -21,6 +21,7 @@ fun MainAppNavHost(
 
     NavHost(navController = navController, startDestination = Routes.Home.route) {
         composable(route = Routes.Home.route) {
+
             HomePage(
                 modifier = modifier,
                 homePageItems = homePageItems,
@@ -29,7 +30,9 @@ fun MainAppNavHost(
         }
 
         composable(route = Routes.Creator.route) {
-            CreatorScreen()
+            CreatorScreen(
+                homePageItems = homePageItems
+            )
         }
 
     }

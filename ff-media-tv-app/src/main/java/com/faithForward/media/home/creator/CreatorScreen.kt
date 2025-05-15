@@ -7,23 +7,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.faithForward.media.home.HomePage
 import com.faithForward.media.theme.unFocusMainColor
+import com.faithForward.media.viewModel.HomePageItem
 
 @Composable
 fun CreatorScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    homePageItems: List<HomePageItem>,
 ) {
-
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = unFocusMainColor),
-        contentAlignment = Alignment.Center
-    ) {
-
-        Text(text = "Creator Screen")
-
-    }
+    HomePage(
+        modifier = modifier,
+        homePageItems = homePageItems,
+        onChangeContentRowFocusedIndex = {  }
+    )
 
 }

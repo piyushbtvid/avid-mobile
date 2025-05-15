@@ -6,6 +6,7 @@ import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.carousel.CarouselContentRowDto
 import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.commanComponents.CategoryComposeDto
+import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.Section
@@ -18,6 +19,7 @@ sealed interface HomePageItem {
     data class CarouselRow(val dto: CarouselContentRowDto) : HomePageItem
     data class PosterRow(val dto: PosterRowDto) : HomePageItem
     data class CategoryRow(val dto: CategoryRowDto) : HomePageItem
+    data class CreatorGrid(val dto:List<CreatorCardDto>): HomePageItem
 }
 
 fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
