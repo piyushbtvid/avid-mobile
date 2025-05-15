@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
+import com.faithForward.media.theme.homeBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.SideBarViewModel
 
@@ -24,16 +25,17 @@ fun MainScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = unFocusMainColor),
+            .background(color = homeBackgroundColor),
     ) {
-        MainAppNavHost(
-            navController = navController,
+        MainAppNavHost(navController = navController,
             onDataLoadedSuccess = {
                 sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(true))
-            }
-        )
+            }, changeSideBarSelectedPosition = { value ->
+                sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(value))
+            })
 
-        SideBar(columnList = sideBarItems,
+        SideBar(
+            columnList = sideBarItems,
             modifier = Modifier.align(Alignment.TopStart),
             isSideBarFocusable = sideBarState.isSideBarFocusable,
             sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,
@@ -41,11 +43,13 @@ fun MainScreen(
             onSideBarItemClick = { item ->
                 if (item.tag == Routes.Creator.route) {
                     navController.navigate(item.tag) {
+                        popUpTo(Routes.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
                 }
                 if (item.tag == Routes.Home.route) {
                     navController.navigate(item.tag) {
+                        popUpTo(Routes.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
                 }
@@ -55,7 +59,6 @@ fun MainScreen(
             },
             onSideBarFocusedIndexChange = { index ->
                 sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(index))
-            }
-        )
+            })
     }
 }

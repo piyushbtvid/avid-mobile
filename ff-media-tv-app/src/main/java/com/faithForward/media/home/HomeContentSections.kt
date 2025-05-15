@@ -1,5 +1,6 @@
 package com.faithForward.media.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.extensions.PositionFocusedItemInLazyLayout
 import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
@@ -16,6 +18,7 @@ import com.faithForward.media.home.creator.list.CreatorCardGrid
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomePageItem
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContentSections(
     modifier: Modifier = Modifier,
@@ -26,7 +29,6 @@ fun HomeContentSections(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(unFocusMainColor)
             .padding(start = 63.dp),
         contentPadding = PaddingValues(bottom = 20.dp)
     ) {

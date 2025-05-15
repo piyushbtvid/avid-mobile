@@ -16,6 +16,7 @@ import com.faithForward.media.viewModel.HomeViewModel
 fun MainAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit
 ) {
 
@@ -25,14 +26,17 @@ fun MainAppNavHost(
             HomePage(
                 modifier = modifier,
                 homeViewModel = homeViewModel,
-                onDataLoadedSuccess = onDataLoadedSuccess
+                onDataLoadedSuccess = onDataLoadedSuccess,
+                changeSideBarSelectedPosition = { value ->
+                    changeSideBarSelectedPosition.invoke(value)
+                }
             )
         }
 
         composable(route = Routes.Creator.route) { bacStackEntry ->
             val creatorViewModel: CreatorViewModel = hiltViewModel()
             CreatorScreen(
-                creatorViewModel = creatorViewModel
+                creatorViewModel = creatorViewModel,
             )
         }
 

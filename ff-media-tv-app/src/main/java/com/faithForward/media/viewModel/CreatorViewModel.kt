@@ -90,12 +90,12 @@ class CreatorViewModel
     }
 
 
-    private val sampleCreatorCards = List(20) {
+    private val sampleCreatorCards by lazy {  List(22) {
         CreatorCardDto(
             creatorSubscriberText = "11M Subscriber",
             creatorName = "Virat Khohli",
             creatorImageUrl = "https://rukminim2.flixcart.com/image/850/1000/l22724w0/poster/a/x/o/small-virat-kohli-multicolour-photo-paper-print-poster-virat-original-imagdhycghmdyr3j.jpeg?q=90&crop=false"
         )
-    }
+    }}
 
 }
