@@ -3,6 +3,7 @@ package com.faithForward.media;
 import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
 import com.faithForward.di.AppModule;
 import com.faithForward.media.activity.MainActivity_GeneratedInjector;
+import com.faithForward.media.viewModel.CreatorViewModel_HiltModules;
 import com.faithForward.media.viewModel.HomeViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
@@ -158,6 +159,7 @@ public final class App_HiltComponents {
       modules = {
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
+          CreatorViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           HomeViewModel_HiltModules.KeyModule.class
@@ -196,6 +198,7 @@ public final class App_HiltComponents {
 
   @Subcomponent(
       modules = {
+          CreatorViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           HomeViewModel_HiltModules.BindsModule.class
       }

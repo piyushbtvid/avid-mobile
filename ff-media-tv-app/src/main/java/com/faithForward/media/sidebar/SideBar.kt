@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,10 +32,13 @@ import com.faithForward.media.theme.sideBarShadowLightColor
 fun SideBar(
     modifier: Modifier = Modifier,
     columnList: List<SideBarItem>,
+    sideBarFocusedIndex: Int,
+    sideBarSelectedPosition: Int,
+    isSideBarFocusable: Boolean,
+    onSideBarFocusedIndexChange: (Int) -> Unit,
+    onSideBarSelectedPositionChange: (Int) -> Unit,
     onSideBarItemClick: (SideBarItem) -> Unit
 ) {
-    var sideBarFocusedIndex by remember { mutableStateOf(-1) }
-    var sideBarSelectedPosition by remember { mutableStateOf(1) }
 
     val animatedWidth by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
@@ -127,12 +127,13 @@ fun SideBar(
                     .padding(top = 39.dp, end = if (sideBarFocusedIndex == -1) 0.dp else 10.dp),
                 selectedPosition = sideBarSelectedPosition,
                 onSelectedPositionChange = { index ->
-                    sideBarSelectedPosition = index
+                    onSideBarSelectedPositionChange.invoke(index)
                     val sideBarItem = columnList.get(index)
                     onSideBarItemClick.invoke(sideBarItem)
                 },
+                isSideBarFocusable = isSideBarFocusable,
                 onFocusChange = { num ->
-                    sideBarFocusedIndex = num
+                    onSideBarFocusedIndexChange.invoke(num)
                 }
             )
         }
@@ -174,6 +175,15 @@ fun SideBarPreview() {
         SideBar(
             columnList = sideBarTestList,
             onSideBarItemClick = {
+
+            },
+            sideBarFocusedIndex = 1,
+            sideBarSelectedPosition = 1,
+            isSideBarFocusable = true,
+            onSideBarSelectedPositionChange = {
+
+            },
+            onSideBarFocusedIndexChange = {
 
             }
         )

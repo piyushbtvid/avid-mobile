@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
@@ -26,16 +27,16 @@ fun SideBarColumn(
     columnItems: List<SideBarItem>,
     focusedIndex: Int,
     selectedPosition: Int,
+    isSideBarFocusable: Boolean,
     onSelectedPositionChange: (Int) -> Unit,
     onFocusChange: (index: Int) -> Unit
 ) {
     val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
 
     LazyColumn(
-        modifier = modifier
-            .focusRestorer {
-                itemFocusRequesters[1]
-            },
+        modifier = modifier.focusRestorer {
+            itemFocusRequesters[1]
+        },
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -46,23 +47,25 @@ fun SideBarColumn(
                 else -> FocusState.UNFOCUSED
             }
 
-            SideBarUiItem(
-                modifier = Modifier
-                    .focusRequester(itemFocusRequesters[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            onFocusChange.invoke(index)
-                        } else {
-                            if (focusedIndex == index) {
-                                onFocusChange.invoke(-1)
-                            }
+            SideBarUiItem(modifier = Modifier
+                .focusRequester(itemFocusRequesters[index])
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        onFocusChange.invoke(index)
+                    } else {
+                        if (focusedIndex == index) {
+                            onFocusChange.invoke(-1)
                         }
                     }
-                    .focusable()
-                    .clickable(interactionSource = null, indication = null, onClick = {
-                        onSelectedPositionChange.invoke(index)
-                        onFocusChange.invoke(-1)
-                    }),
+                }
+                .focusable(enabled = isSideBarFocusable)
+                .focusProperties {
+                    canFocus = isSideBarFocusable
+                }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onSelectedPositionChange.invoke(index)
+                    onFocusChange.invoke(-1)
+                }),
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,
                 img = item.img,
@@ -82,23 +85,19 @@ fun SideBarRowPreview() {
             name = "Home",
             img = R.drawable.home_ic,
             tag = "home",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "Search",
             img = R.drawable.search_ic,
             tag = "search",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "MyList",
             img = R.drawable.plus_ic,
             tag = "myList",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "Creators",
             img = R.drawable.group_person_ic,
             tag = "creators",
-        ),
-        SideBarItem(
+        ), SideBarItem(
             name = "Home",
             img = R.drawable.home_ic,
             tag = "home",

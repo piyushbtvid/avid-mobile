@@ -127,18 +127,24 @@ fun TestScreen(modifier: Modifier = Modifier) {
             )
         ) {
             Text(
-                text = "Click Me",
-                color = if (isFocused) Color.White else Color.Black
+                text = "Click Me", color = if (isFocused) Color.White else Color.Black
             )
         }
 
-        SideBar(
-            columnList = sideBarTestList,
+        SideBar(columnList = sideBarTestList,
             modifier = Modifier.align(Alignment.TopStart),
+            isSideBarFocusable = true,
+            sideBarFocusedIndex = 1,
+            sideBarSelectedPosition = 1,
+            onSideBarSelectedPositionChange = {
+
+            },
+            onSideBarFocusedIndexChange = {
+
+            },
             onSideBarItemClick = {
 
-            }
-        )
+            })
     }
 }
 
