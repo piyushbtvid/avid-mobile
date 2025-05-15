@@ -35,6 +35,9 @@ class CreatorViewModel
         contentRowFocusedIndex = value
     }
 
+    init {
+        fetchCreatorData(1)
+    }
 
     fun fetchCreatorData(sectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
