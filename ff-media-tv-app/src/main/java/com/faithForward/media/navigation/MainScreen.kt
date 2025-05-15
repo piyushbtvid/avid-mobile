@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
+import com.faithForward.media.theme.homeBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.SideBarViewModel
 
@@ -24,7 +25,7 @@ fun MainScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = unFocusMainColor),
+            .background(color = homeBackgroundColor),
     ) {
         MainAppNavHost(navController = navController,
             onDataLoadedSuccess = {
