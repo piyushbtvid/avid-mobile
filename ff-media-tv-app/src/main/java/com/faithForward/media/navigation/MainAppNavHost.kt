@@ -36,7 +36,7 @@ fun MainAppNavHost(
         composable(route = Routes.Creator.route) { bacStackEntry ->
             val creatorViewModel: CreatorViewModel = hiltViewModel()
             CreatorScreen(
-                creatorViewModel = creatorViewModel
+                creatorViewModel = creatorViewModel,
             )
         }
 
