@@ -134,6 +134,14 @@ fun TestScreen(modifier: Modifier = Modifier) {
         SideBar(columnList = sideBarTestList,
             modifier = Modifier.align(Alignment.TopStart),
             isSideBarFocusable = true,
+            sideBarFocusedIndex = 1,
+            sideBarSelectedPosition = 1,
+            onSideBarSelectedPositionChange = {
+
+            },
+            onSideBarFocusedIndexChange = {
+
+            },
             onSideBarItemClick = {
 
             })

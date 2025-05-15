@@ -1,14 +1,15 @@
 package com.faithForward.media.viewModel
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.R
 import com.faithForward.media.navigation.Routes
+import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.sidebar.SideBarItem
+import com.faithForward.media.sidebar.SideBarState
 import kotlinx.coroutines.launch
 
 class SideBarViewModel : ViewModel() {
@@ -16,8 +17,9 @@ class SideBarViewModel : ViewModel() {
     var sideBarItems = mutableStateListOf<SideBarItem>()
         private set
 
-    var isSideBarFocusable by mutableStateOf(false)
-        private set
+    private val _sideBarState = mutableStateOf(SideBarState())
+    val sideBarState: State<SideBarState> = _sideBarState
+
 
     init {
         sideBarItems.addAll(
@@ -33,10 +35,27 @@ class SideBarViewModel : ViewModel() {
         )
     }
 
-    fun changeSideBarFocusState(boolean: Boolean) {
+    fun onEvent(event: SideBarEvent) {
         viewModelScope.launch {
-            isSideBarFocusable = boolean
+            when (event) {
+                is SideBarEvent.ChangeFocusState -> {
+                    _sideBarState.value = _sideBarState.value.copy(
+                        isSideBarFocusable = event.isFocusable
+                    )
+                }
+
+                is SideBarEvent.ChangeFocusedIndex -> {
+                    _sideBarState.value = _sideBarState.value.copy(
+                        sideBarFocusedIndex = event.index
+                    )
+                }
+
+                is SideBarEvent.ChangeSelectedIndex -> {
+                    _sideBarState.value = _sideBarState.value.copy(
+                        sideBarSelectedPosition = event.index
+                    )
+                }
+            }
         }
     }
-
 }
