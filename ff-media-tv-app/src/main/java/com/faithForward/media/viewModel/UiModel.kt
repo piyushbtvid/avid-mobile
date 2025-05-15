@@ -22,6 +22,8 @@ sealed interface HomePageItem {
     data class CreatorGrid(val dto:List<CreatorCardDto>): HomePageItem
 }
 
+
+
 fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
     val categoryDtos = data.map {
         CategoryComposeDto(it.name)

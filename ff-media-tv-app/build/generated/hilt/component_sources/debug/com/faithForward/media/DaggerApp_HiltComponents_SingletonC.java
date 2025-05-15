@@ -11,6 +11,8 @@ import com.faithForward.di.AppModule_ProvideNetworkRepositoryFactory;
 import com.faithForward.di.AppModule_ProvidesApiServiceInterfaceFactory;
 import com.faithForward.di.AppModule_ProvidesRetrofitInstanceFactory;
 import com.faithForward.media.activity.MainActivity;
+import com.faithForward.media.viewModel.CreatorViewModel;
+import com.faithForward.media.viewModel.CreatorViewModel_HiltModules;
 import com.faithForward.media.viewModel.HomeViewModel;
 import com.faithForward.media.viewModel.HomeViewModel_HiltModules;
 import com.faithForward.network.ApiServiceInterface;
@@ -390,7 +392,7 @@ public final class DaggerApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(ImmutableMap.<String, Boolean>of(LazyClassKeyProvider.com_faithForward_media_viewModel_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()));
+      return LazyClassKeyMap.<Boolean>of(ImmutableMap.<String, Boolean>of(LazyClassKeyProvider.com_faithForward_media_viewModel_CreatorViewModel, CreatorViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_faithForward_media_viewModel_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()));
     }
 
     @Override
@@ -410,7 +412,12 @@ public final class DaggerApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
+
       static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
+
+      @KeepFieldType
+      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
 
       @KeepFieldType
       HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
@@ -423,6 +430,8 @@ public final class DaggerApp_HiltComponents_SingletonC {
     private final ActivityRetainedCImpl activityRetainedCImpl;
 
     private final ViewModelCImpl viewModelCImpl = this;
+
+    private Provider<CreatorViewModel> creatorViewModelProvider;
 
     private Provider<HomeViewModel> homeViewModelProvider;
 
@@ -439,12 +448,13 @@ public final class DaggerApp_HiltComponents_SingletonC {
     @SuppressWarnings("unchecked")
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
-      this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.creatorViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(ImmutableMap.<String, javax.inject.Provider<ViewModel>>of(LazyClassKeyProvider.com_faithForward_media_viewModel_HomeViewModel, ((Provider) homeViewModelProvider)));
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(ImmutableMap.<String, javax.inject.Provider<ViewModel>>of(LazyClassKeyProvider.com_faithForward_media_viewModel_CreatorViewModel, ((Provider) creatorViewModelProvider), LazyClassKeyProvider.com_faithForward_media_viewModel_HomeViewModel, ((Provider) homeViewModelProvider)));
     }
 
     @Override
@@ -456,8 +466,13 @@ public final class DaggerApp_HiltComponents_SingletonC {
     private static final class LazyClassKeyProvider {
       static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
 
+      static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
+
       @KeepFieldType
       HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
+
+      @KeepFieldType
+      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -481,7 +496,10 @@ public final class DaggerApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.faithForward.media.viewModel.HomeViewModel 
+          case 0: // com.faithForward.media.viewModel.CreatorViewModel 
+          return (T) new CreatorViewModel(singletonCImpl.provideNetworkRepositoryProvider.get());
+
+          case 1: // com.faithForward.media.viewModel.HomeViewModel 
           return (T) new HomeViewModel(singletonCImpl.provideNetworkRepositoryProvider.get());
 
           default: throw new AssertionError(id);
@@ -584,7 +602,7 @@ public final class DaggerApp_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectApp(App app) {
+    public void injectApp(App arg0) {
     }
 
     @Override
