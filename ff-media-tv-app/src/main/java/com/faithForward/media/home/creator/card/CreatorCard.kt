@@ -68,7 +68,7 @@ fun CreatorCard(
                     blurRadius = 11.dp,
                     offsetY = 8.dp,
                     offsetX = 0.dp,
-                    spread = 10.dp,
+                    spread = 6.dp,
                 ) else Modifier)
                 .size(136.dp)
                 .clip(RoundedCornerShape(70.dp))
@@ -84,13 +84,13 @@ fun CreatorCard(
 
         Text(
             text = creatorCardDto.creatorName,
-            color = if (isFocused) text100 else cardShadowColor,
+            color = if (isFocused) focusedMainColor else cardShadowColor,
             fontSize = 10.sp
         )
         Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = creatorCardDto.creatorSubscriberText,
-            color = if (isFocused) text100 else cardShadowColor,
+            color = if (isFocused) focusedMainColor else cardShadowColor,
             fontSize = 7.5.sp
         )
 

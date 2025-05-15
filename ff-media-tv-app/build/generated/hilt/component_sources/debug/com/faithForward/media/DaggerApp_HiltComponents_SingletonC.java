@@ -412,15 +412,15 @@ public final class DaggerApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
-
       static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
 
-      @KeepFieldType
-      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
+      static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
 
       @KeepFieldType
       HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
+
+      @KeepFieldType
+      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
     }
   }
 
@@ -464,15 +464,15 @@ public final class DaggerApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
-
       static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
 
-      @KeepFieldType
-      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
+      static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
 
       @KeepFieldType
       HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
+
+      @KeepFieldType
+      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {

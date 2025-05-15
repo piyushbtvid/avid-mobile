@@ -39,7 +39,6 @@ fun HomePage(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = unFocusMainColor),
     ) {
         HomeContentSections(
             modifier = Modifier,

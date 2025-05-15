@@ -1,15 +1,38 @@
+# IntelliJ IDEA
+/.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
+
+# Android/Gradle
+**/build/
+.gradle/
+local.properties
 .externalNativeBuild
 .cxx
-local.properties
+/captures
+
+# Gradle wrapper
+/gradlew
+/gradlew.bat
+/gradle-wrapper.jar
+/gradle-wrapper.properties
+
+# macOS
+.DS_Store
+
+# Sentry
+sentry.properties
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Kotlin
+*.kts
+*.kt.cls
+
+# Project-specific files
+deviceManager.xml
+Project_Default.xml
+Project.xml
+compiler.xml
