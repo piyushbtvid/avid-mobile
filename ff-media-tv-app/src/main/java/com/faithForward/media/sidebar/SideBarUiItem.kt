@@ -23,11 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.faithForward.media.util.FocusState
 import com.faithForward.media.R
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.theme.sideBarFocusedTextColor
+import com.faithForward.media.util.FocusState
 
 @Composable
 fun SideBarUiItem(

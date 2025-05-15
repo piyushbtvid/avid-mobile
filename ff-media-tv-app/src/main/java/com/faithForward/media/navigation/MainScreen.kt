@@ -17,6 +17,7 @@ fun MainScreen(
     sideBarViewModel: SideBarViewModel,
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
+    val isSideBarFocusable = sideBarViewModel.isSideBarFocusable
     val navController = rememberNavController()
     Box(
         modifier = modifier
@@ -25,22 +26,25 @@ fun MainScreen(
     ) {
         MainAppNavHost(
             navController = navController,
+            onDataLoadedSuccess = {
+                sideBarViewModel.changeSideBarFocusState(true)
+            }
         )
 
         SideBar(
             columnList = sideBarItems,
             modifier = Modifier.align(Alignment.TopStart),
+            isSideBarFocusable = isSideBarFocusable,
             onSideBarItemClick = { item ->
-                navController.navigate(item.tag) {
-                    if (item.tag == Routes.Creator.route) {
-//                        homeViewModel.fetchCreatorData(sectionId = 1)
-                        navController.navigate(item.tag)
+                if (item.tag == Routes.Creator.route) {
+                    navController.navigate(item.tag) {
+                        launchSingleTop = true
                     }
-                    if (item.tag == Routes.Home.route) {
-//                        homeViewModel.fetchHomePageData(sectionId = 1)
-                        navController.navigate(item.tag)
+                }
+                if (item.tag == Routes.Home.route) {
+                    navController.navigate(item.tag) {
+                        launchSingleTop = true
                     }
-                    launchSingleTop = true
                 }
             }
         )

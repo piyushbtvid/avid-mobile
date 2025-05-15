@@ -29,16 +29,19 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.theme.sideBarShadowColor
 import com.faithForward.media.theme.sideBarShadowLightColor
+import com.faithForward.media.viewModel.SideBarViewModel
 
 
 @Composable
 fun SideBar(
     modifier: Modifier = Modifier,
     columnList: List<SideBarItem>,
+    isSideBarFocusable: Boolean,
     onSideBarItemClick: (SideBarItem) -> Unit
 ) {
     var sideBarFocusedIndex by remember { mutableStateOf(-1) }
     var sideBarSelectedPosition by remember { mutableStateOf(1) }
+
 
     val animatedWidth by animateDpAsState(
         targetValue = if (sideBarFocusedIndex != -1) 150.dp else 56.dp,
@@ -131,6 +134,7 @@ fun SideBar(
                     val sideBarItem = columnList.get(index)
                     onSideBarItemClick.invoke(sideBarItem)
                 },
+                isSideBarFocusable = isSideBarFocusable,
                 onFocusChange = { num ->
                     sideBarFocusedIndex = num
                 }
@@ -175,7 +179,8 @@ fun SideBarPreview() {
             columnList = sideBarTestList,
             onSideBarItemClick = {
 
-            }
+            },
+            isSideBarFocusable = true
         )
     }
 }

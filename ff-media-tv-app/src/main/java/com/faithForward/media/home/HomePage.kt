@@ -16,6 +16,7 @@ import com.faithForward.util.Resource
 fun HomePage(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
+    onDataLoadedSuccess: () -> Unit
 ) {
 
     LaunchedEffect(Unit) {
@@ -31,6 +32,9 @@ fun HomePage(
 
     val homePageItems = homePageItemsResource.data ?: return
 
+    if (homePageItemsResource is Resource.Success) {
+        onDataLoadedSuccess.invoke()
+    }
 
     Box(
         modifier = modifier

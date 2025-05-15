@@ -46,13 +46,11 @@ fun HomeContentSections(
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem
                 )
 
-                is HomePageItem.PosterRow -> ContentRow(
-                    posterRowDto = homePageItem.dto,
+                is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                     onChangeContentRowFocusedIndex = { index ->
                         onChangeContentRowFocusedIndex.invoke(index)
-                    }
-                )
+                    })
 
                 is HomePageItem.CreatorGrid -> {
                     CreatorCardGrid(
