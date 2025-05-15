@@ -20,9 +20,9 @@ fun CreatorScreen(
 ) {
 
 
-    LaunchedEffect(Unit) {
-        creatorViewModel.fetchCreatorData(1)
-    }
+//    LaunchedEffect(Unit) {
+//        creatorViewModel.fetchCreatorData(1)
+//    }
 
     val creatorPageItemsResource by creatorViewModel.creatorPageData.collectAsStateWithLifecycle()
 

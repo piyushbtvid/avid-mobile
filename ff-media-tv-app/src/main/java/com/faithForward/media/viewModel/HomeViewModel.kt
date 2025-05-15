@@ -30,6 +30,9 @@ class HomeViewModel
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
 
+    init {
+        fetchHomePageData(1)
+    }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value

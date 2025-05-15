@@ -28,9 +28,9 @@ fun HomePage(
     val lifecycleOwner = LocalLifecycleOwner.current
 
 
-    LaunchedEffect(Unit) {
-        homeViewModel.fetchHomePageData(sectionId = 1)
-    }
+//    LaunchedEffect(Unit) {
+//        homeViewModel.fetchHomePageData(sectionId = 1)
+//    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
