@@ -8,8 +8,18 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
+**/build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+.idea/deploymentTargetSelector.xml
+# Sentry Config File
+sentry.properties
+deviceManager.xml
+Project_Default.xml
+Project.xml
+
+/.idea/misc.xml
+compiler.xml

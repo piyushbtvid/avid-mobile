@@ -30,6 +30,9 @@ fun MainScreen(
             navController = navController,
             onDataLoadedSuccess = {
                 sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(true))
+            },
+            changeSideBarSelectedPosition = { value ->
+                sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(value))
             }
         )
 
