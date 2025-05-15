@@ -42,11 +42,13 @@ fun MainScreen(
             onSideBarItemClick = { item ->
                 if (item.tag == Routes.Creator.route) {
                     navController.navigate(item.tag) {
+                        popUpTo(Routes.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
                 }
                 if (item.tag == Routes.Home.route) {
                     navController.navigate(item.tag) {
+                        popUpTo(Routes.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
                 }
