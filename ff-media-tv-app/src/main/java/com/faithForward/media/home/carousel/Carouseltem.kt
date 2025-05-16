@@ -2,7 +2,9 @@ package com.faithForward.media.home.carousel
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -51,6 +54,8 @@ fun CarouselItem(
     @DrawableRes placeholderRes: Int = R.drawable.banner_test_img
 ) {
 
+    
+
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             Modifier
@@ -68,6 +73,24 @@ fun CarouselItem(
                 )
         } else {
             modifier.padding(start = 20.dp, bottom = 20.dp)
+        }
+
+    val rowButtonModifier =
+        if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
+            Modifier
+                .shadow(
+                    color = Color.White.copy(alpha = .11f),
+                    borderRadius = 40.dp,
+                    blurRadius = 7.dp,
+                    spread = 5.dp,
+                )
+                .border(
+                    width = 1.dp,
+                    color = textFocusedMainColor,
+                    shape = RoundedCornerShape(40.dp)
+                )
+        } else {
+            Modifier
         }
 
     with(carouselItemDto) {
@@ -136,11 +159,36 @@ fun CarouselItem(
                 iconWidth = 21,
                 backgroundColor = playButtonBackgroundColor
             )
+
+            Row(
+                modifier = Modifier
+                    .align(alignment = Alignment.TopCenter)
+                    .padding(top = 10.dp, end = 100.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                RoundedIconButton(
+                    modifier = rowButtonModifier,
+                    imageId = R.drawable.microphone_ic,
+                    iconHeight = 15,
+                    boxSize = 43,
+                    iconWidth = 15,
+                    backgroundColor = Color.White.copy(alpha = .75f)
+                )
+                RoundedIconButton(
+                    modifier = rowButtonModifier,
+                    imageId = R.drawable.search_ic,
+                    iconHeight = 15,
+                    boxSize = 43,
+                    iconWidth = 15,
+                    backgroundColor = Color.White.copy(alpha = .75f)
+                )
+            }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@PreviewScreenSizes()
+@Preview()
 @Composable
 fun CarouseItemPreview(modifier: Modifier = Modifier) {
 
