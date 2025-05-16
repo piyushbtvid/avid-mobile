@@ -45,10 +45,10 @@ class CreatorViewModel
             try {
                 // Fetch both APIs concurrently
                 val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
-                val categoriesDataDeferred = async { networkRepository.getCategories() }
+                val creatorsDataDeferred = async { networkRepository.getCreatorsList() }
 
                 val sectionData = sectionDataDeferred.await()
-                val categoriesData = categoriesDataDeferred.await()
+                val creatorsData = creatorsDataDeferred.await()
 
                 // Process section data (Carousel and Poster rows)
                 val sectionItems = if (sectionData.isSuccessful) {
@@ -58,10 +58,10 @@ class CreatorViewModel
                 }
 
                 // Process category data
-                val categoryRow = if (categoriesData.isSuccessful) {
-                    categoriesData.body()?.toCategoryRow()
+                val creatorRow = if (creatorsData.isSuccessful) {
+                    creatorsData.body()?.data?.toCreatorCardDtoList()
                 } else {
-                    null
+                    listOf()
                 }
 
                 // Combine the data with CategoryRow at index 1
@@ -77,11 +77,13 @@ class CreatorViewModel
 //                        add(categoryRow)
 //                    }
 
+                    //add creator Grid
+                    if (creatorRow != null) {
+                        add(HomePageItem.CreatorGrid(creatorRow))
+                    }
+
                     // Add remaining items (PosterRows)
 //                    addAll(sectionItems.filter { it !is HomePageItem.CarouselRow })
-
-
-                    add(HomePageItem.CreatorGrid(sampleCreatorCards))
                 }
 
                 _creatorPageData.emit(Resource.Success(combinedItems))
@@ -93,12 +95,14 @@ class CreatorViewModel
     }
 
 
-    private val sampleCreatorCards by lazy {  List(22) {
-        CreatorCardDto(
-            creatorSubscriberText = "11M Subscriber",
-            creatorName = "Virat Khohli",
-            creatorImageUrl = "https://rukminim2.flixcart.com/image/850/1000/l22724w0/poster/a/x/o/small-virat-kohli-multicolour-photo-paper-print-poster-virat-original-imagdhycghmdyr3j.jpeg?q=90&crop=false"
-        )
-    }}
+    private val sampleCreatorCards by lazy {
+        List(22) {
+            CreatorCardDto(
+                creatorSubscriberText = "11M Subscriber",
+                creatorName = "Virat Khohli",
+                creatorImageUrl = "https://rukminim2.flixcart.com/image/850/1000/l22724w0/poster/a/x/o/small-virat-kohli-multicolour-photo-paper-print-poster-virat-original-imagdhycghmdyr3j.jpeg?q=90&crop=false"
+            )
+        }
+    }
 
 }
