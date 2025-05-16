@@ -1,5 +1,6 @@
 package com.faithForward.media.sidebar
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,11 @@ fun SideBarColumn(
     LazyColumn(
         modifier = modifier.focusRestorer {
             itemFocusRequesters[1]
+        }.onFocusChanged {
+            Log.d("onFocusChanged","${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
+            if(it.hasFocus){
+                itemFocusRequesters[selectedPosition].requestFocus()
+            }
         },
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
