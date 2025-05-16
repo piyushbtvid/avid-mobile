@@ -87,7 +87,7 @@ fun CreatorCard(
             color = if (isFocused) focusedMainColor else cardShadowColor,
             fontSize = 10.sp
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(3.dp))
         Text(
             text = creatorCardDto.creatorSubscriberText,
             color = if (isFocused) focusedMainColor else cardShadowColor,

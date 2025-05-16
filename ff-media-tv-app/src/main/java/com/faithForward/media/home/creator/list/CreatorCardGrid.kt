@@ -1,31 +1,18 @@
 package com.faithForward.media.home.creator.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,7 +21,6 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.extensions.PositionFocusedItemInLazyLayout
 import com.faithForward.media.home.creator.card.CreatorCard
 import com.faithForward.media.home.creator.card.CreatorCardDto
 
@@ -58,7 +44,7 @@ fun CreatorCardGrid(
         ) {
             val isFirstRow = creatorsListIndex == 0
             LazyRow(
-                modifier = (if (isFirstRow) Modifier.focusRestorer{
+                modifier = (if (isFirstRow) Modifier.focusRestorer {
                     focusRequester
                 } else Modifier).fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -68,7 +54,9 @@ fun CreatorCardGrid(
                     val absoluteIndex = creatorsListIndex * 5 + index
                     CreatorCard(
                         creatorCardDto = creator, isFocused = absoluteIndex == focusedIndex,
-                        modifier = (if (isFirstRow && index==0) Modifier.focusRequester(focusRequester) else Modifier)
+                        modifier = (if (isFirstRow && index == 0) Modifier.focusRequester(
+                            focusRequester
+                        ) else Modifier)
                             .onFocusChanged {
                                 if (it.isFocused) {
                                     focusedIndex = absoluteIndex

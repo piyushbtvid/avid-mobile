@@ -1,16 +1,17 @@
 package com.faithForward.media.viewModel
 
-import com.faithForward.media.home.category.CategoryRowDto
+import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.carousel.CarouselContentRowDto
 import com.faithForward.media.home.carousel.CarouselItemDto
-import com.faithForward.media.commanComponents.CategoryComposeDto
+import com.faithForward.media.home.category.CategoryRowDto
+import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.Item
 import com.faithForward.network.dto.Section
 import com.faithForward.network.dto.SectionApiResponse
+import com.faithForward.network.dto.creator.UserData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -19,9 +20,8 @@ sealed interface HomePageItem {
     data class CarouselRow(val dto: CarouselContentRowDto) : HomePageItem
     data class PosterRow(val dto: PosterRowDto) : HomePageItem
     data class CategoryRow(val dto: CategoryRowDto) : HomePageItem
-    data class CreatorGrid(val dto:List<CreatorCardDto>): HomePageItem
+    data class CreatorGrid(val dto: List<CreatorCardDto>) : HomePageItem
 }
-
 
 
 fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
@@ -29,6 +29,16 @@ fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
         CategoryComposeDto(it.name)
     }
     return HomePageItem.CategoryRow(dto = CategoryRowDto(categoryDtos))
+}
+
+fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
+    return this.map { user ->
+        CreatorCardDto(
+            creatorImageUrl = user.profileImg.orEmpty(), // fallback to empty string if null
+            creatorName = user.name,
+            creatorSubscriberText = "${user.channelSubscribers} Subscribers"
+        )
+    }
 }
 
 
