@@ -36,7 +36,8 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
         CreatorCardDto(
             creatorImageUrl = user.profileImg.orEmpty(), // fallback to empty string if null
             creatorName = user.name,
-            creatorSubscriberText = "${user.channelSubscribers} Subscribers"
+            creatorSubscriberText = "${user.channelSubscribers} Subscribers",
+            channelDescription = user.channelDescription ?: ""
         )
     }
 }
@@ -112,4 +113,13 @@ fun Item.toCarouselItemDto(): CarouselItemDto {
 
 
 fun Item.toPosterCardDto(): PosterCardDto = PosterCardDto(posterImageSrc = posterImage)
+
+fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
+    return CarouselItemDto(
+        imgSrc = creatorImageUrl,
+        description = channelDescription,
+        subscribers = "$creatorSubscriberText Subscribers",
+        title = creatorName
+    )
+}
 

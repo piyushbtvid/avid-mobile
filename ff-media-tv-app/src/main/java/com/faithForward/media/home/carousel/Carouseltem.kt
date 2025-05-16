@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -43,7 +44,8 @@ data class CarouselItemDto(
     val seasons: Int? = null,
     val duration: String? = null,
     val imdbRating: String? = null,
-    val title: String? = null
+    val title: String? = null,
+    val subscribers: String? = null
 )
 
 @Composable
@@ -54,7 +56,6 @@ fun CarouselItem(
     @DrawableRes placeholderRes: Int = R.drawable.banner_test_img
 ) {
 
-    
 
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
@@ -96,12 +97,12 @@ fun CarouselItem(
     with(carouselItemDto) {
         Box(
             modifier = modifier
-                .fillMaxWidth()
+                .width(944.92.dp)
                 .height(358.dp),
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(null) // fallback if blank
+                    .data(imgSrc) // fallback if blank
                     .placeholder(placeholderRes)
                     .error(placeholderRes)
                     .crossfade(true)
@@ -109,7 +110,7 @@ fun CarouselItem(
                 contentDescription = "banner Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(944.92.dp)
                     .height(358.dp)
 //                    .offset(y = (-183).dp)
                     .clip(
@@ -138,7 +139,7 @@ fun CarouselItem(
                 ContentDescription(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
-                        .padding(top = 15.dp, end = 26.dp)
+                        .padding(top = 15.dp, end = 100.dp)
                         .align(Alignment.TopEnd),
                     text = title,
                     textSize = 28,
