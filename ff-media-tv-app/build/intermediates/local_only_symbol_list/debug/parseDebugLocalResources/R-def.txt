@@ -8,6 +8,7 @@ color purple_700
 color teal_200
 color teal_700
 color white
+drawable app_logo
 drawable banner_test_img
 drawable fi_rs_hand_holding_heart
 drawable fi_sr_thumbs_down

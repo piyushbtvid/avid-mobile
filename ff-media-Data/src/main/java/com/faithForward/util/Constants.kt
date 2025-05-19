@@ -8,4 +8,5 @@ object Constants {
     const val SECTION_END_POINT = "section/{id}"
     const val CREATOR_END_POINT =
         "http://107.180.208.127:8000/api/client/v1/creators/list?perpage=10"
+    const val LOGIN_END_POINT = "http://107.180.208.127:8000/api/client/v1/subscribers/login"
 }

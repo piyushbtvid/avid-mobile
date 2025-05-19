@@ -5,6 +5,7 @@ import com.faithForward.di.AppModule;
 import com.faithForward.media.activity.MainActivity_GeneratedInjector;
 import com.faithForward.media.viewModel.CreatorViewModel_HiltModules;
 import com.faithForward.media.viewModel.HomeViewModel_HiltModules;
+import com.faithForward.media.viewModel.LoginViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -162,7 +163,8 @@ public final class App_HiltComponents {
           CreatorViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
-          HomeViewModel_HiltModules.KeyModule.class
+          HomeViewModel_HiltModules.KeyModule.class,
+          LoginViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -200,7 +202,8 @@ public final class App_HiltComponents {
       modules = {
           CreatorViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
-          HomeViewModel_HiltModules.BindsModule.class
+          HomeViewModel_HiltModules.BindsModule.class,
+          LoginViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped
