@@ -16,8 +16,8 @@
         "source": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-main-79:\\drawable-nodpi\\home_ic.png"
     },
     {
-        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_preload_placeholder.jpg.flat",
-        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/preload_placeholder.jpg"
+        "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\drawable-nodpi_preload_placeholder.jpg.flat",
+        "source": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-main-79:\\drawable-nodpi\\preload_placeholder.jpg"
     },
     {
         "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\drawable-nodpi_plus_ic.png.flat",
@@ -54,6 +54,10 @@
     {
         "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-main-79:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_fi_sr_thumbs_down.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/fi_sr_thumbs_down.xml"
     },
     {
         "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
@@ -104,6 +108,10 @@
         "source": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-main-79:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_vector.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/vector.xml"
+    },
+    {
         "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\drawable-nodpi_banner_test_img.png.flat",
         "source": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-main-79:\\drawable-nodpi\\banner_test_img.png"
     },
@@ -118,6 +126,10 @@
     {
         "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-main-79:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_fi_sr_thumbs_up.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/fi_sr_thumbs_up.xml"
     },
     {
         "merged": "C:\\Users\\hp\\.gradle\\daemon\\8.9\\com.faithForward.media.ff-media-tv-app-debug-77:\\drawable_ic_launcher_foreground.xml.flat",

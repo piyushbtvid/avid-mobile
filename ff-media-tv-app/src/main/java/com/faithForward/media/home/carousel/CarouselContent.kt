@@ -16,12 +16,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
+import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.util.FocusState
 
 @Composable
 fun CarouselContent(
@@ -33,13 +36,19 @@ fun CarouselContent(
     duration: String? = null,
     imdbRating: String? = null,
     subscribers: String? = null,
-    title: String?
+    title: String?,
+    addToWatchListModifier: Modifier = Modifier,
+    likeModifier: Modifier = Modifier,
+    disLikeModifier: Modifier = Modifier,
+    addToWatchListUiState: FocusState,
+    likeUiState: FocusState,
+    dislikeUiState: FocusState,
 ) {
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(addToWatchListUiState) {
         Log.e(
             "UTIL",
-            "util list in carouselContent is $releaseDate $genre  $seasons $duration $subscribers $imdbRating"
+            "util list in carouselContent is $releaseDate $genre  $seasons $duration $subscribers $imdbRating $addToWatchListUiState"
         )
     }
 
@@ -50,14 +59,12 @@ fun CarouselContent(
         Column(
             modifier = Modifier
         ) {
-            val metaList = listOfNotNull(
-                releaseDate?.takeIf { it.isNotBlank() },
+            val metaList = listOfNotNull(releaseDate?.takeIf { it.isNotBlank() },
                 genre?.takeIf { it.isNotBlank() },
                 seasons?.let { "$it Season${if (it > 1) "s" else ""}" }?.takeIf { it.isNotBlank() },
                 duration?.takeIf { it.isNotBlank() },
                 subscribers?.takeIf { it.isNotBlank() },
-                imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() }
-            )
+                imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() })
 
             // Show metadata row only if there's something to display
             if (metaList.isNotEmpty()) {
@@ -98,14 +105,22 @@ fun CarouselContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(R.drawable.plus_icon), contentDescription = null
+                    modifier = addToWatchListModifier,
+                    painter = painterResource(R.drawable.vector),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
                 Image(
-                    painter = painterResource(R.drawable.fi_sr_thumbs_up), contentDescription = null
+                    modifier = likeModifier,
+                    painter = painterResource(R.drawable.fi_sr_thumbs_up),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
                 Image(
+                    modifier = disLikeModifier,
                     painter = painterResource(R.drawable.fi_sr_thumbs_down),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
             }
         }
@@ -122,6 +137,11 @@ fun CarouselPreview(modifier: Modifier = Modifier) {
             .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        CarouselContent(title = "")
+        CarouselContent(
+            title = "",
+            addToWatchListUiState = FocusState.FOCUSED,
+            likeUiState = FocusState.FOCUSED,
+            dislikeUiState = FocusState.SELECTED,
+        )
     }
 }

@@ -20,13 +20,13 @@ drawable ic_launcher_foreground
 drawable microphone_ic
 drawable play_ic
 drawable plus_ic
-drawable plus_icon
 drawable preload_placeholder
 drawable screen_ic
 drawable search_ic
 drawable side_bar_focused_background
 drawable side_bar_unfocused_background
 drawable test_poster
+drawable vector
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name

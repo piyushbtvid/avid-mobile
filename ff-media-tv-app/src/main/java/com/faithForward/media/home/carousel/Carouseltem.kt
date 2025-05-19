@@ -2,6 +2,7 @@ package com.faithForward.media.home.carousel
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,16 @@ data class CarouselItemDto(
 fun CarouselItem(
     modifier: Modifier = Modifier,
     carouselItemDto: CarouselItemDto,
+    micModifier: Modifier = Modifier,
+    searchIcModifier: Modifier = Modifier,
+    addToWatchListModifier: Modifier = Modifier,
+    likeModifier: Modifier = Modifier,
+    disLikeModifier: Modifier = Modifier,
+    addToWatchListUiState: FocusState,
+    likeUiState: FocusState,
+    dislikeUiState: FocusState,
+    micUiState: FocusState,
+    searchUiSate: FocusState,
     focusState: FocusState,
     @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder
 ) {
@@ -59,7 +70,7 @@ fun CarouselItem(
 
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
-            Modifier
+            modifier
                 .padding(start = 20.dp, bottom = 20.dp)
                 .shadow(
                     color = Color.White.copy(alpha = .46f),
@@ -74,9 +85,9 @@ fun CarouselItem(
             modifier.padding(start = 20.dp, bottom = 20.dp)
         }
 
-    val rowButtonModifier =
-        if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
-            Modifier
+    val micButtonModifier =
+        if (micUiState == FocusState.FOCUSED || micUiState == FocusState.SELECTED) {
+            micModifier
                 .shadow(
                     color = Color.White.copy(alpha = .11f),
                     borderRadius = 40.dp,
@@ -87,12 +98,28 @@ fun CarouselItem(
                     width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
                 )
         } else {
-            Modifier
+            micModifier
+        }
+
+    val searchButtonModifier =
+        if (searchUiSate == FocusState.FOCUSED || searchUiSate == FocusState.SELECTED) {
+            searchIcModifier
+                .shadow(
+                    color = Color.White.copy(alpha = .11f),
+                    borderRadius = 40.dp,
+                    blurRadius = 7.dp,
+                    spread = 5.dp,
+                )
+                .border(
+                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
+                )
+        } else {
+            searchIcModifier
         }
 
     with(carouselItemDto) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .width(944.92.dp)
                 .height(358.dp),
         ) {
@@ -125,7 +152,13 @@ fun CarouselItem(
                 duration = duration,
                 subscribers = subscribers,
                 imdbRating = imdbRating,
-                title = title
+                title = title,
+                addToWatchListModifier = addToWatchListModifier,
+                likeModifier = likeModifier,
+                disLikeModifier = disLikeModifier,
+                addToWatchListUiState = addToWatchListUiState,
+                likeUiState = likeUiState,
+                dislikeUiState = dislikeUiState
             )
 
             title?.let {
@@ -161,7 +194,7 @@ fun CarouselItem(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     RoundedIconButton(
-                        modifier = rowButtonModifier,
+                        modifier = micButtonModifier,
                         imageId = R.drawable.microphone_ic,
                         iconHeight = 15,
                         boxSize = 43,
@@ -169,7 +202,7 @@ fun CarouselItem(
                         backgroundColor = Color.White.copy(alpha = .75f)
                     )
                     RoundedIconButton(
-                        modifier = rowButtonModifier,
+                        modifier = searchButtonModifier,
                         imageId = R.drawable.search_ic,
                         iconHeight = 15,
                         boxSize = 43,
@@ -199,7 +232,13 @@ fun CarouseItemPreview(modifier: Modifier = Modifier) {
                 duration = "2.5h",
                 imdbRating = "4.4",
                 title = "khbshbslihbfv"
-            ), focusState = FocusState.FOCUSED
+            ),
+            focusState = FocusState.FOCUSED,
+            micUiState = FocusState.FOCUSED,
+            searchUiSate = FocusState.FOCUSED,
+            addToWatchListUiState = FocusState.FOCUSED,
+            likeUiState = FocusState.FOCUSED,
+            dislikeUiState = FocusState.FOCUSED,
         )
 
     }
