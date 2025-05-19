@@ -118,8 +118,9 @@ fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(
         imgSrc = creatorImageUrl,
         description = channelDescription,
-        subscribers = "$creatorSubscriberText Subscribers",
-        title = creatorName
+        subscribers = creatorSubscriberText,
+        title = creatorName,
+        isCreator = true
     )
 }
 

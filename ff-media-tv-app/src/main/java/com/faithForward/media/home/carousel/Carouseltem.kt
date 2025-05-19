@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -45,7 +44,8 @@ data class CarouselItemDto(
     val duration: String? = null,
     val imdbRating: String? = null,
     val title: String? = null,
-    val subscribers: String? = null
+    val subscribers: String? = null,
+    var isCreator: Boolean = false
 )
 
 @Composable
@@ -53,7 +53,7 @@ fun CarouselItem(
     modifier: Modifier = Modifier,
     carouselItemDto: CarouselItemDto,
     focusState: FocusState,
-    @DrawableRes placeholderRes: Int = R.drawable.banner_test_img
+    @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder
 ) {
 
 
@@ -68,9 +68,7 @@ fun CarouselItem(
                     spread = 5.dp,
                 )
                 .border(
-                    width = 1.dp,
-                    color = textFocusedMainColor,
-                    shape = RoundedCornerShape(40.dp)
+                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
                 )
         } else {
             modifier.padding(start = 20.dp, bottom = 20.dp)
@@ -86,9 +84,7 @@ fun CarouselItem(
                     spread = 5.dp,
                 )
                 .border(
-                    width = 1.dp,
-                    color = textFocusedMainColor,
-                    shape = RoundedCornerShape(40.dp)
+                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
                 )
         } else {
             Modifier
@@ -101,12 +97,8 @@ fun CarouselItem(
                 .height(358.dp),
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imgSrc) // fallback if blank
-                    .placeholder(placeholderRes)
-                    .error(placeholderRes)
-                    .crossfade(true)
-                    .build(),
+                model = ImageRequest.Builder(LocalContext.current).data(imgSrc) // fallback if blank
+                    .placeholder(placeholderRes).error(placeholderRes).crossfade(true).build(),
                 contentDescription = "banner Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -131,6 +123,7 @@ fun CarouselItem(
                 genre = genre,
                 seasons = seasons,
                 duration = duration,
+                subscribers = subscribers,
                 imdbRating = imdbRating,
                 title = title
             )
@@ -139,7 +132,7 @@ fun CarouselItem(
                 ContentDescription(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
-                        .padding(top = 15.dp, end = 100.dp)
+                        .padding(top = 15.dp, end = if (isCreator) 80.dp else 100.dp)
                         .align(Alignment.TopEnd),
                     text = title,
                     textSize = 28,
@@ -150,8 +143,7 @@ fun CarouselItem(
             }
 
             RoundedIconButton(
-                modifier = buttonModifier
-                    .align(alignment = Alignment.BottomStart)
+                modifier = buttonModifier.align(alignment = Alignment.BottomStart)
 //
                 ,
                 imageId = R.drawable.play_ic,
@@ -161,28 +153,30 @@ fun CarouselItem(
                 backgroundColor = playButtonBackgroundColor
             )
 
-            Row(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopCenter)
-                    .padding(top = 10.dp, end = 100.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                RoundedIconButton(
-                    modifier = rowButtonModifier,
-                    imageId = R.drawable.microphone_ic,
-                    iconHeight = 15,
-                    boxSize = 43,
-                    iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
-                RoundedIconButton(
-                    modifier = rowButtonModifier,
-                    imageId = R.drawable.search_ic,
-                    iconHeight = 15,
-                    boxSize = 43,
-                    iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
+            if (!isCreator) {
+                Row(
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopCenter)
+                        .padding(top = 10.dp, end = 100.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    RoundedIconButton(
+                        modifier = rowButtonModifier,
+                        imageId = R.drawable.microphone_ic,
+                        iconHeight = 15,
+                        boxSize = 43,
+                        iconWidth = 15,
+                        backgroundColor = Color.White.copy(alpha = .75f)
+                    )
+                    RoundedIconButton(
+                        modifier = rowButtonModifier,
+                        imageId = R.drawable.search_ic,
+                        iconHeight = 15,
+                        boxSize = 43,
+                        iconWidth = 15,
+                        backgroundColor = Color.White.copy(alpha = .75f)
+                    )
+                }
             }
         }
     }
@@ -194,8 +188,7 @@ fun CarouselItem(
 fun CarouseItemPreview(modifier: Modifier = Modifier) {
 
     Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
 
         CarouselItem(
@@ -206,8 +199,7 @@ fun CarouseItemPreview(modifier: Modifier = Modifier) {
                 duration = "2.5h",
                 imdbRating = "4.4",
                 title = "khbshbslihbfv"
-            ),
-            focusState = FocusState.FOCUSED
+            ), focusState = FocusState.FOCUSED
         )
 
     }

@@ -30,6 +30,7 @@ fun CarouselContent(
     seasons: Int? = null,
     duration: String? = null,
     imdbRating: String? = null,
+    subscribers: String? = null,
     title: String?
 ) {
     Box(
@@ -44,6 +45,7 @@ fun CarouselContent(
                 genre,
                 seasons?.let { "$it Season${if (it > 1) "s" else ""}" },
                 duration,
+                subscribers,
                 imdbRating?.let { "IMDB $it" }
             )
 

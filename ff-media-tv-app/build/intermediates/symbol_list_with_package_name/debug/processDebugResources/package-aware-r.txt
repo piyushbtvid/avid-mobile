@@ -3215,6 +3215,7 @@ drawable notify_panel_notification_icon_bg
 drawable play_ic
 drawable plus_ic
 drawable plus_icon
+drawable preload_placeholder
 drawable screen_ic
 drawable search_ic
 drawable side_bar_focused_background

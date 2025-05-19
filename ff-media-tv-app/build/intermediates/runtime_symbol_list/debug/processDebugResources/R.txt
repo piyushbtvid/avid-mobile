@@ -3214,6 +3214,7 @@ int drawable notify_panel_notification_icon_bg 0x7f08013a
 int drawable play_ic 0x7f08013b
 int drawable plus_ic 0x7f08013c
 int drawable plus_icon 0x7f08013d
+int drawable preload_placeholder 0x7f080146
 int drawable screen_ic 0x7f08013e
 int drawable search_ic 0x7f08013f
 int drawable side_bar_focused_background 0x7f080140
