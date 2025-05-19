@@ -43,10 +43,61 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
 }
 
 
+//fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
+//    return data.sortedBy { if (it.type == "Carousel") 0 else 1 } // Prioritize Carousel
+//        .map { it.toHomePageItem() }
+//}
+
 fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
-    return data.sortedBy { if (it.type == "Carousel") 0 else 1 } // Prioritize Carousel
-        .map { it.toHomePageItem() }
+    val sections = data
+    val homePageItems = mutableListOf<HomePageItem>()
+    var carouselAdded = false
+    var carouselSectionIndex: Int? = null
+
+    // Find the first section with a non-null/non-empty first item for carousel
+    sections.forEachIndexed { index, section ->
+        if (!carouselAdded && section.items.isNotEmpty() && section.items.first() != null) {
+            homePageItems.add(
+                HomePageItem.CarouselRow(
+                    CarouselContentRowDto(
+                        listOf(section.items.first().toCarouselItemDto())
+                    )
+                )
+            )
+            carouselAdded = true
+            carouselSectionIndex = index
+        }
+    }
+
+    // Process all sections for PosterRow
+    sections.forEachIndexed { index, section ->
+        // Skip if section or items are null/empty
+        if (section.items.isEmpty()) return@forEachIndexed
+
+        // Determine which items to include in PosterRow
+        val posterItems = if (index == carouselSectionIndex) {
+            // For the carousel section, include all items except the first
+            section.items.drop(1).filterNotNull().map { it.toPosterCardDto() }
+        } else {
+            // For other sections, include all non-null items
+            section.items.filterNotNull().map { it.toPosterCardDto() }
+        }
+
+        // Add PosterRow if there are items to display
+        if (posterItems.isNotEmpty()) {
+            homePageItems.add(
+                HomePageItem.PosterRow(
+                    PosterRowDto(
+                        heading = section.title, dtos = posterItems
+                    )
+                )
+            )
+        }
+    }
+
+    return homePageItems
 }
+
 
 fun Section.toHomePageItem(): HomePageItem {
     return when (type) {
@@ -88,15 +139,19 @@ fun Item.toCarouselItemDto(): CarouselItemDto {
 
 
     // Convert releaseDate (epoch seconds → "dd MMM yyyy")
-    val formattedReleaseDate = try {
-        val epochMillis = releaseDate * 1000
-        val date = Date(epochMillis)
-        val formatter = SimpleDateFormat(
-            "dd MMM yyyy", Locale.getDefault()
-        )
-        formatter.format(date)
-    } catch (e: Exception) {
+    val formattedReleaseDate = if (releaseDate == 0L) {
         ""
+    } else {
+        try {
+            val epochMillis = releaseDate * 1000
+            val date = Date(epochMillis)
+            val formatter = SimpleDateFormat(
+                "dd MMM yyyy", Locale.getDefault()
+            )
+            formatter.format(date)
+        } catch (e: Exception) {
+            ""
+        }
     }
 
 

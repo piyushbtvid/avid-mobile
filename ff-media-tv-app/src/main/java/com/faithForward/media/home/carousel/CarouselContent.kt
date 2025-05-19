@@ -1,5 +1,6 @@
 package com.faithForward.media.home.carousel
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +35,14 @@ fun CarouselContent(
     subscribers: String? = null,
     title: String?
 ) {
+
+    LaunchedEffect(Unit) {
+        Log.e(
+            "UTIL",
+            "util list in carouselContent is $releaseDate $genre  $seasons $duration $subscribers $imdbRating"
+        )
+    }
+
     Box(
         modifier = modifier
     ) {
@@ -41,12 +51,12 @@ fun CarouselContent(
             modifier = Modifier
         ) {
             val metaList = listOfNotNull(
-                releaseDate,
-                genre,
-                seasons?.let { "$it Season${if (it > 1) "s" else ""}" },
-                duration,
-                subscribers,
-                imdbRating?.let { "IMDB $it" }
+                releaseDate?.takeIf { it.isNotBlank() },
+                genre?.takeIf { it.isNotBlank() },
+                seasons?.let { "$it Season${if (it > 1) "s" else ""}" }?.takeIf { it.isNotBlank() },
+                duration?.takeIf { it.isNotBlank() },
+                subscribers?.takeIf { it.isNotBlank() },
+                imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() }
             )
 
             // Show metadata row only if there's something to display
@@ -55,12 +65,12 @@ fun CarouselContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     metaList.forEachIndexed { index, item ->
-                        ContentDescription(text = item)
-                        if (index < metaList.lastIndex) {
+                        if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
                             ContentDescription(text = "|")
                             Spacer(modifier = Modifier.width(8.dp))
                         }
+                        ContentDescription(text = item)
                     }
                 }
 
@@ -88,12 +98,10 @@ fun CarouselContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(R.drawable.plus_icon),
-                    contentDescription = null
+                    painter = painterResource(R.drawable.plus_icon), contentDescription = null
                 )
                 Image(
-                    painter = painterResource(R.drawable.fi_sr_thumbs_up),
-                    contentDescription = null
+                    painter = painterResource(R.drawable.fi_sr_thumbs_up), contentDescription = null
                 )
                 Image(
                     painter = painterResource(R.drawable.fi_sr_thumbs_down),
