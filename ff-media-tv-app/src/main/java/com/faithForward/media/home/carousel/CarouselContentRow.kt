@@ -6,6 +6,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -23,6 +25,7 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
+import kotlinx.coroutines.launch
 
 data class CarouselContentRowDto(
     val carouselItemsDto: List<CarouselItemDto>
@@ -34,7 +37,10 @@ fun CarouselContentRow(
     modifier: Modifier = Modifier,
     carouselList: List<CarouselItemDto>,
     shouldFocusOnFirstItem: Boolean = false,
+    listState: LazyListState
 ) {
+
+    val scope = rememberCoroutineScope()
 
     var carouselRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var micFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -104,6 +110,9 @@ fun CarouselContentRow(
                         if (it.hasFocus) {
                             //    onItemFocused(Pair(rowIndex, index))
                             carouselRowFocusedIndex = index
+                            scope.launch {
+                                listState.scrollToItem(0)
+                            }
                             //  onChangeContentRowFocusedIndex.invoke(index)
                             //  playListItemFocusedIndex = index
                             //onBackgroundChange.invoke(playlistItem.landscape ?: "")
