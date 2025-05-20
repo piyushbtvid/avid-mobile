@@ -12,12 +12,15 @@ import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.theme.homeBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
+import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     sideBarViewModel: SideBarViewModel,
+    startRoute: String,
+    loginViewModel: LoginViewModel
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
@@ -27,38 +30,46 @@ fun MainScreen(
             .fillMaxSize()
             .background(color = homeBackgroundColor),
     ) {
-        MainAppNavHost(navController = navController,
+        MainAppNavHost(
+            navController = navController,
             onDataLoadedSuccess = {
                 sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(true))
-            }, changeSideBarSelectedPosition = { value ->
+            },
+            changeSideBarSelectedPosition = { value ->
                 sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(value))
-            })
+            },
+            startRoute = startRoute,
+            loginViewModel = loginViewModel
+        )
 
-        SideBar(
-            columnList = sideBarItems,
-            modifier = Modifier.align(Alignment.TopStart),
-            isSideBarFocusable = sideBarState.isSideBarFocusable,
-            sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,
-            sideBarFocusedIndex = sideBarState.sideBarFocusedIndex,
-            onSideBarItemClick = { item ->
-                if (item.tag == Routes.Creator.route) {
-                    navController.navigate(item.tag) {
-                        popUpTo(Routes.Home.route) { inclusive = false }
-                        launchSingleTop = true
+        if (startRoute == Routes.Home.route) {
+            SideBar(
+                columnList = sideBarItems,
+                modifier = Modifier.align(Alignment.TopStart),
+                isSideBarFocusable = sideBarState.isSideBarFocusable,
+                sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,
+                sideBarFocusedIndex = sideBarState.sideBarFocusedIndex,
+                onSideBarItemClick = { item ->
+                    if (item.tag == Routes.Creator.route) {
+                        navController.navigate(item.tag) {
+                            popUpTo(Routes.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
                     }
-                }
-                if (item.tag == Routes.Home.route) {
-                    navController.navigate(item.tag) {
-                        popUpTo(Routes.Home.route) { inclusive = false }
-                        launchSingleTop = true
+                    if (item.tag == Routes.Home.route) {
+                        navController.navigate(item.tag) {
+                            popUpTo(Routes.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
                     }
+                },
+                onSideBarSelectedPositionChange = { index ->
+                    sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(index))
+                },
+                onSideBarFocusedIndexChange = { index ->
+                    sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(index))
                 }
-            },
-            onSideBarSelectedPositionChange = { index ->
-                sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(index))
-            },
-            onSideBarFocusedIndexChange = { index ->
-                sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(index))
-            })
+            )
+        }
     }
 }

@@ -1,15 +1,17 @@
 package com.faithForward.di
 
+import android.content.Context
 import com.faithForward.network.ApiServiceInterface
+import com.faithForward.preferences.UserPreferences
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -34,8 +36,20 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideNetworkRepository(apiServiceInterface: ApiServiceInterface): NetworkRepository {
-        return NetworkRepository(apiServiceInterface)
+    fun provideNetworkRepository(
+        apiServiceInterface: ApiServiceInterface,
+        userPreferences: UserPreferences
+    ): NetworkRepository {
+        return NetworkRepository(
+            userPreferences = userPreferences,
+            apiServiceInterface = apiServiceInterface
+        )
     }
+
+    @Provides
+    @Singleton
+    fun provideUserPreferences(
+        @ApplicationContext context: Context
+    ): UserPreferences = UserPreferences(context)
 
 }

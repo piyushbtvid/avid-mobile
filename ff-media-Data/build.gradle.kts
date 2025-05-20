@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    //data store
+    implementation("androidx.datastore:datastore-preferences:1.1.6")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

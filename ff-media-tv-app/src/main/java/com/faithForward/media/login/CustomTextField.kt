@@ -4,25 +4,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.theme.placeHolderTextColor
 import com.faithForward.media.theme.sideBarFocusedBackgroundColor
-import com.faithForward.media.theme.sideBarFocusedTextColor
 
 @Composable
-fun CustomEmailTextField(
+fun CustomTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    keyboardController: SoftwareKeyboardController? = null,
+    onNext: () -> Unit = {}, // Change onSearch to onNext for clarity
+    imeAction: ImeAction = ImeAction.Next,
     placeholder: String? = null,
     enabled: Boolean = true
 ) {
@@ -32,8 +38,8 @@ fun CustomEmailTextField(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = Color.White.copy(alpha = .33f), // Gray background
-                shape = RoundedCornerShape(24.dp) // Rounded corners
+                color = Color.White.copy(alpha = .33f),
+                shape = RoundedCornerShape(24.dp)
             )
             .border(
                 width = 1.dp,
@@ -42,27 +48,42 @@ fun CustomEmailTextField(
             ),
         enabled = enabled,
         textStyle = TextStyle(
-            color = sideBarFocusedBackgroundColor, // Orange text color
-            fontSize = 18.sp
+            color = sideBarFocusedBackgroundColor,
+            fontSize = 17.sp
         ),
         placeholder = {
             if (placeholder != null) {
                 Text(
                     text = placeholder,
-                    color = placeHolderTextColor, // Orange placeholder with lower opacity
+                    color = placeHolderTextColor,
                     fontSize = 10.sp
                 )
             }
         },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            autoCorrectEnabled = false,
+            imeAction = imeAction
+        ),
+        keyboardActions = KeyboardActions(
+//            onNext = {
+//                onNext() // Call the onNext callback to handle focus transition
+//                keyboardController?.hide()
+//            },
+            onSearch = {
+                keyboardController?.hide() // Only hide keyboard for Search action
+                onNext()
+            }
+        ),
         colors = TextFieldDefaults.colors(
+            cursorColor = sideBarFocusedBackgroundColor,
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent, // Remove underline
+            focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),
-        shape = RoundedCornerShape(24.dp) // Ensure the shape is applied
+        shape = RoundedCornerShape(24.dp)
     )
 }
 
@@ -71,9 +92,12 @@ fun CustomEmailTextField(
 @Composable
 private fun EmailTextField() {
 
-    CustomEmailTextField(
+    CustomTextField(
         value = "hbd,kbsvkbvs",
         onValueChange = {
+
+        },
+        onNext = {
 
         }
     )

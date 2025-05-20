@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.faithForward.di.AppModule;
 import com.faithForward.di.AppModule_ProvideNetworkRepositoryFactory;
+import com.faithForward.di.AppModule_ProvideUserPreferencesFactory;
 import com.faithForward.di.AppModule_ProvidesApiServiceInterfaceFactory;
 import com.faithForward.di.AppModule_ProvidesRetrofitInstanceFactory;
 import com.faithForward.media.activity.MainActivity;
@@ -18,6 +19,7 @@ import com.faithForward.media.viewModel.HomeViewModel_HiltModules;
 import com.faithForward.media.viewModel.LoginViewModel;
 import com.faithForward.media.viewModel.LoginViewModel_HiltModules;
 import com.faithForward.network.ApiServiceInterface;
+import com.faithForward.preferences.UserPreferences;
 import com.faithForward.repository.NetworkRepository;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -35,6 +37,7 @@ import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories_Internal
 import dagger.hilt.android.internal.managers.ActivityRetainedComponentManager_LifecycleModule_ProvideActivityRetainedLifecycleFactory;
 import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.android.internal.modules.ApplicationContextModule;
+import dagger.hilt.android.internal.modules.ApplicationContextModule_ProvideContextFactory;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
 import dagger.internal.IdentifierNameString;
@@ -67,12 +70,10 @@ public final class DaggerApp_HiltComponents_SingletonC {
     return new Builder();
   }
 
-  public static App_HiltComponents.SingletonC create() {
-    return new Builder().build();
-  }
-
   public static final class Builder {
     private AppModule appModule;
+
+    private ApplicationContextModule applicationContextModule;
 
     private Builder() {
     }
@@ -82,12 +83,8 @@ public final class DaggerApp_HiltComponents_SingletonC {
       return this;
     }
 
-    /**
-     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
-     */
-    @Deprecated
     public Builder applicationContextModule(ApplicationContextModule applicationContextModule) {
-      Preconditions.checkNotNull(applicationContextModule);
+      this.applicationContextModule = Preconditions.checkNotNull(applicationContextModule);
       return this;
     }
 
@@ -95,7 +92,8 @@ public final class DaggerApp_HiltComponents_SingletonC {
       if (appModule == null) {
         this.appModule = new AppModule();
       }
-      return new SingletonCImpl(appModule);
+      Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
+      return new SingletonCImpl(appModule, applicationContextModule);
     }
   }
 
@@ -414,17 +412,17 @@ public final class DaggerApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
-
       static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
+
+      static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
 
       static String com_faithForward_media_viewModel_LoginViewModel = "com.faithForward.media.viewModel.LoginViewModel";
 
       @KeepFieldType
-      HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
+      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
 
       @KeepFieldType
-      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
+      HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
 
       @KeepFieldType
       LoginViewModel com_faithForward_media_viewModel_LoginViewModel2;
@@ -474,17 +472,17 @@ public final class DaggerApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_faithForward_media_viewModel_LoginViewModel = "com.faithForward.media.viewModel.LoginViewModel";
-
       static String com_faithForward_media_viewModel_CreatorViewModel = "com.faithForward.media.viewModel.CreatorViewModel";
+
+      static String com_faithForward_media_viewModel_LoginViewModel = "com.faithForward.media.viewModel.LoginViewModel";
 
       static String com_faithForward_media_viewModel_HomeViewModel = "com.faithForward.media.viewModel.HomeViewModel";
 
       @KeepFieldType
-      LoginViewModel com_faithForward_media_viewModel_LoginViewModel2;
+      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
 
       @KeepFieldType
-      CreatorViewModel com_faithForward_media_viewModel_CreatorViewModel2;
+      LoginViewModel com_faithForward_media_viewModel_LoginViewModel2;
 
       @KeepFieldType
       HomeViewModel com_faithForward_media_viewModel_HomeViewModel2;
@@ -598,24 +596,32 @@ public final class DaggerApp_HiltComponents_SingletonC {
   private static final class SingletonCImpl extends App_HiltComponents.SingletonC {
     private final AppModule appModule;
 
+    private final ApplicationContextModule applicationContextModule;
+
     private final SingletonCImpl singletonCImpl = this;
 
     private Provider<Retrofit> providesRetrofitInstanceProvider;
 
     private Provider<ApiServiceInterface> providesApiServiceInterfaceProvider;
 
+    private Provider<UserPreferences> provideUserPreferencesProvider;
+
     private Provider<NetworkRepository> provideNetworkRepositoryProvider;
 
-    private SingletonCImpl(AppModule appModuleParam) {
+    private SingletonCImpl(AppModule appModuleParam,
+        ApplicationContextModule applicationContextModuleParam) {
       this.appModule = appModuleParam;
-      initialize(appModuleParam);
+      this.applicationContextModule = applicationContextModuleParam;
+      initialize(appModuleParam, applicationContextModuleParam);
 
     }
 
     @SuppressWarnings("unchecked")
-    private void initialize(final AppModule appModuleParam) {
+    private void initialize(final AppModule appModuleParam,
+        final ApplicationContextModule applicationContextModuleParam) {
       this.providesRetrofitInstanceProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 2));
       this.providesApiServiceInterfaceProvider = DoubleCheck.provider(new SwitchingProvider<ApiServiceInterface>(singletonCImpl, 1));
+      this.provideUserPreferencesProvider = DoubleCheck.provider(new SwitchingProvider<UserPreferences>(singletonCImpl, 3));
       this.provideNetworkRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<NetworkRepository>(singletonCImpl, 0));
     }
 
@@ -653,13 +659,16 @@ public final class DaggerApp_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.faithForward.repository.NetworkRepository 
-          return (T) AppModule_ProvideNetworkRepositoryFactory.provideNetworkRepository(singletonCImpl.appModule, singletonCImpl.providesApiServiceInterfaceProvider.get());
+          return (T) AppModule_ProvideNetworkRepositoryFactory.provideNetworkRepository(singletonCImpl.appModule, singletonCImpl.providesApiServiceInterfaceProvider.get(), singletonCImpl.provideUserPreferencesProvider.get());
 
           case 1: // com.faithForward.network.ApiServiceInterface 
           return (T) AppModule_ProvidesApiServiceInterfaceFactory.providesApiServiceInterface(singletonCImpl.appModule, singletonCImpl.providesRetrofitInstanceProvider.get());
 
           case 2: // retrofit2.Retrofit 
           return (T) AppModule_ProvidesRetrofitInstanceFactory.providesRetrofitInstance(singletonCImpl.appModule);
+
+          case 3: // com.faithForward.preferences.UserPreferences 
+          return (T) AppModule_ProvideUserPreferencesFactory.provideUserPreferences(singletonCImpl.appModule, ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

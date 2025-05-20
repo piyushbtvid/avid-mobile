@@ -5,6 +5,10 @@ INJECTED from C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\ma
 INJECTED from C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:2:1-42:12
 INJECTED from C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml:2:1-42:12
 MERGED from [:ff-media-Data] C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-Data\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.datastore:datastore-preferences-core-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\bfe9f93c034d8a3ececf27e588c1a638\transformed\datastore-preferences-core-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\25d6bf573c54d75bc0e1a70e254b8259\transformed\datastore-preferences-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.datastore:datastore-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\9b6fdfa451169d6b04df38eed7e5d255\transformed\datastore-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.datastore:datastore-core-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\8ee0d67a1925b4d9b145b55e9ac5b220\transformed\datastore-core-release\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.hilt:hilt-work:1.2.0] C:\Users\hp\.gradle\caches\8.9\transforms\6069f0ec442c0e8d86ed5cc17cbb0d20\transformed\hilt-work-1.2.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.hilt:hilt-navigation-compose:1.2.0] C:\Users\hp\.gradle\caches\8.9\transforms\76687f32af0e6804eab7bfc494514eea\transformed\hilt-navigation-compose-1.2.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.hilt:hilt-navigation:1.2.0] C:\Users\hp\.gradle\caches\8.9\transforms\38e95ea4a94a5a74409b250b9ea91e09\transformed\hilt-navigation-1.2.0\AndroidManifest.xml:2:1-7:12
@@ -223,6 +227,14 @@ INJECTED from C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\ma
 INJECTED from C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-tv-app\src\main\AndroidManifest.xml
 MERGED from [:ff-media-Data] C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-Data\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:5:5-44
 MERGED from [:ff-media-Data] C:\Users\hp\Downloads\Tvid_Projects\ffmedia\ff-media-Data\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-preferences-core-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\bfe9f93c034d8a3ececf27e588c1a638\transformed\datastore-preferences-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-preferences-core-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\bfe9f93c034d8a3ececf27e588c1a638\transformed\datastore-preferences-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\25d6bf573c54d75bc0e1a70e254b8259\transformed\datastore-preferences-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\25d6bf573c54d75bc0e1a70e254b8259\transformed\datastore-preferences-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\9b6fdfa451169d6b04df38eed7e5d255\transformed\datastore-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\9b6fdfa451169d6b04df38eed7e5d255\transformed\datastore-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-core-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\8ee0d67a1925b4d9b145b55e9ac5b220\transformed\datastore-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-core-android:1.1.6] C:\Users\hp\.gradle\caches\8.9\transforms\8ee0d67a1925b4d9b145b55e9ac5b220\transformed\datastore-core-release\AndroidManifest.xml:5:5-44
 MERGED from [androidx.hilt:hilt-work:1.2.0] C:\Users\hp\.gradle\caches\8.9\transforms\6069f0ec442c0e8d86ed5cc17cbb0d20\transformed\hilt-work-1.2.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.hilt:hilt-work:1.2.0] C:\Users\hp\.gradle\caches\8.9\transforms\6069f0ec442c0e8d86ed5cc17cbb0d20\transformed\hilt-work-1.2.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.hilt:hilt-navigation-compose:1.2.0] C:\Users\hp\.gradle\caches\8.9\transforms\76687f32af0e6804eab7bfc494514eea\transformed\hilt-navigation-compose-1.2.0\AndroidManifest.xml:5:5-44

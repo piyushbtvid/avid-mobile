@@ -27,10 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.faithForward.media.R
+import com.faithForward.media.commanComponents.LoaderScreen
 import com.faithForward.media.login.LoginScreen
 import com.faithForward.media.navigation.MainScreen
+import com.faithForward.media.navigation.Routes
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.theme.FfmediaTheme
@@ -49,11 +52,17 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = viewModel()
                     val loginViewModel = hiltViewModel<LoginViewModel>()
-//                    MainScreen(
-//                        modifier = Modifier.padding(innerPadding),
-//                        sideBarViewModel = sideBarViewModel
-//                    )
-                    LoginScreen(modifier = Modifier.padding(innerPadding))
+                    val userSession by loginViewModel.userSession.collectAsStateWithLifecycle()
+                    if (userSession.isLoading) {
+                        LoaderScreen()
+                    } else {
+                        MainScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            sideBarViewModel = sideBarViewModel,
+                            loginViewModel = loginViewModel,
+                            startRoute = if (userSession.data != null) Routes.Home.route else Routes.Login.route
+                        )
+                    }
                 }
             }
         }
