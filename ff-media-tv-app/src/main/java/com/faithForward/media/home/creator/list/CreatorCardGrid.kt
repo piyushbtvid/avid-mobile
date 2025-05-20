@@ -112,21 +112,25 @@ private fun CreatorCardGridPreview() {
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
+                channelDescription = "jhb,hb"
             ),
             CreatorCardDto(
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
+                channelDescription = "jhb,hb"
             ),
             CreatorCardDto(
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
+                channelDescription = "jhb,hb"
             ),
             CreatorCardDto(
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
+                channelDescription = "jhb,hb"
             ),
         )
     )

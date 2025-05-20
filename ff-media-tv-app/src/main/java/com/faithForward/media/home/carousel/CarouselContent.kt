@@ -1,5 +1,6 @@
 package com.faithForward.media.home.carousel
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,17 +10,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
+import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.util.FocusState
 
 @Composable
 fun CarouselContent(
@@ -30,8 +36,24 @@ fun CarouselContent(
     seasons: Int? = null,
     duration: String? = null,
     imdbRating: String? = null,
-    title: String?
+    subscribers: String? = null,
+    title: String?,
+    addToWatchListModifier: Modifier = Modifier,
+    likeModifier: Modifier = Modifier,
+    disLikeModifier: Modifier = Modifier,
+    buttonModifier: Modifier = Modifier,
+    addToWatchListUiState: FocusState,
+    likeUiState: FocusState,
+    dislikeUiState: FocusState,
 ) {
+
+    LaunchedEffect(addToWatchListUiState) {
+        Log.e(
+            "UTIL",
+            "util list in carouselContent is $releaseDate $genre  $seasons $duration $subscribers $imdbRating $addToWatchListUiState"
+        )
+    }
+
     Box(
         modifier = modifier
     ) {
@@ -39,13 +61,12 @@ fun CarouselContent(
         Column(
             modifier = Modifier
         ) {
-            val metaList = listOfNotNull(
-                releaseDate,
-                genre,
-                seasons?.let { "$it Season${if (it > 1) "s" else ""}" },
-                duration,
-                imdbRating?.let { "IMDB $it" }
-            )
+            val metaList = listOfNotNull(releaseDate?.takeIf { it.isNotBlank() },
+                genre?.takeIf { it.isNotBlank() },
+                seasons?.let { "$it Season${if (it > 1) "s" else ""}" }?.takeIf { it.isNotBlank() },
+                duration?.takeIf { it.isNotBlank() },
+                subscribers?.takeIf { it.isNotBlank() },
+                imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() })
 
             // Show metadata row only if there's something to display
             if (metaList.isNotEmpty()) {
@@ -53,12 +74,12 @@ fun CarouselContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     metaList.forEachIndexed { index, item ->
-                        ContentDescription(text = item)
-                        if (index < metaList.lastIndex) {
+                        if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
                             ContentDescription(text = "|")
                             Spacer(modifier = Modifier.width(8.dp))
                         }
+                        ContentDescription(text = item)
                     }
                 }
 
@@ -86,18 +107,26 @@ fun CarouselContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(R.drawable.plus_icon),
-                    contentDescription = null
+                    modifier = addToWatchListModifier,
+                    painter = painterResource(R.drawable.vector),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
                 Image(
+                    modifier = likeModifier,
                     painter = painterResource(R.drawable.fi_sr_thumbs_up),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
                 Image(
+                    modifier = disLikeModifier,
                     painter = painterResource(R.drawable.fi_sr_thumbs_down),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
             }
+
+            Box(modifier = buttonModifier.size(10.dp).background(color = Color.Transparent))
         }
     }
 }
@@ -112,6 +141,11 @@ fun CarouselPreview(modifier: Modifier = Modifier) {
             .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        CarouselContent(title = "")
+        CarouselContent(
+            title = "",
+            addToWatchListUiState = FocusState.FOCUSED,
+            likeUiState = FocusState.FOCUSED,
+            dislikeUiState = FocusState.SELECTED,
+        )
     }
 }

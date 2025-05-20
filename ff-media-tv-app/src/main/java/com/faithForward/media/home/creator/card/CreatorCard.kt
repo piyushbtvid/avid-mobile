@@ -33,6 +33,7 @@ import com.faithForward.media.theme.unFocusMainColor
 data class CreatorCardDto(
     val creatorImageUrl: String,
     val creatorName: String,
+    val channelDescription:String,
     val creatorSubscriberText: String
 )
 
@@ -106,6 +107,7 @@ private fun CreatorCardPreview() {
             creatorSubscriberText = "130K Subscribers",
             creatorImageUrl = "",
             creatorName = "Jasmine Wright",
+            channelDescription = ",khbhbhb"
         ),
         isFocused = false
     )
@@ -119,6 +121,7 @@ private fun CreatorCardFocusedPreview() {
             creatorSubscriberText = "130K Subscribers",
             creatorImageUrl = "",
             creatorName = "Jasmine Wright",
+            channelDescription = "jhmb"
         ),
         isFocused = true
     )

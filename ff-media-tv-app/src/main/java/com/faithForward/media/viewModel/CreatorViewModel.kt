@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.home.carousel.CarouselContentRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
@@ -44,18 +45,12 @@ class CreatorViewModel
             _creatorPageData.emit(Resource.Loading())
             try {
                 // Fetch both APIs concurrently
-                val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
+                //   val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
                 val creatorsDataDeferred = async { networkRepository.getCreatorsList() }
 
-                val sectionData = sectionDataDeferred.await()
+                //   val sectionData = sectionDataDeferred.await()
                 val creatorsData = creatorsDataDeferred.await()
 
-                // Process section data (Carousel and Poster rows)
-                val sectionItems = if (sectionData.isSuccessful) {
-                    sectionData.body()?.toHomePageItems() ?: listOf()
-                } else {
-                    listOf()
-                }
 
                 // Process category data
                 val creatorRow = if (creatorsData.isSuccessful) {
@@ -66,24 +61,20 @@ class CreatorViewModel
 
                 // Combine the data with CategoryRow at index 1
                 val combinedItems: List<HomePageItem> = buildList {
-                    // Add Carousel first (if it exists)
-                    val carousel = sectionItems.find { it is HomePageItem.CarouselRow }
-                    if (carousel != null) {
-                        add(carousel)
+
+                    val creatorCarousel = creatorRow?.firstOrNull()
+
+                    if (creatorCarousel != null) {
+                        val carouselRow = listOf(creatorCarousel.toCarouselItemDto())
+                        add(HomePageItem.CarouselRow(CarouselContentRowDto(carouselRow)))
                     }
 
-                    // Add CategoryRow second (if it exists)
-//                    if (categoryRow != null) {
-//                        add(categoryRow)
-//                    }
 
                     //add creator Grid
-                    if (creatorRow != null) {
-                        add(HomePageItem.CreatorGrid(creatorRow))
+                    if (!creatorRow.isNullOrEmpty()) {
+                        val newCreatorRow = creatorRow.toMutableList().apply { removeAt(0) }
+                        add(HomePageItem.CreatorGrid(newCreatorRow))
                     }
-
-                    // Add remaining items (PosterRows)
-//                    addAll(sectionItems.filter { it !is HomePageItem.CarouselRow })
                 }
 
                 _creatorPageData.emit(Resource.Success(combinedItems))
@@ -100,7 +91,8 @@ class CreatorViewModel
             CreatorCardDto(
                 creatorSubscriberText = "11M Subscriber",
                 creatorName = "Virat Khohli",
-                creatorImageUrl = "https://rukminim2.flixcart.com/image/850/1000/l22724w0/poster/a/x/o/small-virat-kohli-multicolour-photo-paper-print-poster-virat-original-imagdhycghmdyr3j.jpeg?q=90&crop=false"
+                creatorImageUrl = "https://rukminim2.flixcart.com/image/850/1000/l22724w0/poster/a/x/o/small-virat-kohli-multicolour-photo-paper-print-poster-virat-original-imagdhycghmdyr3j.jpeg?q=90&crop=false",
+                channelDescription = "hbs,hbshs"
             )
         }
     }

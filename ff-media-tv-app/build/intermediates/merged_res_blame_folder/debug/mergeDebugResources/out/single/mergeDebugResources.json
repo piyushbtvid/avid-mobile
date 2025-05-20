@@ -32,12 +32,12 @@
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_side_bar_unfocused_background.png.flat",
-        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/side_bar_unfocused_background.png"
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_preload_placeholder.jpg.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/preload_placeholder.jpg"
     },
     {
-        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_plus_icon.png.flat",
-        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/plus_icon.png"
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_side_bar_unfocused_background.png.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/side_bar_unfocused_background.png"
     },
     {
         "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/mipmap-xxxhdpi_ic_launcher.webp.flat",
@@ -56,10 +56,6 @@
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/mipmap-mdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_fi_sr_thumbs_down.png.flat",
-        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/fi_sr_thumbs_down.png"
-    },
-    {
         "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_side_bar_focused_background.png.flat",
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/side_bar_focused_background.png"
     },
@@ -68,12 +64,12 @@
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/ic_launcher_background.xml"
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_fi_sr_thumbs_down.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/fi_sr_thumbs_down.xml"
     },
     {
-        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_fi_sr_thumbs_up.png.flat",
-        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/fi_sr_thumbs_up.png"
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/ic_launcher_background.xml"
     },
     {
         "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_fi_rs_hand_holding_heart.png.flat",
@@ -108,6 +104,10 @@
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_vector.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/vector.xml"
+    },
+    {
         "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_plus_ic.png.flat",
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/plus_ic.png"
     },
@@ -122,6 +122,10 @@
     {
         "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_play_ic.png.flat",
         "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable-nodpi/play_ic.png"
+    },
+    {
+        "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable_fi_sr_thumbs_up.xml.flat",
+        "source": "com.faithForward.media.ff-media-tv-app-main-79:/drawable/fi_sr_thumbs_up.xml"
     },
     {
         "merged": "com.faithForward.media.ff-media-tv-app-debug-77:/drawable-nodpi_test_poster.png.flat",

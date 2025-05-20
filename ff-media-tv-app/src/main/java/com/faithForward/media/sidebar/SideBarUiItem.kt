@@ -78,19 +78,24 @@ fun SideBarUiItem(
             )
         )
 
-        androidx.compose.animation.AnimatedVisibility(visible = focusedSideBarItem != -1,
-            enter = slideInHorizontally(animationSpec = tween(
-                800, easing = LinearOutSlowInEasing
-            ), initialOffsetX = { -it / 4 }),
-            exit = slideOutHorizontally(animationSpec = tween(
-                100, easing = FastOutLinearInEasing
-            ), targetOffsetX = { -it / 4 }),
-            modifier = Modifier.constrainAs(textRef) {
-                start.linkTo(iconRef.end, margin = 8.dp)
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-            }) {
+//        androidx.compose.animation.AnimatedVisibility(visible = focusedSideBarItem != -1,
+//            enter = slideInHorizontally(animationSpec = tween(
+//                600, easing = LinearOutSlowInEasing
+//            ), initialOffsetX = { -it / 4 }),
+//            exit = slideOutHorizontally(animationSpec = tween(
+//                100, easing = FastOutLinearInEasing
+//            ), targetOffsetX = { -it / 4 }),
+//            modifier = Modifier.constrainAs(textRef) {
+//                start.linkTo(iconRef.end, margin = 8.dp)
+//                top.linkTo(parent.top)
+//                bottom.linkTo(parent.bottom)
+//            }) {
+        if (focusedSideBarItem!=-1){
             Text(
+                modifier = Modifier.constrainAs(textRef) {
+                    start.linkTo(iconRef.end, margin = 8.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)},
                 text = txt,
                 color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedColor else unFocusedColor,
                 maxLines = 1,
@@ -98,6 +103,8 @@ fun SideBarUiItem(
                 textAlign = TextAlign.Center
             )
         }
+
+//        }
     }
 }
 

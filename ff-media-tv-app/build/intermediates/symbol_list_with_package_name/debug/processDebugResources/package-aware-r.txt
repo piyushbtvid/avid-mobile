@@ -3214,7 +3214,7 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable play_ic
 drawable plus_ic
-drawable plus_icon
+drawable preload_placeholder
 drawable screen_ic
 drawable search_ic
 drawable side_bar_focused_background
@@ -3223,6 +3223,7 @@ drawable test_level_drawable
 drawable test_poster
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
+drawable vector
 font roboto_medium_numbers
 id ALT
 id BOTTOM_END
