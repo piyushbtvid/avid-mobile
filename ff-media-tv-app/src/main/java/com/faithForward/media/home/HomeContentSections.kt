@@ -34,6 +34,12 @@ fun HomeContentSections(
 
     val listState = rememberLazyListState()
 
+//    LaunchedEffect(Unit) {
+//        while (true){
+//            delay(300)
+//            listState.scrollToItem(0)
+//        }
+//    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()

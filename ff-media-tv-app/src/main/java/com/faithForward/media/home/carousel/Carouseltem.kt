@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -70,7 +71,7 @@ fun CarouselItem(
 
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
-            modifier
+            Modifier
                 .padding(start = 20.dp, bottom = 20.dp)
                 .shadow(
                     color = Color.White.copy(alpha = .46f),
@@ -82,7 +83,7 @@ fun CarouselItem(
                     width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
                 )
         } else {
-            modifier.padding(start = 20.dp, bottom = 20.dp)
+            Modifier.padding(start = 20.dp, bottom = 20.dp)
         }
 
     val micButtonModifier =
@@ -120,7 +121,7 @@ fun CarouselItem(
     with(carouselItemDto) {
         Box(
             modifier = Modifier
-                .width(944.92.dp)
+                .fillMaxWidth()
                 .height(358.dp),
         ) {
             AsyncImage(
@@ -129,8 +130,7 @@ fun CarouselItem(
                 contentDescription = "banner Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(944.92.dp)
-                    .height(358.dp)
+                    .matchParentSize()
 //                    .offset(y = (-183).dp)
                     .clip(
                         RoundedCornerShape(
@@ -153,6 +153,7 @@ fun CarouselItem(
                 subscribers = subscribers,
                 imdbRating = imdbRating,
                 title = title,
+                buttonModifier = modifier,
                 addToWatchListModifier = addToWatchListModifier,
                 likeModifier = likeModifier,
                 disLikeModifier = disLikeModifier,

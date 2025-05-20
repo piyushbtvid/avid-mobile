@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +41,7 @@ fun CarouselContent(
     addToWatchListModifier: Modifier = Modifier,
     likeModifier: Modifier = Modifier,
     disLikeModifier: Modifier = Modifier,
+    buttonModifier: Modifier = Modifier,
     addToWatchListUiState: FocusState,
     likeUiState: FocusState,
     dislikeUiState: FocusState,
@@ -123,6 +125,8 @@ fun CarouselContent(
                     colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
                 )
             }
+
+            Box(modifier = buttonModifier.size(10.dp).background(color = Color.Transparent))
         }
     }
 }
