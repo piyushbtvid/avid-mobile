@@ -13,7 +13,7 @@ interface ApiServiceInterface {
 
     @GET(Constants.SECTION_END_POINT)
     suspend fun getGivenSectionData(
-        @Path("id") id: Int
+
     ): Response<SectionApiResponse>
 
     @GET(Constants.CATEGORY_END_POINT)
