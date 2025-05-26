@@ -5,4 +5,5 @@ sealed class Routes(val route: String) {
     data object Home : Routes("HOME_SCREEN")
     data object Creator : Routes("CREATOR_SCREEN")
     data object Login : Routes("LOGIN_SCREEN")
+    data object Movies : Routes("MOVIES_SCREEN")
 }

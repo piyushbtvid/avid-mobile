@@ -1,6 +1,9 @@
 package com.faithForward.media.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.repository.NetworkRepository
@@ -23,8 +26,15 @@ class MoviesViewModel
         MutableStateFlow(Resource.Unspecified())
     val homePageData: StateFlow<Resource<List<HomePageItem>>> = _homepageData
 
+    var contentRowFocusedIndex by mutableStateOf(-1)
+        private set
+
     init {
         fetchMoviesPageData(sectionId = "movies")
+    }
+
+    fun onContentRowFocusedIndexChange(value: Int) {
+        contentRowFocusedIndex = value
     }
 
     private fun fetchMoviesPageData(sectionId: String) {

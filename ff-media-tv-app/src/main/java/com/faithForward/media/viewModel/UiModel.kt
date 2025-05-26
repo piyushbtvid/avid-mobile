@@ -102,35 +102,32 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
 fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
     val homePageItems = mutableListOf<HomePageItem>()
 
-    data.forEachIndexed { index, contentItem ->
-        when (index) {
-            0 -> {
-                // Add Carousel Row for the first item
-                val carouselItem = contentItem.toCarouselItemDto()
-                homePageItems.add(
-                    HomePageItem.CarouselRow(
-                        CarouselContentRowDto(listOf(carouselItem))
-                    )
-                )
-            }
+    if (data.isNotEmpty()) {
+        // First item → Carousel
+        val firstItem = data.first().toCarouselItemDto()
+        homePageItems.add(
+            HomePageItem.CarouselRow(
+                CarouselContentRowDto(listOf(firstItem))
+            )
+        )
 
-            else -> {
-                // Add Poster Row for remaining items (if needed per item)
-                val posterCard = contentItem.toPosterCardDto()
-                homePageItems.add(
-                    HomePageItem.PosterRow(
-                        PosterRowDto(
-                            heading = "Movies",
-                            dtos = listOf(posterCard)
-                        )
+        // Remaining items → PosterRow (combined)
+        val posterItems = data.drop(1).map { it.toPosterCardDto() }
+        if (posterItems.isNotEmpty()) {
+            homePageItems.add(
+                HomePageItem.PosterRow(
+                    PosterRowDto(
+                        heading = "Movies", // Or dynamic heading if available
+                        dtos = posterItems
                     )
                 )
-            }
+            )
         }
     }
 
     return homePageItems
 }
+
 
 
 fun ContentItem.toCarouselItemDto(): CarouselItemDto {

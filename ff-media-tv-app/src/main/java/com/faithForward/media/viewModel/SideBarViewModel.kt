@@ -29,7 +29,7 @@ class SideBarViewModel : ViewModel() {
                 SideBarItem("MyList", R.drawable.plus_ic, "myList"),
                 SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),
                 SideBarItem("Series", R.drawable.screen_ic, "series"),
-                SideBarItem("Movies", R.drawable.film_ic, "movie"),
+                SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
                 SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
             )
         )
