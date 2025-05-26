@@ -1,5 +1,6 @@
 package com.faithForward.media.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -19,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +57,9 @@ fun LoginScreen(
 
     val passwordFocusRequester = remember { FocusRequester() }
     val buttonFocusRequester = remember { FocusRequester() }
+    val emailFocusRequester = remember { FocusRequester() }
+    var isEmailFocused by remember { mutableStateOf(false) }
+    var isPasswordFocused by remember { mutableStateOf(false) }
     var isButtonFocused by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
@@ -110,11 +115,20 @@ fun LoginScreen(
                 placeholder = "Enter email",
                 imeAction = ImeAction.Next,
                 onNext = {
-                    passwordFocusRequester.requestFocus() // Move focus to password
+                    keyboardController?.hide()
+                    scope.launch {
+                        delay(200)
+                        passwordFocusRequester.requestFocus() // Move focus to password
+                    }
                 },
+                isTextFieldFocused = isEmailFocused,
                 modifier = Modifier
                     .width(389.5.dp)
                     .height(48.dp)
+                    .focusRequester(emailFocusRequester)
+                    .onFocusChanged {
+                        isEmailFocused = it.hasFocus
+                    }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -131,13 +145,18 @@ fun LoginScreen(
                 onNext = {
                     scope.launch {
                         delay(200)
+                        Log.e("NEXT", "on next click is called in password text field")
                         buttonFocusRequester.requestFocus() // Move focus to button
                     }
                 },
+                isTextFieldFocused = isPasswordFocused,
                 modifier = Modifier
                     .width(389.5.dp)
                     .height(48.dp)
                     .focusRequester(passwordFocusRequester)
+                    .onFocusChanged {
+                        isPasswordFocused = it.hasFocus
+                    }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -167,14 +186,29 @@ fun LoginScreen(
                 )
             }
 
-            if (loginState.errorMessage != null) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = loginState.errorMessage!!,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            Box(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(20.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (loginState.errorMessage != null) {
+                    Text(
+                        text = loginState.errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        try {
+            emailFocusRequester.requestFocus()
+        } catch (ex: Exception) {
+            Log.e("EX", "${ex.message}")
         }
     }
 }

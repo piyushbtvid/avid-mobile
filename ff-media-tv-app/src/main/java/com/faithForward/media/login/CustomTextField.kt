@@ -1,5 +1,6 @@
 package com.faithForward.media.login
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ fun CustomTextField(
     onNext: () -> Unit = {}, // Change onSearch to onNext for clarity
     imeAction: ImeAction = ImeAction.Next,
     placeholder: String? = null,
+    isTextFieldFocused: Boolean = false,
     enabled: Boolean = true
 ) {
     TextField(
@@ -43,7 +45,7 @@ fun CustomTextField(
             )
             .border(
                 width = 1.dp,
-                color = sideBarFocusedBackgroundColor,
+                color = if (isTextFieldFocused) sideBarFocusedBackgroundColor else Color.Transparent,
                 shape = RoundedCornerShape(24.dp)
             ),
         enabled = enabled,
@@ -65,14 +67,15 @@ fun CustomTextField(
             imeAction = imeAction
         ),
         keyboardActions = KeyboardActions(
-//            onNext = {
-//                onNext() // Call the onNext callback to handle focus transition
-//                keyboardController?.hide()
-//            },
-            onSearch = {
-                keyboardController?.hide() // Only hide keyboard for Search action
+            onNext = {
+                Log.e("NEXT", "on next click is called in text field")
                 onNext()
-            }
+            },
+            onDone = {
+                Log.e("NEXT", "on done click is called in text field")
+                keyboardController?.hide()
+                onNext()
+            },
         ),
         colors = TextFieldDefaults.colors(
             cursorColor = sideBarFocusedBackgroundColor,
