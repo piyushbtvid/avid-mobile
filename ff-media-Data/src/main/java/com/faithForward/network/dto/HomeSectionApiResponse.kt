@@ -32,5 +32,7 @@ data class ContentItem(
     val genres: List<Genre>?,
     val rating: String?,
     val dateUploaded: String?,
-    val uploadedYear: String?
+    val uploadedYear: String?,
+    var access: String? = null,
+    var video_link: String? = null
 )
