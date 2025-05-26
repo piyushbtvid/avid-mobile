@@ -14,8 +14,8 @@ class NetworkRepository @Inject constructor(
     private val apiServiceInterface: ApiServiceInterface
 ) {
 
-    suspend fun getGivenSectionData(sectionId: Int) =
-        apiServiceInterface.getGivenSectionData()
+    suspend fun getHomeSectionData(sectionId: Int) =
+        apiServiceInterface.getHomeSectionData()
 
     suspend fun getCategories() = apiServiceInterface.getCategories()
 
@@ -51,5 +51,8 @@ class NetworkRepository @Inject constructor(
         return userData
     }
 
+    suspend fun getGivenSectionData(
+        sectionName: String
+    ) = apiServiceInterface.getGivenSectionData(sectionName)
 
 }

@@ -1,9 +1,6 @@
 package com.faithForward.media.viewModel
 
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.repository.NetworkRepository
@@ -17,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel
+class MoviesViewModel
 @Inject constructor(
     private val networkRepository: NetworkRepository
 ) : ViewModel() {
@@ -26,30 +23,25 @@ class HomeViewModel
         MutableStateFlow(Resource.Unspecified())
     val homePageData: StateFlow<Resource<List<HomePageItem>>> = _homepageData
 
-    var contentRowFocusedIndex by mutableStateOf(-1)
-        private set
-
     init {
-        fetchHomePageData(1)
+        fetchMoviesPageData(sectionId = "movies")
     }
 
-    fun onContentRowFocusedIndexChange(value: Int) {
-        contentRowFocusedIndex = value
-    }
-
-    private fun fetchHomePageData(sectionId: Int) {
+    private fun fetchMoviesPageData(sectionId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _homepageData.emit(Resource.Loading())
             try {
                 // Fetch both APIs concurrently
-                val sectionDataDeferred = async { networkRepository.getHomeSectionData(sectionId) }
+                val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
 
                 val sectionData = sectionDataDeferred.await()
 
                 // Process section data (Carousel and Poster rows)
                 val sectionItems = if (sectionData.isSuccessful) {
+                    Log.e("MOVIES", "movies response is success with ${sectionData.body()}")
                     sectionData.body()?.toHomePageItems() ?: listOf()
                 } else {
+                    Log.e("MOVIES", "movies response is error with ${sectionData.message()}")
                     listOf()
                 }
 
@@ -74,8 +66,10 @@ class HomeViewModel
                 _homepageData.emit(Resource.Success(combinedItems))
             } catch (ex: Exception) {
                 ex.printStackTrace()
+                Log.e("MOVIES", "movies response is exception with ${ex.message}")
                 _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
             }
         }
     }
+
 }

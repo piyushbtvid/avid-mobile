@@ -64,12 +64,12 @@ fun CarouselContentRow(
     }
     HorizontalPager(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(start = 25.dp)
-                .focusRestorer {
-                    itemFocusRequesters[0]
-                },
+        modifier
+            .fillMaxWidth()
+            .padding(start = 25.dp)
+            .focusRestorer {
+                itemFocusRequesters[0]
+            },
         state = rememberPagerState(
             pageCount = { carouselList.size }
         ),
@@ -112,7 +112,7 @@ fun CarouselContentRow(
                     if (it.isFocused) {
                         //    onItemFocused(Pair(rowIndex, index))
                         carouselRowFocusedIndex = index
-                        Log.d("Logging","carouselRowFocusedIndex$index")
+                        Log.d("Logging", "carouselRowFocusedIndex$index")
                         //  onChangeContentRowFocusedIndex.invoke(index)
                         //  playListItemFocusedIndex = index
                         //onBackgroundChange.invoke(playlistItem.landscape ?: "")

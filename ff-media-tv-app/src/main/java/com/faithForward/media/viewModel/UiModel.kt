@@ -9,7 +9,8 @@ import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
-import com.faithForward.network.dto.SectionApiResponse
+import com.faithForward.network.dto.HomeSectionApiResponse
+import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.creator.UserData
 
 sealed interface HomePageItem {
@@ -38,7 +39,7 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
     }
 }
 
-fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
+fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     val sections = data
     val homePageItems = mutableListOf<HomePageItem>()
     var carouselAdded = false
@@ -92,6 +93,39 @@ fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
                     )
                 )
             )
+        }
+    }
+
+    return homePageItems
+}
+
+fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
+    val homePageItems = mutableListOf<HomePageItem>()
+
+    data.forEachIndexed { index, contentItem ->
+        when (index) {
+            0 -> {
+                // Add Carousel Row for the first item
+                val carouselItem = contentItem.toCarouselItemDto()
+                homePageItems.add(
+                    HomePageItem.CarouselRow(
+                        CarouselContentRowDto(listOf(carouselItem))
+                    )
+                )
+            }
+
+            else -> {
+                // Add Poster Row for remaining items (if needed per item)
+                val posterCard = contentItem.toPosterCardDto()
+                homePageItems.add(
+                    HomePageItem.PosterRow(
+                        PosterRowDto(
+                            heading = "Movies",
+                            dtos = listOf(posterCard)
+                        )
+                    )
+                )
+            }
         }
     }
 

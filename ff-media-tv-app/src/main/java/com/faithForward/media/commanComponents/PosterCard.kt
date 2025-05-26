@@ -84,8 +84,7 @@ fun PosterCard(
                     FocusState.SELECTED, FocusState.FOCUSED -> 1f
                     else -> 0f
                 }
-            )
-            ,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
