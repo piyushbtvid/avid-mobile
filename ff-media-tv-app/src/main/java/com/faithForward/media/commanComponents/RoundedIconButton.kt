@@ -23,7 +23,7 @@ fun RoundedIconButton(
     backgroundColor: Color = Color.White,
     iconWidth: Int = 15,
     iconHeight: Int = 15,
-    boxSize : Int = 43,
+    boxSize: Int = 43,
     imageId: Int,
 ) {
 

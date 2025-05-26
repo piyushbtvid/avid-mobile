@@ -9,7 +9,8 @@ import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
-import com.faithForward.network.dto.SectionApiResponse
+import com.faithForward.network.dto.HomeSectionApiResponse
+import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.creator.UserData
 
 sealed interface HomePageItem {
@@ -38,7 +39,7 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
     }
 }
 
-fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
+fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     val sections = data
     val homePageItems = mutableListOf<HomePageItem>()
     var carouselAdded = false
@@ -97,6 +98,36 @@ fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
 
     return homePageItems
 }
+
+fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
+    val homePageItems = mutableListOf<HomePageItem>()
+
+    if (data.isNotEmpty()) {
+        // First item → Carousel
+        val firstItem = data.first().toCarouselItemDto()
+        homePageItems.add(
+            HomePageItem.CarouselRow(
+                CarouselContentRowDto(listOf(firstItem))
+            )
+        )
+
+        // Remaining items → PosterRow (combined)
+        val posterItems = data.drop(1).map { it.toPosterCardDto() }
+        if (posterItems.isNotEmpty()) {
+            homePageItems.add(
+                HomePageItem.PosterRow(
+                    PosterRowDto(
+                        heading = "Movies", // Or dynamic heading if available
+                        dtos = posterItems
+                    )
+                )
+            )
+        }
+    }
+
+    return homePageItems
+}
+
 
 
 fun ContentItem.toCarouselItemDto(): CarouselItemDto {

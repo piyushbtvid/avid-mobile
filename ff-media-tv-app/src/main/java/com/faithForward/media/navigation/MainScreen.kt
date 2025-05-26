@@ -1,5 +1,6 @@
 package com.faithForward.media.navigation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ fun MainScreen(
                 sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,
                 sideBarFocusedIndex = sideBarState.sideBarFocusedIndex,
                 onSideBarItemClick = { item ->
+                    Log.e("SIDE_BAR", "side bar item is $item")
                     if (item.tag == Routes.Creator.route) {
                         navController.navigate(item.tag) {
                             popUpTo(Routes.Home.route) { inclusive = false }
@@ -62,6 +64,14 @@ fun MainScreen(
                             launchSingleTop = true
                         }
                     }
+
+                    if (item.tag == Routes.Movies.route) {
+                        navController.navigate(item.tag) {
+                            popUpTo(Routes.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+
                 },
                 onSideBarSelectedPositionChange = { index ->
                     sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(index))

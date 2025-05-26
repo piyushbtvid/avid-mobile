@@ -1,7 +1,7 @@
 package com.faithForward.network.dto
 
 
-data class SectionApiResponse(
+data class HomeSectionApiResponse(
     val status: String?,
     val message: String?,
     val data: ContentData?
