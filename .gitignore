@@ -1,64 +1,42 @@
-# IntelliJ IDEA
-/.idea/
-*.iml
-ō
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-**/build/
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+# Android build outputs (applies to all modules)
+/build/
+*.apk
+*.aar
+*.ap_
+*.aab
 
-.idea/deploymentTargetSelector.xml
-# Sentry Config File
-sentry.properties
-deviceManager.xml
-Project_Default.xml
-Project.xml
-
-/.idea/misc.xml
-
-
-# Android/Gradle
-**/build/
+# Gradle files
 .gradle/
+gradle/
+gradlew
+gradlew.bat
 local.properties
-.externalNativeBuild
-.cxx
-/captures
 
-# Gradle wrapper
-/gradlew
-/gradlew.bat
-/gradle-wrapper.jar
-/gradle-wrapper.properties
+# Kotlin build outputs
+*.kt.meta
+*.kotlin_module
+/build/kotlin/
 
-# macOS
-.DS_Store
-
-# Sentry
-sentry.properties
+# Hilt generated files
+/build/generated/hilt/
 
 # Temporary files
 *.tmp
-*.bak
-*.swp
+/build/tmp/
 
-# Kotlin
-*.kts
-*.kt.cls
+# IntelliJ/Android Studio
+.idea/
+*.iml
 
-# Project-specific files
-deviceManager.xml
-Project_Default.xml
-Project.xml
+# Compiled files
+*.dex
+*.class
+*.jar
 
-compiler.xml
+# Build intermediates and outputs
+/build/intermediates/
+/build/outputs/
+
+# Module-specific build directories
+ff-media-Data/build/
+ff-media-tv-app/build/

@@ -6,13 +6,17 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -23,6 +27,8 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 data class CarouselContentRowDto(
     val carouselItemsDto: List<CarouselItemDto>
@@ -34,7 +40,10 @@ fun CarouselContentRow(
     modifier: Modifier = Modifier,
     carouselList: List<CarouselItemDto>,
     shouldFocusOnFirstItem: Boolean = false,
+    listState: LazyListState
 ) {
+
+    val scope = rememberCoroutineScope()
 
     var carouselRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var micFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -53,139 +62,138 @@ fun CarouselContentRow(
             }
         }
     }
-    LazyRow(
-        userScrollEnabled = false,
+    HorizontalPager(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .padding(start = 25.dp)
-            .focusRestorer {
-                itemFocusRequesters[0]
-            },
-        horizontalArrangement = Arrangement.spacedBy(9.dp),
-    )
-    {
-        itemsIndexed(carouselList) { index, carouselItem ->
-
-            val uiState = when (index) {
-                carouselRowFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            val micUiState = when (index) {
-                micFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            val searchUiState = when (index) {
-                searchFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            val addToWatchListUiState = when (index) {
-                addToWatchListFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            val likeUiState = when (index) {
-                likeFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            val disLikeUiState = when (index) {
-                disLikeFocusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            CarouselItem(
-                modifier = Modifier
-                    .focusRequester(itemFocusRequesters[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            //    onItemFocused(Pair(rowIndex, index))
-                            carouselRowFocusedIndex = index
-                            //  onChangeContentRowFocusedIndex.invoke(index)
-                            //  playListItemFocusedIndex = index
-                            //onBackgroundChange.invoke(playlistItem.landscape ?: "")
-                        } else {
-                            if (carouselRowFocusedIndex == index) {
-                                carouselRowFocusedIndex = -1
-                                //  onChangeContentRowFocusedIndex.invoke(index)
-                                // playListItemFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                carouselItemDto = carouselItem,
-                focusState = uiState,
-                searchUiSate = searchUiState,
-                micUiState = micUiState,
-                micModifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            //    onItemFocused(Pair(rowIndex, index))
-                            micFocusedIndex = index
-                            //  onChangeContentRowFocusedIndex.invoke(index)
-                            //  playListItemFocusedIndex = index
-                            //onBackgroundChange.invoke(playlistItem.landscape ?: "")
-                        } else {
-                            if (micFocusedIndex == index) {
-                                micFocusedIndex = -1
-                                //  onChangeContentRowFocusedIndex.invoke(index)
-                                // playListItemFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                searchIcModifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            searchFocusedIndex = index
-                        } else {
-                            if (searchFocusedIndex == index) {
-                                searchFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                addToWatchListModifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            addToWatchListFocusedIndex = index
-                        } else {
-                            if (addToWatchListFocusedIndex == index) {
-                                addToWatchListFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                likeModifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            likeFocusedIndex = index
-                        } else {
-                            if (likeFocusedIndex == index) {
-                                likeFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                disLikeModifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            disLikeFocusedIndex = index
-                        } else {
-                            if (disLikeFocusedIndex == index) {
-                                disLikeFocusedIndex = -1
-                            }
-                        }
-                    }
-                    .focusable(),
-                addToWatchListUiState = addToWatchListUiState,
-                likeUiState = likeUiState,
-                dislikeUiState = disLikeUiState
-            )
+            modifier
+                .fillMaxWidth()
+                .padding(start = 25.dp)
+                .focusRestorer {
+                    itemFocusRequesters[0]
+                },
+        state = rememberPagerState(
+            pageCount = { carouselList.size }
+        ),
+    ) { index: Int ->
+        val carouselItem = carouselList.get(index)
+        val uiState = when (index) {
+            carouselRowFocusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
         }
+
+        val micUiState = when (index) {
+            micFocusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
+        }
+
+        val searchUiState = when (index) {
+            searchFocusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
+        }
+
+        val addToWatchListUiState = when (index) {
+            addToWatchListFocusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
+        }
+
+        val likeUiState = when (index) {
+            likeFocusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
+        }
+
+        val disLikeUiState = when (index) {
+            disLikeFocusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
+        }
+
+        CarouselItem(
+            modifier = Modifier
+                .focusRequester(itemFocusRequesters[index])
+                .onFocusChanged {
+                    if (it.isFocused) {
+                        //    onItemFocused(Pair(rowIndex, index))
+                        carouselRowFocusedIndex = index
+                        Log.d("Logging","carouselRowFocusedIndex$index")
+                        //  onChangeContentRowFocusedIndex.invoke(index)
+                        //  playListItemFocusedIndex = index
+                        //onBackgroundChange.invoke(playlistItem.landscape ?: "")
+                    } else {
+                        if (carouselRowFocusedIndex == index) {
+                            carouselRowFocusedIndex = -1
+                            //  onChangeContentRowFocusedIndex.invoke(index)
+                            // playListItemFocusedIndex = -1
+                        }
+                    }
+                }
+                .focusable(),
+            carouselItemDto = carouselItem,
+            focusState = uiState,
+            searchUiSate = searchUiState,
+            micUiState = micUiState,
+            micModifier = Modifier
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        //    onItemFocused(Pair(rowIndex, index))
+                        micFocusedIndex = index
+                        //  onChangeContentRowFocusedIndex.invoke(index)
+                        //  playListItemFocusedIndex = index
+                        //onBackgroundChange.invoke(playlistItem.landscape ?: "")
+                    } else {
+                        if (micFocusedIndex == index) {
+                            micFocusedIndex = -1
+                            //  onChangeContentRowFocusedIndex.invoke(index)
+                            // playListItemFocusedIndex = -1
+                        }
+                    }
+                }
+                .focusable(),
+            searchIcModifier = Modifier
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        searchFocusedIndex = index
+                    } else {
+                        if (searchFocusedIndex == index) {
+                            searchFocusedIndex = -1
+                        }
+                    }
+                }
+                .focusable(),
+            addToWatchListModifier = Modifier
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        addToWatchListFocusedIndex = index
+                    } else {
+                        if (addToWatchListFocusedIndex == index) {
+                            addToWatchListFocusedIndex = -1
+                        }
+                    }
+                }
+                .focusable(),
+            likeModifier = Modifier
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        likeFocusedIndex = index
+                    } else {
+                        if (likeFocusedIndex == index) {
+                            likeFocusedIndex = -1
+                        }
+                    }
+                }
+                .focusable(),
+            disLikeModifier = Modifier
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        disLikeFocusedIndex = index
+                    } else {
+                        if (disLikeFocusedIndex == index) {
+                            disLikeFocusedIndex = -1
+                        }
+                    }
+                }
+                .focusable(),
+            addToWatchListUiState = addToWatchListUiState,
+            likeUiState = likeUiState,
+            dislikeUiState = disLikeUiState
+        )
     }
 
 }

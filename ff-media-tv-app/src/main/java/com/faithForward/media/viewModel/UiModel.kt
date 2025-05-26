@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel
 
+import androidx.compose.ui.util.fastForEachIndexed
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRowDto
@@ -8,13 +9,9 @@ import com.faithForward.media.home.category.CategoryRowDto
 import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.network.dto.CategoryResponse
-import com.faithForward.network.dto.Item
-import com.faithForward.network.dto.Section
+import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.SectionApiResponse
 import com.faithForward.network.dto.creator.UserData
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 sealed interface HomePageItem {
     data class CarouselRow(val dto: CarouselContentRowDto) : HomePageItem
@@ -42,53 +39,57 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
     }
 }
 
-
-//fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
-//    return data.sortedBy { if (it.type == "Carousel") 0 else 1 } // Prioritize Carousel
-//        .map { it.toHomePageItem() }
-//}
-
 fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
     val sections = data
     val homePageItems = mutableListOf<HomePageItem>()
     var carouselAdded = false
     var carouselSectionIndex: Int? = null
 
+    val category = sections?.genres?.mapIndexed { index, genre ->
+        CategoryComposeDto(genre.name ?: "")
+    }
+    if (category != null) {
+        homePageItems.add(HomePageItem.CategoryRow(CategoryRowDto(category)))
+    }
     // Find the first section with a non-null/non-empty first item for carousel
-    sections.forEachIndexed { index, section ->
-        if (!carouselAdded && section.items.isNotEmpty() && section.items.first() != null) {
-            homePageItems.add(
-                HomePageItem.CarouselRow(
-                    CarouselContentRowDto(
-                        listOf(section.items.first().toCarouselItemDto())
+    sections?.sections?.forEachIndexed { index, section ->
+        if (!carouselAdded && section.content?.isNotEmpty() == true && section.content?.first() != null && section.content?.first()
+                ?.toCarouselItemDto() != null
+        ) {
+            section.content?.first()?.toCarouselItemDto()?.run {
+                homePageItems.add(
+                    HomePageItem.CarouselRow(
+                        CarouselContentRowDto(
+                            listOf(this)
+                        )
                     )
                 )
-            )
+            }
             carouselAdded = true
             carouselSectionIndex = index
         }
     }
 
     // Process all sections for PosterRow
-    sections.forEachIndexed { index, section ->
+    sections?.sections?.forEachIndexed { index, section ->
         // Skip if section or items are null/empty
-        if (section.items.isEmpty()) return@forEachIndexed
+        if (section.content.isNullOrEmpty()) return@forEachIndexed
 
         // Determine which items to include in PosterRow
         val posterItems = if (index == carouselSectionIndex) {
             // For the carousel section, include all items except the first
-            section.items.drop(1).filterNotNull().map { it.toPosterCardDto() }
+            section.content?.drop(1)?.filterNotNull()?.map { it.toPosterCardDto() }
         } else {
             // For other sections, include all non-null items
-            section.items.filterNotNull().map { it.toPosterCardDto() }
+            section.content?.filterNotNull()?.map { it.toPosterCardDto() }
         }
 
         // Add PosterRow if there are items to display
-        if (posterItems.isNotEmpty()) {
+        if (!posterItems.isNullOrEmpty()) {
             homePageItems.add(
                 HomePageItem.PosterRow(
                     PosterRowDto(
-                        heading = section.title, dtos = posterItems
+                        heading = section.title ?: "", dtos = posterItems
                     )
                 )
             )
@@ -99,75 +100,21 @@ fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
 }
 
 
-fun Section.toHomePageItem(): HomePageItem {
-    return when (type) {
-        "Carousel" -> {
-            val carouselItemsDto = items.map { item: Item ->
-                // Assuming Item has a method or property to convert to CarouselItemDto
-                item.toCarouselItemDto() // Replace with actual conversion logic
-            }
-            HomePageItem.CarouselRow(CarouselContentRowDto(carouselItemsDto))
-        }
-
-        else -> {
-            val posterItemsDto = items.map { item: Item ->
-                // Assuming Item has a method or property to convert to PosterCardDto
-                item.toPosterCardDto() // Replace with actual conversion logic
-            }
-            HomePageItem.PosterRow(
-                PosterRowDto(
-                    heading = title, dtos = posterItemsDto
-                )
-            ) // Replace 'title' with actual heading source
-        }
-    }
-}
-
-fun Item.toCarouselItemDto(): CarouselItemDto {
-    // Convert duration (e.g., "1451" seconds → "24:11")
-    val formattedDuration = duration?.toIntOrNull()?.let { totalSeconds ->
-        val hours = totalSeconds / 3600
-        val minutes = (totalSeconds % 3600) / 60
-        val seconds = totalSeconds % 60
-
-        when {
-            hours > 0 -> "%d hr %02d min %02d s".format(hours, minutes, seconds)
-            minutes > 0 -> "%d min %02d s".format(minutes, seconds)
-            else -> "%d s".format(seconds)
-        }
-    } ?: ""
-
-
-    // Convert releaseDate (epoch seconds → "dd MMM yyyy")
-    val formattedReleaseDate = if (releaseDate == 0L) {
-        ""
-    } else {
-        try {
-            val epochMillis = releaseDate * 1000
-            val date = Date(epochMillis)
-            val formatter = SimpleDateFormat(
-                "dd MMM yyyy", Locale.getDefault()
-            )
-            formatter.format(date)
-        } catch (e: Exception) {
-            ""
-        }
-    }
-
-
+fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     // Return the DTO
     return CarouselItemDto(
         description = description,
-        duration = formattedDuration,
-        imdbRating = imdbRating,
-        imgSrc = posterImage,
-        releaseDate = formattedReleaseDate,
-        title = title
+        duration = null,
+        imdbRating = rating,
+        imgSrc = landscape,
+        releaseDate = uploadedYear,
+        title = name
     )
 }
 
 
-fun Item.toPosterCardDto(): PosterCardDto = PosterCardDto(posterImageSrc = posterImage)
+fun ContentItem.toPosterCardDto(): PosterCardDto =
+    PosterCardDto(posterImageSrc = landscape ?: portrait ?: "")
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(
