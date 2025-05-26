@@ -3,7 +3,9 @@ package com.faithForward.media.login
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,7 +31,7 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     keyboardController: SoftwareKeyboardController? = null,
-    keyboardType  : KeyboardType= KeyboardType.Text,
+    keyboardType: KeyboardType = KeyboardType.Text,
     onNext: () -> Unit = {}, // Change onSearch to onNext for clarity
     imeAction: ImeAction = ImeAction.Next,
     placeholder: String? = null,
@@ -41,6 +43,7 @@ fun CustomTextField(
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
+            .height(52.dp)
             .background(
                 color = Color.White.copy(alpha = .33f),
                 shape = RoundedCornerShape(24.dp)
@@ -53,7 +56,8 @@ fun CustomTextField(
         enabled = enabled,
         textStyle = TextStyle(
             color = sideBarFocusedBackgroundColor,
-            fontSize = 17.sp
+            fontSize = 20.sp,
+            lineHeight = 20.sp
         ),
         placeholder = {
             if (placeholder != null) {

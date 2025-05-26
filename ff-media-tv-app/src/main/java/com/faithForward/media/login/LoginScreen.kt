@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -127,7 +128,7 @@ fun LoginScreen(
                 isTextFieldFocused = isEmailFocused,
                 modifier = Modifier
                     .width(389.5.dp)
-                    .height(48.dp)
+                    .height(52.dp)
                     .focusRequester(emailFocusRequester)
                     .onFocusChanged {
                         isEmailFocused = it.hasFocus
@@ -156,7 +157,7 @@ fun LoginScreen(
                 isTextFieldFocused = isPasswordFocused,
                 modifier = Modifier
                     .width(389.5.dp)
-                    .height(48.dp)
+                    .height(52.dp)
                     .focusRequester(passwordFocusRequester)
                     .onFocusChanged {
                         isPasswordFocused = it.hasFocus
@@ -186,7 +187,10 @@ fun LoginScreen(
                     }
                 )) {
                 Text(
-                    text = "Next", color = sideBarFocusedTextColor, fontSize = 20.sp
+                    text = "Next",
+                    color = sideBarFocusedTextColor,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Light
                 )
             }
 
