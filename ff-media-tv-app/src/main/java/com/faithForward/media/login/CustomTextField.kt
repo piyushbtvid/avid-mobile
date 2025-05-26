@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +29,7 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     keyboardController: SoftwareKeyboardController? = null,
+    keyboardType  : KeyboardType= KeyboardType.Text,
     onNext: () -> Unit = {}, // Change onSearch to onNext for clarity
     imeAction: ImeAction = ImeAction.Next,
     placeholder: String? = null,
@@ -63,6 +65,7 @@ fun CustomTextField(
             }
         },
         keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = keyboardType,
             autoCorrectEnabled = false,
             imeAction = imeAction
         ),

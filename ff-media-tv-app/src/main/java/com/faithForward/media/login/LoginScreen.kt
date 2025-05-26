@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -114,6 +115,7 @@ fun LoginScreen(
                 keyboardController = keyboardController,
                 placeholder = "Enter email",
                 imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Email,
                 onNext = {
                     keyboardController?.hide()
                     scope.launch {
@@ -142,6 +144,7 @@ fun LoginScreen(
                 },
                 placeholder = "Password",
                 imeAction = ImeAction.Done, // Use Done instead of Next for the last field
+                keyboardType = KeyboardType.Password,
                 onNext = {
                     scope.launch {
                         delay(200)
