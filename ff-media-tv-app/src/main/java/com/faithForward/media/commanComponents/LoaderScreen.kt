@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.theme.unFocusMainColor
+import com.faithForward.media.theme.homeBackgroundColor
 
 @Composable
 fun LoaderScreen(
@@ -20,7 +20,7 @@ fun LoaderScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = unFocusMainColor),
+            .background(color = homeBackgroundColor),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

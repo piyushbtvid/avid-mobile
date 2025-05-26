@@ -1,6 +1,5 @@
 package com.faithForward.media.viewModel
 
-import androidx.compose.ui.util.fastForEachIndexed
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRowDto
