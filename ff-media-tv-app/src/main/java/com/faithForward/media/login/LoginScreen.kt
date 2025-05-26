@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -192,18 +193,21 @@ fun LoginScreen(
             Box(
                 modifier = Modifier
                     .padding(top = 10.dp)
-                    .height(20.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(20.dp),
                 contentAlignment = Alignment.Center
             ) {
                 if (loginState.errorMessage != null) {
                     Text(
                         text = loginState.errorMessage!!,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth() // Ensures the Text centers properly
                     )
                 }
             }
+
         }
     }
 
