@@ -32,3 +32,16 @@ val Typography = Typography(
     )
     */
 )
+
+
+val baseTextStyle = TextStyle(
+    fontWeight = FontWeight.Normal,
+    fontSize = 9.sp
+)
+
+
+val creatorTitleStyle = baseTextStyle.copy(
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 30.sp,
+    color = cardShadowColor
+)
