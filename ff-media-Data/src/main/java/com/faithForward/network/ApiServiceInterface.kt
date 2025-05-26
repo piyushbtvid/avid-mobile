@@ -15,7 +15,7 @@ import retrofit2.http.Path
 
 interface ApiServiceInterface {
 
-    @GET(Constants.SECTION_END_POINT)
+    @GET(Constants.HOME_SECTION_END_POINT)
     suspend fun getGivenSectionData(
 
     ): Response<SectionApiResponse>
