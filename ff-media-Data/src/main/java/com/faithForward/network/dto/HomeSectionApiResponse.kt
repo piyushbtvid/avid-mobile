@@ -23,6 +23,12 @@ data class Section(
     val content: List<ContentItem>?
 )
 
+
+data class Creator(
+    val id: Int,
+    val name: String
+)
+
 data class ContentItem(
     val id: String?,
     val name: String?,
@@ -32,5 +38,9 @@ data class ContentItem(
     val genres: List<Genre>?,
     val rating: String?,
     val dateUploaded: String?,
-    val uploadedYear: String?
+    val uploadedYear: String?,
+    var access: String? = null,
+    var video_link: String? = null,
+    var views: Int? = null,
+    var creator: Creator? = null
 )

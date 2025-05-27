@@ -1,34 +1,27 @@
 package com.faithForward.media.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.extensions.PositionFocusedItemInLazyLayout
 import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
 import com.faithForward.media.home.creator.list.CreatorCardGrid
-import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomePageItem
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContentSections(
     modifier: Modifier = Modifier,
     homePageItems: List<HomePageItem>,
+    onCategoryItemClick: (String) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit
 ) {
 
@@ -61,7 +54,8 @@ fun HomeContentSections(
 
                 is HomePageItem.CategoryRow -> CategoryRow(
                     categoryRowDto = homePageItem.dto,
-                    shouldFocusOnFirstItem = shouldFocusOnFirstItem
+                    shouldFocusOnFirstItem = shouldFocusOnFirstItem,
+                    onCategoryItemClick = onCategoryItemClick
                 )
 
                 is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,

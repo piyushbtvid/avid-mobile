@@ -7,13 +7,17 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.faithForward.media.home.HomePage
 import com.faithForward.media.home.creator.CreatorScreen
+import com.faithForward.media.home.genre.GenreDataScreen
 import com.faithForward.media.home.movies.MoviesPage
 import com.faithForward.media.login.LoginScreen
 import com.faithForward.media.viewModel.CreatorViewModel
+import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MoviesViewModel
@@ -45,7 +49,16 @@ fun MainAppNavHost(
                 onDataLoadedSuccess = onDataLoadedSuccess,
                 changeSideBarSelectedPosition = { value ->
                     changeSideBarSelectedPosition.invoke(value)
-                })
+                },
+                onCategoryClick = { id ->
+                    if (id.isNotEmpty()) {
+                        navController.navigate(Routes.GenreData.createRoute(id)) {
+                            popUpTo(Routes.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            )
         }
 
         composable(route = Routes.Creator.route) {
@@ -61,6 +74,24 @@ fun MainAppNavHost(
                 moviesViewModel = moviesViewModel
             )
         }
+
+        composable(
+            route = Routes.GenreData.route,
+            arguments = listOf(navArgument("genreId") {
+                type = NavType.StringType
+            }
+            )
+        ) { backStackEntry ->
+            val genreId = backStackEntry.arguments?.getString("genreId") ?: ""
+
+            val genreViewModel: GenreViewModel = hiltViewModel()
+
+            GenreDataScreen(
+                genreId = genreId,
+                viewModel = genreViewModel
+            )
+        }
+
 
     }
 

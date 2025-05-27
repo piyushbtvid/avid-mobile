@@ -1,6 +1,7 @@
 package com.faithForward.media.navigation
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.faithForward.media.R
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.theme.homeBackgroundColor
@@ -26,11 +30,22 @@ fun MainScreen(
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val showSidebar = currentRoute in sidebarVisibleRoutes
+
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = homeBackgroundColor),
+
     ) {
+        Image(
+            painter = painterResource(R.drawable.background_blur__1_),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
         MainAppNavHost(
             navController = navController,
             onDataLoadedSuccess = {
@@ -43,7 +58,7 @@ fun MainScreen(
             loginViewModel = loginViewModel
         )
 
-        if (startRoute == Routes.Home.route) {
+        if (startRoute == Routes.Home.route && showSidebar) {
             SideBar(
                 columnList = sideBarItems,
                 modifier = Modifier.align(Alignment.TopStart),
@@ -83,3 +98,9 @@ fun MainScreen(
         }
     }
 }
+
+val sidebarVisibleRoutes = listOf(
+    Routes.Home.route,
+    Routes.Movies.route,
+    Routes.Creator.route
+)

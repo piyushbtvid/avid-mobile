@@ -22,6 +22,7 @@ fun HomePage(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
     changeSideBarSelectedPosition: (Int) -> Unit,
+    onCategoryClick: (String) -> Unit,
     onDataLoadedSuccess: () -> Unit
 ) {
 
@@ -64,12 +65,16 @@ fun HomePage(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(unFocusMainColor)
     ) {
         HomeContentSections(
             modifier = Modifier,
             homePageItems = homePageItems,
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
+            },
+            onCategoryItemClick = { id ->
+                onCategoryClick.invoke(id)
             }
         )
     }

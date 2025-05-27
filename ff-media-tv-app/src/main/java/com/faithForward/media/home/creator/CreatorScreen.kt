@@ -39,6 +39,9 @@ fun CreatorScreen(
             homePageItems = creatorPageItems,
             onChangeContentRowFocusedIndex = { index ->
                 creatorViewModel.onContentRowFocusedIndexChange(index)
+            },
+            onCategoryItemClick = {
+
             }
         )
     }

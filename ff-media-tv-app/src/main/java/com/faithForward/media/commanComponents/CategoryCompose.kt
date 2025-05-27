@@ -24,7 +24,8 @@ import com.faithForward.media.util.FocusState
 
 
 data class CategoryComposeDto(
-    val btnText: String
+    val btnText: String,
+    val id: String
 )
 
 @Composable
@@ -36,6 +37,7 @@ fun CategoryCompose(
     textFocusedColor: Color = textFocusedMainColor,
     textUnFocusedColor: Color = textUnFocusColor,
     categoryComposeDto: CategoryComposeDto,
+    onCategoryItemClick: (String) -> Unit,
     focusState: FocusState
 ) {
     val containerColor = when (focusState) {
@@ -70,7 +72,9 @@ fun CategoryCompose(
         }
 
     Button(
-        onClick = { /* Handle click */ },
+        onClick = {
+            onCategoryItemClick.invoke(categoryComposeDto.id)
+        },
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
         shape = RoundedCornerShape(50),
         modifier = buttonModifier.height(38.dp)
@@ -91,7 +95,10 @@ fun ButtonPreview() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CategoryCompose(
             focusState = FocusState.UNFOCUSED,
-            categoryComposeDto = CategoryComposeDto("Poscasts"),
+            categoryComposeDto = CategoryComposeDto("Poscasts", id = "vf"),
+            onCategoryItemClick = {
+
+            }
         )
     }
 }

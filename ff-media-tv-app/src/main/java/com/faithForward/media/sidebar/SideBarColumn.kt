@@ -53,7 +53,11 @@ fun SideBarColumn(
             .onFocusChanged {
                 Log.d("onFocusChanged", "${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
                 if (it.hasFocus) {
-                    itemFocusRequesters[selectedPosition].requestFocus()
+                    try {
+                        itemFocusRequesters[selectedPosition].requestFocus()
+                    } catch (ex: Exception) {
+                        Log.e("LOG", "${ex.message}")
+                    }
                 }
             },
         verticalArrangement = Arrangement.spacedBy(4.dp),
