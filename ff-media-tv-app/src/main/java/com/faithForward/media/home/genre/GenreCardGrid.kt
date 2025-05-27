@@ -70,11 +70,9 @@ fun GenreCardGrid(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(homeBackgroundColor)
             .padding(start = 41.dp),
 
         ) {
-
         Column(
             modifier = Modifier.fillMaxSize()
         ) {

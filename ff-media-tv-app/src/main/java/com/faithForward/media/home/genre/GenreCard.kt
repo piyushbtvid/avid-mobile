@@ -57,7 +57,7 @@ fun GenreCard(
                 fontWeight = FontWeight.W600,
                 textSize = 10
             )
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(1.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
