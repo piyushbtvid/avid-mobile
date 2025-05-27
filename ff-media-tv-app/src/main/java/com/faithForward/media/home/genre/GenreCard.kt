@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.commanComponents.PosterCard
-import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
 
@@ -42,9 +40,9 @@ fun GenreCard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        PosterCard(
+        GenreImageCard(
             modifier = modifier,
-            posterCardDto = PosterCardDto(
+            posterCardDto = GenreImageCardDto(
                 posterImageSrc = genreCardDto.image
             ),
             focusState = focusState,
@@ -59,7 +57,7 @@ fun GenreCard(
                 fontWeight = FontWeight.W600,
                 textSize = 10
             )
-            Spacer(modifier = Modifier.height(3.5.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
