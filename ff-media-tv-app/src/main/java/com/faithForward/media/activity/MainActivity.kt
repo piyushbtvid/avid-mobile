@@ -37,7 +37,6 @@ import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.theme.FfmediaTheme
 import com.faithForward.media.theme.unFocusMainColor
-import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,9 +51,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = viewModel()
                     val loginViewModel = hiltViewModel<LoginViewModel>()
-                    val genreViewModel = hiltViewModel<GenreViewModel>()
                     val userSession by loginViewModel.userSession.collectAsStateWithLifecycle()
-                    genreViewModel.getGivenGenreDetail("movie-61")
                     if (userSession.isLoading) {
                         LoaderScreen()
                     } else {

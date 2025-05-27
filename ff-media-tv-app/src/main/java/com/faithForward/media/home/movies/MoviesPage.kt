@@ -35,6 +35,9 @@ fun MoviesPage(
             homePageItems = homePageItems,
             onChangeContentRowFocusedIndex = { index ->
                 moviesViewModel.onContentRowFocusedIndexChange(index)
+            },
+            onCategoryItemClick = {
+
             }
         )
     }

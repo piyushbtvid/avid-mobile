@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.theme.focusedMainColor
@@ -16,12 +19,16 @@ fun TitleText(
     modifier: Modifier = Modifier,
     text: String,
     textSize: Int = 15,
+    fontWeight: FontWeight = FontWeight.Normal,
     color: Color = focusedMainColor
 ) {
     Text(
         text = text,
         modifier = modifier,
+        fontWeight = fontWeight,
         color = color,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         fontSize = textSize.sp
     )
 }

@@ -55,8 +55,8 @@ class NetworkRepository @Inject constructor(
         sectionName: String
     ) = apiServiceInterface.getGivenSectionData(sectionName)
 
-    suspend fun getGivenItemDetail(
+    suspend fun getGivenGenreData(
         itemId: String
-    ) = apiServiceInterface.getGivenItemIdDetail(itemId)
+    ) = apiServiceInterface.getGivenGenreData(itemId)
 
 }

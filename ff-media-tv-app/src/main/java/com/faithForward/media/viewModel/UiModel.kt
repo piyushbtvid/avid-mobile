@@ -7,6 +7,7 @@ import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRowDto
 import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.home.genre.GenreCardDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.HomeSectionApiResponse
@@ -23,7 +24,7 @@ sealed interface HomePageItem {
 
 fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
     val categoryDtos = data.map {
-        CategoryComposeDto(it.name)
+        CategoryComposeDto(it.name, id = it.id.toString())
     }
     return HomePageItem.CategoryRow(dto = CategoryRowDto(categoryDtos))
 }
@@ -46,7 +47,7 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     var carouselSectionIndex: Int? = null
 
     val category = sections?.genres?.mapIndexed { index, genre ->
-        CategoryComposeDto(genre.name ?: "")
+        CategoryComposeDto(genre.name ?: "", id = genre.id ?: "")
     }
     if (category != null) {
         homePageItems.add(HomePageItem.CategoryRow(CategoryRowDto(category)))
@@ -129,7 +130,6 @@ fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
 }
 
 
-
 fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     // Return the DTO
     return CarouselItemDto(
@@ -155,4 +155,5 @@ fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
         isCreator = true
     )
 }
+
 

@@ -22,6 +22,7 @@ fun HomePage(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
     changeSideBarSelectedPosition: (Int) -> Unit,
+    onCategoryClick: (String) -> Unit,
     onDataLoadedSuccess: () -> Unit
 ) {
 
@@ -70,6 +71,9 @@ fun HomePage(
             homePageItems = homePageItems,
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
+            },
+            onCategoryItemClick = { id ->
+                onCategoryClick.invoke(id)
             }
         )
     }

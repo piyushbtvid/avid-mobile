@@ -30,6 +30,7 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState

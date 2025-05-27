@@ -34,6 +34,7 @@ data class CategoryRowDto(
 fun CategoryRow(
     modifier: Modifier = Modifier,
     categoryRowDto: CategoryRowDto,
+    onCategoryItemClick: (String) -> Unit,
     shouldFocusOnFirstItem: Boolean = false
 ) {
 
@@ -57,9 +58,7 @@ fun CategoryRow(
         LazyRow(
             modifier = modifier
                 .fillMaxWidth()
-                .focusRestorer {
-                    itemFocusRequesters[0]
-                },
+                .focusRestorer(),
             contentPadding = PaddingValues(
                 top = 17.5.dp,
                 start = 25.dp,
@@ -93,7 +92,13 @@ fun CategoryRow(
                                 }
                             }
                         }
-                        .focusable(), categoryComposeDto = categoryComposeDto, focusState = uiState)
+                        .focusable(),
+                    categoryComposeDto = categoryComposeDto,
+                    onCategoryItemClick = { id ->
+                        onCategoryItemClick.invoke(id)
+                    },
+                    focusState = uiState
+                )
             }
         }
     }

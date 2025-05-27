@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
@@ -26,6 +27,12 @@ fun MainScreen(
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val showSidebar = currentRoute in sidebarVisibleRoutes
+
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -43,7 +50,7 @@ fun MainScreen(
             loginViewModel = loginViewModel
         )
 
-        if (startRoute == Routes.Home.route) {
+        if (startRoute == Routes.Home.route && showSidebar) {
             SideBar(
                 columnList = sideBarItems,
                 modifier = Modifier.align(Alignment.TopStart),
@@ -83,3 +90,9 @@ fun MainScreen(
         }
     }
 }
+
+val sidebarVisibleRoutes = listOf(
+    Routes.Home.route,
+    Routes.Movies.route,
+    Routes.Creator.route
+)

@@ -3,7 +3,7 @@ package com.faithForward.network
 import com.faithForward.network.dto.CategoryDetailResponse
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
-import com.faithForward.network.dto.ItemDetailResponse
+import com.faithForward.network.dto.GenreResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.login.LoginResponse
@@ -44,8 +44,8 @@ interface ApiServiceInterface {
     ): Response<SectionContentResponse>
 
     @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
-    suspend fun getGivenItemIdDetail(
+    suspend fun getGivenGenreData(
         @Path("id") id: String
-    ): Response<ItemDetailResponse>
+    ): Response<GenreResponse>
 
 }
