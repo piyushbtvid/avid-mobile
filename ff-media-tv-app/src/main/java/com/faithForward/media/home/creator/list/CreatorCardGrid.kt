@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -31,7 +32,7 @@ fun CreatorCardGrid(
     modifier: Modifier = Modifier,
     creators: List<CreatorCardDto>
 ) {
-    var focusedIndex by remember { mutableIntStateOf(-1) }
+    var focusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     val creatorsList = creators.chunked(5)
 

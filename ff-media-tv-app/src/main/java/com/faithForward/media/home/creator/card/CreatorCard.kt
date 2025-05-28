@@ -33,7 +33,7 @@ import com.faithForward.media.theme.unFocusMainColor
 data class CreatorCardDto(
     val creatorImageUrl: String,
     val creatorName: String,
-    val channelDescription:String,
+    val channelDescription: String,
     val creatorSubscriberText: String
 )
 

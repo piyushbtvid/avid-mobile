@@ -1,6 +1,5 @@
 package com.faithForward.media.viewModel
 
-import androidx.compose.ui.util.fastForEachIndexed
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRowDto
@@ -8,9 +7,11 @@ import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRowDto
 import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.home.genre.GenreCardDto
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
-import com.faithForward.network.dto.SectionApiResponse
+import com.faithForward.network.dto.HomeSectionApiResponse
+import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.creator.UserData
 
 sealed interface HomePageItem {
@@ -23,7 +24,7 @@ sealed interface HomePageItem {
 
 fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
     val categoryDtos = data.map {
-        CategoryComposeDto(it.name)
+        CategoryComposeDto(it.name, id = it.id.toString())
     }
     return HomePageItem.CategoryRow(dto = CategoryRowDto(categoryDtos))
 }
@@ -39,14 +40,14 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
     }
 }
 
-fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
+fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     val sections = data
     val homePageItems = mutableListOf<HomePageItem>()
     var carouselAdded = false
     var carouselSectionIndex: Int? = null
 
     val category = sections?.genres?.mapIndexed { index, genre ->
-        CategoryComposeDto(genre.name ?: "")
+        CategoryComposeDto(genre.name ?: "", id = genre.id ?: "")
     }
     if (category != null) {
         homePageItems.add(HomePageItem.CategoryRow(CategoryRowDto(category)))
@@ -99,6 +100,35 @@ fun SectionApiResponse.toHomePageItems(): List<HomePageItem> {
     return homePageItems
 }
 
+fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
+    val homePageItems = mutableListOf<HomePageItem>()
+
+    if (data.isNotEmpty()) {
+        // First item → Carousel
+        val firstItem = data.first().toCarouselItemDto()
+        homePageItems.add(
+            HomePageItem.CarouselRow(
+                CarouselContentRowDto(listOf(firstItem))
+            )
+        )
+
+        // Remaining items → PosterRow (combined)
+        val posterItems = data.drop(1).map { it.toPosterCardDto() }
+        if (posterItems.isNotEmpty()) {
+            homePageItems.add(
+                HomePageItem.PosterRow(
+                    PosterRowDto(
+                        heading = "Movies", // Or dynamic heading if available
+                        dtos = posterItems
+                    )
+                )
+            )
+        }
+    }
+
+    return homePageItems
+}
+
 
 fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     // Return the DTO
@@ -125,4 +155,5 @@ fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
         isCreator = true
     )
 }
+
 

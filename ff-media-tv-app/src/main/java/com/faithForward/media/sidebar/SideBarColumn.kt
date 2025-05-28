@@ -38,7 +38,7 @@ fun SideBarColumn(
 ) {
     val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
 
-    var targetValue  = if(focusedIndex==-1) 38.dp else 114.dp
+    var targetValue = if (focusedIndex == -1) 38.dp else 114.dp
     val animatedWidth by animateDpAsState(
         targetValue = targetValue,
         animationSpec = tween(300),
@@ -46,14 +46,20 @@ fun SideBarColumn(
     )
 
     LazyColumn(
-        modifier = modifier.focusRestorer {
-            itemFocusRequesters[1]
-        }.onFocusChanged {
-            Log.d("onFocusChanged","${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
-            if(it.hasFocus){
-                itemFocusRequesters[selectedPosition].requestFocus()
+        modifier = modifier
+            .focusRestorer {
+                itemFocusRequesters[1]
             }
-        },
+            .onFocusChanged {
+                Log.d("onFocusChanged", "${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
+                if (it.hasFocus) {
+                    try {
+                        itemFocusRequesters[selectedPosition].requestFocus()
+                    } catch (ex: Exception) {
+                        Log.e("LOG", "${ex.message}")
+                    }
+                }
+            },
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

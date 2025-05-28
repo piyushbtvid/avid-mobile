@@ -126,7 +126,9 @@ fun CarouselContent(
                 )
             }
 
-            Box(modifier = buttonModifier.size(10.dp).background(color = Color.Transparent))
+            Box(modifier = buttonModifier
+                .size(10.dp)
+                .background(color = Color.Transparent))
         }
     }
 }

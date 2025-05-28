@@ -1,4 +1,4 @@
-package com.faithForward.media.commanComponents
+package com.faithForward.media.home.genre
 
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -35,14 +36,14 @@ import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState
 
-data class PosterCardDto(
+data class GenreImageCardDto(
     val posterImageSrc: String,
 )
 
 @Composable
-fun PosterCard(
+fun GenreImageCard(
     modifier: Modifier = Modifier,
-    posterCardDto: PosterCardDto,
+    posterCardDto: GenreImageCardDto,
     focusState: FocusState,
     cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
@@ -56,30 +57,13 @@ fun PosterCard(
         animationSpec = tween(300), label = ""
     )
 
-    val posterModifier =
-        if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
-            modifier.shadow(
-                color = cardShadowColor,
-                borderRadius = 23.dp,
-                blurRadius = 18.dp,
-                offsetY = 8.dp,
-                offsetX = 0.dp,
-                spread = 3.dp,
-                scale = scale
-            )
-        } else {
-            modifier
-        }
+
 
 
     Column(
-        modifier = posterModifier
+        modifier = modifier
             .width(135.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
-            }
+            .scale(scale)
             .zIndex(
                 when (focusState) {
                     FocusState.SELECTED, FocusState.FOCUSED -> 1f
@@ -125,8 +109,8 @@ fun PosterCardLazyRowPreview() {
             contentPadding = PaddingValues(horizontal = 24.dp)
         ) {
             items(3) { index ->
-                PosterCard(
-                    posterCardDto = PosterCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
+                GenreImageCard(
+                    posterCardDto = GenreImageCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
                     focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
             }

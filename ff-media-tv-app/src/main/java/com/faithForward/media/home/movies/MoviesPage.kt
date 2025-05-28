@@ -1,4 +1,4 @@
-package com.faithForward.media.home.creator
+package com.faithForward.media.home.movies
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,28 +7,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.home.HomeContentSections
-import com.faithForward.media.viewModel.CreatorViewModel
+import com.faithForward.media.viewModel.MoviesViewModel
 import com.faithForward.util.Resource
 
 @Composable
-fun CreatorScreen(
+fun MoviesPage(
     modifier: Modifier = Modifier,
-    creatorViewModel: CreatorViewModel,
+    moviesViewModel: MoviesViewModel,
 ) {
 
 
-//    LaunchedEffect(Unit) {
-//        creatorViewModel.fetchCreatorData(1)
-//    }
+    val homePageItemsResource by moviesViewModel.homePageData.collectAsStateWithLifecycle()
 
-    val creatorPageItemsResource by creatorViewModel.creatorPageData.collectAsStateWithLifecycle()
-
-    if (creatorPageItemsResource is Resource.Unspecified
-        || creatorPageItemsResource is Resource.Error ||
-        creatorPageItemsResource is Resource.Loading
+    if (homePageItemsResource is Resource.Unspecified
+        || homePageItemsResource is Resource.Error
+        || homePageItemsResource is Resource.Loading
     ) return
 
-    val creatorPageItems = creatorPageItemsResource.data ?: return
+    val homePageItems = homePageItemsResource.data ?: return
 
     Box(
         modifier = modifier
@@ -36,9 +32,9 @@ fun CreatorScreen(
     ) {
         HomeContentSections(
             modifier = Modifier,
-            homePageItems = creatorPageItems,
+            homePageItems = homePageItems,
             onChangeContentRowFocusedIndex = { index ->
-                creatorViewModel.onContentRowFocusedIndexChange(index)
+                moviesViewModel.onContentRowFocusedIndexChange(index)
             },
             onCategoryItemClick = {
 

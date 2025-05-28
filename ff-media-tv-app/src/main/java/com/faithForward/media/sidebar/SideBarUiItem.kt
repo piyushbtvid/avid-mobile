@@ -90,12 +90,13 @@ fun SideBarUiItem(
 //                top.linkTo(parent.top)
 //                bottom.linkTo(parent.bottom)
 //            }) {
-        if (focusedSideBarItem!=-1){
+        if (focusedSideBarItem != -1) {
             Text(
                 modifier = Modifier.constrainAs(textRef) {
                     start.linkTo(iconRef.end, margin = 8.dp)
                     top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)},
+                    bottom.linkTo(parent.bottom)
+                },
                 text = txt,
                 color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedColor else unFocusedColor,
                 maxLines = 1,
