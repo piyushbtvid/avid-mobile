@@ -32,7 +32,7 @@ import com.faithForward.media.util.FocusState
 
 data class PosterRowDto(
     val heading: String,
-    val dtos: List<PosterCardDto>
+    val dtos: List<PosterCardDto>,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -40,8 +40,9 @@ data class PosterRowDto(
 fun ContentRow(
     modifier: Modifier = Modifier,
     posterRowDto: PosterRowDto,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     shouldFocusOnFirstItem: Boolean = false,
-    onChangeContentRowFocusedIndex: (Int) -> Unit
+    onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
 
     var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -103,7 +104,10 @@ fun ContentRow(
                         }
                         .focusable(),
                     posterCardDto = posterCardDto,
-                    focusState = uiState
+                    focusState = uiState,
+                    onItemClick = { item ->
+                        onItemClick.invoke(item, posterRowDto.dtos)
+                    }
                 )
             }
             item {

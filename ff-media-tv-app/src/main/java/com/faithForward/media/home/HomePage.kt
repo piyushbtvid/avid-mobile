@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.util.Resource
@@ -22,8 +23,9 @@ fun HomePage(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
     changeSideBarSelectedPosition: (Int) -> Unit,
+    onItemClick: (PosterCardDto , List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
-    onDataLoadedSuccess: () -> Unit
+    onDataLoadedSuccess: () -> Unit,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -73,6 +75,7 @@ fun HomePage(
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
             },
+            onItemClick = onItemClick,
             onCategoryItemClick = { id ->
                 onCategoryClick.invoke(id)
             }

@@ -3,7 +3,7 @@ package com.faithForward.media.viewModel
 import com.faithForward.media.home.genre.GenreCardDto
 import com.faithForward.media.home.genre.GenreGridDto
 import com.faithForward.network.dto.ContentItem
-import com.faithForward.network.dto.GenreResponse
+import com.faithForward.network.dto.genre.GenreResponse
 
 
 fun ContentItem.toGenreCardDto(): GenreCardDto {

@@ -28,7 +28,7 @@ import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
 
 @Composable
-fun CarouselContent(
+fun ContentMetaBlock(
     modifier: Modifier = Modifier,
     description: String? = null,
     releaseDate: String? = null,
@@ -38,6 +38,7 @@ fun CarouselContent(
     imdbRating: String? = null,
     subscribers: String? = null,
     title: String?,
+    textColor: Color = Color.White,
     addToWatchListModifier: Modifier = Modifier,
     likeModifier: Modifier = Modifier,
     disLikeModifier: Modifier = Modifier,
@@ -64,7 +65,7 @@ fun CarouselContent(
             val metaList = listOfNotNull(releaseDate?.takeIf { it.isNotBlank() },
                 genre?.takeIf { it.isNotBlank() },
                 seasons?.let { "$it Season${if (it > 1) "s" else ""}" }?.takeIf { it.isNotBlank() },
-                duration?.takeIf { it.isNotBlank() },
+                duration?.takeIf { it.isNotBlank()  },
                 subscribers?.takeIf { it.isNotBlank() },
                 imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() })
 
@@ -76,10 +77,13 @@ fun CarouselContent(
                     metaList.forEachIndexed { index, item ->
                         if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
-                            ContentDescription(text = "|")
+                            ContentDescription(
+                                text = "|",
+                                color = textColor
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
-                        ContentDescription(text = item)
+                        ContentDescription(text = item, color = textColor)
                     }
                 }
 
@@ -94,6 +98,7 @@ fun CarouselContent(
                         .height(60.dp),
                     text = it,
                     lineHeight = 13,
+                    color = textColor,
                     overflow = TextOverflow.Ellipsis,
                     textSize = 12
                 )
@@ -126,9 +131,11 @@ fun CarouselContent(
                 )
             }
 
-            Box(modifier = buttonModifier
-                .size(10.dp)
-                .background(color = Color.Transparent))
+            Box(
+                modifier = buttonModifier
+                    .size(10.dp)
+                    .background(color = Color.Transparent)
+            )
         }
     }
 }
@@ -143,7 +150,7 @@ fun CarouselPreview(modifier: Modifier = Modifier) {
             .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        CarouselContent(
+        ContentMetaBlock(
             title = "",
             addToWatchListUiState = FocusState.FOCUSED,
             likeUiState = FocusState.FOCUSED,

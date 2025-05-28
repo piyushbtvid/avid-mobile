@@ -38,6 +38,9 @@ fun MoviesPage(
             },
             onCategoryItemClick = {
 
+            },
+            onItemClick = {  item , list ->
+
             }
         )
     }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
@@ -22,7 +23,8 @@ fun HomeContentSections(
     modifier: Modifier = Modifier,
     homePageItems: List<HomePageItem>,
     onCategoryItemClick: (String) -> Unit,
-    onChangeContentRowFocusedIndex: (Int) -> Unit
+    onItemClick: (PosterCardDto , List<PosterCardDto>) -> Unit,
+    onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
 
     val listState = rememberLazyListState()
@@ -60,6 +62,7 @@ fun HomeContentSections(
 
                 is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
+                    onItemClick = onItemClick,
                     onChangeContentRowFocusedIndex = { index ->
                         onChangeContentRowFocusedIndex.invoke(index)
                     })

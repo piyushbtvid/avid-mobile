@@ -42,6 +42,9 @@ fun CreatorScreen(
             },
             onCategoryItemClick = {
 
+            },
+            onItemClick = { item , list ->
+
             }
         )
     }

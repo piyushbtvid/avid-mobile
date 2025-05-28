@@ -144,7 +144,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
 
 
 fun ContentItem.toPosterCardDto(): PosterCardDto =
-    PosterCardDto(posterImageSrc = landscape ?: portrait ?: "")
+    PosterCardDto(posterImageSrc = landscape ?: portrait ?: "", id = id ?: "")
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(

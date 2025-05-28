@@ -59,4 +59,8 @@ class NetworkRepository @Inject constructor(
         itemId: String
     ) = apiServiceInterface.getGivenGenreData(itemId)
 
+    suspend fun getGivenCardDetail(
+        itemId: String
+    ) = apiServiceInterface.getGivenCardDetail(itemId)
+
 }

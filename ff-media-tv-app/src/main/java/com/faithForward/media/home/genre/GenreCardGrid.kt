@@ -88,6 +88,7 @@ fun GenreCardGrid(
                         .onFocusChanged {
                             isMicFocused = it.hasFocus
                         }
+                        .focusable()
                         .then(
                             if (isMicFocused) {
                                 Modifier
@@ -118,6 +119,7 @@ fun GenreCardGrid(
                         .onFocusChanged {
                             isSearchFocused = it.hasFocus
                         }
+                        .focusable()
                         .then(
                             if (isSearchFocused) {
                                 Modifier

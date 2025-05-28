@@ -42,5 +42,6 @@ data class ContentItem(
     var access: String? = null,
     var video_link: String? = null,
     var views: Int? = null,
-    var creator: Creator? = null
+    var creator: Creator? = null,
+    var duration: Int? = null
 )

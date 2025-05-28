@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,8 +35,11 @@ import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PosterCardDto(
+    val id : String,
     val posterImageSrc: String,
 )
 
@@ -44,8 +48,9 @@ fun PosterCard(
     modifier: Modifier = Modifier,
     posterCardDto: PosterCardDto,
     focusState: FocusState,
+    onItemClick: (PosterCardDto) -> Unit,
     cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
-    @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
+    @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
     val scale by animateFloatAsState(
@@ -108,6 +113,10 @@ fun PosterCard(
                 .fillMaxWidth()
                 .height(210.dp)
                 .clip(RoundedCornerShape(5.dp))
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onItemClick.invoke(posterCardDto)
+                }
+                )
         )
     }
 }
@@ -126,8 +135,11 @@ fun PosterCardLazyRowPreview() {
         ) {
             items(3) { index ->
                 PosterCard(
-                    posterCardDto = PosterCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
-                    focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED
+                    posterCardDto = PosterCardDto(posterImageSrc = "", id = ""), // Leave blank to test drawable fallback
+                    focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED,
+                    onItemClick = {
+
+                    }
                 )
             }
         }
