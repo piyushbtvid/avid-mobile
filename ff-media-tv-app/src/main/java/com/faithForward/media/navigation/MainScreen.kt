@@ -1,8 +1,14 @@
 package com.faithForward.media.navigation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -15,8 +21,6 @@ import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
-import com.faithForward.media.theme.homeBackgroundColor
-import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 
@@ -25,7 +29,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     sideBarViewModel: SideBarViewModel,
     startRoute: String,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
@@ -58,7 +62,27 @@ fun MainScreen(
             loginViewModel = loginViewModel
         )
 
-        if (startRoute == Routes.Home.route && showSidebar) {
+        AnimatedVisibility(
+            visible = startRoute == Routes.Home.route && showSidebar,
+            enter = slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(
+                    durationMillis = 1500,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(
+                animationSpec = tween(durationMillis = 300)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { -it },
+                animationSpec = tween(
+                    durationMillis = 1000,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(
+                animationSpec = tween(durationMillis = 300)
+            )
+        ) {
             SideBar(
                 columnList = sideBarItems,
                 modifier = Modifier.align(Alignment.TopStart),
