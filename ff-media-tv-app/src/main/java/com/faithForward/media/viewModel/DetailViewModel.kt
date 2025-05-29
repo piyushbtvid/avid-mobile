@@ -24,7 +24,6 @@ class DetailViewModel
     fun getGivenCardDetail(id: String, relatedList: List<PosterCardDto>) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                relatedList.toMutableList().removeAt(0)
                 val response = networkRepository.getGivenCardDetail(id)
                 if (response.isSuccessful) {
                     Log.e("DETAIL", "card detail success is ${response.body()}")

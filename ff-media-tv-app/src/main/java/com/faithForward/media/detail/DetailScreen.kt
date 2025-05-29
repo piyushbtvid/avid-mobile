@@ -1,5 +1,6 @@
 package com.faithForward.media.detail
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,10 @@ fun DetailScreen(
 ) {
 
     LaunchedEffect(Unit) {
+        Log.e(
+            "DETAIL_SCREEN",
+            "detail screen is opened with $itemId and related List size  ${relatedList.size}"
+        )
         detailViewModel.getGivenCardDetail(itemId, relatedList)
     }
 
@@ -33,6 +38,13 @@ fun DetailScreen(
     if (cardDetailResponse is Resource.Loading || cardDetailResponse is Resource.Error || cardDetailResponse is Resource.Unspecified) return
 
     val detailPageItem = cardDetailResponse.data ?: return
+
+    LaunchedEffect(detailPageItem) {
+        Log.e(
+            "DETAIL_SCREEN",
+            "detail page item in detail screen is $detailPageItem"
+        )
+    }
 
     Box(
         modifier = modifier.fillMaxSize()
