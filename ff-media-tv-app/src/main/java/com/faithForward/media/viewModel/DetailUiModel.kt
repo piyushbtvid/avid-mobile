@@ -24,3 +24,31 @@ fun CardDetail.toDetailDto(): DetailDto {
         imdbRating = data.rating,
     )
 }
+
+
+sealed class DetailScreenEvent {
+    data class WatchNowFocusChanged(val isFocused: Boolean) : DetailScreenEvent()
+    data class RelatedTextFocusChanged(val isFocused: Boolean) : DetailScreenEvent()
+    data class RelatedItemFocused(val index: Int, val item: PosterCardDto?) : DetailScreenEvent()
+}
+
+sealed class DetailScreenState(
+    val isWatchNowFocused: Boolean = false,
+    val isRelatedTextFocused: Boolean = false,
+    val focusedRelatedItemIndex: Int = -1,
+    val focusedRelatedItem: PosterCardDto? = null
+) {
+    data object Idle : DetailScreenState()
+
+    data class Active(
+        val watchNowFocused: Boolean,
+        val relatedTextFocused: Boolean,
+        val relatedItemIndex: Int,
+        val relatedItem: PosterCardDto?
+    ) : DetailScreenState(
+        watchNowFocused,
+        relatedTextFocused,
+        relatedItemIndex,
+        relatedItem
+    )
+}

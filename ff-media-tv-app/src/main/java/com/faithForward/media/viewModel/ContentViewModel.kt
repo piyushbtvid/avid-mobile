@@ -17,9 +17,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MoviesViewModel
+class ContentViewModel
 @Inject constructor(
-    private val networkRepository: NetworkRepository
+    private val networkRepository: NetworkRepository,
 ) : ViewModel() {
 
     private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
@@ -30,14 +30,14 @@ class MoviesViewModel
         private set
 
     init {
-        fetchMoviesPageData(sectionId = "movies")
+        loadSectionContent(sectionId = "movies")
     }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
 
-    private fun fetchMoviesPageData(sectionId: String) {
+    private fun loadSectionContent(sectionId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _homepageData.emit(Resource.Loading())
             try {

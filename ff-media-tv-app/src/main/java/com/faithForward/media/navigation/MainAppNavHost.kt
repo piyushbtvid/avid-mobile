@@ -21,7 +21,7 @@ import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
-import com.faithForward.media.viewModel.MoviesViewModel
+import com.faithForward.media.viewModel.ContentViewModel
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -82,9 +82,9 @@ fun MainAppNavHost(
         }
 
         composable(route = Routes.Movies.route) {
-            val moviesViewModel: MoviesViewModel = hiltViewModel()
+            val contentViewModel: ContentViewModel = hiltViewModel()
             MoviesPage(
-                moviesViewModel = moviesViewModel,
+                contentViewModel = contentViewModel,
                 onItemClick = { item, list ->
                     if (item.id.isNotEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }

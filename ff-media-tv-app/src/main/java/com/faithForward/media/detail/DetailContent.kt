@@ -27,6 +27,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,6 +64,7 @@ data class DetailDto(
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
+    onPlayButtonKeyDown: () -> Unit,
     detailDto: DetailDto,
 ) {
 
@@ -135,7 +141,8 @@ fun DetailContent(
                 ContentMetaBlock(
                     modifier = Modifier
                         .padding(start = 20.dp, top = 20.dp)
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                    ,
                     description = description,
                     releaseDate = releaseDate,
                     genre = genre,
@@ -153,7 +160,6 @@ fun DetailContent(
                     likeUiState = likeUiState,
                     dislikeUiState = dislikeUiState
                 )
-
                 CategoryCompose(
                     modifier = Modifier
                         .padding(start = 20.dp)
@@ -161,7 +167,8 @@ fun DetailContent(
                         .onFocusChanged {
                             isFocused.value = it.hasFocus
                         }
-                        .focusable(),
+                        .focusable()
+                    ,
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
                         // onCategoryItemClick.invoke(id)
@@ -202,6 +209,9 @@ fun DetailContent(
 @Composable
 private fun DetailPagePreview() {
     DetailContent(
-        detailDto = DetailDto()
+        detailDto = DetailDto(),
+        onPlayButtonKeyDown = {
+
+        }
     )
 }
