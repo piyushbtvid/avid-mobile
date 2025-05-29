@@ -84,7 +84,15 @@ fun MainAppNavHost(
         composable(route = Routes.Movies.route) {
             val moviesViewModel: MoviesViewModel = hiltViewModel()
             MoviesPage(
-                moviesViewModel = moviesViewModel
+                moviesViewModel = moviesViewModel,
+                onItemClick = { item, list ->
+                    if (item.id.isNotEmpty()) {
+                        val filteredList = list.filterNot { it.id == item.id }
+                        val json = Json.encodeToString(filteredList)
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList))
+                    }
+                }
             )
         }
 
@@ -101,7 +109,15 @@ fun MainAppNavHost(
 
             GenreDataScreen(
                 genreId = genreId,
-                viewModel = genreViewModel
+                viewModel = genreViewModel,
+                onItemClick = { item, list ->
+                    if (item.id.isNotEmpty()) {
+                        val filteredList = list.filterNot { it.id == item.id }
+                        val json = Json.encodeToString(filteredList)
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList))
+                    }
+                }
             )
         }
 

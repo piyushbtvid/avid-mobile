@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.viewModel.MoviesViewModel
 import com.faithForward.util.Resource
@@ -14,6 +15,7 @@ import com.faithForward.util.Resource
 fun MoviesPage(
     modifier: Modifier = Modifier,
     moviesViewModel: MoviesViewModel,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
 
@@ -39,8 +41,8 @@ fun MoviesPage(
             onCategoryItemClick = {
 
             },
-            onItemClick = {  item , list ->
-
+            onItemClick = { item, list ->
+                onItemClick.invoke(item, list)
             }
         )
     }

@@ -7,13 +7,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.viewModel.GenreViewModel
+import com.faithForward.media.viewModel.toPosterCardDto
 import com.faithForward.util.Resource
 
 @Composable
 fun GenreDataScreen(
     modifier: Modifier = Modifier,
     genreId: String,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     viewModel: GenreViewModel,
 ) {
 
@@ -31,7 +34,13 @@ fun GenreDataScreen(
         modifier = modifier.fillMaxSize()
     ) {
         GenreCardGrid(
-            genreGridDto = genreData
+            genreGridDto = genreData,
+            onItemClick = { item ->
+                val newPosterCardDtoList = genreData.genreCardList.map {
+                    it.toPosterCardDto()
+                }
+                onItemClick.invoke(item, newPosterCardDtoList)
+            }
         )
     }
 

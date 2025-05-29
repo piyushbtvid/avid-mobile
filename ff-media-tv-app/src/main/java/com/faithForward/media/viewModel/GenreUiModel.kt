@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel
 
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.genre.GenreCardDto
 import com.faithForward.media.home.genre.GenreGridDto
 import com.faithForward.network.dto.ContentItem
@@ -24,5 +25,13 @@ fun GenreResponse.toGenreCardGridDto(): GenreGridDto {
     return GenreGridDto(
         title = title ?: "",
         genreCardList = list
+    )
+}
+
+
+fun GenreCardDto.toPosterCardDto(): PosterCardDto {
+    return PosterCardDto(
+        id = genreId,
+        posterImageSrc = image
     )
 }
