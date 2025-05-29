@@ -41,6 +41,10 @@ fun ContentRow(
     modifier: Modifier = Modifier,
     posterRowDto: PosterRowDto,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    rowIndex: Int,
+    focusRequesters: MutableMap<Pair<Int, Int>, FocusRequester>,
+    onItemFocused: (Pair<Int, Int>) -> Unit,
+    lastFocusedItem: Pair<Int, Int>,
     shouldFocusOnFirstItem: Boolean = false,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
@@ -49,15 +53,15 @@ fun ContentRow(
 
     val itemFocusRequesters = remember { List(posterRowDto.dtos.size) { FocusRequester() } }
 
-    LaunchedEffect(shouldFocusOnFirstItem) {
-        if (shouldFocusOnFirstItem) {
-            try {
-                itemFocusRequesters[0].requestFocus()
-            } catch (ex: Exception) {
-                Log.e("FOCUS_ISSUE", "${ex.message}")
-            }
-        }
-    }
+//    LaunchedEffect(shouldFocusOnFirstItem) {
+//        if (shouldFocusOnFirstItem) {
+//            try {
+//                itemFocusRequesters[0].requestFocus()
+//            } catch (ex: Exception) {
+//                Log.e("FOCUS_ISSUE", "${ex.message}")
+//            }
+//        }
+//    }
 
     Column(
         modifier = modifier
@@ -79,6 +83,16 @@ fun ContentRow(
         {
             itemsIndexed(posterRowDto.dtos) { index, posterCardDto ->
 
+                focusRequesters[Pair(rowIndex, index)] = itemFocusRequesters[index]
+
+
+                // Restore focus to the last focused item when returning to this row
+                LaunchedEffect(lastFocusedItem) {
+                    if (lastFocusedItem == Pair(rowIndex, index)) {
+                        itemFocusRequesters[index].requestFocus()
+                    }
+                }
+
                 val uiState = when (index) {
                     contentRowFocusedIndex -> FocusState.FOCUSED
                     else -> FocusState.UNFOCUSED
@@ -89,7 +103,7 @@ fun ContentRow(
                         .focusRequester(itemFocusRequesters[index])
                         .onFocusChanged {
                             if (it.hasFocus) {
-                                //    onItemFocused(Pair(rowIndex, index))
+                                onItemFocused(Pair(rowIndex, index))
                                 contentRowFocusedIndex = index
                                 //  onChangeContentRowFocusedIndex.invoke(index)
                                 //  playListItemFocusedIndex = index

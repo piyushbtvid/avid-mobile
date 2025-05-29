@@ -26,7 +26,7 @@ import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.util.FocusState
 
 data class CategoryRowDto(
-    val categories: List<CategoryComposeDto>
+    val categories: List<CategoryComposeDto>,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -34,8 +34,12 @@ data class CategoryRowDto(
 fun CategoryRow(
     modifier: Modifier = Modifier,
     categoryRowDto: CategoryRowDto,
+    rowIndex: Int,
+    focusRequesters: MutableMap<Pair<Int, Int>, FocusRequester>,
+    lastFocusedItem: Pair<Int, Int>,
+    onItemFocused: (Pair<Int, Int>) -> Unit,
     onCategoryItemClick: (String) -> Unit,
-    shouldFocusOnFirstItem: Boolean = false
+    shouldFocusOnFirstItem: Boolean = false,
 ) {
 
 
@@ -44,15 +48,15 @@ fun CategoryRow(
         var categoryRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
         val itemFocusRequesters = remember { List(categories.size) { FocusRequester() } }
 
-        LaunchedEffect(shouldFocusOnFirstItem) {
-            if (shouldFocusOnFirstItem) {
-                try {
-                    itemFocusRequesters[0].requestFocus()
-                } catch (ex: Exception) {
-                    Log.e("FOCUS_ISSUE", "${ex.message}")
-                }
-            }
-        }
+//        LaunchedEffect(shouldFocusOnFirstItem) {
+//            if (shouldFocusOnFirstItem) {
+//                try {
+//                    itemFocusRequesters[0].requestFocus()
+//                } catch (ex: Exception) {
+//                    Log.e("FOCUS_ISSUE", "${ex.message}")
+//                }
+//            }
+//        }
 
 
         LazyRow(
@@ -69,6 +73,16 @@ fun CategoryRow(
         ) {
             itemsIndexed(categories) { index, categoryComposeDto ->
 
+                focusRequesters[Pair(rowIndex, index)] = itemFocusRequesters[index]
+
+
+                // Restore focus to the last focused item when returning to this row
+                LaunchedEffect(lastFocusedItem) {
+                    if (lastFocusedItem == Pair(rowIndex, index)) {
+                        itemFocusRequesters[index].requestFocus()
+                    }
+                }
+
                 val uiState = when (index) {
                     categoryRowFocusedIndex -> FocusState.FOCUSED
                     else -> FocusState.UNFOCUSED
@@ -79,7 +93,7 @@ fun CategoryRow(
                         .focusRequester(itemFocusRequesters[index])
                         .onFocusChanged {
                             if (it.hasFocus) {
-                                //    onItemFocused(Pair(rowIndex, index))
+                                onItemFocused(Pair(rowIndex, index))
                                 categoryRowFocusedIndex = index
                                 //  onChangeContentRowFocusedIndex.invoke(index)
                                 //  playListItemFocusedIndex = index

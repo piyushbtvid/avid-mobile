@@ -8,7 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRow
@@ -23,18 +30,14 @@ fun HomeContentSections(
     modifier: Modifier = Modifier,
     homePageItems: List<HomePageItem>,
     onCategoryItemClick: (String) -> Unit,
-    onItemClick: (PosterCardDto , List<PosterCardDto>) -> Unit,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
 
     val listState = rememberLazyListState()
+    val focusRequesters = remember { mutableMapOf<Pair<Int, Int>, FocusRequester>() }
+    var lastFocusedItem by rememberSaveable { mutableStateOf(Pair(0, 0)) }
 
-//    LaunchedEffect(Unit) {
-//        while (true){
-//            delay(300)
-//            listState.scrollToItem(0)
-//        }
-//    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -51,18 +54,36 @@ fun HomeContentSections(
                 is HomePageItem.CarouselRow -> CarouselContentRow(
                     carouselList = homePageItem.dto.carouselItemsDto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
+                    rowIndex = rowIndex,
+                    focusRequesters = focusRequesters,
+                    lastFocusedItem = lastFocusedItem,
+                    onItemFocused = { newFocus ->
+                        lastFocusedItem = newFocus
+                    },
                     listState = listState
                 )
 
                 is HomePageItem.CategoryRow -> CategoryRow(
                     categoryRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
+                    rowIndex = rowIndex,
+                    focusRequesters = focusRequesters,
+                    lastFocusedItem = lastFocusedItem,
+                    onItemFocused = { newFocus ->
+                        lastFocusedItem = newFocus
+                    },
                     onCategoryItemClick = onCategoryItemClick
                 )
 
                 is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                     onItemClick = onItemClick,
+                    rowIndex = rowIndex,
+                    focusRequesters = focusRequesters,
+                    lastFocusedItem = lastFocusedItem,
+                    onItemFocused = { newFocus ->
+                        lastFocusedItem = newFocus
+                    },
                     onChangeContentRowFocusedIndex = { index ->
                         onChangeContentRowFocusedIndex.invoke(index)
                     })
@@ -75,5 +96,9 @@ fun HomeContentSections(
             }
         }
 
+    }
+
+    LaunchedEffect(lastFocusedItem) {
+        focusRequesters[lastFocusedItem]?.requestFocus()
     }
 }
