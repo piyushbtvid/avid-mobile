@@ -71,7 +71,7 @@ class DetailViewModel @Inject constructor(
             buttonUnfocusedColor = if (hasFocus) Color.Transparent else Color.White,
             textUnfocusedColor = if (hasFocus) Color.Transparent else textUnFocusColor,
             contentRowTint = if (hasFocus) Color.Transparent else Color.White,
-            relatedContentColor = if (hasFocus) Color.White else Color.Transparent
+            relatedContentColor = if (hasFocus) Color.Black else Color.Transparent
         )
     }
 

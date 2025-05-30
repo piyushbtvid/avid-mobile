@@ -10,7 +10,7 @@ import com.faithForward.network.dto.detail.CardDetail
 sealed interface DetailPageItem {
     data class CardWithRelated(
         val detailDto: DetailDto,
-        val relatedList: List<PosterCardDto> = emptyList()
+        val relatedList: List<PosterCardDto> = emptyList(),
     ) : DetailPageItem
 }
 
@@ -28,20 +28,21 @@ fun CardDetail.toDetailDto(): DetailDto {
 }
 
 
-
 // Data class for UI-specific states
 data class UiState(
     val contentColor: Color = Color.Black,
     val buttonUnfocusedColor: Color = Color.White,
     val textUnfocusedColor: Color = textUnFocusColor, // Replace with your textUnFocusColor
     val contentRowTint: Color = Color.White,
-    val relatedContentColor: Color = Color.White,
-    val targetHeight: Int = 250
+    val relatedContentColor: Color = Color.Black,
+    val targetHeight: Int = 250,
 )
 
 // Sealed class for UI events
 sealed class DetailScreenEvent {
-    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) : DetailScreenEvent()
+    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) :
+        DetailScreenEvent()
+
     data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent()
     data object RelatedRowUpClick : DetailScreenEvent()
 }
