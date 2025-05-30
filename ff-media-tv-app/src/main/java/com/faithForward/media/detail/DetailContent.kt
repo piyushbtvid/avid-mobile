@@ -1,6 +1,5 @@
 package com.faithForward.media.detail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -40,8 +38,6 @@ import com.faithForward.media.commanComponents.CategoryCompose
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.home.carousel.ContentMetaBlock
-import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.media.util.FocusState
 
@@ -120,6 +116,7 @@ fun DetailContent(
                 modifier = Modifier.fillMaxSize()
             )
 
+            //Play Now Button and Content Info
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -170,6 +167,7 @@ fun DetailContent(
             }
 
 
+            // Item Title
             title?.let {
                 ContentDescription(
                     modifier = Modifier

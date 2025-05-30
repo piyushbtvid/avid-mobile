@@ -72,7 +72,7 @@ fun PosterCard(
             modifier.shadow(
                 color = cardShadowColor,
                 borderRadius = 23.dp,
-                blurRadius = 18.dp,
+                blurRadius = 14.dp,
                 offsetY = 8.dp,
                 offsetX = 0.dp,
                 spread = 3.dp,
@@ -125,7 +125,7 @@ fun PosterCardLazyRowPreview() {
     ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(horizontal = 24.dp)
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 20.dp)
         ) {
             items(3) { index ->
                 PosterCard(posterCardDto = PosterCardDto(

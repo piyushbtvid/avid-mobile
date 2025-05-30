@@ -31,7 +31,7 @@ fun RelatedContentRow(
     LazyRow(
         modifier = modifier
            ,
-        contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 5.dp),
+        contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(9.dp)
     ) {
         itemsIndexed(relatedContentRowDto.relatedContentDto) { index, relatedContentItem ->
