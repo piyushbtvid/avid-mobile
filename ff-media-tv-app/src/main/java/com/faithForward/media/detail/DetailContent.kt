@@ -1,7 +1,6 @@
 package com.faithForward.media.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,11 +26,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,7 +40,9 @@ import com.faithForward.media.commanComponents.CategoryCompose
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.home.carousel.ContentMetaBlock
+import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.media.util.FocusState
 
 data class DetailDto(
@@ -64,8 +60,12 @@ data class DetailDto(
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
-    onPlayButtonKeyDown: () -> Unit,
+    btnFocusRequester: FocusRequester = FocusRequester(),
+    contentColor: Color = Color.Black,
+    buttonUnfocusedColor: Color = Color.White,
+    textUnfocusedColor: Color = textUnFocusColor,
     detailDto: DetailDto,
+    contentRowTint: Color = Color.White,
 ) {
 
     var addToWatchListUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
@@ -73,7 +73,6 @@ fun DetailContent(
     var dislikeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
 
     val isFocused = remember { mutableStateOf(false) }
-    val btnFocusRequester = remember { FocusRequester() }
 
 
     val addToWatchListModifier = Modifier
@@ -141,8 +140,7 @@ fun DetailContent(
                 ContentMetaBlock(
                     modifier = Modifier
                         .padding(start = 20.dp, top = 20.dp)
-                        .wrapContentHeight()
-                    ,
+                        .wrapContentHeight(),
                     description = description,
                     releaseDate = releaseDate,
                     genre = genre,
@@ -151,14 +149,15 @@ fun DetailContent(
                     subscribers = subscribers,
                     imdbRating = imdbRating,
                     title = title,
-                    textColor = Color.Black,
+                    textColor = contentColor,
                     buttonModifier = modifier,
                     addToWatchListModifier = addToWatchListModifier,
                     likeModifier = likeModifier,
                     disLikeModifier = disLikeModifier,
                     addToWatchListUiState = addToWatchListUiState,
                     likeUiState = likeUiState,
-                    dislikeUiState = dislikeUiState
+                    dislikeUiState = dislikeUiState,
+                    contentRowTint = contentRowTint
                 )
                 CategoryCompose(
                     modifier = Modifier
@@ -167,8 +166,9 @@ fun DetailContent(
                         .onFocusChanged {
                             isFocused.value = it.hasFocus
                         }
-                        .focusable()
-                    ,
+                        .focusable(),
+                    backgroundUnFocusedColor = buttonUnfocusedColor,
+                    textUnFocusedColor = textUnfocusedColor,
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
                         // onCategoryItemClick.invoke(id)
@@ -190,7 +190,7 @@ fun DetailContent(
                     textSize = 28,
                     lineHeight = 29,
                     maxLines = 2,
-                    color = Color.Black,
+                    color = contentColor,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -210,8 +210,5 @@ fun DetailContent(
 private fun DetailPagePreview() {
     DetailContent(
         detailDto = DetailDto(),
-        onPlayButtonKeyDown = {
-
-        }
     )
 }

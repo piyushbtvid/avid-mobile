@@ -39,8 +39,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PosterCardDto(
-    val id : String,
+    val id: String,
     val posterImageSrc: String,
+    val title: String,
+    val description: String,
+    val genre: String? = null,
+    val seasons: Int? = null,
+    val duration: String? = null,
+    val imdbRating: String? = null,
+    val releaseDate: String? = null,
 )
 
 @Composable
@@ -57,8 +64,7 @@ fun PosterCard(
         targetValue = when (focusState) {
             FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
             else -> 1f
-        },
-        animationSpec = tween(300), label = ""
+        }, animationSpec = tween(300), label = ""
     )
 
     val posterModifier =
@@ -77,36 +83,27 @@ fun PosterCard(
         }
 
 
-    Column(
-        modifier = posterModifier
-            .width(135.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
+    Column(modifier = posterModifier
+        .width(135.dp)
+        .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+            transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
+        }
+        .zIndex(
+            when (focusState) {
+                FocusState.SELECTED, FocusState.FOCUSED -> 1f
+                else -> 0f
             }
-            .zIndex(
-                when (focusState) {
-                    FocusState.SELECTED, FocusState.FOCUSED -> 1f
-                    else -> 0f
-                }
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
+        ), horizontalAlignment = Alignment.CenterHorizontally) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(posterCardDto.posterImageSrc) // fallback if blank
-                .listener(
-                    onError = { request, throwable ->
-                        Log.e("CoilError", "Image load failed ${throwable.throwable}")
-                    },
-                    onSuccess = { _, _ ->
-                        Log.e("CoilSuccess", "Image loaded successfully")
-                    }
-                )
-                .crossfade(true)
-                .build(),
+                .listener(onError = { request, throwable ->
+                    Log.e("CoilError", "Image load failed ${throwable.throwable}")
+                }, onSuccess = { _, _ ->
+                    Log.e("CoilSuccess", "Image loaded successfully")
+                }).crossfade(true).build(),
             contentDescription = "Poster Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -115,8 +112,7 @@ fun PosterCard(
                 .clip(RoundedCornerShape(5.dp))
                 .clickable(interactionSource = null, indication = null, onClick = {
                     onItemClick.invoke(posterCardDto)
-                }
-                )
+                })
         )
     }
 }
@@ -125,22 +121,20 @@ fun PosterCard(
 @Composable
 fun PosterCardLazyRowPreview() {
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(horizontal = 24.dp)
         ) {
             items(3) { index ->
-                PosterCard(
-                    posterCardDto = PosterCardDto(posterImageSrc = "", id = ""), // Leave blank to test drawable fallback
+                PosterCard(posterCardDto = PosterCardDto(
+                    posterImageSrc = "", id = "", title = "", description = ""
+                ), // Leave blank to test drawable fallback
                     focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED,
                     onItemClick = {
 
-                    }
-                )
+                    })
             }
         }
     }

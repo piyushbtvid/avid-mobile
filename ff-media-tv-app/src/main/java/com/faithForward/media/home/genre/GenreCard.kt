@@ -24,9 +24,14 @@ import com.faithForward.media.util.FocusState
 data class GenreCardDto(
     val genreId: String,
     val name: String,
-    val description: String,
     val image: String,
     val views: String,
+    val description: String,
+    val genre: String? = null,
+    val seasons: Int? = null,
+    val duration: String? = null,
+    val imdbRating: String? = null,
+    val releaseDate: String? = null,
 )
 
 @Composable

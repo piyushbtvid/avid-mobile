@@ -13,7 +13,13 @@ fun ContentItem.toGenreCardDto(): GenreCardDto {
         name = creator?.name ?: "",
         image = portrait ?: "",
         description = name ?: "",
-        views = "$views Views"
+        views = "$views Views",
+        genre = genres?.mapNotNull { it.name }  // safely extract non-null names
+            ?.joinToString(", "),
+        seasons = seasons?.size,
+        duration = duration.toString(),
+        imdbRating = rating,
+        releaseDate = dateUploaded
     )
 }
 
@@ -32,6 +38,13 @@ fun GenreResponse.toGenreCardGridDto(): GenreGridDto {
 fun GenreCardDto.toPosterCardDto(): PosterCardDto {
     return PosterCardDto(
         id = genreId,
-        posterImageSrc = image
+        posterImageSrc = image,
+        title = name,
+        description = description,
+        genre = genre,
+        seasons = seasons,
+        duration = duration.toString(),
+        imdbRating = imdbRating,
+        releaseDate = releaseDate
     )
 }

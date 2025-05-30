@@ -1,5 +1,6 @@
 package com.faithForward.media.commanComponents
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -25,7 +26,7 @@ import com.faithForward.media.util.FocusState
 
 data class CategoryComposeDto(
     val btnText: String,
-    val id: String
+    val id: String,
 )
 
 @Composable
@@ -38,16 +39,18 @@ fun CategoryCompose(
     textUnFocusedColor: Color = textUnFocusColor,
     categoryComposeDto: CategoryComposeDto,
     onCategoryItemClick: (String) -> Unit,
-    focusState: FocusState
+    focusState: FocusState,
 ) {
     val containerColor = when (focusState) {
         FocusState.SELECTED, FocusState.FOCUSED -> backgroundFocusedColor
         FocusState.UNFOCUSED -> backgroundUnFocusedColor
+        FocusState.UNDEFINED -> backgroundUnFocusedColor // Default to unfocused color for UNDEFINED
     }
 
     val textColor = when (focusState) {
         FocusState.SELECTED, FocusState.FOCUSED -> textFocusedColor
         FocusState.UNFOCUSED -> textUnFocusedColor
+        FocusState.UNDEFINED -> textUnFocusedColor // Default to unfocused text color for UNDEFINED
     }
 
     val buttonModifier =

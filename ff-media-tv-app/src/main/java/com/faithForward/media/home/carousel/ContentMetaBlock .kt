@@ -43,9 +43,10 @@ fun ContentMetaBlock(
     likeModifier: Modifier = Modifier,
     disLikeModifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier,
-    addToWatchListUiState: FocusState,
-    likeUiState: FocusState,
-    dislikeUiState: FocusState,
+    addToWatchListUiState: FocusState = FocusState.UNDEFINED,
+    likeUiState: FocusState = FocusState.UNDEFINED,
+    dislikeUiState: FocusState = FocusState.UNDEFINED,
+    contentRowTint: Color = Color.White,
 ) {
 
     LaunchedEffect(addToWatchListUiState) {
@@ -65,7 +66,7 @@ fun ContentMetaBlock(
             val metaList = listOfNotNull(releaseDate?.takeIf { it.isNotBlank() },
                 genre?.takeIf { it.isNotBlank() },
                 seasons?.let { "$it Season${if (it > 1) "s" else ""}" }?.takeIf { it.isNotBlank() },
-                duration?.takeIf { it.isNotBlank()  },
+                duration?.takeIf { it.isNotBlank() },
                 subscribers?.takeIf { it.isNotBlank() },
                 imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() })
 
@@ -106,29 +107,34 @@ fun ContentMetaBlock(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Icon buttons
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            // Show Icon buttons Row only when none of the UiStates are UNDEFINED
+            if (addToWatchListUiState != FocusState.UNDEFINED &&
+                likeUiState != FocusState.UNDEFINED &&
+                dislikeUiState != FocusState.UNDEFINED
             ) {
-                Image(
-                    modifier = addToWatchListModifier,
-                    painter = painterResource(R.drawable.vector),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
-                )
-                Image(
-                    modifier = likeModifier,
-                    painter = painterResource(R.drawable.fi_sr_thumbs_up),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
-                )
-                Image(
-                    modifier = disLikeModifier,
-                    painter = painterResource(R.drawable.fi_sr_thumbs_down),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = addToWatchListModifier,
+                        painter = painterResource(R.drawable.vector),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                    )
+                    Image(
+                        modifier = likeModifier,
+                        painter = painterResource(R.drawable.fi_sr_thumbs_up),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                    )
+                    Image(
+                        modifier = disLikeModifier,
+                        painter = painterResource(R.drawable.fi_sr_thumbs_down),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                    )
+                }
             }
 
             Box(
