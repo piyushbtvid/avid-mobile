@@ -76,7 +76,7 @@ fun DetailScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
 
-                RelatedContentRow(
+                RelatedContent(
                     relatedContentRowDto = RelatedContentRowDto(
                         heading = "Related Movies",
                         relatedContentDto = detailPageItem.relatedList,
