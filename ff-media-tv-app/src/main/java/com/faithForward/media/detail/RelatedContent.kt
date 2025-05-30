@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
-import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.theme.focusedMainColor
 
 data class RelatedContentRowDto(
@@ -55,6 +53,8 @@ fun RelatedContent(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+
+        // Related Items Text Heading
         TitleText(text = relatedContentRowDto.heading,
             color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
             fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
@@ -66,6 +66,7 @@ fun RelatedContent(
 
         )
 
+        // Related Items Row
         RelatedContentRow(
             relatedContentRowDto = relatedContentRowDto,
             modifier = Modifier
@@ -77,35 +78,13 @@ fun RelatedContent(
                 relatedRowFocusedIndex = index
             },
         )
-        Column(
+
+        //Related Item Content Meta Data
+        RelatedContentInfoBlock(
             modifier = Modifier.padding(top = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            with(currentFocusedItem) {
-                TitleText(
-                    textSize = 18,
-                    modifier = Modifier
-                        .padding(start = 20.dp),
-                    text = this?.title ?: "",
-                    fontWeight = FontWeight.W600,
-                    color = relatedContentColor
-                )
-                ContentMetaBlock(
-                    modifier = Modifier
-                        .padding(start = 20.dp)
-                        .wrapContentHeight(),
-                    description = this?.description,
-                    title = this?.title,
-                    textColor = relatedContentColor,
-                    buttonModifier = modifier,
-                    releaseDate = this?.releaseDate,
-                    imdbRating = this?.imdbRating,
-                    duration = this?.duration,
-                    genre = this?.genre,
-                    seasons = this?.seasons
-                )
-            }
-        }
+            currentFocusedItem = currentFocusedItem,
+            relatedContentColor = relatedContentColor,
+        )
     }
 
 }
