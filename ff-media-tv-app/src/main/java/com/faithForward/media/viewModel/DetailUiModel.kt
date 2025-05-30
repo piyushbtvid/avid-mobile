@@ -1,7 +1,9 @@
 package com.faithForward.media.viewModel
 
+import androidx.compose.ui.graphics.Color
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.DetailDto
+import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.network.dto.detail.CardDetail
 
 
@@ -26,29 +28,20 @@ fun CardDetail.toDetailDto(): DetailDto {
 }
 
 
+
+// Data class for UI-specific states
+data class UiState(
+    val contentColor: Color = Color.Black,
+    val buttonUnfocusedColor: Color = Color.White,
+    val textUnfocusedColor: Color = textUnFocusColor, // Replace with your textUnFocusColor
+    val contentRowTint: Color = Color.White,
+    val relatedContentColor: Color = Color.White,
+    val targetHeight: Int = 250
+)
+
+// Sealed class for UI events
 sealed class DetailScreenEvent {
-    data class WatchNowFocusChanged(val isFocused: Boolean) : DetailScreenEvent()
-    data class RelatedTextFocusChanged(val isFocused: Boolean) : DetailScreenEvent()
-    data class RelatedItemFocused(val index: Int, val item: PosterCardDto?) : DetailScreenEvent()
-}
-
-sealed class DetailScreenState(
-    val isWatchNowFocused: Boolean = false,
-    val isRelatedTextFocused: Boolean = false,
-    val focusedRelatedItemIndex: Int = -1,
-    val focusedRelatedItem: PosterCardDto? = null
-) {
-    data object Idle : DetailScreenState()
-
-    data class Active(
-        val watchNowFocused: Boolean,
-        val relatedTextFocused: Boolean,
-        val relatedItemIndex: Int,
-        val relatedItem: PosterCardDto?
-    ) : DetailScreenState(
-        watchNowFocused,
-        relatedTextFocused,
-        relatedItemIndex,
-        relatedItem
-    )
+    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) : DetailScreenEvent()
+    data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent()
+    data object RelatedRowUpClick : DetailScreenEvent()
 }

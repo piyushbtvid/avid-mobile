@@ -116,18 +116,8 @@ fun DetailContent(
                 modifier = Modifier.fillMaxSize()
             )
 
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                textFocusedMainColor,
-                                textFocusedMainColor.copy(alpha = 0f),
-                                textFocusedMainColor.copy(alpha = 0f)
-                            )
-                        )
-                    )
+            DetailGradient(
+                modifier = Modifier.fillMaxSize()
             )
 
             Column(
