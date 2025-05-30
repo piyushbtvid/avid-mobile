@@ -55,7 +55,7 @@ fun RelatedContentRow(
     var isRelatedTextFocused by remember { mutableStateOf(false) }
 
     LaunchedEffect(relatedRowFocusedIndex) {
-        if (relatedRowFocusedIndex > 0) {
+        if (relatedRowFocusedIndex > -1) {
             currentFocusedItem = relatedContentRowDto.relatedContentDto.get(relatedRowFocusedIndex)
             Log.e("CURRENT_FOCUS", "current focus item is ${currentFocusedItem?.title}")
         }
