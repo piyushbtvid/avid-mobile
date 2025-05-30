@@ -1,4 +1,4 @@
-package com.faithForward.media.detail
+package com.faithForward.media.detail.related
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

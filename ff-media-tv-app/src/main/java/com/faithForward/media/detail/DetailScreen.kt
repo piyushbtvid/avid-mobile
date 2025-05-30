@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.detail.related.RelatedContent
+import com.faithForward.media.detail.related.RelatedContentRowDto
 import com.faithForward.media.viewModel.DetailPageItem
 import com.faithForward.media.viewModel.DetailScreenEvent
 import com.faithForward.media.viewModel.DetailViewModel

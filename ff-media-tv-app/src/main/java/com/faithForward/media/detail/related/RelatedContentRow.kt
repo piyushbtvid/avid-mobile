@@ -1,4 +1,4 @@
-package com.faithForward.media.detail
+package com.faithForward.media.detail.related
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement

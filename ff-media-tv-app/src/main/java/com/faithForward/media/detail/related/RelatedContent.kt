@@ -1,4 +1,4 @@
-package com.faithForward.media.detail
+package com.faithForward.media.detail.related
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
