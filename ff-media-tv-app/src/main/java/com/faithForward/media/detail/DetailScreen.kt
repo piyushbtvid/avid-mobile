@@ -87,6 +87,7 @@ fun DetailScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(top = 30.dp)
                             .height(animatedHeight)
                             .align(Alignment.BottomStart)
                             .padding(

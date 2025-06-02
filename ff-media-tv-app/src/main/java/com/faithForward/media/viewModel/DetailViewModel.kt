@@ -73,7 +73,7 @@ class DetailViewModel @Inject constructor(
 
     private fun updateFocusState(hasFocus: Boolean) {
         _uiState.value = _uiState.value.copy(
-            targetHeight = if (hasFocus) Int.MAX_VALUE else 250,
+            targetHeight = if (hasFocus) Int.MAX_VALUE else 280,
             contentColor = if (hasFocus) Color.Transparent else Color.Black,
             buttonUnfocusedColor = if (hasFocus) Color.Transparent else Color.White,
             textUnfocusedColor = if (hasFocus) Color.Transparent else textUnFocusColor,
