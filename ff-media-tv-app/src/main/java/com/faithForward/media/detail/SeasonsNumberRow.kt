@@ -46,7 +46,7 @@ fun SeasonsNumberRow(
 
     LazyRow(
         modifier = modifier.wrapContentWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
         itemsIndexed(seasonsNumberDtoList) { index, seasonNumberItem ->
