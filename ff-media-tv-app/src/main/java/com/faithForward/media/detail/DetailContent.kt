@@ -1,5 +1,7 @@
 package com.faithForward.media.detail
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -58,7 +61,7 @@ fun DetailContent(
     modifier: Modifier = Modifier,
     btnFocusRequester: FocusRequester = FocusRequester(),
     contentColor: Color = Color.Black,
-    buttonUnfocusedColor: Color = Color.White,
+    buttonUnfocusedColor: Color = Color.Black,
     textUnfocusedColor: Color = textUnFocusColor,
     detailDto: DetailDto,
     contentRowTint: Color = Color.White,
@@ -101,6 +104,13 @@ fun DetailContent(
         }
         .focusable()
 
+    val isVisible = contentColor != Color.Transparent
+
+    val targetAlpha by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = 500)
+    )
+
     with(detailDto) {
         Box(modifier = modifier.fillMaxSize()) {
 
@@ -120,6 +130,7 @@ fun DetailContent(
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
+                    .alpha(targetAlpha)
                     .verticalScroll(rememberScrollState()) // allow scrolling
                     .padding(bottom = 100.dp), // ensure the button has space
                 verticalArrangement = Arrangement.spacedBy(34.dp)
@@ -134,9 +145,9 @@ fun DetailContent(
                     seasons = seasons,
                     duration = duration,
                     subscribers = subscribers,
+                    textColor = Color.Black,
                     imdbRating = imdbRating,
                     title = title,
-                    textColor = contentColor,
                     buttonModifier = modifier,
                     addToWatchListModifier = addToWatchListModifier,
                     likeModifier = likeModifier,
@@ -154,8 +165,6 @@ fun DetailContent(
                             isFocused.value = it.hasFocus
                         }
                         .focusable(),
-                    backgroundUnFocusedColor = buttonUnfocusedColor,
-                    textUnFocusedColor = textUnfocusedColor,
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
                         // onCategoryItemClick.invoke(id)
@@ -173,12 +182,13 @@ fun DetailContent(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
                         .padding(top = 15.dp, end = 100.dp)
+                        .alpha(targetAlpha)
                         .align(Alignment.TopEnd),
                     text = title,
+                    color = Color.Black,
                     textSize = 28,
                     lineHeight = 29,
                     maxLines = 2,
-                    color = contentColor,
                     overflow = TextOverflow.Ellipsis
                 )
             }

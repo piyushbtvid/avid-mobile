@@ -30,7 +30,7 @@ import com.faithForward.media.theme.focusedMainColor
 
 data class SeasonsContentDto(
     val seasonsNumberDtoList: List<SeasonsNumberDto>,
-    val relatedContentDto: List<PosterCardDto>,
+    val listSeasonDto: List<SeasonDto>,
 )
 
 data class SeasonDto(
@@ -50,9 +50,19 @@ fun SeasonsContent(
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
     var isRelatedTextFocused by remember { mutableStateOf(false) }
 
+    var focusedSeasonEpisodes: List<PosterCardDto> by remember {
+        mutableStateOf(
+            if (seasonsContentDto.listSeasonDto.isNotEmpty()) {
+                seasonsContentDto.listSeasonDto[0].episodesContentDto
+            } else {
+                emptyList() // Default to an empty list if listSeasonDto is empty
+            }
+        )
+    }
+
     LaunchedEffect(relatedRowFocusedIndex) {
         if (relatedRowFocusedIndex > -1) {
-            currentFocusedItem = seasonsContentDto.relatedContentDto.get(relatedRowFocusedIndex)
+            currentFocusedItem = focusedSeasonEpisodes.get(relatedRowFocusedIndex)
             Log.e("CURRENT_FOCUS", "current focus item is ${currentFocusedItem?.title}")
         }
     }
@@ -77,7 +87,11 @@ fun SeasonsContent(
 
             SeasonsNumberRow(
                 seasonsNumberDtoList = seasonsContentDto.seasonsNumberDtoList,
-                onSeasonUpClick = onSeasonUpClick
+                onSeasonUpClick = onSeasonUpClick,
+                onSeasonClicked = { seasonNumber ->
+                    focusedSeasonEpisodes =
+                        seasonsContentDto.listSeasonDto[seasonNumber - 1].episodesContentDto
+                }
             )
 
         }
@@ -85,10 +99,9 @@ fun SeasonsContent(
 
         // Related Items Row
         RelatedContentRow(
-            relatedContentRowDto = seasonsContentDto.relatedContentDto,
+            relatedContentRowDto = focusedSeasonEpisodes,
             modifier = Modifier
-                .fillMaxWidth()
-                .focusRestorer(),
+                .fillMaxWidth(),
             relatedRowFocusedIndex = relatedRowFocusedIndex,
             onRelatedUpClick = {
                 false

@@ -46,23 +46,6 @@ fun DetailScreen(
         animationSpec = tween(durationMillis = 500)
     )
 
-    val list = listOf(
-        SeasonsNumberDto(
-            seasonNumber = 1
-        ),
-        SeasonsNumberDto(
-            seasonNumber = 2
-        ),
-        SeasonsNumberDto(
-            seasonNumber = 3
-        ),
-        SeasonsNumberDto(
-            seasonNumber = 4
-        ),
-        SeasonsNumberDto(
-            seasonNumber = 5
-        ),
-    )
 
     LaunchedEffect(Unit) {
         Log.e(
@@ -156,7 +139,7 @@ fun DetailScreen(
                                 },
                             seasonsContentDto = SeasonsContentDto(
                                 seasonsNumberDtoList = detailPageItem.seasonNumberList,
-                                relatedContentDto = detailPageItem.seasonList.get(1).episodesContentDto
+                                listSeasonDto = detailPageItem.seasonList,
                             ),
                             relatedContentColor = uiState.relatedContentColor
                         )

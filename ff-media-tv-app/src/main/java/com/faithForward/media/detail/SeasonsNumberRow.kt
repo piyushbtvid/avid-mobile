@@ -37,6 +37,7 @@ data class SeasonsNumberDto(
 fun SeasonsNumberRow(
     modifier: Modifier = Modifier,
     seasonsNumberDtoList: List<SeasonsNumberDto>,
+    onSeasonClicked: (Int) -> Unit,
     onSeasonUpClick: () -> Boolean,
 ) {
 
@@ -61,6 +62,7 @@ fun SeasonsNumberRow(
                     .onFocusChanged {
                         if (it.hasFocus) {
                             seasonNumberFocusedIndex = index
+                            onSeasonClicked.invoke(seasonNumberItem.seasonNumber)
                         } else {
                             seasonNumberFocusedIndex = -1
                         }
@@ -76,6 +78,7 @@ fun SeasonsNumberRow(
                         }
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
+                        onSeasonClicked.invoke(seasonNumberItem.seasonNumber)
                         seasonNumberSelectedIndex = index
                         seasonNumberFocusedIndex = -1
                     }),
@@ -129,6 +132,9 @@ private fun SeasonsNumberRowPreview() {
             seasonsNumberDtoList = list,
             onSeasonUpClick = {
                 false
+            },
+            onSeasonClicked = {
+
             }
         )
     }
