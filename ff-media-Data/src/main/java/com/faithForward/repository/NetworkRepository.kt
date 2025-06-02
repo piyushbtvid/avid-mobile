@@ -1,10 +1,10 @@
 package com.faithForward.repository
 
-import com.faithForward.preferences.UserPreferences
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.request.LoginRequest
+import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject

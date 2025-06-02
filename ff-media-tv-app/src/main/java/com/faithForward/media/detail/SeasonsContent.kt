@@ -1,8 +1,9 @@
-package com.faithForward.media.detail.related
+package com.faithForward.media.detail
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -22,20 +23,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.detail.related.RelatedContentInfoBlock
+import com.faithForward.media.detail.related.RelatedContentRow
 import com.faithForward.media.theme.focusedMainColor
 
-data class RelatedContentRowDto(
-    val heading: String,
+
+data class SeasonsContentDto(
+    val seasonsNumberDtoList: List<SeasonsNumberDto>,
     val relatedContentDto: List<PosterCardDto>,
+)
+
+data class SeasonDto(
+    val episodesContentDto: List<PosterCardDto>,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun RelatedContent(
+fun SeasonsContent(
     modifier: Modifier = Modifier,
-    onRelatedUpClick: () -> Boolean,
-    relatedContentColor: Color = Color.White,
-    relatedContentRowDto: RelatedContentRowDto,
+    seasonsContentDto: SeasonsContentDto,
+    relatedContentColor: Color = Color.Black,
+    onSeasonUpClick: () -> Boolean,
 ) {
 
     var relatedRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -44,36 +52,47 @@ fun RelatedContent(
 
     LaunchedEffect(relatedRowFocusedIndex) {
         if (relatedRowFocusedIndex > -1) {
-            currentFocusedItem = relatedContentRowDto.relatedContentDto.get(relatedRowFocusedIndex)
+            currentFocusedItem = seasonsContentDto.relatedContentDto.get(relatedRowFocusedIndex)
             Log.e("CURRENT_FOCUS", "current focus item is ${currentFocusedItem?.title}")
         }
     }
 
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         // Related Items Text Heading
-        TitleText(text = relatedContentRowDto.heading,
-            color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
-            fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
+        Row(
             modifier = Modifier
-                .padding(start = 25.dp)
-                .onFocusChanged {
+                .fillMaxWidth()
+                .padding(start = 25.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            TitleText(text = "Seasons:",
+                color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
+                fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
+                modifier = Modifier.onFocusChanged {
                     isRelatedTextFocused = it.hasFocus
-                }
+                })
 
-        )
+            SeasonsNumberRow(
+                seasonsNumberDtoList = seasonsContentDto.seasonsNumberDtoList,
+                onSeasonUpClick = onSeasonUpClick
+            )
+
+        }
+
 
         // Related Items Row
         RelatedContentRow(
-            relatedContentRowDto = relatedContentRowDto.relatedContentDto,
+            relatedContentRowDto = seasonsContentDto.relatedContentDto,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRestorer(),
             relatedRowFocusedIndex = relatedRowFocusedIndex,
-            onRelatedUpClick = onRelatedUpClick,
+            onRelatedUpClick = {
+                false
+            },
             onRelatedRowFocusedIndexChange = { index ->
                 relatedRowFocusedIndex = index
             },

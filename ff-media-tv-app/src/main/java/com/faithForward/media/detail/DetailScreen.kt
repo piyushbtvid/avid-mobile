@@ -46,6 +46,24 @@ fun DetailScreen(
         animationSpec = tween(durationMillis = 500)
     )
 
+    val list = listOf(
+        SeasonsNumberDto(
+            seasonNumber = 1
+        ),
+        SeasonsNumberDto(
+            seasonNumber = 2
+        ),
+        SeasonsNumberDto(
+            seasonNumber = 3
+        ),
+        SeasonsNumberDto(
+            seasonNumber = 4
+        ),
+        SeasonsNumberDto(
+            seasonNumber = 5
+        ),
+    )
+
     LaunchedEffect(Unit) {
         Log.e(
             "DETAIL_SCREEN",
@@ -78,29 +96,73 @@ fun DetailScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
 
-                RelatedContent(
-                    relatedContentRowDto = RelatedContentRowDto(
-                        heading = "Related Movies",
-                        relatedContentDto = detailPageItem.relatedList,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(animatedHeight)
-                        .align(Alignment.BottomStart)
-                        .padding(bottom = 10.dp)
-                        .onFocusChanged {
-                            detailViewModel.handleEvent(DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus))
+                if (detailPageItem.relatedList.isNotEmpty()) {
+                    RelatedContent(
+                        relatedContentRowDto = RelatedContentRowDto(
+                            heading = "Related Movies",
+                            relatedContentDto = detailPageItem.relatedList,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(animatedHeight)
+                            .align(Alignment.BottomStart)
+                            .padding(
+                                bottom = 10.dp,
+                            )
+                            .onFocusChanged {
+                                detailViewModel.handleEvent(
+                                    DetailScreenEvent.RelatedRowFocusChanged(
+                                        it.hasFocus
+                                    )
+                                )
+                            },
+                        onRelatedUpClick = {
+                            detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
+                            try {
+                                btnFocusRequester.requestFocus()
+                            } catch (ex: Exception) {
+                                Log.e("LOG", "exception is ${ex.message}")
+                            }
+                            true
                         },
-                    onRelatedUpClick = {
-                        detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
-                        try {
-                            btnFocusRequester.requestFocus()
-                        } catch (ex: Exception) {
-                            Log.e("LOG", "exception is ${ex.message}")
-                        }
-                    },
-                    relatedContentColor = uiState.relatedContentColor
-                )
+                        relatedContentColor = uiState.relatedContentColor,
+                    )
+                } else {
+                    if (detailPageItem.seasonNumberList != null && detailPageItem.seasonList != null) {
+                        SeasonsContent(
+                            onSeasonUpClick = {
+                                Log.e("SEASON", "on Season Up Click is called on detail screen")
+                                try {
+                                    btnFocusRequester.requestFocus()
+                                } catch (ex: Exception) {
+                                    Log.e("LOG", "exception is ${ex.message}")
+                                }
+                                true
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 30.dp)
+                                .height(animatedHeight)
+                                .align(Alignment.BottomStart)
+                                .padding(
+                                    bottom = 10.dp,
+                                )
+                                .onFocusChanged {
+                                    detailViewModel.handleEvent(
+                                        DetailScreenEvent.RelatedRowFocusChanged(
+                                            it.hasFocus
+                                        )
+                                    )
+                                },
+                            seasonsContentDto = SeasonsContentDto(
+                                seasonsNumberDtoList = detailPageItem.seasonNumberList,
+                                relatedContentDto = detailPageItem.seasonList.get(1).episodesContentDto
+                            ),
+                            relatedContentColor = uiState.relatedContentColor
+                        )
+                    }
+                }
+
             }
         }
     }

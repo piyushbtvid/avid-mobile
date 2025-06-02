@@ -15,6 +15,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.util.FocusState
 
 
@@ -23,18 +24,17 @@ import com.faithForward.media.util.FocusState
 fun RelatedContentRow(
     modifier: Modifier = Modifier,
     relatedRowFocusedIndex: Int,
-    relatedContentRowDto: RelatedContentRowDto,
-    onRelatedUpClick: () -> Unit,
+    relatedContentRowDto: List<PosterCardDto>,
+    onRelatedUpClick: () -> Boolean,
     onRelatedRowFocusedIndexChange: (Int) -> Unit,
 ) {
 
     LazyRow(
-        modifier = modifier
-           ,
+        modifier = modifier,
         contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(9.dp)
     ) {
-        itemsIndexed(relatedContentRowDto.relatedContentDto) { index, relatedContentItem ->
+        itemsIndexed(relatedContentRowDto) { index, relatedContentItem ->
 
             val uiState = when (index) {
                 relatedRowFocusedIndex -> FocusState.FOCUSED
@@ -54,8 +54,7 @@ fun RelatedContentRow(
                 .focusable()
                 .onKeyEvent { keyEvent ->
                     if (keyEvent.key == Key.DirectionUp && keyEvent.type == KeyEventType.KeyUp) {
-                        onRelatedUpClick.invoke()
-                        true
+                        return@onKeyEvent onRelatedUpClick()
                     } else {
                         false
                     }

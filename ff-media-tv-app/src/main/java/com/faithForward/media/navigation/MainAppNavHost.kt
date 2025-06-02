@@ -57,7 +57,12 @@ fun MainAppNavHost(
                 },
                 onItemClick = { item, list ->
                     if (item.id.isNotEmpty()) {
-                        val filteredList = list.filterNot { it.id == item.id }
+                        val filteredList = if (item.id.contains("series")) {
+                            emptyList()
+                        } else {
+                            list.filterNot { it.id == item.id }
+                        }
+
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.id, encodedList))

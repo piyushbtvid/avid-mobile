@@ -52,8 +52,6 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = viewModel()
                     val loginViewModel = hiltViewModel<LoginViewModel>()
-                    val seriesViewModel = hiltViewModel<SeriesViewModel>()
-                    seriesViewModel.fetchSeriesDetail("series-5")
                     val userSession by loginViewModel.userSession.collectAsStateWithLifecycle()
                     if (userSession.isLoading) {
                         LoaderScreen()

@@ -42,12 +42,19 @@ class DetailViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     Log.e("DETAIL", "card detail success is ${response.body()}")
                     val cardDetail = response.body()
+                    val seasonNumberList = cardDetail?.data?.seasons?.map {
+                        it.toSeasonNumberDto()
+                    }
                     if (cardDetail != null) {
                         _cardDetail.emit(
                             Resource.Success(
                                 DetailPageItem.CardWithRelated(
                                     detailDto = cardDetail.toDetailDto(),
-                                    relatedList = relatedList
+                                    relatedList = relatedList,
+                                    seasonList = cardDetail.data.seasons?.map {
+                                        it.toSeasonDto()
+                                    },
+                                    seasonNumberList = seasonNumberList
                                 )
                             )
                         )
@@ -77,7 +84,7 @@ class DetailViewModel @Inject constructor(
 
     private fun handleRelatedRowUpClick() {
         _uiState.value = _uiState.value.copy(
-            targetHeight = 250,
+            targetHeight = 280,
             contentColor = Color.Black,
             buttonUnfocusedColor = Color.White,
             textUnfocusedColor = textUnFocusColor,
