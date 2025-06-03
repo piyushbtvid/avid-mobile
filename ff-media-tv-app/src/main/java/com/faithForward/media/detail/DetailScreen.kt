@@ -25,6 +25,7 @@ import com.faithForward.media.detail.related.RelatedContentRowDto
 import com.faithForward.media.viewModel.DetailPageItem
 import com.faithForward.media.viewModel.DetailScreenEvent
 import com.faithForward.media.viewModel.DetailViewModel
+import com.faithForward.media.viewModel.RelatedContentData
 import com.faithForward.util.Resource
 
 @Composable
@@ -36,16 +37,15 @@ fun DetailScreen(
 ) {
     val cardDetail by detailViewModel.cardDetail.collectAsStateWithLifecycle()
     val uiState by detailViewModel.uiState.collectAsStateWithLifecycle()
+    val relatedContentData by detailViewModel.relatedContentData.collectAsStateWithLifecycle()
     val btnFocusRequester = remember { FocusRequester() }
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
 
-    // Update target height with actual screen height when focused
     val animatedHeight by animateDpAsState(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
         animationSpec = tween(durationMillis = 500)
     )
-
 
     LaunchedEffect(Unit) {
         Log.e(
@@ -57,17 +57,17 @@ fun DetailScreen(
 
     when (cardDetail) {
         is Resource.Loading, is Resource.Unspecified -> {
-            //  add loading indicator here if required
+            // Add loading indicator here if required
             return
         }
 
         is Resource.Error -> {
-            //  error UI here if required
+            // Error UI here if required
             return
         }
 
         is Resource.Success -> {
-            val detailPageItem = cardDetail.data as? DetailPageItem.CardWithRelated ?: return
+            val detailPageItem = cardDetail.data as? DetailPageItem.Card ?: return
             Box(modifier = modifier.fillMaxSize()) {
                 DetailContent(
                     detailDto = detailPageItem.detailDto,
@@ -79,43 +79,63 @@ fun DetailScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
 
-                if (detailPageItem.relatedList.isNotEmpty()) {
-                    RelatedContent(
-                        relatedContentRowDto = RelatedContentRowDto(
-                            heading = "Related Movies",
-                            relatedContentDto = detailPageItem.relatedList,
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 30.dp)
-                            .height(animatedHeight)
-                            .align(Alignment.BottomStart)
-                            .padding(
-                                bottom = 10.dp,
+                // Assign to local variable to enable smart casting
+                when (val contentData = relatedContentData) {
+                    is RelatedContentData.None -> {
+                        // Optionally show a placeholder or nothing
+                    }
+
+                    is RelatedContentData.RelatedMovies -> {
+                        if (contentData.movies.isNotEmpty()) {
+                            RelatedContent(
+                                relatedContentRowDto = RelatedContentRowDto(
+                                    heading = "Related Movies",
+                                    relatedContentDto = contentData.movies
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 30.dp)
+                                    .height(animatedHeight)
+                                    .align(Alignment.BottomStart)
+                                    .padding(bottom = 10.dp)
+                                    .onFocusChanged {
+                                        detailViewModel.handleEvent(
+                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                        )
+                                    },
+                                onRelatedUpClick = {
+                                    detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
+                                    try {
+                                        btnFocusRequester.requestFocus()
+                                    } catch (ex: Exception) {
+                                        Log.e("LOG", "exception is ${ex.message}")
+                                    }
+                                    true
+                                },
+                                relatedContentColor = uiState.relatedContentColor
                             )
-                            .onFocusChanged {
-                                detailViewModel.handleEvent(
-                                    DetailScreenEvent.RelatedRowFocusChanged(
-                                        it.hasFocus
+                        }
+                    }
+
+                    is RelatedContentData.SeriesSeasons -> {
+                        RelatedContent(
+                            relatedContentRowDto = RelatedContentRowDto(
+                                heading = "Seasons:",
+                                relatedContentDto = contentData.selectedSeasonEpisodes
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 30.dp)
+                                .height(animatedHeight)
+                                .align(Alignment.BottomStart)
+                                .padding(bottom = 10.dp)
+                                .onFocusChanged {
+                                    detailViewModel.handleEvent(
+                                        DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
                                     )
-                                )
-                            },
-                        onRelatedUpClick = {
-                            detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
-                            try {
-                                btnFocusRequester.requestFocus()
-                            } catch (ex: Exception) {
-                                Log.e("LOG", "exception is ${ex.message}")
-                            }
-                            true
-                        },
-                        relatedContentColor = uiState.relatedContentColor,
-                    )
-                } else {
-                    if (detailPageItem.seasonNumberList != null && detailPageItem.seasonList != null) {
-                        SeasonsContent(
-                            onSeasonUpClick = {
-                                Log.e("SEASON", "on Season Up Click is called on detail screen")
+                                },
+                            onRelatedUpClick = {
+                                detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                 try {
                                     btnFocusRequester.requestFocus()
                                 } catch (ex: Exception) {
@@ -123,30 +143,29 @@ fun DetailScreen(
                                 }
                                 true
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 30.dp)
-                                .height(animatedHeight)
-                                .align(Alignment.BottomStart)
-                                .padding(
-                                    bottom = 10.dp,
-                                )
-                                .onFocusChanged {
-                                    detailViewModel.handleEvent(
-                                        DetailScreenEvent.RelatedRowFocusChanged(
-                                            it.hasFocus
+                            relatedContentColor = uiState.relatedContentColor,
+                            seasonsNumberRow = {
+                                SeasonsNumberRow(
+                                    seasonsNumberDtoList = contentData.seasonNumberList,
+                                    onSeasonUpClick = {
+                                        try {
+                                            btnFocusRequester.requestFocus()
+                                        } catch (ex: Exception) {
+                                            Log.e("LOG", "exception is ${ex.message}")
+                                        }
+                                        true
+                                    },
+                                    onSeasonNumberChanged = { seasonNumber ->
+                                        detailViewModel.handleEvent(
+                                            DetailScreenEvent.SeasonSelected(seasonNumber)
                                         )
-                                    )
-                                },
-                            seasonsContentDto = SeasonsContentDto(
-                                seasonsNumberDtoList = detailPageItem.seasonNumberList,
-                                listSeasonDto = detailPageItem.seasonList,
-                            ),
-                            relatedContentColor = uiState.relatedContentColor
+                                    },
+                                    modifier = Modifier
+                                )
+                            }
                         )
                     }
                 }
-
             }
         }
     }

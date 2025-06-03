@@ -12,13 +12,26 @@ import com.faithForward.network.dto.series.Season
 
 
 sealed interface DetailPageItem {
-    data class CardWithRelated(
-        val detailDto: DetailDto,
-        val relatedList: List<PosterCardDto> = emptyList(),
-        val seasonNumberList: List<SeasonsNumberDto>? = emptyList(),
-        val seasonList: List<SeasonDto>? = emptyList(),
+    data class Card(
+        val detailDto: DetailDto
     ) : DetailPageItem
 }
+
+sealed interface RelatedContentData {
+    data class RelatedMovies(val movies: List<PosterCardDto>) : RelatedContentData
+    data class SeriesSeasons(
+        val seasonNumberList: List<SeasonsNumberDto>,
+        val selectedSeasonEpisodes: List<PosterCardDto>,
+        val allSeasons: List<SeasonDto>
+    ) : RelatedContentData
+    data object None : RelatedContentData
+}
+
+data class SeasonData(
+    val seasonNumberList: List<SeasonsNumberDto>,
+    val selectedSeasonEpisodes: List<PosterCardDto>,
+    val allSeasons: List<SeasonDto>
+)
 
 fun CardDetail.toDetailDto(): DetailDto {
     return DetailDto(
@@ -39,8 +52,8 @@ fun Season.toSeasonDto(): SeasonDto {
     })
 }
 
-fun Season.toSeasonNumberDto() : SeasonsNumberDto {
-    return  SeasonsNumberDto(
+fun Season.toSeasonNumberDto(): SeasonsNumberDto {
+    return SeasonsNumberDto(
         seasonNumber = season_number
     )
 }
@@ -69,10 +82,9 @@ data class UiState(
 )
 
 // Sealed class for UI events
-sealed class DetailScreenEvent {
-    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) :
-        DetailScreenEvent()
-
-    data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent()
-    data object RelatedRowUpClick : DetailScreenEvent()
+sealed interface DetailScreenEvent {
+    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) : DetailScreenEvent
+    data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent
+    data object RelatedRowUpClick : DetailScreenEvent
+    data class SeasonSelected(val seasonNumber: Int) : DetailScreenEvent
 }

@@ -16,7 +16,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -88,7 +87,7 @@ fun SeasonsContent(
             SeasonsNumberRow(
                 seasonsNumberDtoList = seasonsContentDto.seasonsNumberDtoList,
                 onSeasonUpClick = onSeasonUpClick,
-                onSeasonClicked = { seasonNumber ->
+                onSeasonNumberChanged = { seasonNumber ->
                     focusedSeasonEpisodes =
                         seasonsContentDto.listSeasonDto[seasonNumber - 1].episodesContentDto
                 }

@@ -35,10 +35,10 @@ data class SeasonsNumberDto(
 
 @Composable
 fun SeasonsNumberRow(
-    modifier: Modifier = Modifier,
     seasonsNumberDtoList: List<SeasonsNumberDto>,
-    onSeasonClicked: (Int) -> Unit,
     onSeasonUpClick: () -> Boolean,
+    onSeasonNumberChanged: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     var seasonNumberFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -62,7 +62,7 @@ fun SeasonsNumberRow(
                     .onFocusChanged {
                         if (it.hasFocus) {
                             seasonNumberFocusedIndex = index
-                            onSeasonClicked.invoke(seasonNumberItem.seasonNumber)
+                            onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
                         } else {
                             seasonNumberFocusedIndex = -1
                         }
@@ -78,7 +78,7 @@ fun SeasonsNumberRow(
                         }
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
-                        onSeasonClicked.invoke(seasonNumberItem.seasonNumber)
+                        onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
                         seasonNumberSelectedIndex = index
                         seasonNumberFocusedIndex = -1
                     }),
@@ -133,7 +133,7 @@ private fun SeasonsNumberRowPreview() {
             onSeasonUpClick = {
                 false
             },
-            onSeasonClicked = {
+            onSeasonNumberChanged = {
 
             }
         )

@@ -3,6 +3,7 @@ package com.faithForward.media.detail.related
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -36,15 +37,15 @@ fun RelatedContent(
     onRelatedUpClick: () -> Boolean,
     relatedContentColor: Color = Color.White,
     relatedContentRowDto: RelatedContentRowDto,
+    seasonsNumberRow: (@Composable () -> Unit)? = null
 ) {
-
     var relatedRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
     var isRelatedTextFocused by remember { mutableStateOf(false) }
 
     LaunchedEffect(relatedRowFocusedIndex) {
         if (relatedRowFocusedIndex > -1) {
-            currentFocusedItem = relatedContentRowDto.relatedContentDto.get(relatedRowFocusedIndex)
+            currentFocusedItem = relatedContentRowDto.relatedContentDto.getOrNull(relatedRowFocusedIndex)
             Log.e("CURRENT_FOCUS", "current focus item is ${currentFocusedItem?.title}")
         }
     }
@@ -53,38 +54,38 @@ fun RelatedContent(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-
-        // Related Items Text Heading
-        TitleText(text = relatedContentRowDto.heading,
-            color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
-            fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
-            modifier = Modifier
-                .padding(start = 25.dp)
-                .onFocusChanged {
-                    isRelatedTextFocused = it.hasFocus
-                }
-
-        )
-
-        // Related Items Row
-        RelatedContentRow(
-            relatedContentRowDto = relatedContentRowDto.relatedContentDto,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRestorer(),
+                .padding(start = 25.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            TitleText(
+                text = relatedContentRowDto.heading,
+                color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
+                fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
+                modifier = Modifier.onFocusChanged {
+                    isRelatedTextFocused = it.hasFocus
+                }
+            )
+
+            seasonsNumberRow?.invoke()
+        }
+
+        RelatedContentRow(
+            relatedContentRowDto = relatedContentRowDto.relatedContentDto,
+            modifier = Modifier.fillMaxWidth(),
             relatedRowFocusedIndex = relatedRowFocusedIndex,
             onRelatedUpClick = onRelatedUpClick,
             onRelatedRowFocusedIndexChange = { index ->
                 relatedRowFocusedIndex = index
-            },
+            }
         )
 
-        //Related Item Content Meta Data
         RelatedContentInfoBlock(
             modifier = Modifier.padding(top = 20.dp),
             currentFocusedItem = currentFocusedItem,
-            relatedContentColor = relatedContentColor,
+            relatedContentColor = relatedContentColor
         )
     }
-
 }
