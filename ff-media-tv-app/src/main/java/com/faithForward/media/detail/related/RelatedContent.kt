@@ -36,8 +36,9 @@ fun RelatedContent(
     modifier: Modifier = Modifier,
     onRelatedUpClick: () -> Boolean,
     relatedContentColor: Color = Color.White,
+    contentRowModifier: Modifier = Modifier,
     relatedContentRowDto: RelatedContentRowDto,
-    seasonsNumberRow: (@Composable () -> Unit)? = null
+    seasonsNumberRow: (@Composable () -> Unit)? = null,
 ) {
     var relatedRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
@@ -45,7 +46,8 @@ fun RelatedContent(
 
     LaunchedEffect(relatedRowFocusedIndex) {
         if (relatedRowFocusedIndex > -1) {
-            currentFocusedItem = relatedContentRowDto.relatedContentDto.getOrNull(relatedRowFocusedIndex)
+            currentFocusedItem =
+                relatedContentRowDto.relatedContentDto.getOrNull(relatedRowFocusedIndex)
             Log.e("CURRENT_FOCUS", "current focus item is ${currentFocusedItem?.title}")
         }
     }
@@ -74,7 +76,7 @@ fun RelatedContent(
 
         RelatedContentRow(
             relatedContentRowDto = relatedContentRowDto.relatedContentDto,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = contentRowModifier,
             relatedRowFocusedIndex = relatedRowFocusedIndex,
             onRelatedUpClick = onRelatedUpClick,
             onRelatedRowFocusedIndexChange = { index ->

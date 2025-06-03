@@ -13,8 +13,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.RelatedContentData
 import com.faithForward.util.Resource
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
@@ -103,6 +106,9 @@ fun DetailScreen(
                                             DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
                                         )
                                     },
+                                contentRowModifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRestorer(),
                                 onRelatedUpClick = {
                                     detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                     try {
@@ -118,11 +124,10 @@ fun DetailScreen(
                     }
 
                     is RelatedContentData.SeriesSeasons -> {
-                        RelatedContent(
-                            relatedContentRowDto = RelatedContentRowDto(
-                                heading = "Seasons:",
-                                relatedContentDto = contentData.selectedSeasonEpisodes
-                            ),
+                        RelatedContent(relatedContentRowDto = RelatedContentRowDto(
+                            heading = "Seasons:",
+                            relatedContentDto = contentData.selectedSeasonEpisodes
+                        ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 30.dp)
@@ -134,6 +139,7 @@ fun DetailScreen(
                                         DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
                                     )
                                 },
+                            contentRowModifier = Modifier.fillMaxWidth(),
                             onRelatedUpClick = {
                                 detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                 try {
@@ -160,10 +166,9 @@ fun DetailScreen(
                                             DetailScreenEvent.SeasonSelected(seasonNumber)
                                         )
                                     },
-                                    modifier = Modifier
+                                    modifier = Modifier.focusRestorer()
                                 )
-                            }
-                        )
+                            })
                     }
                 }
             }
