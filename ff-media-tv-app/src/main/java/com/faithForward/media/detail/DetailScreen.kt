@@ -75,10 +75,7 @@ fun DetailScreen(
                 DetailContent(
                     detailDto = detailPageItem.detailDto,
                     btnFocusRequester = btnFocusRequester,
-                    contentColor = uiState.contentColor,
-                    textUnfocusedColor = uiState.textUnfocusedColor,
-                    contentRowTint = uiState.contentRowTint,
-                    buttonUnfocusedColor = uiState.buttonUnfocusedColor,
+                    isContentVisible = uiState.isContentVisible,
                     modifier = Modifier.fillMaxSize(),
                 )
 

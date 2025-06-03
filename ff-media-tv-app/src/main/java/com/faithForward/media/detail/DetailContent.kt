@@ -41,7 +41,6 @@ import com.faithForward.media.commanComponents.CategoryCompose
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.home.carousel.ContentMetaBlock
-import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.media.util.FocusState
 
 data class DetailDto(
@@ -60,19 +59,18 @@ data class DetailDto(
 fun DetailContent(
     modifier: Modifier = Modifier,
     btnFocusRequester: FocusRequester = FocusRequester(),
-    contentColor: Color = Color.Black,
-    buttonUnfocusedColor: Color = Color.Black,
-    textUnfocusedColor: Color = textUnFocusColor,
+    isContentVisible: Boolean = true,
     detailDto: DetailDto,
-    contentRowTint: Color = Color.White,
 ) {
-
     var addToWatchListUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var likeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var dislikeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
+    var isFocused by remember { mutableStateOf(false) }
 
-    val isFocused = remember { mutableStateOf(false) }
-
+    val targetAlpha by animateFloatAsState(
+        targetValue = if (isContentVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = 500)
+    )
 
     val addToWatchListModifier = Modifier
         .onFocusChanged {
@@ -104,19 +102,18 @@ fun DetailContent(
         }
         .focusable()
 
-    val isVisible = contentColor != Color.Transparent
-
-    val targetAlpha by animateFloatAsState(
-        targetValue = if (isVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 500)
-    )
-
     with(detailDto) {
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
 
+        ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(imgSrc)
-                    .error(R.drawable.banner_test_img).crossfade(true).build(),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imgSrc)
+                    .error(R.drawable.banner_test_img)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = "detail Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -126,13 +123,13 @@ fun DetailContent(
                 modifier = Modifier.fillMaxSize()
             )
 
-            //Play Now Button and Content Info
+            // Play Now Button and Content Info
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .alpha(targetAlpha)
-                    .verticalScroll(rememberScrollState()) // allow scrolling
-                    .padding(bottom = 100.dp), // ensure the button has space
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(34.dp)
             ) {
                 ContentMetaBlock(
@@ -145,49 +142,47 @@ fun DetailContent(
                     seasons = seasons,
                     duration = duration,
                     subscribers = subscribers,
-                    textColor = Color.Black,
                     imdbRating = imdbRating,
                     title = title,
-                    buttonModifier = modifier,
+                    textColor = Color.Black,
+                    buttonModifier = Modifier,
                     addToWatchListModifier = addToWatchListModifier,
                     likeModifier = likeModifier,
                     disLikeModifier = disLikeModifier,
                     addToWatchListUiState = addToWatchListUiState,
                     likeUiState = likeUiState,
                     dislikeUiState = dislikeUiState,
-                    contentRowTint = contentRowTint
                 )
                 CategoryCompose(
                     modifier = Modifier
                         .padding(start = 20.dp)
                         .focusRequester(btnFocusRequester)
                         .onFocusChanged {
-                            isFocused.value = it.hasFocus
+                            isFocused = it.hasFocus
                         }
                         .focusable(),
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
                         // onCategoryItemClick.invoke(id)
                     },
-                    focusState = if (isFocused.value) FocusState.FOCUSED else FocusState.UNFOCUSED
+                    focusState = if (isFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
 
-                Spacer(modifier = Modifier.height(40.dp)) // padding space at the bottom
+                Spacer(modifier = Modifier.height(40.dp))
             }
-
 
             // Item Title
             title?.let {
                 ContentDescription(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
-                        .padding(top = 15.dp, end = 100.dp)
                         .alpha(targetAlpha)
+                        .padding(top = 15.dp, end = 100.dp)
                         .align(Alignment.TopEnd),
                     text = title,
-                    color = Color.Black,
                     textSize = 28,
                     lineHeight = 29,
+                    color = Color.Black,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

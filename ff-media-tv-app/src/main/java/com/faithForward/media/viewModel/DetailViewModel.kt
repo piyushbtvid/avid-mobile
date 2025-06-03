@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.SeasonsNumberDto
-import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -120,10 +119,7 @@ class DetailViewModel @Inject constructor(
     private fun updateFocusState(hasFocus: Boolean) {
         _uiState.value = _uiState.value.copy(
             targetHeight = if (hasFocus) Int.MAX_VALUE else 280,
-            contentColor = if (hasFocus) Color.Transparent else Color.Black,
-            buttonUnfocusedColor = if (hasFocus) Color.Transparent else Color.White,
-            textUnfocusedColor = if (hasFocus) Color.Transparent else textUnFocusColor,
-            contentRowTint = if (hasFocus) Color.Transparent else Color.White,
+            isContentVisible = !hasFocus, // Hide content when related content is focused
             relatedContentColor = if (hasFocus) Color.Black else Color.Transparent
         )
     }
@@ -131,10 +127,7 @@ class DetailViewModel @Inject constructor(
     private fun handleRelatedRowUpClick() {
         _uiState.value = _uiState.value.copy(
             targetHeight = 280,
-            contentColor = Color.Black,
-            buttonUnfocusedColor = Color.White,
-            textUnfocusedColor = textUnFocusColor,
-            contentRowTint = Color.White,
+            isContentVisible = true, // Show content when related row is unfocused
             relatedContentColor = Color.Transparent
         )
     }

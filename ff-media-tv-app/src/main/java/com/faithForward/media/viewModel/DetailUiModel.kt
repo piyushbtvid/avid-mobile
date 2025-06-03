@@ -73,12 +73,9 @@ fun Episode.toPosterDto(): PosterCardDto {
 
 // Data class for UI-specific states
 data class UiState(
-    val contentColor: Color = Color.Black,
-    val buttonUnfocusedColor: Color = Color.White,
-    val textUnfocusedColor: Color = textUnFocusColor, // Replace with your textUnFocusColor
-    val contentRowTint: Color = Color.White,
     val relatedContentColor: Color = Color.Black,
     val targetHeight: Int = 280,
+    val isContentVisible: Boolean = true
 )
 
 // Sealed class for UI events
