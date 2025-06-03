@@ -97,21 +97,21 @@ fun SeasonsContent(
 
 
         // Related Items Row
-        RelatedContentRow(
-            relatedContentRowDto = focusedSeasonEpisodes,
-            modifier = Modifier
-                .fillMaxWidth(),
-            relatedRowFocusedIndex = relatedRowFocusedIndex,
-            onRelatedUpClick = {
-                false
-            },
-            onRelatedRowFocusedIndexChange = { index ->
-                relatedRowFocusedIndex = index
-            },
-            onItemClick = {
-
-            }
-        )
+//        RelatedContentRow(
+//            relatedContentRowDto = focusedSeasonEpisodes,
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//            relatedRowFocusedIndex = relatedRowFocusedIndex,
+//            onRelatedUpClick = {
+//                false
+//            },
+//            onRelatedRowFocusedIndexChange = { index ->
+//                relatedRowFocusedIndex = index
+//            },
+//            onItemClick = {
+//
+//            }
+//        )
 
         //Related Item Content Meta Data
         RelatedContentInfoBlock(

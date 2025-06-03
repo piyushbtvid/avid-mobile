@@ -16,12 +16,12 @@ import com.faithForward.media.home.creator.CreatorScreen
 import com.faithForward.media.home.genre.GenreDataScreen
 import com.faithForward.media.home.movies.MoviesPage
 import com.faithForward.media.login.LoginScreen
+import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
 import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
-import com.faithForward.media.viewModel.ContentViewModel
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -151,12 +151,14 @@ fun MainAppNavHost(
                 itemId = itemId,
                 detailViewModel = detailViewModel,
                 relatedList = posterList,
-                onRelatedItemClick = { item , list ->
+                onRelatedItemClick = { item, list ->
                     if (item.id.isNotEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList))
+                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList)) {
+                        }
+
                     }
                 }
             )

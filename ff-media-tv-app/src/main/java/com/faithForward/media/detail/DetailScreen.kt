@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -45,6 +48,8 @@ fun DetailScreen(
     val btnFocusRequester = remember { FocusRequester() }
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
+
+    var lastFocusedItem by rememberSaveable { mutableStateOf(0) }
 
     val animatedHeight by animateDpAsState(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
@@ -100,6 +105,7 @@ fun DetailScreen(
                                     .align(Alignment.BottomStart)
                                     .padding(bottom = 10.dp)
                                     .onFocusChanged {
+                                        Log.e("LOG", "onFocusChanged()()()()}")
                                         detailViewModel.handleEvent(
                                             DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
                                         )
@@ -117,7 +123,11 @@ fun DetailScreen(
                                     true
                                 },
                                 onItemClick = onRelatedItemClick,
-                                isRelatedContentMetaDataVisible = !uiState.isContentVisible
+                                isRelatedContentMetaDataVisible = !uiState.isContentVisible,
+                                lastFocusedItemIndex = lastFocusedItem,
+                                onLastFocusedIndexChange = { item ->
+                                    lastFocusedItem = item
+                                }
                             )
                         }
                     }
@@ -150,6 +160,10 @@ fun DetailScreen(
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls ->
+
+                            },
+                            lastFocusedItemIndex = 0,
+                            onLastFocusedIndexChange = { int ->
 
                             },
                             seasonsNumberRow = {

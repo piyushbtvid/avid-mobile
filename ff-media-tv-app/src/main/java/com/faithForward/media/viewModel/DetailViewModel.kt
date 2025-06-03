@@ -1,5 +1,7 @@
 package com.faithForward.media.viewModel
 
+import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
@@ -26,6 +28,10 @@ class DetailViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        Log.e("DETAIL_VIEWMODEL", "detail viewmodel init called")
+    }
 
     fun handleEvent(event: DetailScreenEvent) {
         when (event) {

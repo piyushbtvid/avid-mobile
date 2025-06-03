@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -39,12 +41,18 @@ fun RelatedContent(
     contentRowModifier: Modifier = Modifier,
     relatedContentRowDto: RelatedContentRowDto,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    lastFocusedItemIndex: Int,
+    onLastFocusedIndexChange: (Int) -> Unit,
     isRelatedContentMetaDataVisible: Boolean = false,
     seasonsNumberRow: (@Composable () -> Unit)? = null,
 ) {
     var relatedRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
     var isRelatedTextFocused by remember { mutableStateOf(false) }
+
+    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
+
+    val listState = rememberLazyListState()
 
     val targetAlpha by animateFloatAsState(
         targetValue = if (isRelatedContentMetaDataVisible) 1f else 0f,
@@ -87,6 +95,12 @@ fun RelatedContent(
             },
             onRelatedRowFocusedIndexChange = { index ->
                 relatedRowFocusedIndex = index
+            },
+            focusRequesters = focusRequesters,
+            lastFocusedItem = lastFocusedItemIndex,
+            lazyListState = listState,
+            onItemFocused = { newFocus ->
+                onLastFocusedIndexChange.invoke(newFocus)
             })
 
         RelatedContentInfoBlock(
@@ -96,4 +110,18 @@ fun RelatedContent(
             currentFocusedItem = currentFocusedItem,
         )
     }
+
+    LaunchedEffect(Unit) {
+        Log.e("LAST_FOCUSED_INDEX", "last focused index is $lastFocusedItemIndex")
+        try {
+            if (lastFocusedItemIndex > 0 && lastFocusedItemIndex < relatedContentRowDto.relatedContentDto.size) {
+                //  listState.scrollToItem(lastFocusedItemIndex)
+                focusRequesters[lastFocusedItemIndex]?.requestFocus()
+            }
+        } catch (_: Exception) {
+
+        }
+
+    }
+
 }

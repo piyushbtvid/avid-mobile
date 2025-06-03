@@ -83,7 +83,11 @@ fun CarouselContentRow(
 
         LaunchedEffect(lastFocusedItem) {
             if (lastFocusedItem == Pair(rowIndex, index)) {
-                itemFocusRequesters[index].requestFocus()
+                try {
+                    itemFocusRequesters[index].requestFocus()
+                } catch (_: Exception) {
+
+                }
             }
         }
 

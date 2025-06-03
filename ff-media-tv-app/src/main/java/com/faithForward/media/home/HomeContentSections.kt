@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -33,8 +34,15 @@ fun HomeContentSections(
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
-
+    // State for the vertical LazyColumn
     val listState = rememberLazyListState()
+    // Map to store LazyListState for each row's LazyRow
+    val rowListStates = remember { mutableMapOf<Int, LazyListState>() }
+    // Initialize LazyListState for each row
+    homePageItems.forEachIndexed { index, _ ->
+        rowListStates[index] = rowListStates[index] ?: rememberLazyListState()
+    }
+    // Focus management
     val focusRequesters = remember { mutableMapOf<Pair<Int, Int>, FocusRequester>() }
     var lastFocusedItem by rememberSaveable { mutableStateOf(Pair(0, 0)) }
 
@@ -45,8 +53,6 @@ fun HomeContentSections(
         state = listState,
         contentPadding = PaddingValues(bottom = 20.dp)
     ) {
-
-
         itemsIndexed(homePageItems) { rowIndex, homePageItem ->
             val shouldFocusOnFirstItem = rowIndex == 0
 
@@ -72,10 +78,12 @@ fun HomeContentSections(
                     onItemFocused = { newFocus ->
                         lastFocusedItem = newFocus
                     },
+                    listState = rowListStates[rowIndex] ?: rememberLazyListState(),
                     onCategoryItemClick = onCategoryItemClick
                 )
 
-                is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
+                is HomePageItem.PosterRow -> ContentRow(
+                    posterRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                     onItemClick = onItemClick,
                     rowIndex = rowIndex,
@@ -84,9 +92,11 @@ fun HomeContentSections(
                     onItemFocused = { newFocus ->
                         lastFocusedItem = newFocus
                     },
+                    listState = rowListStates[rowIndex] ?: rememberLazyListState(),
                     onChangeContentRowFocusedIndex = { index ->
                         onChangeContentRowFocusedIndex.invoke(index)
-                    })
+                    }
+                )
 
                 is HomePageItem.CreatorGrid -> {
                     CreatorCardGrid(
@@ -95,10 +105,16 @@ fun HomeContentSections(
                 }
             }
         }
-
     }
 
-    LaunchedEffect(lastFocusedItem) {
-        focusRequesters[lastFocusedItem]?.requestFocus()
+    // Scroll to the last focused item for the correct row
+    LaunchedEffect(Unit) {
+        try {
+            val (rowIndex, itemIndex) = lastFocusedItem
+            rowListStates[rowIndex]?.scrollToItem(itemIndex)
+            focusRequesters[lastFocusedItem]?.requestFocus()
+        } catch (_: Exception) {
+            // Handle any errors (e.g., index out of bounds)
+        }
     }
 }

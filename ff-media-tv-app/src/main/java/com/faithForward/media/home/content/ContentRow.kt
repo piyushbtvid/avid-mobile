@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ fun ContentRow(
     focusRequesters: MutableMap<Pair<Int, Int>, FocusRequester>,
     onItemFocused: (Pair<Int, Int>) -> Unit,
     lastFocusedItem: Pair<Int, Int>,
+    listState: LazyListState,
     shouldFocusOnFirstItem: Boolean = false,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
@@ -72,6 +74,7 @@ fun ContentRow(
             text = posterRowDto.heading, modifier = Modifier.padding(start = 25.dp)
         )
         LazyRow(
+            state = listState,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRestorer {
@@ -89,7 +92,11 @@ fun ContentRow(
                 // Restore focus to the last focused item when returning to this row
                 LaunchedEffect(lastFocusedItem) {
                     if (lastFocusedItem == Pair(rowIndex, index)) {
-                        itemFocusRequesters[index].requestFocus()
+                        try {
+                            itemFocusRequesters[index].requestFocus()
+                        } catch (_: Exception) {
+
+                        }
                     }
                 }
 

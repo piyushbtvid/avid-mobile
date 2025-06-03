@@ -5,6 +5,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ fun CategoryRow(
     lastFocusedItem: Pair<Int, Int>,
     onItemFocused: (Pair<Int, Int>) -> Unit,
     onCategoryItemClick: (String) -> Unit,
+    listState: LazyListState,
     shouldFocusOnFirstItem: Boolean = false,
 ) {
 
@@ -60,6 +62,7 @@ fun CategoryRow(
 
 
         LazyRow(
+            state = listState,
             modifier = modifier
                 .fillMaxWidth()
                 .focusRestorer(),
@@ -79,7 +82,11 @@ fun CategoryRow(
                 // Restore focus to the last focused item when returning to this row
                 LaunchedEffect(lastFocusedItem) {
                     if (lastFocusedItem == Pair(rowIndex, index)) {
-                        itemFocusRequesters[index].requestFocus()
+                        try {
+                            itemFocusRequesters[index].requestFocus()
+                        }catch (_:Exception){
+
+                        }
                     }
                 }
 
