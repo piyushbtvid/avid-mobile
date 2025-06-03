@@ -1,11 +1,9 @@
 package com.faithForward.media.viewModel
 
-import androidx.compose.ui.graphics.Color
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.DetailDto
 import com.faithForward.media.detail.SeasonDto
 import com.faithForward.media.detail.SeasonsNumberDto
-import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.series.Episode
 import com.faithForward.network.dto.series.Season
@@ -41,7 +39,7 @@ fun CardDetail.toDetailDto(): DetailDto {
         releaseDate = data.dateUploaded,
         genre = data.genres?.mapNotNull { it.name }  // safely extract non-null names
             ?.joinToString(", "),
-        duration = data.duration.toString(),
+        duration = data.duration?.toString(),
         imdbRating = data.rating,
     )
 }
