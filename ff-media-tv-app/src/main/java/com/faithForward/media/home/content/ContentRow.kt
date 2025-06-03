@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -32,7 +33,7 @@ import com.faithForward.media.util.FocusState
 
 data class PosterRowDto(
     val heading: String,
-    val dtos: List<PosterCardDto>
+    val dtos: List<PosterCardDto>,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -40,23 +41,29 @@ data class PosterRowDto(
 fun ContentRow(
     modifier: Modifier = Modifier,
     posterRowDto: PosterRowDto,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    rowIndex: Int,
+    focusRequesters: MutableMap<Pair<Int, Int>, FocusRequester>,
+    onItemFocused: (Pair<Int, Int>) -> Unit,
+    lastFocusedItem: Pair<Int, Int>,
+    listState: LazyListState,
     shouldFocusOnFirstItem: Boolean = false,
-    onChangeContentRowFocusedIndex: (Int) -> Unit
+    onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
 
     var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     val itemFocusRequesters = remember { List(posterRowDto.dtos.size) { FocusRequester() } }
 
-    LaunchedEffect(shouldFocusOnFirstItem) {
-        if (shouldFocusOnFirstItem) {
-            try {
-                itemFocusRequesters[0].requestFocus()
-            } catch (ex: Exception) {
-                Log.e("FOCUS_ISSUE", "${ex.message}")
-            }
-        }
-    }
+//    LaunchedEffect(shouldFocusOnFirstItem) {
+//        if (shouldFocusOnFirstItem) {
+//            try {
+//                itemFocusRequesters[0].requestFocus()
+//            } catch (ex: Exception) {
+//                Log.e("FOCUS_ISSUE", "${ex.message}")
+//            }
+//        }
+//    }
 
     Column(
         modifier = modifier
@@ -67,6 +74,7 @@ fun ContentRow(
             text = posterRowDto.heading, modifier = Modifier.padding(start = 25.dp)
         )
         LazyRow(
+            state = listState,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRestorer {
@@ -78,6 +86,20 @@ fun ContentRow(
         {
             itemsIndexed(posterRowDto.dtos) { index, posterCardDto ->
 
+                focusRequesters[Pair(rowIndex, index)] = itemFocusRequesters[index]
+
+
+                // Restore focus to the last focused item when returning to this row
+                LaunchedEffect(lastFocusedItem) {
+                    if (lastFocusedItem == Pair(rowIndex, index)) {
+                        try {
+                            itemFocusRequesters[index].requestFocus()
+                        } catch (_: Exception) {
+
+                        }
+                    }
+                }
+
                 val uiState = when (index) {
                     contentRowFocusedIndex -> FocusState.FOCUSED
                     else -> FocusState.UNFOCUSED
@@ -88,7 +110,7 @@ fun ContentRow(
                         .focusRequester(itemFocusRequesters[index])
                         .onFocusChanged {
                             if (it.hasFocus) {
-                                //    onItemFocused(Pair(rowIndex, index))
+                                onItemFocused(Pair(rowIndex, index))
                                 contentRowFocusedIndex = index
                                 //  onChangeContentRowFocusedIndex.invoke(index)
                                 //  playListItemFocusedIndex = index
@@ -103,7 +125,10 @@ fun ContentRow(
                         }
                         .focusable(),
                     posterCardDto = posterCardDto,
-                    focusState = uiState
+                    focusState = uiState,
+                    onItemClick = { item ->
+                        onItemClick.invoke(item, posterRowDto.dtos)
+                    }
                 )
             }
             item {

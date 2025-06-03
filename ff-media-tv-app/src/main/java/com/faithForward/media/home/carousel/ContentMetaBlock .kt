@@ -28,7 +28,7 @@ import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
 
 @Composable
-fun CarouselContent(
+fun ContentMetaBlock(
     modifier: Modifier = Modifier,
     description: String? = null,
     releaseDate: String? = null,
@@ -38,13 +38,15 @@ fun CarouselContent(
     imdbRating: String? = null,
     subscribers: String? = null,
     title: String?,
+    textColor: Color = Color.White,
     addToWatchListModifier: Modifier = Modifier,
     likeModifier: Modifier = Modifier,
     disLikeModifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier,
-    addToWatchListUiState: FocusState,
-    likeUiState: FocusState,
-    dislikeUiState: FocusState,
+    addToWatchListUiState: FocusState = FocusState.UNDEFINED,
+    likeUiState: FocusState = FocusState.UNDEFINED,
+    dislikeUiState: FocusState = FocusState.UNDEFINED,
+    contentRowTint: Color = Color.White,
 ) {
 
     LaunchedEffect(addToWatchListUiState) {
@@ -76,10 +78,13 @@ fun CarouselContent(
                     metaList.forEachIndexed { index, item ->
                         if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
-                            ContentDescription(text = "|")
+                            ContentDescription(
+                                text = "|",
+                                color = textColor
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
-                        ContentDescription(text = item)
+                        ContentDescription(text = item, color = textColor)
                     }
                 }
 
@@ -94,6 +99,7 @@ fun CarouselContent(
                         .height(60.dp),
                     text = it,
                     lineHeight = 13,
+                    color = textColor,
                     overflow = TextOverflow.Ellipsis,
                     textSize = 12
                 )
@@ -101,34 +107,41 @@ fun CarouselContent(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Icon buttons
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            // Show Icon buttons Row only when none of the UiStates are UNDEFINED
+            if (addToWatchListUiState != FocusState.UNDEFINED &&
+                likeUiState != FocusState.UNDEFINED &&
+                dislikeUiState != FocusState.UNDEFINED
             ) {
-                Image(
-                    modifier = addToWatchListModifier,
-                    painter = painterResource(R.drawable.vector),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
-                )
-                Image(
-                    modifier = likeModifier,
-                    painter = painterResource(R.drawable.fi_sr_thumbs_up),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
-                )
-                Image(
-                    modifier = disLikeModifier,
-                    painter = painterResource(R.drawable.fi_sr_thumbs_down),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else Color.White)
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = addToWatchListModifier,
+                        painter = painterResource(R.drawable.vector),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                    )
+                    Image(
+                        modifier = likeModifier,
+                        painter = painterResource(R.drawable.fi_sr_thumbs_up),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                    )
+                    Image(
+                        modifier = disLikeModifier,
+                        painter = painterResource(R.drawable.fi_sr_thumbs_down),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                    )
+                }
             }
 
-            Box(modifier = buttonModifier
-                .size(10.dp)
-                .background(color = Color.Transparent))
+            Box(
+                modifier = buttonModifier
+                    .size(10.dp)
+                    .background(color = Color.Transparent)
+            )
         }
     }
 }
@@ -143,7 +156,7 @@ fun CarouselPreview(modifier: Modifier = Modifier) {
             .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        CarouselContent(
+        ContentMetaBlock(
             title = "",
             addToWatchListUiState = FocusState.FOCUSED,
             likeUiState = FocusState.FOCUSED,

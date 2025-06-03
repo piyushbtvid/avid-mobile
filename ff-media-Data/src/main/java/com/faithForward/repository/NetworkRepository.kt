@@ -1,21 +1,20 @@
 package com.faithForward.repository
 
-import com.faithForward.preferences.UserPreferences
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.request.LoginRequest
+import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject
 
 class NetworkRepository @Inject constructor(
     private val userPreferences: UserPreferences,
-    private val apiServiceInterface: ApiServiceInterface
+    private val apiServiceInterface: ApiServiceInterface,
 ) {
 
-    suspend fun getHomeSectionData(sectionId: Int) =
-        apiServiceInterface.getHomeSectionData()
+    suspend fun getHomeSectionData(sectionId: Int) = apiServiceInterface.getHomeSectionData()
 
     suspend fun getCategories() = apiServiceInterface.getCategories()
 
@@ -26,11 +25,10 @@ class NetworkRepository @Inject constructor(
 
     suspend fun loginUser(
         email: String,
-        password: String
+        password: String,
     ): Response<LoginResponse> {
         val loginRequest = LoginRequest(
-            password = password,
-            email = email
+            password = password, email = email
         )
 
         return apiServiceInterface.loginUser(loginRequest)
@@ -52,11 +50,20 @@ class NetworkRepository @Inject constructor(
     }
 
     suspend fun getGivenSectionData(
-        sectionName: String
+        sectionName: String,
     ) = apiServiceInterface.getGivenSectionData(sectionName)
 
     suspend fun getGivenGenreData(
-        itemId: String
+        itemId: String,
     ) = apiServiceInterface.getGivenGenreData(itemId)
 
+    suspend fun getGivenCardDetail(
+        itemId: String,
+    ) = apiServiceInterface.getGivenCardDetail(itemId)
+
+    suspend fun getSingleSeriesDetail(
+        itemId: String,
+    ) = apiServiceInterface.getSingleSeriesDetail(itemId)
+
 }
+

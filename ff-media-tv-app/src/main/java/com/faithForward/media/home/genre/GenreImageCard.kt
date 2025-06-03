@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.faithForward.media.R
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState
 
@@ -45,6 +47,7 @@ fun GenreImageCard(
     modifier: Modifier = Modifier,
     posterCardDto: GenreImageCardDto,
     focusState: FocusState,
+    onItemClick: () -> Unit,
     cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
 ) {
@@ -92,6 +95,10 @@ fun GenreImageCard(
                 .fillMaxWidth()
                 .height(210.dp)
                 .clip(RoundedCornerShape(5.dp))
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onItemClick.invoke()
+                }
+                )
         )
     }
 }
@@ -111,7 +118,10 @@ fun PosterCardLazyRowPreview() {
             items(3) { index ->
                 GenreImageCard(
                     posterCardDto = GenreImageCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
-                    focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED
+                    focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED,
+                    onItemClick = {
+
+                    }
                 )
             }
         }

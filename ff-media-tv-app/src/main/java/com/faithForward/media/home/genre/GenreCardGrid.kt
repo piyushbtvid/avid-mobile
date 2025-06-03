@@ -1,5 +1,6 @@
 package com.faithForward.media.home.genre
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,23 +42,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.homeBackgroundColor
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.viewModel.toPosterCardDto
 
 
 data class GenreGridDto(
     val title: String,
-    val genreCardList: List<GenreCardDto>
+    val genreCardList: List<GenreCardDto>,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun GenreCardGrid(
     modifier: Modifier = Modifier,
+    onItemClick: (PosterCardDto) -> Unit,
     genreGridDto: GenreGridDto,
 ) {
 
@@ -88,6 +92,7 @@ fun GenreCardGrid(
                         .onFocusChanged {
                             isMicFocused = it.hasFocus
                         }
+                        .focusable()
                         .then(
                             if (isMicFocused) {
                                 Modifier
@@ -118,6 +123,7 @@ fun GenreCardGrid(
                         .onFocusChanged {
                             isSearchFocused = it.hasFocus
                         }
+                        .focusable()
                         .then(
                             if (isSearchFocused) {
                                 Modifier
@@ -195,6 +201,9 @@ fun GenreCardGrid(
                                 .focusable(),
                             genreCardDto = genreCardItem,
                             focusState = uiState,
+                            onItemClick = {
+                                onItemClick.invoke(genreCardItem.toPosterCardDto())
+                            }
                         )
                     }
                 }
@@ -203,7 +212,11 @@ fun GenreCardGrid(
     }
 
     LaunchedEffect(Unit) {
-        gridFocusRequester.requestFocus()
+        try {
+            gridFocusRequester.requestFocus()
+        } catch (ex: Exception) {
+            Log.e("LOG", "${ex.message}")
+        }
     }
 
 }
@@ -286,6 +299,9 @@ private fun GenreGridPreview() {
                     views = "300k Views",
                 ),
             ),
-        )
+        ),
+        onItemClick = {
+
+        }
     )
 }

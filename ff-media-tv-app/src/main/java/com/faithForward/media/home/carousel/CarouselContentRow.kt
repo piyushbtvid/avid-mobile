@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 data class CarouselContentRowDto(
-    val carouselItemsDto: List<CarouselItemDto>
+    val carouselItemsDto: List<CarouselItemDto>,
 )
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
@@ -39,8 +39,12 @@ data class CarouselContentRowDto(
 fun CarouselContentRow(
     modifier: Modifier = Modifier,
     carouselList: List<CarouselItemDto>,
+    rowIndex: Int,
+    focusRequesters: MutableMap<Pair<Int, Int>, FocusRequester>,
+    lastFocusedItem: Pair<Int, Int>,
+    onItemFocused: (Pair<Int, Int>) -> Unit,
     shouldFocusOnFirstItem: Boolean = false,
-    listState: LazyListState
+    listState: LazyListState,
 ) {
 
     val scope = rememberCoroutineScope()
@@ -53,15 +57,15 @@ fun CarouselContentRow(
     var disLikeFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     val itemFocusRequesters = remember { List(carouselList.size) { FocusRequester() } }
 
-    LaunchedEffect(shouldFocusOnFirstItem) {
-        if (shouldFocusOnFirstItem) {
-            try {
-                itemFocusRequesters[0].requestFocus()
-            } catch (ex: Exception) {
-                Log.e("FOCUS_ISSUE", "${ex.message}")
-            }
-        }
-    }
+//    LaunchedEffect(shouldFocusOnFirstItem) {
+//        if (shouldFocusOnFirstItem) {
+//            try {
+//                itemFocusRequesters[0].requestFocus()
+//            } catch (ex: Exception) {
+//                Log.e("FOCUS_ISSUE", "${ex.message}")
+//            }
+//        }
+//    }
     HorizontalPager(
         modifier =
         modifier
@@ -74,6 +78,19 @@ fun CarouselContentRow(
             pageCount = { carouselList.size }
         ),
     ) { index: Int ->
+
+        focusRequesters[Pair(rowIndex, index)] = itemFocusRequesters[index]
+
+        LaunchedEffect(lastFocusedItem) {
+            if (lastFocusedItem == Pair(rowIndex, index)) {
+                try {
+                    itemFocusRequesters[index].requestFocus()
+                } catch (_: Exception) {
+
+                }
+            }
+        }
+
         val carouselItem = carouselList.get(index)
         val uiState = when (index) {
             carouselRowFocusedIndex -> FocusState.FOCUSED
@@ -110,7 +127,7 @@ fun CarouselContentRow(
                 .focusRequester(itemFocusRequesters[index])
                 .onFocusChanged {
                     if (it.isFocused) {
-                        //    onItemFocused(Pair(rowIndex, index))
+                        onItemFocused(Pair(rowIndex, index))
                         carouselRowFocusedIndex = index
                         Log.d("Logging", "carouselRowFocusedIndex$index")
                         //  onChangeContentRowFocusedIndex.invoke(index)

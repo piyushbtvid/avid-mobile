@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,9 +35,19 @@ import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.util.FocusState
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PosterCardDto(
+    val id: String,
     val posterImageSrc: String,
+    val title: String,
+    val description: String,
+    val genre: String? = null,
+    val seasons: Int? = null,
+    val duration: String? = null,
+    val imdbRating: String? = null,
+    val releaseDate: String? = null,
 )
 
 @Composable
@@ -44,16 +55,16 @@ fun PosterCard(
     modifier: Modifier = Modifier,
     posterCardDto: PosterCardDto,
     focusState: FocusState,
+    onItemClick: (PosterCardDto) -> Unit,
     cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
-    @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
+    @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
             FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
             else -> 1f
-        },
-        animationSpec = tween(300), label = ""
+        }, animationSpec = tween(300), label = ""
     )
 
     val posterModifier =
@@ -61,7 +72,7 @@ fun PosterCard(
             modifier.shadow(
                 color = cardShadowColor,
                 borderRadius = 23.dp,
-                blurRadius = 18.dp,
+                blurRadius = 14.dp,
                 offsetY = 8.dp,
                 offsetX = 0.dp,
                 spread = 3.dp,
@@ -72,42 +83,36 @@ fun PosterCard(
         }
 
 
-    Column(
-        modifier = posterModifier
-            .width(135.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
+    Column(modifier = posterModifier
+        .width(135.dp)
+        .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+            transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
+        }
+        .zIndex(
+            when (focusState) {
+                FocusState.SELECTED, FocusState.FOCUSED -> 1f
+                else -> 0f
             }
-            .zIndex(
-                when (focusState) {
-                    FocusState.SELECTED, FocusState.FOCUSED -> 1f
-                    else -> 0f
-                }
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
+        ), horizontalAlignment = Alignment.CenterHorizontally) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(posterCardDto.posterImageSrc) // fallback if blank
-                .listener(
-                    onError = { request, throwable ->
-                        Log.e("CoilError", "Image load failed ${throwable.throwable}")
-                    },
-                    onSuccess = { _, _ ->
-                        Log.e("CoilSuccess", "Image loaded successfully")
-                    }
-                )
-                .crossfade(true)
-                .build(),
+                .listener(onError = { request, throwable ->
+                    Log.e("CoilError", "Image load failed ${throwable.throwable}")
+                }, onSuccess = { _, _ ->
+                    Log.e("CoilSuccess", "Image loaded successfully")
+                }).crossfade(true).build(),
             contentDescription = "Poster Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(210.dp)
                 .clip(RoundedCornerShape(5.dp))
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onItemClick.invoke(posterCardDto)
+                })
         )
     }
 }
@@ -116,19 +121,20 @@ fun PosterCard(
 @Composable
 fun PosterCardLazyRowPreview() {
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(horizontal = 24.dp)
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 20.dp)
         ) {
             items(3) { index ->
-                PosterCard(
-                    posterCardDto = PosterCardDto(posterImageSrc = ""), // Leave blank to test drawable fallback
-                    focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED
-                )
+                PosterCard(posterCardDto = PosterCardDto(
+                    posterImageSrc = "", id = "", title = "", description = ""
+                ), // Leave blank to test drawable fallback
+                    focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED,
+                    onItemClick = {
+
+                    })
             }
         }
     }

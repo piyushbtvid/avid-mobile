@@ -38,6 +38,7 @@ import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.theme.FfmediaTheme
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.SeriesViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

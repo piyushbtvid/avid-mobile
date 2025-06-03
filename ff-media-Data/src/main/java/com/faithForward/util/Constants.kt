@@ -10,4 +10,5 @@ object Constants {
     const val GIVEN_ITEM_DETAIL_END_POINT = "client/v1/content/{id}"
     const val CREATOR_END_POINT = "client/v1/creators/list?perpage=10"
     const val LOGIN_END_POINT = "client/v1/subscribers/login"
+    const val SINGLE_SERIES_DETAIL_API = "client/v1/series/{id}"
 }

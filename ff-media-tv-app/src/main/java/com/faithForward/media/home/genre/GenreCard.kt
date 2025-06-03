@@ -17,21 +17,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
 
 data class GenreCardDto(
     val genreId: String,
     val name: String,
-    val description: String,
     val image: String,
-    val views: String
+    val views: String,
+    val description: String,
+    val genre: String? = null,
+    val seasons: Int? = null,
+    val duration: String? = null,
+    val imdbRating: String? = null,
+    val releaseDate: String? = null,
 )
 
 @Composable
 fun GenreCard(
     modifier: Modifier = Modifier,
     genreCardDto: GenreCardDto,
+    onItemClick: () -> Unit,
     focusState: FocusState,
 ) {
 
@@ -46,6 +53,7 @@ fun GenreCard(
                 posterImageSrc = genreCardDto.image
             ),
             focusState = focusState,
+            onItemClick = onItemClick
         )
         Spacer(modifier = Modifier.height(19.dp))
         Column(
@@ -97,7 +105,10 @@ private fun GenreCardPreview(
                 image = "",
                 views = "300k Views",
             ),
-            focusState = FocusState.UNFOCUSED
+            focusState = FocusState.UNFOCUSED,
+            onItemClick = {
+
+            }
         )
     }
 }

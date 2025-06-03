@@ -1,5 +1,7 @@
 package com.faithForward.network.dto
 
+import com.faithForward.network.dto.series.Season
+
 
 data class HomeSectionApiResponse(
     val status: String?,
@@ -29,6 +31,7 @@ data class Creator(
     val name: String
 )
 
+
 data class ContentItem(
     val id: String?,
     val name: String?,
@@ -42,5 +45,7 @@ data class ContentItem(
     var access: String? = null,
     var video_link: String? = null,
     var views: Int? = null,
-    var creator: Creator? = null
+    var creator: Creator? = null,
+    var duration: Int? = null,
+    val seasons: List<Season>? = null,
 )

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.org.jetbrains.kotlin.kapt)
+    kotlin("plugin.serialization") version "1.9.0"
     id("kotlin-parcelize")
 }
 
@@ -106,6 +107,9 @@ dependencies {
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
