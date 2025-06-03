@@ -36,6 +36,7 @@ fun DetailScreen(
     modifier: Modifier = Modifier,
     itemId: String,
     relatedList: List<PosterCardDto> = emptyList(),
+    onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     detailViewModel: DetailViewModel,
 ) {
     val cardDetail by detailViewModel.cardDetail.collectAsStateWithLifecycle()
@@ -115,6 +116,7 @@ fun DetailScreen(
                                     }
                                     true
                                 },
+                                onItemClick = onRelatedItemClick,
                                 isRelatedContentMetaDataVisible = !uiState.isContentVisible
                             )
                         }
@@ -147,6 +149,9 @@ fun DetailScreen(
                                 true
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
+                            onItemClick = { item, ls ->
+
+                            },
                             seasonsNumberRow = {
                                 SeasonsNumberRow(
                                     seasonsNumberDtoList = contentData.seasonNumberList,

@@ -108,6 +108,9 @@ fun SeasonsContent(
             onRelatedRowFocusedIndexChange = { index ->
                 relatedRowFocusedIndex = index
             },
+            onItemClick = {
+
+            }
         )
 
         //Related Item Content Meta Data

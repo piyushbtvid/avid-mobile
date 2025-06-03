@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
@@ -32,13 +31,14 @@ data class RelatedContentRowDto(
     val relatedContentDto: List<PosterCardDto>,
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
+
 @Composable
 fun RelatedContent(
     modifier: Modifier = Modifier,
     onRelatedUpClick: () -> Boolean,
     contentRowModifier: Modifier = Modifier,
     relatedContentRowDto: RelatedContentRowDto,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     isRelatedContentMetaDataVisible: Boolean = false,
     seasonsNumberRow: (@Composable () -> Unit)? = null,
 ) {
@@ -60,8 +60,7 @@ fun RelatedContent(
     }
 
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(
             modifier = Modifier
@@ -69,27 +68,26 @@ fun RelatedContent(
                 .padding(start = 25.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            TitleText(
-                text = relatedContentRowDto.heading,
+            TitleText(text = relatedContentRowDto.heading,
                 color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
                 fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
                 modifier = Modifier.onFocusChanged {
                     isRelatedTextFocused = it.hasFocus
-                }
-            )
+                })
 
             seasonsNumberRow?.invoke()
         }
 
-        RelatedContentRow(
-            relatedContentRowDto = relatedContentRowDto.relatedContentDto,
+        RelatedContentRow(relatedContentRowDto = relatedContentRowDto.relatedContentDto,
             modifier = contentRowModifier,
             relatedRowFocusedIndex = relatedRowFocusedIndex,
             onRelatedUpClick = onRelatedUpClick,
+            onItemClick = { item ->
+                onItemClick.invoke(item, relatedContentRowDto.relatedContentDto)
+            },
             onRelatedRowFocusedIndexChange = { index ->
                 relatedRowFocusedIndex = index
-            }
-        )
+            })
 
         RelatedContentInfoBlock(
             modifier = Modifier

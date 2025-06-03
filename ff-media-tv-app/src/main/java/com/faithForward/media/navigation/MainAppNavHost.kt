@@ -150,7 +150,15 @@ fun MainAppNavHost(
             DetailScreen(
                 itemId = itemId,
                 detailViewModel = detailViewModel,
-                relatedList = posterList
+                relatedList = posterList,
+                onRelatedItemClick = { item , list ->
+                    if (item.id.isNotEmpty()) {
+                        val filteredList = list.filterNot { it.id == item.id }
+                        val json = Json.encodeToString(filteredList)
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList))
+                    }
+                }
             )
         }
 

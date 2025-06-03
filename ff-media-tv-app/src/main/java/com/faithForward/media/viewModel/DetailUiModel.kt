@@ -11,7 +11,7 @@ import com.faithForward.network.dto.series.Season
 
 sealed interface DetailPageItem {
     data class Card(
-        val detailDto: DetailDto
+        val detailDto: DetailDto,
     ) : DetailPageItem
 }
 
@@ -20,15 +20,16 @@ sealed interface RelatedContentData {
     data class SeriesSeasons(
         val seasonNumberList: List<SeasonsNumberDto>,
         val selectedSeasonEpisodes: List<PosterCardDto>,
-        val allSeasons: List<SeasonDto>
+        val allSeasons: List<SeasonDto>,
     ) : RelatedContentData
+
     data object None : RelatedContentData
 }
 
 data class SeasonData(
     val seasonNumberList: List<SeasonsNumberDto>,
     val selectedSeasonEpisodes: List<PosterCardDto>,
-    val allSeasons: List<SeasonDto>
+    val allSeasons: List<SeasonDto>,
 )
 
 fun CardDetail.toDetailDto(): DetailDto {
@@ -72,12 +73,14 @@ fun Episode.toPosterDto(): PosterCardDto {
 // Data class for UI-specific states
 data class UiState(
     val targetHeight: Int = 280,
-    val isContentVisible: Boolean = true
+    val isContentVisible: Boolean = true,
 )
 
 // Sealed class for UI events
 sealed interface DetailScreenEvent {
-    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) : DetailScreenEvent
+    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) :
+        DetailScreenEvent
+
     data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent
     data object RelatedRowUpClick : DetailScreenEvent
     data class SeasonSelected(val seasonNumber: Int) : DetailScreenEvent

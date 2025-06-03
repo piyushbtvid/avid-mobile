@@ -7,21 +7,19 @@ import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.util.FocusState
 
 
-
 @Composable
 fun RelatedContentItem(
     modifier: Modifier = Modifier,
     uiState: FocusState = FocusState.UNFOCUSED,
     relatedContentDto: PosterCardDto,
+    onItemClick: (PosterCardDto) -> Unit,
 ) {
 
     PosterCard(
         modifier = modifier,
         posterCardDto = relatedContentDto,
         focusState = uiState,
-        onItemClick = {
-
-        }
+        onItemClick = onItemClick
     )
 
 }

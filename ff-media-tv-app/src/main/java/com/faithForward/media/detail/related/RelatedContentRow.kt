@@ -26,6 +26,7 @@ fun RelatedContentRow(
     relatedRowFocusedIndex: Int,
     relatedContentRowDto: List<PosterCardDto>,
     onRelatedUpClick: () -> Boolean,
+    onItemClick: (PosterCardDto) -> Unit,
     onRelatedRowFocusedIndexChange: (Int) -> Unit,
 ) {
 
@@ -58,7 +59,10 @@ fun RelatedContentRow(
                     } else {
                         false
                     }
-                }, relatedContentDto = relatedContentItem, uiState = uiState
+                },
+                relatedContentDto = relatedContentItem,
+                uiState = uiState,
+                onItemClick = onItemClick
             )
         }
     }
