@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.commanComponents.TopMenu
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.homeBackgroundColor
 import com.faithForward.media.theme.textFocusedMainColor
@@ -76,72 +77,11 @@ fun GenreCardGrid(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            Row(
+            TopMenu(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RoundedIconButton(
-                    modifier = Modifier
-                        .onFocusChanged {
-                            isMicFocused = it.hasFocus
-                        }
-                        .then(
-                            if (isMicFocused) {
-                                Modifier
-                                    .shadow(
-                                        color = Color.White.copy(alpha = .11f),
-                                        borderRadius = 40.dp,
-                                        blurRadius = 7.dp,
-                                        spread = 5.dp,
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = textFocusedMainColor,
-                                        shape = RoundedCornerShape(40.dp)
-                                    )
-                            } else Modifier
-                        ),
-                    imageId = R.drawable.microphone_ic,
-                    iconHeight = 15,
-                    boxSize = 43,
-                    iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                RoundedIconButton(
-                    modifier = Modifier
-                        .onFocusChanged {
-                            isSearchFocused = it.hasFocus
-                        }
-                        .then(
-                            if (isSearchFocused) {
-                                Modifier
-                                    .shadow(
-                                        color = Color.White.copy(alpha = .11f),
-                                        borderRadius = 40.dp,
-                                        blurRadius = 7.dp,
-                                        spread = 5.dp,
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = textFocusedMainColor,
-                                        shape = RoundedCornerShape(40.dp)
-                                    )
-                            } else Modifier
-                        ),
-                    imageId = R.drawable.search_ic,
-                    iconHeight = 15,
-                    boxSize = 43,
-                    iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
-
-            }
+                    .padding(top = 20.dp)
+            )
 
             Column(
                 modifier = Modifier.padding(top = 20.dp)
