@@ -1,6 +1,8 @@
 package com.faithForward.media.detail.related
 
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -35,14 +37,19 @@ data class RelatedContentRowDto(
 fun RelatedContent(
     modifier: Modifier = Modifier,
     onRelatedUpClick: () -> Boolean,
-    relatedContentColor: Color = Color.White,
     contentRowModifier: Modifier = Modifier,
     relatedContentRowDto: RelatedContentRowDto,
+    isRelatedContentMetaDataVisible: Boolean = false,
     seasonsNumberRow: (@Composable () -> Unit)? = null,
 ) {
     var relatedRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
     var isRelatedTextFocused by remember { mutableStateOf(false) }
+
+    val targetAlpha by animateFloatAsState(
+        targetValue = if (isRelatedContentMetaDataVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = 500)
+    )
 
     LaunchedEffect(relatedRowFocusedIndex) {
         if (relatedRowFocusedIndex > -1) {
@@ -85,9 +92,10 @@ fun RelatedContent(
         )
 
         RelatedContentInfoBlock(
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .alpha(targetAlpha),
             currentFocusedItem = currentFocusedItem,
-            relatedContentColor = relatedContentColor
         )
     }
 }

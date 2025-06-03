@@ -17,7 +17,6 @@ import com.faithForward.media.home.carousel.ContentMetaBlock
 fun RelatedContentInfoBlock(
     modifier: Modifier = Modifier,
     currentFocusedItem: PosterCardDto?,
-    relatedContentColor: Color,
 ) {
 
     Column(
@@ -31,7 +30,7 @@ fun RelatedContentInfoBlock(
                     .padding(start = 20.dp),
                 text = this?.title ?: "",
                 fontWeight = FontWeight.W600,
-                color = relatedContentColor
+                color = Color.Black
             )
             ContentMetaBlock(
                 modifier = Modifier
@@ -39,7 +38,7 @@ fun RelatedContentInfoBlock(
                     .wrapContentHeight(),
                 description = this?.description,
                 title = this?.title,
-                textColor = relatedContentColor,
+                textColor = Color.Black,
                 buttonModifier = modifier,
                 releaseDate = this?.releaseDate,
                 imdbRating = this?.imdbRating,

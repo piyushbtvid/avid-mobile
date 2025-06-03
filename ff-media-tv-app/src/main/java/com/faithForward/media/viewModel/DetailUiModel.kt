@@ -73,7 +73,6 @@ fun Episode.toPosterDto(): PosterCardDto {
 
 // Data class for UI-specific states
 data class UiState(
-    val relatedContentColor: Color = Color.Black,
     val targetHeight: Int = 280,
     val isContentVisible: Boolean = true
 )

@@ -1,6 +1,5 @@
 package com.faithForward.media.viewModel
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
@@ -120,7 +119,6 @@ class DetailViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             targetHeight = if (hasFocus) Int.MAX_VALUE else 280,
             isContentVisible = !hasFocus, // Hide content when related content is focused
-            relatedContentColor = if (hasFocus) Color.Black else Color.Transparent
         )
     }
 
@@ -128,7 +126,6 @@ class DetailViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             targetHeight = 280,
             isContentVisible = true, // Show content when related row is unfocused
-            relatedContentColor = Color.Transparent
         )
     }
 }

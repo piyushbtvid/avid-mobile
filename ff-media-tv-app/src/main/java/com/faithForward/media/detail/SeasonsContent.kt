@@ -114,7 +114,6 @@ fun SeasonsContent(
         RelatedContentInfoBlock(
             modifier = Modifier.padding(top = 20.dp),
             currentFocusedItem = currentFocusedItem,
-            relatedContentColor = relatedContentColor,
         )
     }
 

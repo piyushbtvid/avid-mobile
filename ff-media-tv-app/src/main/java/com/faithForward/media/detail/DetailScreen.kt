@@ -115,7 +115,7 @@ fun DetailScreen(
                                     }
                                     true
                                 },
-                                relatedContentColor = uiState.relatedContentColor
+                                isRelatedContentMetaDataVisible = !uiState.isContentVisible
                             )
                         }
                     }
@@ -146,7 +146,7 @@ fun DetailScreen(
                                 }
                                 true
                             },
-                            relatedContentColor = uiState.relatedContentColor,
+                            isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             seasonsNumberRow = {
                                 SeasonsNumberRow(
                                     seasonsNumberDtoList = contentData.seasonNumberList,
@@ -163,7 +163,7 @@ fun DetailScreen(
                                             DetailScreenEvent.SeasonSelected(seasonNumber)
                                         )
                                     },
-                                    modifier = Modifier.focusRestorer()
+                                    modifier = Modifier.focusRestorer(),
                                 )
                             })
                     }
