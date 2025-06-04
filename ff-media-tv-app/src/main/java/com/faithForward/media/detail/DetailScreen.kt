@@ -49,7 +49,7 @@ fun DetailScreen(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
 
-    var lastFocusedItem by rememberSaveable { mutableStateOf(0) }
+    var lastFocusedItem by rememberSaveable { mutableStateOf(-1) }
 
     val animatedHeight by animateDpAsState(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
@@ -106,9 +106,11 @@ fun DetailScreen(
                                     .padding(bottom = 10.dp)
                                     .onFocusChanged {
                                         Log.e("LOG", "onFocusChanged()()()()}")
-                                        detailViewModel.handleEvent(
-                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
-                                        )
+                                        if (it.hasFocus) {
+                                            detailViewModel.handleEvent(
+                                                DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                            )
+                                        }
                                     },
                                 contentRowModifier = Modifier
                                     .fillMaxWidth()
@@ -144,9 +146,11 @@ fun DetailScreen(
                                 .align(Alignment.BottomStart)
                                 .padding(bottom = 10.dp)
                                 .onFocusChanged {
-                                    detailViewModel.handleEvent(
-                                        DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
-                                    )
+                                    if (it.hasFocus) {
+                                        detailViewModel.handleEvent(
+                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                        )
+                                    }
                                 },
                             contentRowModifier = Modifier.fillMaxWidth(),
                             onRelatedUpClick = {
@@ -186,6 +190,18 @@ fun DetailScreen(
                                 )
                             })
                     }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                if (lastFocusedItem == -1) {
+                    try {
+                        Log.e("LAST_FOCUSED", "last focused is $lastFocusedItem")
+                        btnFocusRequester.requestFocus()
+                    } catch (_: Exception) {
+
+                    }
+
                 }
             }
         }

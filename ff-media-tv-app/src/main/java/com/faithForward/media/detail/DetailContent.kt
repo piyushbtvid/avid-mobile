@@ -190,9 +190,6 @@ fun DetailContent(
         }
     }
 
-    LaunchedEffect(Unit) {
-        btnFocusRequester.requestFocus()
-    }
 }
 
 

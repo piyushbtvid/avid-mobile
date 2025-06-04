@@ -115,7 +115,7 @@ fun RelatedContent(
         Log.e("LAST_FOCUSED_INDEX", "last focused index is $lastFocusedItemIndex")
         try {
             if (lastFocusedItemIndex > 0 && lastFocusedItemIndex < relatedContentRowDto.relatedContentDto.size) {
-                //  listState.scrollToItem(lastFocusedItemIndex)
+                listState.scrollToItem(lastFocusedItemIndex)
                 focusRequesters[lastFocusedItemIndex]?.requestFocus()
             }
         } catch (_: Exception) {
