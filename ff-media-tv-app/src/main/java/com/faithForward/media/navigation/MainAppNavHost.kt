@@ -160,7 +160,7 @@ fun MainAppNavHost(
                 relatedList = posterList,
                 onWatchNowClick = { item ->
                     Log.e("PLAYER", "on watch now click with item is $item")
-                    val route = Routes.PlayerScreen.createRoute(item.toPosterCardDto())
+                    val route = Routes.PlayerScreen.createRoute(item)
                     navController.navigate(route)
                 },
                 onRelatedItemClick = { item, list ->

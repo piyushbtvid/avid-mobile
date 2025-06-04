@@ -31,6 +31,7 @@ import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.uiModels.DetailPageItem
 import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
 import com.faithForward.media.viewModel.uiModels.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -39,7 +40,7 @@ fun DetailScreen(
     modifier: Modifier = Modifier,
     itemId: String,
     relatedList: List<PosterCardDto> = emptyList(),
-    onWatchNowClick: (DetailDto) -> Unit,
+    onWatchNowClick: (PosterCardDto) -> Unit,
     onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     detailViewModel: DetailViewModel,
 ) {
@@ -51,6 +52,7 @@ fun DetailScreen(
     val screenHeight = configuration.screenHeightDp
 
     var lastFocusedItem by rememberSaveable { mutableStateOf(-1) }
+    var seasonNumberSelectedItem by rememberSaveable { mutableStateOf(-1) }
 
     val animatedHeight by animateDpAsState(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
@@ -79,21 +81,19 @@ fun DetailScreen(
         is Resource.Success -> {
             val detailPageItem = cardDetail.data as? DetailPageItem.Card ?: return
             Box(modifier = modifier.fillMaxSize()) {
-                DetailContent(
-                    detailDto = detailPageItem.detailDto,
+                DetailContent(detailDto = detailPageItem.detailDto,
                     btnFocusRequester = btnFocusRequester,
                     isContentVisible = uiState.isContentVisible,
                     modifier = Modifier.fillMaxSize(),
                     onWatchNowClick = {
-                        onWatchNowClick.invoke(detailPageItem.detailDto)
+                        onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto())
                     },
                     onWatchNowFocusChange = { hasFocus ->
                         //changing related items last focus to -1 when focus on watch now for gaining focus again in watchNow
                         if (hasFocus) {
                             lastFocusedItem = -1
                         }
-                    }
-                )
+                    })
 
                 // Assign to local variable to enable smart casting
                 when (val contentData = relatedContentData) {
@@ -103,11 +103,10 @@ fun DetailScreen(
 
                     is RelatedContentData.RelatedMovies -> {
                         if (contentData.movies.isNotEmpty()) {
-                            RelatedContent(
-                                relatedContentRowDto = RelatedContentRowDto(
-                                    heading = "Related Movies",
-                                    relatedContentDto = contentData.movies
-                                ),
+                            RelatedContent(relatedContentRowDto = RelatedContentRowDto(
+                                heading = "Related Movies",
+                                relatedContentDto = contentData.movies
+                            ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 30.dp)
@@ -139,8 +138,7 @@ fun DetailScreen(
                                 lastFocusedItemIndex = lastFocusedItem,
                                 onLastFocusedIndexChange = { item ->
                                     lastFocusedItem = item
-                                }
-                            )
+                                })
                         }
                     }
 
@@ -156,11 +154,11 @@ fun DetailScreen(
                                 .align(Alignment.BottomStart)
                                 .padding(bottom = 10.dp)
                                 .onFocusChanged {
-//                                    if (it.hasFocus) {
-                                    detailViewModel.handleEvent(
-                                        DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
-                                    )
-                                    // }
+                                    if (it.hasFocus) {
+                                        detailViewModel.handleEvent(
+                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                        )
+                                    }
                                 },
                             contentRowModifier = Modifier.fillMaxWidth(),
                             onRelatedUpClick = {
@@ -170,20 +168,21 @@ fun DetailScreen(
                                 } catch (ex: Exception) {
                                     Log.e("LOG", "exception is ${ex.message}")
                                 }
-                                true
+                                false
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls ->
-
+                                onWatchNowClick.invoke(item)
                             },
-                            lastFocusedItemIndex = 0,
+                            lastFocusedItemIndex = lastFocusedItem,
                             onLastFocusedIndexChange = { int ->
-
+                                lastFocusedItem = int
                             },
                             seasonsNumberRow = {
                                 SeasonsNumberRow(
                                     seasonsNumberDtoList = contentData.seasonNumberList,
                                     onSeasonUpClick = {
+                                        detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                         try {
                                             btnFocusRequester.requestFocus()
                                         } catch (ex: Exception) {
@@ -197,6 +196,10 @@ fun DetailScreen(
                                         )
                                     },
                                     modifier = Modifier.focusRestorer(),
+                                    lastSelectedItemIndex = seasonNumberSelectedItem,
+                                    onLastSelectedIndexChange = { index ->
+                                        seasonNumberSelectedItem = index
+                                    },
                                 )
                             })
                     }
