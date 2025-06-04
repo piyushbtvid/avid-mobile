@@ -35,3 +35,8 @@ sealed class PlayerEvent {
     data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
 }
 
+
+enum class PlayerPlayingState {
+    PLAYING, PAUSED, REWINDING, FORWARDING, IDLE
+}
+

@@ -39,6 +39,7 @@ fun MainAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    playerViewModel: PlayerViewModel,
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
@@ -182,7 +183,6 @@ fun MainAppNavHost(
             val json = backStackEntry.arguments?.getString("playerDto")
             val playerDto = json?.let { Json.decodeFromString<PosterCardDto>(Uri.decode(it)) }
 
-            val playerViewModel: PlayerViewModel = viewModel()
 
             playerDto?.let {
                 playerViewModel.handleEvent(
