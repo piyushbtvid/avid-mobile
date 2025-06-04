@@ -33,6 +33,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
@@ -284,7 +285,9 @@ fun VideoPlayer(
                 contentAlignment = Alignment.Center
             ) {
                 Log.e("PLAYER", "Video player is loading or buffering")
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = focusedMainColor
+                )
             }
         }
 

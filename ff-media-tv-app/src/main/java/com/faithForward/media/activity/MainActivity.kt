@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     val userSession by loginViewModel.userSession.collectAsStateWithLifecycle()
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
-                     currentRoute = navBackStackEntry?.destination?.route
+                    currentRoute = navBackStackEntry?.destination?.route
                     if (userSession.isLoading) {
                         LoaderScreen()
                     } else {
@@ -86,10 +86,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-                if (currentRoute == Routes.PlayerScreen.route) {
-                    Log.e("PLAY_EVENT", "on use interction is called ")
-                    playerViewModel.onUserInteraction()
-                }
+        if (currentRoute == Routes.PlayerScreen.route) {
+            Log.e("PLAY_EVENT", "on use interction is called ")
+            playerViewModel.onUserInteraction()
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -97,40 +97,37 @@ class MainActivity : ComponentActivity() {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (isControlsVisible) {
                     playerViewModel.togglePlayPause()
+                } else {
+                    playerViewModel.onUserInteraction()
                 }
-//                else {
-//                    playerViewModel.userInteraction()
-//                }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (isControlsVisible) {
                     playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
+                } else {
+                    playerViewModel.onUserInteraction()
                 }
-//                else {
-//                    playerViewModel.userInteraction()
-//                }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (isControlsVisible) {
                     playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
+                } else {
+                    playerViewModel.onUserInteraction()
                 }
-//                else {
-//                    playerViewModel.userInteraction()
-//                }
                 return true
             }
 
 
-//            KeyEvent.KEYCODE_DPAD_DOWN -> {
-//                if (!isControlsVisible) {
-//                    playerViewModel.userInteraction()
-//                }
-//                return true
-//            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                if (!isControlsVisible) {
+                    playerViewModel.onUserInteraction()
+                }
+                return true
+            }
         }
         return super.onKeyDown(keyCode, event)
     }
