@@ -26,6 +26,7 @@ import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -184,9 +185,12 @@ fun MainAppNavHost(
             val playerViewModel: PlayerViewModel = viewModel()
 
             playerDto?.let {
-                playerViewModel.updateVideoPlayerDto(
-                    itemList = listOf(playerDto)
+                playerViewModel.handleEvent(
+                    PlayerEvent.UpdateVideoPlayerDto(
+                        itemList = listOf(playerDto)
+                    )
                 )
+
             }
 
             PlayerScreen(

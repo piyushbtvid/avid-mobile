@@ -86,6 +86,12 @@ fun DetailScreen(
                     modifier = Modifier.fillMaxSize(),
                     onWatchNowClick = {
                         onWatchNowClick.invoke(detailPageItem.detailDto)
+                    },
+                    onWatchNowFocusChange = { hasFocus ->
+                        //changing related items last focus to -1 when focus on watch now for gaining focus again in watchNow
+                        if (hasFocus) {
+                            lastFocusedItem = -1
+                        }
                     }
                 )
 
@@ -151,10 +157,10 @@ fun DetailScreen(
                                 .padding(bottom = 10.dp)
                                 .onFocusChanged {
 //                                    if (it.hasFocus) {
-                                        detailViewModel.handleEvent(
-                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
-                                        )
-                                   // }
+                                    detailViewModel.handleEvent(
+                                        DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                    )
+                                    // }
                                 },
                             contentRowModifier = Modifier.fillMaxWidth(),
                             onRelatedUpClick = {

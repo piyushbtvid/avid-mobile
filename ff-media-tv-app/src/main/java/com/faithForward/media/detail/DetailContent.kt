@@ -62,6 +62,7 @@ fun DetailContent(
     modifier: Modifier = Modifier,
     btnFocusRequester: FocusRequester = FocusRequester(),
     onWatchNowClick: (String) -> Unit,
+    onWatchNowFocusChange: (Boolean) -> Unit,
     isContentVisible: Boolean = true,
     detailDto: DetailDto,
 ) {
@@ -162,6 +163,7 @@ fun DetailContent(
                         .focusRequester(btnFocusRequester)
                         .onFocusChanged {
                             isFocused = it.hasFocus
+                            onWatchNowFocusChange.invoke(it.hasFocus)
                         }
                         .focusable(),
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
@@ -205,6 +207,9 @@ private fun DetailPagePreview() {
     DetailContent(
         detailDto = DetailDto(),
         onWatchNowClick = {
+
+        },
+        onWatchNowFocusChange = {
 
         }
     )
