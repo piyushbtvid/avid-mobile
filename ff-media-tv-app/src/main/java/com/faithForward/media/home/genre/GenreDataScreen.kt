@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.viewModel.GenreViewModel
-import com.faithForward.media.viewModel.toPosterCardDto
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
 
 @Composable

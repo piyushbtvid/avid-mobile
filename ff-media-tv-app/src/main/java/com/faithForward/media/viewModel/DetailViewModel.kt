@@ -1,11 +1,16 @@
 package com.faithForward.media.viewModel
 
 import android.util.Log
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.viewModel.uiModels.DetailPageItem
+import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
+import com.faithForward.media.viewModel.uiModels.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.UiState
+import com.faithForward.media.viewModel.uiModels.toDetailDto
+import com.faithForward.media.viewModel.uiModels.toSeasonDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

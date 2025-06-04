@@ -44,6 +44,7 @@ import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.util.FocusState
 
 data class DetailDto(
+    val id: String? = null,
     val imgSrc: String? = null,
     val description: String? = null,
     val releaseDate: String? = null,
@@ -53,12 +54,14 @@ data class DetailDto(
     val imdbRating: String? = null,
     val title: String? = null,
     val subscribers: String? = null,
+    val videoLink: String? = null,
 )
 
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
     btnFocusRequester: FocusRequester = FocusRequester(),
+    onWatchNowClick: (String) -> Unit,
     isContentVisible: Boolean = true,
     detailDto: DetailDto,
 ) {
@@ -163,6 +166,7 @@ fun DetailContent(
                         .focusable(),
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
+                        onWatchNowClick.invoke(id)
                         // onCategoryItemClick.invoke(id)
                     },
                     focusState = if (isFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
@@ -200,5 +204,8 @@ fun DetailContent(
 private fun DetailPagePreview() {
     DetailContent(
         detailDto = DetailDto(),
+        onWatchNowClick = {
+
+        }
     )
 }

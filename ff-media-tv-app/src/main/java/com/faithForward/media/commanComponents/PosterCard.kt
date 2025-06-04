@@ -39,7 +39,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PosterCardDto(
-    val id: String,
+    val id: String?,
     val posterImageSrc: String,
     val title: String,
     val description: String,
@@ -48,6 +48,7 @@ data class PosterCardDto(
     val duration: String? = null,
     val imdbRating: String? = null,
     val releaseDate: String? = null,
+    val videoHlsUrl: String? = null,
 )
 
 @Composable

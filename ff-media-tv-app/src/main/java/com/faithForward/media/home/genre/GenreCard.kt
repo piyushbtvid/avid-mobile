@@ -32,6 +32,7 @@ data class GenreCardDto(
     val duration: String? = null,
     val imdbRating: String? = null,
     val releaseDate: String? = null,
+    val videoUrl: String? = null,
 )
 
 @Composable

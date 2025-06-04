@@ -27,10 +27,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.related.RelatedContent
 import com.faithForward.media.detail.related.RelatedContentRowDto
-import com.faithForward.media.viewModel.DetailPageItem
-import com.faithForward.media.viewModel.DetailScreenEvent
 import com.faithForward.media.viewModel.DetailViewModel
-import com.faithForward.media.viewModel.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.DetailPageItem
+import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
+import com.faithForward.media.viewModel.uiModels.RelatedContentData
 import com.faithForward.util.Resource
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -39,6 +39,7 @@ fun DetailScreen(
     modifier: Modifier = Modifier,
     itemId: String,
     relatedList: List<PosterCardDto> = emptyList(),
+    onWatchNowClick: (DetailDto) -> Unit,
     onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     detailViewModel: DetailViewModel,
 ) {
@@ -83,6 +84,9 @@ fun DetailScreen(
                     btnFocusRequester = btnFocusRequester,
                     isContentVisible = uiState.isContentVisible,
                     modifier = Modifier.fillMaxSize(),
+                    onWatchNowClick = {
+                        onWatchNowClick.invoke(detailPageItem.detailDto)
+                    }
                 )
 
                 // Assign to local variable to enable smart casting
@@ -146,11 +150,11 @@ fun DetailScreen(
                                 .align(Alignment.BottomStart)
                                 .padding(bottom = 10.dp)
                                 .onFocusChanged {
-                                    if (it.hasFocus) {
+//                                    if (it.hasFocus) {
                                         detailViewModel.handleEvent(
                                             DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
                                         )
-                                    }
+                                   // }
                                 },
                             contentRowModifier = Modifier.fillMaxWidth(),
                             onRelatedUpClick = {

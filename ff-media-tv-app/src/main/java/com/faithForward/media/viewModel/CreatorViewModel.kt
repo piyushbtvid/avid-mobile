@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.home.carousel.CarouselContentRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.viewModel.uiModels.HomePageItem
+import com.faithForward.media.viewModel.uiModels.toCarouselItemDto
+import com.faithForward.media.viewModel.uiModels.toCreatorCardDtoList
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

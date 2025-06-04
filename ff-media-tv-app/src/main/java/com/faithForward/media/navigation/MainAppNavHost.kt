@@ -1,9 +1,11 @@
 package com.faithForward.media.navigation
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,12 +18,15 @@ import com.faithForward.media.home.creator.CreatorScreen
 import com.faithForward.media.home.genre.GenreDataScreen
 import com.faithForward.media.home.movies.MoviesPage
 import com.faithForward.media.login.LoginScreen
+import com.faithForward.media.player.PlayerScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
 import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -56,7 +61,7 @@ fun MainAppNavHost(
                     changeSideBarSelectedPosition.invoke(value)
                 },
                 onItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = if (item.id.contains("series")) {
                             emptyList()
                         } else {
@@ -91,7 +96,7 @@ fun MainAppNavHost(
             MoviesPage(
                 contentViewModel = contentViewModel,
                 onItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
@@ -116,7 +121,7 @@ fun MainAppNavHost(
                 genreId = genreId,
                 viewModel = genreViewModel,
                 onItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
@@ -151,8 +156,13 @@ fun MainAppNavHost(
                 itemId = itemId,
                 detailViewModel = detailViewModel,
                 relatedList = posterList,
+                onWatchNowClick = { item ->
+                    Log.e("PLAYER", "on watch now click with item is $item")
+                    val route = Routes.PlayerScreen.createRoute(item.toPosterCardDto())
+                    navController.navigate(route)
+                },
                 onRelatedItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
@@ -163,6 +173,27 @@ fun MainAppNavHost(
                 }
             )
         }
+
+        composable(
+            route = Routes.PlayerScreen.route,
+            arguments = listOf(navArgument("playerDto") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val json = backStackEntry.arguments?.getString("playerDto")
+            val playerDto = json?.let { Json.decodeFromString<PosterCardDto>(Uri.decode(it)) }
+
+            val playerViewModel: PlayerViewModel = viewModel()
+
+            playerDto?.let {
+                playerViewModel.updateVideoPlayerDto(
+                    itemList = listOf(playerDto)
+                )
+            }
+
+            PlayerScreen(
+                playerViewModel = playerViewModel
+            )
+        }
+
 
     }
 
