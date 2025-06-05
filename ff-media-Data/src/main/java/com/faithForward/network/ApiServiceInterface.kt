@@ -8,6 +8,7 @@ import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.myList.AddRemoveMyListResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
 import com.faithForward.network.request.LoginRequest
@@ -58,7 +59,6 @@ interface ApiServiceInterface {
     ): Response<MyListResponse>
 
 
-
     @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
     suspend fun getGivenGenreData(
         @Path("id") id: String,
@@ -75,5 +75,17 @@ interface ApiServiceInterface {
     suspend fun getSingleSeriesDetail(
         @Path("id") id: String,
     ): Response<SingleSeriesDetailResponse>
+
+    @POST(Constants.MY_LIST_END_POINT)
+    suspend fun addToMyList(
+        @Path("id") id: String,
+        @Header("Authorization") token: String,
+    ): Response<AddRemoveMyListResponse>
+
+    @POST(Constants.MY_LIST_END_POINT)
+    suspend fun removeFromMyList(
+        @Path("id") id: String,
+        @Header("Authorization") token: String,
+    ): Response<AddRemoveMyListResponse>
 
 }

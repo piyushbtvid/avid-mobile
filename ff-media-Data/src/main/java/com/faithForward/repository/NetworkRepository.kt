@@ -99,5 +99,24 @@ class NetworkRepository @Inject constructor(
         itemId: String,
     ) = apiServiceInterface.getSingleSeriesDetail(itemId)
 
+    suspend fun addToMyWatchList(
+        itemId: String,
+    ) = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.addToMyList(id = itemId, token = token)
+    }
+
+    suspend fun removeFromMyWatchList(
+        itemId: String,
+    ) = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.removeFromMyList(id = itemId, token = token)
+    }
+
+
 }
 

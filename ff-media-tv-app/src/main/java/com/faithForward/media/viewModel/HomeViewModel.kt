@@ -7,9 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.navigation.Routes
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
 import com.faithForward.repository.NetworkRepository
+import com.faithForward.util.MyFavList
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -46,8 +48,10 @@ class HomeViewModel
             try {
                 // Fetch both APIs concurrently
                 val sectionDataDeferred = async { networkRepository.getHomeSectionData() }
+                val myListResponse = async { networkRepository.getMyListSectionData("my-list") }
 
                 val sectionData = sectionDataDeferred.await()
+                val myListData = myListResponse.await()
 
                 Log.e("HOME_DATA", "home data in viewModel is ${sectionData.body()?.data}")
 
@@ -58,6 +62,8 @@ class HomeViewModel
                     listOf()
                 }
 
+
+                MyFavList.myFavList = myListData.body()?.data
 
                 // Combine the data with CategoryRow at index 1
                 val combinedItems = buildList {
