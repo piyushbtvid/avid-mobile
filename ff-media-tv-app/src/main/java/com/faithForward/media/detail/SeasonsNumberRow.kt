@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -48,32 +47,19 @@ fun SeasonsNumberRow(
 ) {
 
     var seasonNumberFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var seasonNumberSelectedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
-    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
-
-    val listState = rememberLazyListState()
-
-    val itemFocusRequesters =
-        remember { mutableListOf<FocusRequester>().apply { addAll(List(seasonsNumberDtoList.size) { FocusRequester() }) } }
 
 
     LazyRow(
-        state = listState,
         modifier = modifier.wrapContentWidth(),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
         itemsIndexed(seasonsNumberDtoList) { index, seasonNumberItem ->
 
-            if (index < focusRequesters.size) {
-                focusRequesters[index] = itemFocusRequesters[index]
-            }
-
 
             val uiState = when (index) {
                 seasonNumberFocusedIndex -> FocusState.FOCUSED
-                seasonNumberSelectedIndex -> FocusState.SELECTED
                 else -> FocusState.UNFOCUSED
             }
 
@@ -83,7 +69,11 @@ fun SeasonsNumberRow(
                         if (it.hasFocus) {
                             seasonNumberFocusedIndex = index
                             onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
+                            onLastSelectedIndexChange.invoke(index)
                         } else {
+                            if (seasonNumberFocusedIndex == index) {
+                                seasonNumberFocusedIndex = -1
+                            }
                             //seasonNumberFocusedIndex = -1
                         }
                     }
@@ -98,7 +88,6 @@ fun SeasonsNumberRow(
                         }
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
-                        onLastSelectedIndexChange.invoke(index)
                         // onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
 //                        seasonNumberSelectedIndex = index
 //                        seasonNumberFocusedIndex = -1
@@ -116,18 +105,6 @@ fun SeasonsNumberRow(
 
     }
 
-//    LaunchedEffect(Unit) {
-//        Log.e("LAST_FOCUSED_INDEX", "last focused index is $lastFocusedItemIndex")
-//        try {
-//            if (lastFocusedItemIndex > 0) {
-//                listState.scrollToItem(lastFocusedItemIndex)
-//                focusRequesters[lastFocusedItemIndex]?.requestFocus()
-//            }
-//        } catch (_: Exception) {
-//
-//        }
-//
-//    }
 
 }
 

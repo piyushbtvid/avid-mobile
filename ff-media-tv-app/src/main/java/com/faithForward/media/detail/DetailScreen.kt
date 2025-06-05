@@ -38,8 +38,6 @@ import com.faithForward.util.Resource
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    itemId: String,
-    relatedList: List<PosterCardDto> = emptyList(),
     onWatchNowClick: (PosterCardDto) -> Unit,
     onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     detailViewModel: DetailViewModel,
@@ -59,13 +57,6 @@ fun DetailScreen(
         animationSpec = tween(durationMillis = 500)
     )
 
-    LaunchedEffect(Unit) {
-        Log.e(
-            "DETAIL_SCREEN",
-            "detail screen is opened with $itemId and related List size ${relatedList.size}"
-        )
-        detailViewModel.handleEvent(DetailScreenEvent.LoadCardDetail(itemId, relatedList))
-    }
 
     when (cardDetail) {
         is Resource.Loading, is Resource.Unspecified -> {
@@ -138,7 +129,8 @@ fun DetailScreen(
                                 lastFocusedItemIndex = lastFocusedItem,
                                 onLastFocusedIndexChange = { item ->
                                     lastFocusedItem = item
-                                })
+                                }
+                            )
                         }
                     }
 
@@ -207,6 +199,10 @@ fun DetailScreen(
             }
 
             LaunchedEffect(Unit) {
+                Log.e(
+                    "LAST_FOCUSED_INDEX",
+                    "current selected series in detail screen is $seasonNumberSelectedItem"
+                )
                 if (lastFocusedItem == -1) {
                     try {
                         Log.e("LAST_FOCUSED", "last focused is $lastFocusedItem")

@@ -112,9 +112,9 @@ fun RelatedContent(
     }
 
     LaunchedEffect(Unit) {
-        Log.e("LAST_FOCUSED_INDEX", "last focused index is $lastFocusedItemIndex")
+        Log.e("LAST_FOCUSED_INDEX", "last focused index of related is $lastFocusedItemIndex")
         try {
-            if (lastFocusedItemIndex > 0 && lastFocusedItemIndex < relatedContentRowDto.relatedContentDto.size) {
+            if (lastFocusedItemIndex >= 0 && lastFocusedItemIndex < relatedContentRowDto.relatedContentDto.size) {
                 listState.scrollToItem(lastFocusedItemIndex)
                 focusRequesters[lastFocusedItemIndex]?.requestFocus()
             }

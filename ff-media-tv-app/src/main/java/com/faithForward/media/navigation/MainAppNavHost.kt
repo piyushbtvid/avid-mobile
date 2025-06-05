@@ -139,27 +139,12 @@ fun MainAppNavHost(
                 navArgument("itemId") { type = NavType.StringType },
                 navArgument("listJson") { type = NavType.StringType }
             )
-        ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
-            val listJson = backStackEntry.arguments?.getString("listJson") ?: ""
-
+        ) {
             val detailViewModel: DetailViewModel = hiltViewModel()
 
-            val posterList: List<PosterCardDto> = try {
-                val decoded =
-                    java.net.URLDecoder.decode(listJson, StandardCharsets.UTF_8.toString())
-                Json.decodeFromString(decoded)
-            } catch (e: Exception) {
-                emptyList()
-            }
-
-            Log.e("POSTER", "poster list recived in detail with $posterList")
             DetailScreen(
-                itemId = itemId,
                 detailViewModel = detailViewModel,
-                relatedList = posterList,
                 onWatchNowClick = { item ->
-                    Log.e("PLAYER", "on watch now click with item is $item")
                     val route = Routes.PlayerScreen.createRoute(item)
                     navController.navigate(route)
                 },
@@ -168,13 +153,12 @@ fun MainAppNavHost(
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList)) {
-                        }
-
+                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList))
                     }
                 }
             )
         }
+
 
         composable(
             route = Routes.PlayerScreen.route,
