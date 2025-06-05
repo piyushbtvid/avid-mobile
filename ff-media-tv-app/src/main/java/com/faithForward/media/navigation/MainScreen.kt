@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
@@ -47,7 +46,6 @@ fun MainScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-
     ) {
         Image(
             painter = painterResource(R.drawable.background_blur__1_),

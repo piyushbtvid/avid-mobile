@@ -1,6 +1,7 @@
 package com.faithForward.media.viewModel
 
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel
 @Inject constructor(
-    private val networkRepository: NetworkRepository
+    private val networkRepository: NetworkRepository,
 ) : ViewModel() {
 
     private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
@@ -32,21 +33,23 @@ class HomeViewModel
         private set
 
     init {
-        fetchHomePageData(1)
+        fetchHomePageData()
     }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
 
-    private fun fetchHomePageData(sectionId: Int) {
+    private fun fetchHomePageData() {
         viewModelScope.launch(Dispatchers.IO) {
             _homepageData.emit(Resource.Loading())
             try {
                 // Fetch both APIs concurrently
-                val sectionDataDeferred = async { networkRepository.getHomeSectionData(sectionId) }
+                val sectionDataDeferred = async { networkRepository.getHomeSectionData() }
 
                 val sectionData = sectionDataDeferred.await()
+
+                Log.e("HOME_DATA", "home data in viewModel is ${sectionData.body()?.data}")
 
                 // Process section data (Carousel and Poster rows)
                 val sectionItems = if (sectionData.isSuccessful) {

@@ -30,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -47,7 +46,6 @@ import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -67,6 +65,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
+                    Log.e("USER_DATA", "user data in mainActivity is ${userSession.data}")
                     if (userSession.isLoading) {
                         LoaderScreen()
                     } else {

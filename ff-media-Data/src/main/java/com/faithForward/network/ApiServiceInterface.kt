@@ -14,6 +14,7 @@ import com.faithForward.util.Constants
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -21,7 +22,7 @@ interface ApiServiceInterface {
 
     @GET(Constants.HOME_SECTION_END_POINT)
     suspend fun getHomeSectionData(
-
+        @Header("Authorization") token: String,
     ): Response<HomeSectionApiResponse>
 
     @GET(Constants.CATEGORY_END_POINT)
