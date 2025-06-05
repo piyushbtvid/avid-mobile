@@ -8,6 +8,7 @@ import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
 import com.faithForward.network.request.LoginRequest
 import com.faithForward.util.Constants
@@ -26,7 +27,9 @@ interface ApiServiceInterface {
     ): Response<HomeSectionApiResponse>
 
     @GET(Constants.CATEGORY_END_POINT)
-    suspend fun getCategories(): Response<CategoryResponse>
+    suspend fun getCategories(
+        @Header("Authorization") token: String,
+    ): Response<CategoryResponse>
 
     @GET(Constants.CATEGORY_END_POINT)
     suspend fun getGivenCategoryDetail(
@@ -44,7 +47,17 @@ interface ApiServiceInterface {
     @GET(Constants.GIVEN_SECTION_END_POINT)
     suspend fun getGivenSectionData(
         @Path("id") id: String,
+        @Header("Authorization") token: String,
     ): Response<SectionContentResponse>
+
+
+    @GET(Constants.GIVEN_SECTION_END_POINT)
+    suspend fun getMyListSectionData(
+        @Path("id") id: String,
+        @Header("Authorization") token: String,
+    ): Response<MyListResponse>
+
+
 
     @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
     suspend fun getGivenGenreData(

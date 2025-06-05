@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject
 constructor(
-    private val networkRepository: NetworkRepository
+    private val networkRepository: NetworkRepository,
 ) : ViewModel() {
 
 
@@ -140,5 +140,5 @@ constructor(
 data class UserSessionState(
     val data: LoginData? = null,
     val isLoading: Boolean = true,
-    val error: String? = null
+    val error: String? = null,
 )

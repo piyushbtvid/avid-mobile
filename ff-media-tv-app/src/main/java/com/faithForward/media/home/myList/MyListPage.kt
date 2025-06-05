@@ -1,27 +1,22 @@
-package com.faithForward.media.home.movies
+package com.faithForward.media.home.myList
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
-import com.faithForward.media.viewModel.ContentViewModel
+import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.util.Resource
 
 @Composable
-fun MoviesPage(
+fun MyListPage(
     modifier: Modifier = Modifier,
-    contentViewModel: ContentViewModel,
+    contentViewModel: MyListViewModel,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
-
-    LaunchedEffect(Unit) {
-        contentViewModel.loadSectionContent("movies","Movies")
-    }
 
 
     val homePageItemsResource by contentViewModel.homePageData.collectAsStateWithLifecycle()
@@ -32,6 +27,8 @@ fun MoviesPage(
     ) return
 
     val homePageItems = homePageItemsResource.data ?: return
+
+
 
     Box(
         modifier = modifier

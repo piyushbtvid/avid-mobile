@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.viewModel.uiModels.HomePageItem
@@ -19,9 +18,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContentViewModel @Inject constructor(
+class MyListViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
@@ -36,22 +34,25 @@ class ContentViewModel @Inject constructor(
         contentRowFocusedIndex = value
     }
 
-    fun loadSectionContent(sectionId: String, rowHeading: String) {
+    init {
+        loadSectionContent("my-list")
+    }
+
+    private fun loadSectionContent(sectionId: String) {
         Log.e("HOME_DATA", "loadSection is called in viewModel with sectionId: $sectionId")
         viewModelScope.launch {
             _homepageData.emit(Resource.Loading())
             try {
                 // Fetch data for the given sectionId
-                val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
+                val sectionDataDeferred =
+                    async { networkRepository.getMyListSectionData(sectionId) }
 
                 val sectionData = sectionDataDeferred.await()
 
                 // Process section data (Carousel and Poster rows)
                 val sectionItems = if (sectionData.isSuccessful) {
                     Log.e("HOME_DATA", "response is success with ${sectionData.body()}")
-                    sectionData.body()?.toHomePageItems(
-                        rowHeading = rowHeading
-                    ) ?: listOf()
+                    sectionData.body()?.toHomePageItems() ?: listOf()
                 } else {
                     Log.e("HOME_DATA", "response is error with ${sectionData.message()}")
                     listOf()

@@ -26,7 +26,13 @@ class NetworkRepository @Inject constructor(
         apiServiceInterface.getHomeSectionData(token)
     }
 
-    suspend fun getCategories() = apiServiceInterface.getCategories()
+    suspend fun getCategories() = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
+        apiServiceInterface.getCategories(token)
+    }
 
 //    suspend fun getGivenCategoryDetail(categoryId: Int) =
 //        apiServiceInterface.getGivenSectionData(categoryId)
@@ -61,7 +67,25 @@ class NetworkRepository @Inject constructor(
 
     suspend fun getGivenSectionData(
         sectionName: String,
-    ) = apiServiceInterface.getGivenSectionData(sectionName)
+    ) = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
+        apiServiceInterface.getGivenSectionData(sectionName, token)
+    }
+
+
+    suspend fun getMyListSectionData(
+        sectionName: String,
+    ) = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
+        apiServiceInterface.getMyListSectionData(sectionName, token)
+    }
+
 
     suspend fun getGivenGenreData(
         itemId: String,
