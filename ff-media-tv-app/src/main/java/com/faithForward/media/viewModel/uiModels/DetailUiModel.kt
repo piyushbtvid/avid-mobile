@@ -1,4 +1,4 @@
-package com.faithForward.media.viewModel
+package com.faithForward.media.viewModel.uiModels
 
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.DetailDto
@@ -33,22 +33,56 @@ data class SeasonData(
 )
 
 fun CardDetail.toDetailDto(): DetailDto {
+
+    //for series detail giving 1 seasons 1 episode url
+    // and for movie giving its url
+
+    val firstEpisodeVideoLink = data.seasons
+        ?.firstOrNull { it.episodes.isNotEmpty() }
+        ?.episodes
+        ?.firstOrNull()
+        ?.video_link
+
+    val resolvedVideoLink = when {
+        !firstEpisodeVideoLink.isNullOrEmpty() -> firstEpisodeVideoLink
+        data.seasons.isNullOrEmpty() -> data.video_link
+        else -> "" // seasons present but no valid episodes
+    }
+
     return DetailDto(
+        id = data.id,
         imgSrc = data.landscape,
         title = data.name,
         description = data.description,
         releaseDate = data.dateUploaded,
-        genre = data.genres?.mapNotNull { it.name }  // safely extract non-null names
-            ?.joinToString(", "),
+        genre = data.genres?.mapNotNull { it.name }?.joinToString(", "),
         duration = data.duration?.toString(),
         imdbRating = data.rating,
+        videoLink = resolvedVideoLink
+    )
+}
+
+
+fun DetailDto.toPosterCardDto(): PosterCardDto {
+    return PosterCardDto(
+        imdbRating = imdbRating,
+        id = id,
+        posterImageSrc = imgSrc ?: "",
+        title = title ?: "",
+        description = description ?: "",
+        genre = genre,
+        seasons = seasons,
+        duration = duration,
+        releaseDate = releaseDate,
+        videoHlsUrl = videoLink,
     )
 }
 
 fun Season.toSeasonDto(): SeasonDto {
-    return SeasonDto(episodesContentDto = episodes.map {
-        it.toPosterDto()
-    })
+    return SeasonDto(
+        episodesContentDto = episodes.map {
+            it.toPosterDto()
+        })
 }
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
@@ -66,7 +100,9 @@ fun Episode.toPosterDto(): PosterCardDto {
             .joinToString(", "),
         duration = duration.toString(),
         imdbRating = rating,
-        releaseDate = dateUploaded)
+        releaseDate = dateUploaded,
+        videoHlsUrl = video_link
+    )
 }
 
 

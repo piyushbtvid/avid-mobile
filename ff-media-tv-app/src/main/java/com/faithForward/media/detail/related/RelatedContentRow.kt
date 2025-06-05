@@ -65,10 +65,10 @@ fun RelatedContentRow(
             LaunchedEffect(lastFocusedItem) {
                 if (lastFocusedItem in 0 until itemFocusRequesters.size && lastFocusedItem == index) {
                     try {
-                        if (lastFocusedItem > 0) {
-                            // lazyListState.scrollToItem(lastFocusedItem)
-                            itemFocusRequesters[index].requestFocus()
-                        }
+//                        if (lastFocusedItem > 0) {
+                        // lazyListState.scrollToItem(lastFocusedItem)
+                        itemFocusRequesters[index].requestFocus()
+                        //  }
                     } catch (ex: Exception) {
                         Log.e("RELATED_CONTENT_ROW", "Error requesting focus: ${ex.message}")
                     }

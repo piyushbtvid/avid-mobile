@@ -44,6 +44,7 @@ import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.util.FocusState
 
 data class DetailDto(
+    val id: String? = null,
     val imgSrc: String? = null,
     val description: String? = null,
     val releaseDate: String? = null,
@@ -53,12 +54,15 @@ data class DetailDto(
     val imdbRating: String? = null,
     val title: String? = null,
     val subscribers: String? = null,
+    val videoLink: String? = null,
 )
 
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
     btnFocusRequester: FocusRequester = FocusRequester(),
+    onWatchNowClick: (String) -> Unit,
+    onWatchNowFocusChange: (Boolean) -> Unit,
     isContentVisible: Boolean = true,
     detailDto: DetailDto,
 ) {
@@ -159,10 +163,12 @@ fun DetailContent(
                         .focusRequester(btnFocusRequester)
                         .onFocusChanged {
                             isFocused = it.hasFocus
+                            onWatchNowFocusChange.invoke(it.hasFocus)
                         }
                         .focusable(),
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
+                        onWatchNowClick.invoke(id)
                         // onCategoryItemClick.invoke(id)
                     },
                     focusState = if (isFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
@@ -190,9 +196,6 @@ fun DetailContent(
         }
     }
 
-    LaunchedEffect(Unit) {
-        btnFocusRequester.requestFocus()
-    }
 }
 
 
@@ -203,5 +206,11 @@ fun DetailContent(
 private fun DetailPagePreview() {
     DetailContent(
         detailDto = DetailDto(),
+        onWatchNowClick = {
+
+        },
+        onWatchNowFocusChange = {
+
+        }
     )
 }

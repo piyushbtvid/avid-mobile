@@ -23,7 +23,7 @@ import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
 import com.faithForward.media.home.creator.list.CreatorCardGrid
-import com.faithForward.media.viewModel.HomePageItem
+import com.faithForward.media.viewModel.uiModels.HomePageItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -1,0 +1,42 @@
+package com.faithForward.media.viewModel.uiModels
+
+import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.player.PlayerDto
+import com.faithForward.media.player.VideoPlayerDto
+import com.faithForward.util.Resource
+
+fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
+    return VideoPlayerDto(
+        url = videoHlsUrl,
+        itemId = id ?: "",
+
+        )
+}
+
+
+
+data class PlayerState(
+    val currentPosition: Long = 0L,
+    val duration: Long = 1L,
+    val videoPlayerDto: Resource<PlayerDto> = Resource.Unspecified(),
+    val isControlsVisible: Boolean = true,
+    val isPlaying: Boolean = false,
+    val isLoading: Boolean = false,
+    val isPlayerBuffering: Boolean = false
+)
+
+sealed class PlayerEvent {
+    data class UpdateDuration(val value: Long) : PlayerEvent()
+    data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
+    data object ShowControls : PlayerEvent()
+    data object HideControls : PlayerEvent()
+    data class UpdateIsPlaying(val isPlaying: Boolean) : PlayerEvent()
+    data class UpdateVideoPlayerDto(val itemList: List<PosterCardDto>) : PlayerEvent()
+    data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
+}
+
+
+enum class PlayerPlayingState {
+    PLAYING, PAUSED, REWINDING, FORWARDING, IDLE
+}
+

@@ -1,11 +1,17 @@
 package com.faithForward.media.viewModel
 
 import android.util.Log
-import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.viewModel.uiModels.DetailPageItem
+import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
+import com.faithForward.media.viewModel.uiModels.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.UiState
+import com.faithForward.media.viewModel.uiModels.toDetailDto
+import com.faithForward.media.viewModel.uiModels.toSeasonDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,10 +19,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val networkRepository: NetworkRepository,
 ) : ViewModel() {
 
@@ -29,9 +39,21 @@ class DetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
+    val id: String? = savedStateHandle["itemId"]
+    var relatedList: List<PosterCardDto>? = emptyList()
+
     init {
-        Log.e("DETAIL_VIEWMODEL", "detail viewmodel init called")
+        val encodedJson = savedStateHandle.get<String>("listJson")
+        relatedList = encodedJson
+            ?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
+            ?.let { Json.decodeFromString<List<PosterCardDto>>(it) }
+
+        // Now you can call any methods here
+        id?.let {
+            handleEvent(DetailScreenEvent.LoadCardDetail(id, relatedList!!))
+        }
     }
+
 
     fun handleEvent(event: DetailScreenEvent) {
         when (event) {
@@ -43,6 +65,7 @@ class DetailViewModel @Inject constructor(
     }
 
     private fun loadCardDetail(id: String, relatedList: List<PosterCardDto>) {
+        Log.e("DETAIL_VIEWMODEL", "LOAD card detail is called in detail viewmodel with item id $id")
         viewModelScope.launch(Dispatchers.IO) {
             _cardDetail.value = Resource.Loading()
             _relatedContentData.value = RelatedContentData.None // Clear previous data

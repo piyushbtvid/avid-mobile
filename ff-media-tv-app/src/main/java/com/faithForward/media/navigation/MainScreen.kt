@@ -16,24 +16,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     sideBarViewModel: SideBarViewModel,
+    playerViewModel: PlayerViewModel,
     startRoute: String,
+    navController:NavHostController,
     loginViewModel: LoginViewModel,
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
-    val navController = rememberNavController()
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -59,6 +63,7 @@ fun MainScreen(
                 sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(value))
             },
             startRoute = startRoute,
+            playerViewModel = playerViewModel,
             loginViewModel = loginViewModel
         )
 

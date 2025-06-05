@@ -27,18 +27,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.related.RelatedContent
 import com.faithForward.media.detail.related.RelatedContentRowDto
-import com.faithForward.media.viewModel.DetailPageItem
-import com.faithForward.media.viewModel.DetailScreenEvent
 import com.faithForward.media.viewModel.DetailViewModel
-import com.faithForward.media.viewModel.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.DetailPageItem
+import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
+import com.faithForward.media.viewModel.uiModels.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    itemId: String,
-    relatedList: List<PosterCardDto> = emptyList(),
+    onWatchNowClick: (PosterCardDto) -> Unit,
     onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     detailViewModel: DetailViewModel,
 ) {
@@ -49,20 +49,14 @@ fun DetailScreen(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
 
-    var lastFocusedItem by rememberSaveable { mutableStateOf(0) }
+    var lastFocusedItem by rememberSaveable { mutableStateOf(-1) }
+    var seasonNumberSelectedItem by rememberSaveable { mutableStateOf(-1) }
 
     val animatedHeight by animateDpAsState(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
         animationSpec = tween(durationMillis = 500)
     )
 
-    LaunchedEffect(Unit) {
-        Log.e(
-            "DETAIL_SCREEN",
-            "detail screen is opened with $itemId and related List size ${relatedList.size}"
-        )
-        detailViewModel.handleEvent(DetailScreenEvent.LoadCardDetail(itemId, relatedList))
-    }
 
     when (cardDetail) {
         is Resource.Loading, is Resource.Unspecified -> {
@@ -78,12 +72,19 @@ fun DetailScreen(
         is Resource.Success -> {
             val detailPageItem = cardDetail.data as? DetailPageItem.Card ?: return
             Box(modifier = modifier.fillMaxSize()) {
-                DetailContent(
-                    detailDto = detailPageItem.detailDto,
+                DetailContent(detailDto = detailPageItem.detailDto,
                     btnFocusRequester = btnFocusRequester,
                     isContentVisible = uiState.isContentVisible,
                     modifier = Modifier.fillMaxSize(),
-                )
+                    onWatchNowClick = {
+                        onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto())
+                    },
+                    onWatchNowFocusChange = { hasFocus ->
+                        //changing related items last focus to -1 when focus on watch now for gaining focus again in watchNow
+                        if (hasFocus) {
+                            lastFocusedItem = -1
+                        }
+                    })
 
                 // Assign to local variable to enable smart casting
                 when (val contentData = relatedContentData) {
@@ -93,11 +94,10 @@ fun DetailScreen(
 
                     is RelatedContentData.RelatedMovies -> {
                         if (contentData.movies.isNotEmpty()) {
-                            RelatedContent(
-                                relatedContentRowDto = RelatedContentRowDto(
-                                    heading = "Related Movies",
-                                    relatedContentDto = contentData.movies
-                                ),
+                            RelatedContent(relatedContentRowDto = RelatedContentRowDto(
+                                heading = "Related Movies",
+                                relatedContentDto = contentData.movies
+                            ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 30.dp)
@@ -106,9 +106,11 @@ fun DetailScreen(
                                     .padding(bottom = 10.dp)
                                     .onFocusChanged {
                                         Log.e("LOG", "onFocusChanged()()()()}")
-                                        detailViewModel.handleEvent(
-                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
-                                        )
+                                        if (it.hasFocus) {
+                                            detailViewModel.handleEvent(
+                                                DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                            )
+                                        }
                                     },
                                 contentRowModifier = Modifier
                                     .fillMaxWidth()
@@ -144,9 +146,11 @@ fun DetailScreen(
                                 .align(Alignment.BottomStart)
                                 .padding(bottom = 10.dp)
                                 .onFocusChanged {
-                                    detailViewModel.handleEvent(
-                                        DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
-                                    )
+                                    if (it.hasFocus) {
+                                        detailViewModel.handleEvent(
+                                            DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
+                                        )
+                                    }
                                 },
                             contentRowModifier = Modifier.fillMaxWidth(),
                             onRelatedUpClick = {
@@ -156,20 +160,21 @@ fun DetailScreen(
                                 } catch (ex: Exception) {
                                     Log.e("LOG", "exception is ${ex.message}")
                                 }
-                                true
+                                false
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls ->
-
+                                onWatchNowClick.invoke(item)
                             },
-                            lastFocusedItemIndex = 0,
+                            lastFocusedItemIndex = lastFocusedItem,
                             onLastFocusedIndexChange = { int ->
-
+                                lastFocusedItem = int
                             },
                             seasonsNumberRow = {
                                 SeasonsNumberRow(
                                     seasonsNumberDtoList = contentData.seasonNumberList,
                                     onSeasonUpClick = {
+                                        detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                         try {
                                             btnFocusRequester.requestFocus()
                                         } catch (ex: Exception) {
@@ -183,9 +188,29 @@ fun DetailScreen(
                                         )
                                     },
                                     modifier = Modifier.focusRestorer(),
+                                    lastSelectedItemIndex = seasonNumberSelectedItem,
+                                    onLastSelectedIndexChange = { index ->
+                                        seasonNumberSelectedItem = index
+                                    },
                                 )
                             })
                     }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                Log.e(
+                    "LAST_FOCUSED_INDEX",
+                    "current selected series in detail screen is $seasonNumberSelectedItem"
+                )
+                if (lastFocusedItem == -1) {
+                    try {
+                        Log.e("LAST_FOCUSED", "last focused is $lastFocusedItem")
+                        btnFocusRequester.requestFocus()
+                    } catch (_: Exception) {
+
+                    }
+
                 }
             }
         }

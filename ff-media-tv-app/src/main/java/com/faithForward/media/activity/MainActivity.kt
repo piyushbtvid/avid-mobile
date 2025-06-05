@@ -1,6 +1,8 @@
 package com.faithForward.media.activity
 
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,7 +30,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.LoaderScreen
 import com.faithForward.media.navigation.MainScreen
@@ -38,12 +43,17 @@ import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.theme.FfmediaTheme
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
-import com.faithForward.media.viewModel.SeriesViewModel
+import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var playerViewModel: PlayerViewModel
+    private var isControlsVisible: Boolean = true
+    private var currentRoute: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,7 +62,11 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = viewModel()
                     val loginViewModel = hiltViewModel<LoginViewModel>()
+                    playerViewModel = viewModel()
                     val userSession by loginViewModel.userSession.collectAsStateWithLifecycle()
+                    val navController = rememberNavController()
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    currentRoute = navBackStackEntry?.destination?.route
                     if (userSession.isLoading) {
                         LoaderScreen()
                     } else {
@@ -60,6 +74,8 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(innerPadding),
                             sideBarViewModel = sideBarViewModel,
                             loginViewModel = loginViewModel,
+                            playerViewModel = playerViewModel,
+                            navController = navController,
                             startRoute = if (userSession.data != null) Routes.Home.route else Routes.Login.route
                         )
                     }
@@ -67,7 +83,56 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+        if (currentRoute == Routes.PlayerScreen.route) {
+            Log.e("PLAY_EVENT", "on use interction is called ")
+            playerViewModel.onUserInteraction()
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
+                if (isControlsVisible) {
+                    playerViewModel.togglePlayPause()
+                } else {
+                    playerViewModel.onUserInteraction()
+                }
+                return true
+            }
+
+            KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
+                if (isControlsVisible) {
+                    playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
+                } else {
+                    playerViewModel.onUserInteraction()
+                }
+                return true
+            }
+
+            KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                if (isControlsVisible) {
+                    playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
+                } else {
+                    playerViewModel.onUserInteraction()
+                }
+                return true
+            }
+
+
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                if (!isControlsVisible) {
+                    playerViewModel.onUserInteraction()
+                }
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
 }
+
 
 @Composable
 fun TestScreen(modifier: Modifier = Modifier) {

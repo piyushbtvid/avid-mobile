@@ -1,4 +1,4 @@
-package com.faithForward.media.viewModel
+package com.faithForward.media.viewModel.uiModels
 
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.genre.GenreCardDto
@@ -19,7 +19,8 @@ fun ContentItem.toGenreCardDto(): GenreCardDto {
         seasons = seasons?.size,
         duration = duration.toString(),
         imdbRating = rating,
-        releaseDate = dateUploaded
+        releaseDate = dateUploaded,
+        videoUrl = video_link
     )
 }
 
@@ -45,6 +46,7 @@ fun GenreCardDto.toPosterCardDto(): PosterCardDto {
         seasons = seasons,
         duration = duration.toString(),
         imdbRating = imdbRating,
-        releaseDate = releaseDate
+        releaseDate = releaseDate,
+        videoHlsUrl = videoUrl
     )
 }

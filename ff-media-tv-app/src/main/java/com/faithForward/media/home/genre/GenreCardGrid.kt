@@ -2,7 +2,6 @@ package com.faithForward.media.home.genre
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,10 +45,9 @@ import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.theme.homeBackgroundColor
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
-import com.faithForward.media.viewModel.toPosterCardDto
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 
 
 data class GenreGridDto(

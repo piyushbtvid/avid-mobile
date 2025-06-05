@@ -84,14 +84,14 @@ fun SeasonsContent(
                     isRelatedTextFocused = it.hasFocus
                 })
 
-            SeasonsNumberRow(
-                seasonsNumberDtoList = seasonsContentDto.seasonsNumberDtoList,
-                onSeasonUpClick = onSeasonUpClick,
-                onSeasonNumberChanged = { seasonNumber ->
-                    focusedSeasonEpisodes =
-                        seasonsContentDto.listSeasonDto[seasonNumber - 1].episodesContentDto
-                }
-            )
+//            SeasonsNumberRow(
+//                seasonsNumberDtoList = seasonsContentDto.seasonsNumberDtoList,
+//                onSeasonUpClick = onSeasonUpClick,
+//                onSeasonNumberChanged = { seasonNumber ->
+//                    focusedSeasonEpisodes =
+//                        seasonsContentDto.listSeasonDto[seasonNumber - 1].episodesContentDto
+//                }
+//            )
 
         }
 

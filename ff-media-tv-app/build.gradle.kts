@@ -110,6 +110,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
+    //material
+    implementation("androidx.compose.material:material:1.7.8")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

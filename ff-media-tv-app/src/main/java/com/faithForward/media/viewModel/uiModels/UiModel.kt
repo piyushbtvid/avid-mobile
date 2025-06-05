@@ -1,4 +1,4 @@
-package com.faithForward.media.viewModel
+package com.faithForward.media.viewModel.uiModels
 
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.PosterCardDto
@@ -153,7 +153,8 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         seasons = seasons?.size,
         duration = duration.toString(),
         imdbRating = rating,
-        releaseDate = dateUploaded
+        releaseDate = dateUploaded,
+        videoHlsUrl = video_link
     )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {

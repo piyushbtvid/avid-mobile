@@ -1,9 +1,11 @@
 package com.faithForward.media.navigation
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,12 +18,16 @@ import com.faithForward.media.home.creator.CreatorScreen
 import com.faithForward.media.home.genre.GenreDataScreen
 import com.faithForward.media.home.movies.MoviesPage
 import com.faithForward.media.login.LoginScreen
+import com.faithForward.media.player.PlayerScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
 import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.uiModels.PlayerEvent
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -33,6 +39,7 @@ fun MainAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    playerViewModel: PlayerViewModel,
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
@@ -56,7 +63,7 @@ fun MainAppNavHost(
                     changeSideBarSelectedPosition.invoke(value)
                 },
                 onItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = if (item.id.contains("series")) {
                             emptyList()
                         } else {
@@ -91,7 +98,7 @@ fun MainAppNavHost(
             MoviesPage(
                 contentViewModel = contentViewModel,
                 onItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
@@ -116,7 +123,7 @@ fun MainAppNavHost(
                 genreId = genreId,
                 viewModel = genreViewModel,
                 onItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
@@ -132,37 +139,49 @@ fun MainAppNavHost(
                 navArgument("itemId") { type = NavType.StringType },
                 navArgument("listJson") { type = NavType.StringType }
             )
-        ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
-            val listJson = backStackEntry.arguments?.getString("listJson") ?: ""
-
+        ) {
             val detailViewModel: DetailViewModel = hiltViewModel()
 
-            val posterList: List<PosterCardDto> = try {
-                val decoded =
-                    java.net.URLDecoder.decode(listJson, StandardCharsets.UTF_8.toString())
-                Json.decodeFromString(decoded)
-            } catch (e: Exception) {
-                emptyList()
-            }
-
-            Log.e("POSTER", "poster list recived in detail with $posterList")
             DetailScreen(
-                itemId = itemId,
                 detailViewModel = detailViewModel,
-                relatedList = posterList,
+                onWatchNowClick = { item ->
+                    val route = Routes.PlayerScreen.createRoute(item)
+                    navController.navigate(route)
+                },
                 onRelatedItemClick = { item, list ->
-                    if (item.id.isNotEmpty()) {
+                    if (!item.id.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.id == item.id }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList)) {
-                        }
-
+                        navController.navigate(Routes.Detail.createRoute(item.id, encodedList))
                     }
                 }
             )
         }
+
+
+        composable(
+            route = Routes.PlayerScreen.route,
+            arguments = listOf(navArgument("playerDto") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val json = backStackEntry.arguments?.getString("playerDto")
+            val playerDto = json?.let { Json.decodeFromString<PosterCardDto>(Uri.decode(it)) }
+
+
+            playerDto?.let {
+                playerViewModel.handleEvent(
+                    PlayerEvent.UpdateVideoPlayerDto(
+                        itemList = listOf(playerDto)
+                    )
+                )
+
+            }
+
+            PlayerScreen(
+                playerViewModel = playerViewModel
+            )
+        }
+
 
     }
 

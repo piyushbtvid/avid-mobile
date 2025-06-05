@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
@@ -38,11 +41,14 @@ fun SeasonsNumberRow(
     seasonsNumberDtoList: List<SeasonsNumberDto>,
     onSeasonUpClick: () -> Boolean,
     onSeasonNumberChanged: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    lastSelectedItemIndex: Int,
+    onLastSelectedIndexChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
     var seasonNumberFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var seasonNumberSelectedIndex by rememberSaveable { mutableIntStateOf(-1) }
+
+
 
     LazyRow(
         modifier = modifier.wrapContentWidth(),
@@ -51,9 +57,9 @@ fun SeasonsNumberRow(
 
         itemsIndexed(seasonsNumberDtoList) { index, seasonNumberItem ->
 
+
             val uiState = when (index) {
                 seasonNumberFocusedIndex -> FocusState.FOCUSED
-                seasonNumberSelectedIndex -> FocusState.SELECTED
                 else -> FocusState.UNFOCUSED
             }
 
@@ -63,8 +69,12 @@ fun SeasonsNumberRow(
                         if (it.hasFocus) {
                             seasonNumberFocusedIndex = index
                             onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
+                            onLastSelectedIndexChange.invoke(index)
                         } else {
-                            seasonNumberFocusedIndex = -1
+                            if (seasonNumberFocusedIndex == index) {
+                                seasonNumberFocusedIndex = -1
+                            }
+                            //seasonNumberFocusedIndex = -1
                         }
                     }
                     .focusable()
@@ -78,9 +88,9 @@ fun SeasonsNumberRow(
                         }
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
-                        onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
-                        seasonNumberSelectedIndex = index
-                        seasonNumberFocusedIndex = -1
+                        // onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
+//                        seasonNumberSelectedIndex = index
+//                        seasonNumberFocusedIndex = -1
                     }),
                 text = seasonNumberItem.seasonNumber.toString(),
                 textSize = if (uiState == FocusState.FOCUSED) 18 else 15,
@@ -94,6 +104,7 @@ fun SeasonsNumberRow(
         }
 
     }
+
 
 }
 
@@ -135,7 +146,11 @@ private fun SeasonsNumberRowPreview() {
             },
             onSeasonNumberChanged = {
 
-            }
+            },
+            lastSelectedItemIndex = 1,
+            onLastSelectedIndexChange = {
+
+            },
         )
     }
 

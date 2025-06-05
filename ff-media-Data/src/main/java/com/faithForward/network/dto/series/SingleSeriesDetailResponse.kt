@@ -37,5 +37,6 @@ data class Episode(
     val dateUploaded: String,
     val uploadedYear: String,
     val access: String,
-    val creator: Creator
+    val creator: Creator,
+    var video_link: String? = null,
 )
