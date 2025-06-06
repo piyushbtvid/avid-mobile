@@ -8,12 +8,15 @@ import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.myList.AddRemoveMyListResponse
+import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
 import com.faithForward.network.request.LoginRequest
 import com.faithForward.util.Constants
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -21,11 +24,13 @@ interface ApiServiceInterface {
 
     @GET(Constants.HOME_SECTION_END_POINT)
     suspend fun getHomeSectionData(
-
+        @Header("Authorization") token: String,
     ): Response<HomeSectionApiResponse>
 
     @GET(Constants.CATEGORY_END_POINT)
-    suspend fun getCategories(): Response<CategoryResponse>
+    suspend fun getCategories(
+        @Header("Authorization") token: String,
+    ): Response<CategoryResponse>
 
     @GET(Constants.CATEGORY_END_POINT)
     suspend fun getGivenCategoryDetail(
@@ -43,7 +48,16 @@ interface ApiServiceInterface {
     @GET(Constants.GIVEN_SECTION_END_POINT)
     suspend fun getGivenSectionData(
         @Path("id") id: String,
+        @Header("Authorization") token: String,
     ): Response<SectionContentResponse>
+
+
+    @GET(Constants.GIVEN_SECTION_END_POINT)
+    suspend fun getMyListSectionData(
+        @Path("id") id: String,
+        @Header("Authorization") token: String,
+    ): Response<MyListResponse>
+
 
     @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
     suspend fun getGivenGenreData(
@@ -61,5 +75,17 @@ interface ApiServiceInterface {
     suspend fun getSingleSeriesDetail(
         @Path("id") id: String,
     ): Response<SingleSeriesDetailResponse>
+
+    @POST(Constants.MY_LIST_END_POINT)
+    suspend fun addToMyList(
+        @Path("id") id: String,
+        @Header("Authorization") token: String,
+    ): Response<AddRemoveMyListResponse>
+
+    @POST(Constants.MY_LIST_END_POINT)
+    suspend fun removeFromMyList(
+        @Path("id") id: String,
+        @Header("Authorization") token: String,
+    ): Response<AddRemoveMyListResponse>
 
 }

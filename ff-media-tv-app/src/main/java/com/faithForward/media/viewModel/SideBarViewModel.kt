@@ -26,9 +26,9 @@ class SideBarViewModel : ViewModel() {
             listOf(
                 SideBarItem("Search", R.drawable.search_ic, "search"),
                 SideBarItem("Home", R.drawable.home_ic, Routes.Home.route),
-                SideBarItem("MyList", R.drawable.plus_ic, "myList"),
+                SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route),
                 SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),
-                SideBarItem("Series", R.drawable.screen_ic, "series"),
+                SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route),
                 SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
                 SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
             )

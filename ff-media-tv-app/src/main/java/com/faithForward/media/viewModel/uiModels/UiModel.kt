@@ -12,6 +12,7 @@ import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.creator.UserData
+import com.faithForward.network.dto.myList.MyListResponse
 
 sealed interface HomePageItem {
     data class CarouselRow(val dto: CarouselContentRowDto) : HomePageItem
@@ -99,7 +100,9 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     return homePageItems
 }
 
-fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
+fun SectionContentResponse.toHomePageItems(
+    rowHeading: String,
+): List<HomePageItem> {
     val homePageItems = mutableListOf<HomePageItem>()
 
     if (data.isNotEmpty()) {
@@ -117,11 +120,51 @@ fun SectionContentResponse.toHomePageItems(): List<HomePageItem> {
             homePageItems.add(
                 HomePageItem.PosterRow(
                     PosterRowDto(
-                        heading = "Movies", // Or dynamic heading if available
+                        heading = rowHeading, // Or dynamic heading if available
                         dtos = posterItems
                     )
                 )
             )
+        }
+    }
+
+    return homePageItems
+}
+
+fun MyListResponse.toHomePageItems(): List<HomePageItem> {
+    val homePageItems = mutableListOf<HomePageItem>()
+
+    var hasAddedCarousel = false
+
+    data.forEach { category ->
+        val items = category.content
+
+        if (items.isNotEmpty()) {
+            val adjustedItems = if (!hasAddedCarousel) {
+                // Add CarouselRow with the first item
+                homePageItems.add(
+                    HomePageItem.CarouselRow(
+                        CarouselContentRowDto(listOf(items.first().toCarouselItemDto()))
+                    )
+                )
+                hasAddedCarousel = true
+                items.drop(1) // drop only from first non-empty list
+            } else {
+                items
+            }
+
+            // Convert remaining items to PosterCardDto
+            val posterItems = adjustedItems.map { it.toPosterCardDto() }
+
+            if (posterItems.isNotEmpty()) {
+                homePageItems.add(
+                    HomePageItem.PosterRow(
+                        PosterRowDto(
+                            heading = category.title, dtos = posterItems
+                        )
+                    )
+                )
+            }
         }
     }
 
@@ -143,8 +186,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
 
 
 fun ContentItem.toPosterCardDto(): PosterCardDto =
-    PosterCardDto(
-        posterImageSrc = landscape ?: portrait ?: "",
+    PosterCardDto(posterImageSrc = landscape ?: portrait ?: "",
         id = id ?: "",
         title = name ?: "",
         description = description ?: "",
@@ -154,8 +196,7 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         duration = duration.toString(),
         imdbRating = rating,
         releaseDate = dateUploaded,
-        videoHlsUrl = video_link
-    )
+        videoHlsUrl = video_link)
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(

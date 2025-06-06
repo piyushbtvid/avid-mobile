@@ -1,4 +1,4 @@
-package com.faithForward.media.home.movies
+package com.faithForward.media.home.series
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,14 +13,14 @@ import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.util.Resource
 
 @Composable
-fun MoviesPage(
+fun SeriesPage(
     modifier: Modifier = Modifier,
     contentViewModel: ContentViewModel,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
     LaunchedEffect(Unit) {
-        contentViewModel.loadSectionContent("movies","Movies")
+        contentViewModel.loadSectionContent("series", "Series")
     }
 
 
