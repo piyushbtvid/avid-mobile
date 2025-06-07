@@ -79,7 +79,8 @@ class DetailViewModel @Inject constructor(
                                 )
                             )
                         )
-                        if (cardDetail.data.seasons.isNullOrEmpty()) {
+                        // if Content type is Movie then movie else for now its Series
+                        if (cardDetail.data.content_type == "Movie") {
                             Log.e(
                                 "DETAIL_SLUG",
                                 "detail isFavourite in viewModel is ${cardDetail.data.myList}"
@@ -91,8 +92,10 @@ class DetailViewModel @Inject constructor(
                                     RelatedContentData.None
                                 }
                             )
-                        } else {
+                        } else if (!cardDetail.data.seasons.isNullOrEmpty()) {
                             val seasonList = cardDetail.data.seasons!!.map { it.toSeasonDto() }
+
+                            //creating season number dto by adding 1 in seasons array index
                             val seasonNumberList = List(seasonList.size) { index ->
                                 SeasonsNumberDto(seasonNumber = index + 1)
                             }

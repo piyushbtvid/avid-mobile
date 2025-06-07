@@ -119,7 +119,9 @@ data class UiState(
 
 // Sealed class for UI events
 sealed interface DetailScreenEvent {
-    data class LoadCardDetail(val slug: String, val relatedList: List<PosterCardDto>) : DetailScreenEvent
+    data class LoadCardDetail(val slug: String, val relatedList: List<PosterCardDto>) :
+        DetailScreenEvent
+
     data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent
     data object RelatedRowUpClick : DetailScreenEvent
     data class SeasonSelected(val seasonNumber: Int) : DetailScreenEvent
