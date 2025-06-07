@@ -40,6 +40,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PosterCardDto(
     val id: String?,
+    val slug: String?,
     val posterImageSrc: String,
     val title: String,
     val description: String,
@@ -130,7 +131,7 @@ fun PosterCardLazyRowPreview() {
         ) {
             items(3) { index ->
                 PosterCard(posterCardDto = PosterCardDto(
-                    posterImageSrc = "", id = "", title = "", description = ""
+                    posterImageSrc = "", id = "", title = "", description = "", slug = ""
                 ), // Leave blank to test drawable fallback
                     focusState = if (index == 0) FocusState.FOCUSED else FocusState.UNFOCUSED,
                     onItemClick = {

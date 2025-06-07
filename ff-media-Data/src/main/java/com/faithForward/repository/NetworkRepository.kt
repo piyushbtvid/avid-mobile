@@ -37,7 +37,12 @@ class NetworkRepository @Inject constructor(
 //    suspend fun getGivenCategoryDetail(categoryId: Int) =
 //        apiServiceInterface.getGivenSectionData(categoryId)
 
-    suspend fun getCreatorsList() = apiServiceInterface.getCreatorsList()
+    suspend fun getCreatorsList() = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getCreatorsList(token)
+    }
 
     suspend fun loginUser(
         email: String,
@@ -92,29 +97,41 @@ class NetworkRepository @Inject constructor(
     ) = apiServiceInterface.getGivenGenreData(itemId)
 
     suspend fun getGivenCardDetail(
-        itemId: String,
-    ) = apiServiceInterface.getGivenCardDetail(itemId)
+        slug: String,
+    ) = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getGivenCardDetail(slug, token)
+    }
+
 
     suspend fun getSingleSeriesDetail(
         itemId: String,
-    ) = apiServiceInterface.getSingleSeriesDetail(itemId)
-
-    suspend fun addToMyWatchList(
-        itemId: String,
     ) = withContext(Dispatchers.IO) {
         // Get the user token from userSessionFlow, default to empty string if null/empty
         val userSession = userPreferences.userSessionFlow.firstOrNull()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        apiServiceInterface.addToMyList(id = itemId, token = token)
+        apiServiceInterface.getSingleSeriesDetail(itemId)
+    }
+
+
+    suspend fun addToMyWatchList(
+        slug: String,
+    ) = withContext(Dispatchers.IO) {
+        // Get the user token from userSessionFlow, default to empty string if null/empty
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.addToMyList(slug = slug, token = token)
     }
 
     suspend fun removeFromMyWatchList(
-        itemId: String,
+        slug: String,
     ) = withContext(Dispatchers.IO) {
         // Get the user token from userSessionFlow, default to empty string if null/empty
         val userSession = userPreferences.userSessionFlow.firstOrNull()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        apiServiceInterface.removeFromMyList(id = itemId, token = token)
+        apiServiceInterface.removeFromMyList(slug = slug, token = token)
     }
 
 

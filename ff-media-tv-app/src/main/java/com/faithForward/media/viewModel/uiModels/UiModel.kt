@@ -47,7 +47,7 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     var carouselSectionIndex: Int? = null
 
     val category = sections?.genres?.mapIndexed { index, genre ->
-        CategoryComposeDto(genre.name ?: "", id = genre.id ?: "")
+        CategoryComposeDto(genre.name ?: "", id = genre.id.toString() ?: "")
     }
     if (category != null) {
         homePageItems.add(HomePageItem.CategoryRow(CategoryRowDto(category)))
@@ -187,7 +187,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
 
 fun ContentItem.toPosterCardDto(): PosterCardDto =
     PosterCardDto(posterImageSrc = landscape ?: portrait ?: "",
-        id = id ?: "",
+        id = id.toString() ?: "",
         title = name ?: "",
         description = description ?: "",
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names
@@ -196,7 +196,9 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         duration = duration.toString(),
         imdbRating = rating,
         releaseDate = dateUploaded,
-        videoHlsUrl = video_link)
+        videoHlsUrl = video_link,
+        slug = slug
+    )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(

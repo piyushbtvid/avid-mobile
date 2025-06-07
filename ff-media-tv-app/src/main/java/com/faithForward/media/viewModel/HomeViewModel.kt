@@ -63,7 +63,7 @@ class HomeViewModel
                 }
 
 
-                MyFavList.myFavList = myListData.body()?.data
+              //  MyFavList.myFavList = myListData.body()?.data
 
                 // Combine the data with CategoryRow at index 1
                 val combinedItems = buildList {

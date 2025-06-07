@@ -57,7 +57,6 @@ fun DetailScreen(
         animationSpec = tween(durationMillis = 500)
     )
 
-
     when (cardDetail) {
         is Resource.Loading, is Resource.Unspecified -> {
             // Add loading indicator here if required
@@ -72,7 +71,8 @@ fun DetailScreen(
         is Resource.Success -> {
             val detailPageItem = cardDetail.data as? DetailPageItem.Card ?: return
             Box(modifier = modifier.fillMaxSize()) {
-                DetailContent(detailDto = detailPageItem.detailDto,
+                DetailContent(
+                    detailDto = detailPageItem.detailDto,
                     btnFocusRequester = btnFocusRequester,
                     isContentVisible = uiState.isContentVisible,
                     modifier = Modifier.fillMaxSize(),
@@ -80,13 +80,19 @@ fun DetailScreen(
                         onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto())
                     },
                     onWatchNowFocusChange = { hasFocus ->
-                        //changing related items last focus to -1 when focus on watch now for gaining focus again in watchNow
                         if (hasFocus) {
                             lastFocusedItem = -1
                         }
-                    })
+                    },
+                    onToggleFavorite = {
+                        if (detailPageItem.detailDto.slug != null) {
+                            detailViewModel.handleEvent(
+                                DetailScreenEvent.ToggleFavorite(detailPageItem.detailDto.slug!!)
+                            )
+                        }
+                    },
+                )
 
-                // Assign to local variable to enable smart casting
                 when (val contentData = relatedContentData) {
                     is RelatedContentData.None -> {
                         // Optionally show a placeholder or nothing
@@ -94,10 +100,11 @@ fun DetailScreen(
 
                     is RelatedContentData.RelatedMovies -> {
                         if (contentData.movies.isNotEmpty()) {
-                            RelatedContent(relatedContentRowDto = RelatedContentRowDto(
-                                heading = "Related Movies",
-                                relatedContentDto = contentData.movies
-                            ),
+                            RelatedContent(
+                                relatedContentRowDto = RelatedContentRowDto(
+                                    heading = "Related Movies",
+                                    relatedContentDto = contentData.movies
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 30.dp)
@@ -105,7 +112,6 @@ fun DetailScreen(
                                     .align(Alignment.BottomStart)
                                     .padding(bottom = 10.dp)
                                     .onFocusChanged {
-                                        Log.e("LOG", "onFocusChanged()()()()}")
                                         if (it.hasFocus) {
                                             detailViewModel.handleEvent(
                                                 DetailScreenEvent.RelatedRowFocusChanged(it.hasFocus)
@@ -135,10 +141,11 @@ fun DetailScreen(
                     }
 
                     is RelatedContentData.SeriesSeasons -> {
-                        RelatedContent(relatedContentRowDto = RelatedContentRowDto(
-                            heading = "Seasons:",
-                            relatedContentDto = contentData.selectedSeasonEpisodes
-                        ),
+                        RelatedContent(
+                            relatedContentRowDto = RelatedContentRowDto(
+                                heading = "Seasons:",
+                                relatedContentDto = contentData.selectedSeasonEpisodes
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 30.dp)
@@ -193,7 +200,8 @@ fun DetailScreen(
                                         seasonNumberSelectedItem = index
                                     },
                                 )
-                            })
+                            }
+                        )
                     }
                 }
             }
@@ -208,9 +216,7 @@ fun DetailScreen(
                         Log.e("LAST_FOCUSED", "last focused is $lastFocusedItem")
                         btnFocusRequester.requestFocus()
                     } catch (_: Exception) {
-
                     }
-
                 }
             }
         }
