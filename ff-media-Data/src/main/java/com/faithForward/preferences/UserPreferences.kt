@@ -1,92 +1,70 @@
 package com.faithForward.preferences
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import android.content.SharedPreferences
+import android.util.Log
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.User
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val Context.dataStore by preferencesDataStore(name = "user_prefs")
 
 @Singleton
 class UserPreferences @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
-
-    private val dataStore: DataStore<Preferences> = context.dataStore
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     companion object {
-        val USER_NAME = stringPreferencesKey("user_name")
-        val USER_EMAIL = stringPreferencesKey("user_email")
-        val USER_PHONE = stringPreferencesKey("user_phone")
-        val USER_PROFILE_IMG = stringPreferencesKey("user_profile_img")
-        val USER_STATUS = stringPreferencesKey("user_status")
-        val USER_ROLE = stringPreferencesKey("user_role")
-        val TOKEN = stringPreferencesKey("token")
-        val TOKEN_TYPE = stringPreferencesKey("token_type")
+        const val USER_NAME = "user_name"
+        const val USER_EMAIL = "user_email"
+        const val USER_PHONE = "user_phone"
+        const val USER_PROFILE_IMG = "user_profile_img"
+        const val USER_STATUS = "user_status"
+        const val USER_ROLE = "user_role"
+        const val TOKEN = "token"
+        const val TOKEN_TYPE = "token_type"
     }
 
-    suspend fun saveUserSession(session: LoginData) {
-        dataStore.edit { prefs ->
-            prefs[USER_NAME] = session.user.name
-            prefs[USER_EMAIL] = session.user.email
-            session.user.phone?.let { prefs[USER_PHONE] = it }
-            session.user.profileImg?.let { prefs[USER_PROFILE_IMG] = it }
-            prefs[USER_STATUS] = session.user.status
-            prefs[USER_ROLE] = session.user.role
-            prefs[TOKEN] = session.token
-            prefs[TOKEN_TYPE] = session.tokenType
+    suspend fun saveUserSession(session: LoginData) = withContext(Dispatchers.IO) {
+        with(sharedPreferences.edit()) {
+            putString(USER_NAME, session.user?.name)
+            putString(USER_EMAIL, session.user?.email)
+            session.user?.phone?.let { putString(USER_PHONE, it) }
+            session.user?.profileImg?.let { putString(USER_PROFILE_IMG, it) }
+            putString(USER_STATUS, session.user?.status)
+            putString(USER_ROLE, session.user?.role)
+            putString(TOKEN, session.token)
+            putString(TOKEN_TYPE, session.tokenType)
+            commit() // Use commit() for synchronous save to ensure data is written
         }
     }
 
-    val userSessionFlow: Flow<LoginData?> = dataStore.data
-        .map { prefs ->
-            val name = prefs[USER_NAME] ?: return@map null
-            val email = prefs[USER_EMAIL] ?: return@map null
-            val phone = prefs[USER_PHONE]
-            val profileImg = prefs[USER_PROFILE_IMG]
-            val status = prefs[USER_STATUS] ?: return@map null
-            val role = prefs[USER_ROLE] ?: return@map null
-            val token = prefs[TOKEN] ?: return@map null
-            val tokenType = prefs[TOKEN_TYPE] ?: return@map null
+    fun getUserSession(): LoginData? {
+        Log.e("USER_PREF", "get Current Season called in UserPref")
+        val name = sharedPreferences.getString(USER_NAME, null)
+        val email = sharedPreferences.getString(USER_EMAIL, null)
+        val phone = sharedPreferences.getString(USER_PHONE, null)
+        val profileImg = sharedPreferences.getString(USER_PROFILE_IMG, null)
+        val status = sharedPreferences.getString(USER_STATUS, null)
+        val role = sharedPreferences.getString(USER_ROLE, null)
+        val token = sharedPreferences.getString(TOKEN, null)
+        val tokenType = sharedPreferences.getString(TOKEN_TYPE, null)
 
-            LoginData(
-                user = User(name, email, phone, profileImg, status, role),
-                token = token,
-                tokenType = tokenType
-            )
-        }
+        Log.e("USER_PREF", "token is $token after getUserSeason")
 
-    fun getCurrentSession(): LoginData? = runBlocking {
-        dataStore.data.firstOrNull()?.let { prefs ->
-            val name = prefs[USER_NAME] ?: return@let null
-            val email = prefs[USER_EMAIL] ?: return@let null
-            val phone = prefs[USER_PHONE]
-            val profileImg = prefs[USER_PROFILE_IMG]
-            val status = prefs[USER_STATUS] ?: return@let null
-            val role = prefs[USER_ROLE] ?: return@let null
-            val token = prefs[TOKEN] ?: return@let null
-            val tokenType = prefs[TOKEN_TYPE] ?: return@let null
-
-            LoginData(
-                user = User(name, email, phone, profileImg, status, role),
-                token = token,
-                tokenType = tokenType
-            )
-        }
+        return LoginData(
+            user = User(name, email, phone, profileImg, status, role),
+            token = token,
+            tokenType = tokenType
+        )
     }
 
-    suspend fun clearSession() {
-        dataStore.edit { it.clear() }
+    suspend fun clearSession() = withContext(Dispatchers.IO) {
+        sharedPreferences.edit().clear().commit()
     }
 }

@@ -1,11 +1,13 @@
 package com.faithForward.media.home.series
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
@@ -18,6 +20,10 @@ fun SeriesPage(
     contentViewModel: ContentViewModel,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
+
+    val uiEvent by contentViewModel.uiEvent.collectAsStateWithLifecycle(null)
+    val context = LocalContext.current
+
 
     LaunchedEffect(Unit) {
         contentViewModel.loadSectionContent("series", "Series")
@@ -32,6 +38,15 @@ fun SeriesPage(
     ) return
 
     val homePageItems = homePageItemsResource.data ?: return
+
+    // Showing Toast when uiEvent changes
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
+            // detailViewModel.resetUiEvent()
+        }
+    }
 
     Box(
         modifier = modifier
@@ -48,6 +63,21 @@ fun SeriesPage(
             },
             onItemClick = { item, list ->
                 onItemClick.invoke(item, list)
+            },
+            onToggleFavorite = { slug ->
+                if (slug != null) {
+                    contentViewModel.toggleFavorite(slug)
+                }
+            },
+            onToggleLike = { slug ->
+                if (slug != null) {
+                    contentViewModel.toggleLike(slug)
+                }
+            },
+            onToggleDisLike = { slug ->
+                if (slug != null) {
+                    contentViewModel.toggleDislike(slug)
+                }
             }
         )
     }

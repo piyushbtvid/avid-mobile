@@ -7,7 +7,6 @@ import com.faithForward.media.detail.SeasonsNumberDto
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.series.Episode
 import com.faithForward.network.dto.series.Season
-import com.faithForward.util.Resource
 
 
 sealed interface DetailPageItem {
@@ -61,7 +60,10 @@ fun CardDetail.toDetailDto(): DetailDto {
         imdbRating = data.rating,
         videoLink = resolvedVideoLink,
         slug = data.slug,
-        isFavourite = data.myList
+        isFavourite = data.myList,
+        isLiked = data.likeDislike == "like",
+        isDisliked = data.likeDislike == "dislike",
+        isSeries = data.content_type == "Series"
     )
 }
 

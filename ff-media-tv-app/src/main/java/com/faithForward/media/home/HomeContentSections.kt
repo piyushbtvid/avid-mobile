@@ -33,6 +33,9 @@ fun HomeContentSections(
     onCategoryItemClick: (String) -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
+    onToggleFavorite: (String?) -> Unit,
+    onToggleLike: (String?) -> Unit,
+    onToggleDisLike: (String?) -> Unit,
 ) {
     // State for the vertical LazyColumn
     val listState = rememberLazyListState()
@@ -66,7 +69,10 @@ fun HomeContentSections(
                     onItemFocused = { newFocus ->
                         lastFocusedItem = newFocus
                     },
-                    listState = listState
+                    listState = listState,
+                    onToggleFavorite = onToggleFavorite,
+                    onToggleLike = onToggleLike,
+                    onToggleDisLike = onToggleDisLike
                 )
 
                 is HomePageItem.CategoryRow -> CategoryRow(
@@ -82,8 +88,7 @@ fun HomeContentSections(
                     onCategoryItemClick = onCategoryItemClick
                 )
 
-                is HomePageItem.PosterRow -> ContentRow(
-                    posterRowDto = homePageItem.dto,
+                is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                     onItemClick = onItemClick,
                     rowIndex = rowIndex,
@@ -95,8 +100,7 @@ fun HomeContentSections(
                     listState = rowListStates[rowIndex] ?: rememberLazyListState(),
                     onChangeContentRowFocusedIndex = { index ->
                         onChangeContentRowFocusedIndex.invoke(index)
-                    }
-                )
+                    })
 
                 is HomePageItem.CreatorGrid -> {
                     CreatorCardGrid(

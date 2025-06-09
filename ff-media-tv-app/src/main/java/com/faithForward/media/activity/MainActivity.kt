@@ -30,11 +30,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
-import com.faithForward.media.commanComponents.LoaderScreen
 import com.faithForward.media.navigation.MainScreen
 import com.faithForward.media.navigation.Routes
 import com.faithForward.media.sidebar.SideBar
@@ -58,26 +56,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val sideBarViewModel: SideBarViewModel = viewModel()
-                    val loginViewModel = hiltViewModel<LoginViewModel>()
-                    playerViewModel = viewModel()
-                    val userSession by loginViewModel.userSession.collectAsStateWithLifecycle()
+                    val sideBarViewModel: SideBarViewModel = hiltViewModel()
+                    val loginViewModel: LoginViewModel = hiltViewModel()
+                    val playerViewModel: PlayerViewModel = hiltViewModel()
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    currentRoute = navBackStackEntry?.destination?.route
-                    Log.e("USER_DATA", "user data in mainActivity is ${userSession.data}")
-                    if (userSession.isLoading) {
-                        LoaderScreen()
-                    } else {
-                        MainScreen(
-                            modifier = Modifier.padding(innerPadding),
-                            sideBarViewModel = sideBarViewModel,
-                            loginViewModel = loginViewModel,
-                            playerViewModel = playerViewModel,
-                            navController = navController,
-                            startRoute = if (userSession.data != null) Routes.Home.route else Routes.Login.route
-                        )
-                    }
+                    val currentRoute = navBackStackEntry?.destination?.route
+                    val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
+
+                    MainScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        sideBarViewModel = sideBarViewModel,
+                        loginViewModel = loginViewModel,
+                        playerViewModel = playerViewModel,
+                        navController = navController,
+                        startRoute = if (isLoggedIn) Routes.Home.route else Routes.Login.route
+                    )
                 }
             }
         }

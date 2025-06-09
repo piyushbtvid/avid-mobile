@@ -180,7 +180,8 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
         imdbRating = rating,
         imgSrc = landscape,
         releaseDate = uploadedYear,
-        title = name
+        title = name,
+        slug = slug
     )
 }
 

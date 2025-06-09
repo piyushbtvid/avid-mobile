@@ -43,10 +43,18 @@ fun CreatorScreen(
             onCategoryItemClick = {
 
             },
-            onItemClick = { item , list ->
+            onItemClick = { item, list ->
+
+            },
+            onToggleFavorite = {
+
+            },
+            onToggleLike = {
+
+            },
+            onToggleDisLike = {
 
             }
         )
     }
-
 }

@@ -49,8 +49,7 @@ class DetailViewModel @Inject constructor(
 
     init {
         val encodedJson = savedStateHandle.get<String>("listJson")
-        relatedList = encodedJson
-            ?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
+        relatedList = encodedJson?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
             ?.let { Json.decodeFromString<List<PosterCardDto>>(it) }
 
         id?.let {
@@ -195,8 +194,7 @@ class DetailViewModel @Inject constructor(
                             Resource.Success(
                                 DetailPageItem.Card(
                                     detailDto = card.detailDto.copy(
-                                        isLiked = newIsLiked,
-                                        isDisliked = newIsDisliked
+                                        isLiked = newIsLiked, isDisliked = newIsDisliked
                                     )
                                 )
                             )
@@ -243,8 +241,7 @@ class DetailViewModel @Inject constructor(
                             Resource.Success(
                                 DetailPageItem.Card(
                                     detailDto = card.detailDto.copy(
-                                        isLiked = newIsLiked,
-                                        isDisliked = newIsDisliked
+                                        isLiked = newIsLiked, isDisliked = newIsDisliked
                                     )
                                 )
                             )
@@ -256,9 +253,12 @@ class DetailViewModel @Inject constructor(
                             )
                         )
                     } else {
-                        Log.e("TOGGLE_DISLIKE", "Failed to toggle dislike: ${response.message()}")
+                        Log.e(
+                            "TOGGLE_DISLIKE", "Failed to toggle dislike: ${response.message()}"
+                        )
                         _cardDetail.emit(Resource.Error("Failed to update dislike status"))
                     }
+
                 } else {
                     Log.e("TOGGLE_DISLIKE", "Invalid detail state or type")
                     _cardDetail.emit(Resource.Error("Invalid detail state"))

@@ -59,6 +59,7 @@ data class DetailDto(
     val videoLink: String? = null,
     val isLiked: Boolean? = null,
     val isDisliked: Boolean? = null,
+    val isSeries: Boolean? = null,
 )
 
 @Composable

@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +45,9 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.faithForward.media.R
+import com.faithForward.media.navigation.Routes
 import com.faithForward.media.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.theme.sideBarFocusedTextColor
 import com.faithForward.media.viewModel.LoginViewModel
@@ -53,19 +56,37 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier, loginViewModel: LoginViewModel, onNextClick: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel,
+    navController: NavController
 ) {
     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
+    val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
 
     val passwordFocusRequester = remember { FocusRequester() }
     val buttonFocusRequester = remember { FocusRequester() }
     val emailFocusRequester = remember { FocusRequester() }
-    var isEmailFocused by remember { mutableStateOf(false) }
-    var isPasswordFocused by remember { mutableStateOf(false) }
-    var isButtonFocused by remember { mutableStateOf(false) }
+    var isEmailFocused by rememberSaveable { mutableStateOf(false) }
+    var isPasswordFocused by rememberSaveable { mutableStateOf(false) }
+    var isButtonFocused by rememberSaveable { mutableStateOf(false) }
 
-    val scope = rememberCoroutineScope()
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            navController.navigate(Routes.Home.route) {
+                popUpTo(Routes.Login.route) { inclusive = false }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        try {
+            emailFocusRequester.requestFocus()
+        } catch (ex: Exception) {
+            Log.e("EX", "${ex.message}")
+        }
+    }
 
     Box(
         modifier = modifier
@@ -80,7 +101,6 @@ fun LoginScreen(
                 )
             )
     ) {
-        // Logo at the top-left
         Image(
             painter = painterResource(R.drawable.app_logo),
             modifier = Modifier
@@ -91,7 +111,6 @@ fun LoginScreen(
             contentDescription = "App Logo"
         )
 
-        // Centered content
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,7 +119,6 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // "Login" title
             Text(
                 text = "Login",
                 color = sideBarFocusedBackgroundColor,
@@ -108,7 +126,6 @@ fun LoginScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Email TextField
             CustomTextField(
                 value = loginState.email,
                 onValueChange = {
@@ -122,7 +139,7 @@ fun LoginScreen(
                     keyboardController?.hide()
                     scope.launch {
                         delay(200)
-                        passwordFocusRequester.requestFocus() // Move focus to password
+                        passwordFocusRequester.requestFocus()
                     }
                 },
                 isTextFieldFocused = isEmailFocused,
@@ -137,7 +154,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Password TextField
             CustomTextField(
                 value = loginState.password,
                 keyboardController = keyboardController,
@@ -145,13 +161,12 @@ fun LoginScreen(
                     loginViewModel.onEvent(LoginEvent.PasswordChanged(it))
                 },
                 placeholder = "Password",
-                imeAction = ImeAction.Done, // Use Done instead of Next for the last field
+                imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password,
                 onNext = {
                     scope.launch {
                         delay(200)
-                        Log.e("NEXT", "on next click is called in password text field")
-                        buttonFocusRequester.requestFocus() // Move focus to button
+                        buttonFocusRequester.requestFocus()
                     }
                 },
                 isTextFieldFocused = isPasswordFocused,
@@ -166,11 +181,10 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Next Button
-            Button(onClick = {
-                loginViewModel.onEvent(LoginEvent.SubmitLogin)
-                onNextClick.invoke()
-            },
+            Button(
+                onClick = {
+                    loginViewModel.onEvent(LoginEvent.SubmitLogin)
+                },
                 modifier = Modifier
                     .width(178.5.dp)
                     .height(48.dp)
@@ -182,10 +196,9 @@ fun LoginScreen(
                 shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isButtonFocused) sideBarFocusedBackgroundColor
-                    else {
-                        Color.White.copy(alpha = .33f)
-                    }
-                )) {
+                    else Color.White.copy(alpha = 0.33f)
+                )
+            ) {
                 Text(
                     text = "Next",
                     color = sideBarFocusedTextColor,
@@ -207,19 +220,10 @@ fun LoginScreen(
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth() // Ensures the Text centers properly
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
-
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        try {
-            emailFocusRequester.requestFocus()
-        } catch (ex: Exception) {
-            Log.e("EX", "${ex.message}")
         }
     }
 }

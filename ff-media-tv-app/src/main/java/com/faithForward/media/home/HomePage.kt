@@ -1,6 +1,7 @@
 package com.faithForward.media.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -23,12 +25,14 @@ fun HomePage(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
     changeSideBarSelectedPosition: (Int) -> Unit,
-    onItemClick: (PosterCardDto , List<PosterCardDto>) -> Unit,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
     onDataLoadedSuccess: () -> Unit,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
+    val context = LocalContext.current
 
 
 //    LaunchedEffect(Unit) {
@@ -64,6 +68,16 @@ fun HomePage(
         onDataLoadedSuccess.invoke()
     }
 
+    // Showing Toast when uiEvent changes
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
+            // detailViewModel.resetUiEvent()
+        }
+    }
+
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -78,6 +92,21 @@ fun HomePage(
             onItemClick = onItemClick,
             onCategoryItemClick = { id ->
                 onCategoryClick.invoke(id)
+            },
+            onToggleFavorite = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleFavorite(slug)
+                }
+            },
+            onToggleLike = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleLike(slug)
+                }
+            },
+            onToggleDisLike = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleDislike(slug)
+                }
             }
         )
     }

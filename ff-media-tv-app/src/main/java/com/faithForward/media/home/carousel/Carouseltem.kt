@@ -36,6 +36,7 @@ import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
 
 data class CarouselItemDto(
+    val slug: String? = null,
     val imgSrc: String? = null,
     val description: String? = null,
     val releaseDate: String? = null,
@@ -45,7 +46,10 @@ data class CarouselItemDto(
     val imdbRating: String? = null,
     val title: String? = null,
     val subscribers: String? = null,
-    var isCreator: Boolean = false
+    var isCreator: Boolean = false,
+    val isLiked: Boolean? = null,
+    val isDisliked: Boolean? = null,
+    var isFavourite: Boolean? = null,
 )
 
 @Composable
@@ -63,7 +67,7 @@ fun CarouselItem(
     micUiState: FocusState,
     searchUiSate: FocusState,
     focusState: FocusState,
-    @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder
+    @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder,
 ) {
 
 
@@ -156,7 +160,10 @@ fun CarouselItem(
                 disLikeModifier = disLikeModifier,
                 addToWatchListUiState = addToWatchListUiState,
                 likeUiState = likeUiState,
-                dislikeUiState = dislikeUiState
+                dislikeUiState = dislikeUiState,
+                isLiked = isLiked ?: false,
+                isUnLiked = isDisliked ?: false,
+                isFavourite = isFavourite ?: false
             )
 
             title?.let {

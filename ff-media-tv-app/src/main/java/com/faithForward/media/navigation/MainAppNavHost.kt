@@ -50,7 +50,8 @@ fun MainAppNavHost(
     ) {
         composable(route = Routes.Login.route) {
             LoginScreen(
-                loginViewModel = loginViewModel
+                loginViewModel = loginViewModel,
+                navController = navController
             )
         }
 
