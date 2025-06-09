@@ -9,7 +9,7 @@ object Constants {
     const val HOME_SECTION_END_POINT = "client/v1/home"
     const val GIVEN_SECTION_END_POINT = "client/v1/{id}"
     const val GIVEN_ITEM_DETAIL_END_POINT = "client/v1/content/{slug}"
-    const val SINGLE_GENRE_DETAIL_END_POINT = "client/v1/gernes/{id}"
+    const val SINGLE_GENRE_DETAIL_END_POINT = "client/v1/genres/{id}"
     const val CREATOR_END_POINT = "client/v1/creators/list"
     const val LOGIN_END_POINT = "client/v1/subscribers/login"
     const val SINGLE_SERIES_DETAIL_API = "client/v1/series/{id}"
