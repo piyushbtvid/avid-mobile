@@ -47,7 +47,12 @@ class LoginViewModel @Inject constructor(
                 Log.e("USER_PREF", "check login status  in  viewModel  called")
                 val session = networkRepository.getCurrentSession()
                 Log.e("USER_PREF", "Initial session check in checkLoginStatus is called: $session")
-                _isLoggedIn.value = session != null
+                //checking login based on token is null or not
+                _isLoggedIn.value = session?.token != null
+                Log.e(
+                    "USER_PREF",
+                    "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
+                )
             }
         }
     }

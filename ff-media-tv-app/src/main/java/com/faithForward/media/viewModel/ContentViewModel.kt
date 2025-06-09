@@ -4,13 +4,13 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
 import com.faithForward.repository.NetworkRepository
+import com.faithForward.util.MyFavList
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -49,8 +49,21 @@ class ContentViewModel @Inject constructor(
             try {
                 // Fetch data for the given sectionId
                 val sectionDataDeferred = async { networkRepository.getGivenSectionData(sectionId) }
+                val myListResponse = async { networkRepository.getMyListSectionData("my-list") }
+                val likedListResponse = async { networkRepository.getLikedList() }
+                val disLikedListResponse = async { networkRepository.getDisLikedList() }
+
 
                 val sectionData = sectionDataDeferred.await()
+                val myListData = myListResponse.await()
+                val likedListData = likedListResponse.await()
+                val disLikedData = disLikedListResponse.await()
+
+                if (myListData.isSuccessful && likedListData.isSuccessful && disLikedData.isSuccessful) {
+                    MyFavList.myFavList = myListData.body()?.data
+                    MyFavList.likedList = likedListData.body()?.data
+                    MyFavList.disLikedList = disLikedData.body()?.data
+                }
 
                 // Process section data (Carousel and Poster rows)
                 val sectionItems = if (sectionData.isSuccessful) {

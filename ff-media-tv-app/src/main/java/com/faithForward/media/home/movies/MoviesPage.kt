@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +30,7 @@ fun MoviesPage(
     }
 
 
-    val homePageItemsResource by contentViewModel.homePageData.collectAsStateWithLifecycle()
+    val homePageItemsResource by contentViewModel.homePageData.collectAsState()
 
     if (homePageItemsResource is Resource.Unspecified
         || homePageItemsResource is Resource.Error

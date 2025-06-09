@@ -55,8 +55,9 @@ fun MainAppNavHost(
             )
         }
 
-        composable(route = Routes.Home.route) {
-            val homeViewModel: HomeViewModel = hiltViewModel()
+        composable(route = Routes.Home.route) { navBackStackEntry ->
+            // Scope the ViewModel to the navigation destination
+            val homeViewModel: HomeViewModel = hiltViewModel(navBackStackEntry)
             HomePage(modifier = modifier,
                 homeViewModel = homeViewModel,
                 onDataLoadedSuccess = onDataLoadedSuccess,
@@ -93,8 +94,8 @@ fun MainAppNavHost(
             )
         }
 
-        composable(route = Routes.Movies.route) {
-            val contentViewModel: ContentViewModel = hiltViewModel()
+        composable(route = Routes.Movies.route) { navBackStackEntry ->
+            val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
             MoviesPage(contentViewModel = contentViewModel, onItemClick = { item, list ->
                 if (!item.slug.isNullOrEmpty()) {
                     val filteredList = list.filterNot { it.slug == item.slug }
@@ -105,8 +106,8 @@ fun MainAppNavHost(
             })
         }
 
-        composable(route = Routes.Series.route) {
-            val contentViewModel: ContentViewModel = hiltViewModel()
+        composable(route = Routes.Series.route) { navBackStackEntry ->
+            val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
             SeriesPage(contentViewModel = contentViewModel, onItemClick = { item, list ->
                 if (!item.slug.isNullOrEmpty()) {
                     val filteredList = list.filterNot { it.slug == item.slug }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,7 +56,7 @@ fun HomePage(
     }
 
 
-    val homePageItemsResource by homeViewModel.homePageData.collectAsStateWithLifecycle()
+    val homePageItemsResource by homeViewModel.homePageData.collectAsState()
 
     if (homePageItemsResource is Resource.Unspecified
         || homePageItemsResource is Resource.Error
