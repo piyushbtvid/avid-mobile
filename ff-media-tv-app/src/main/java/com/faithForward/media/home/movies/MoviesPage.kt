@@ -25,9 +25,9 @@ fun MoviesPage(
     val uiEvent by contentViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        contentViewModel.loadSectionContent("movies", "Movies")
-    }
+//    LaunchedEffect(Unit) {
+//        contentViewModel.loadSectionContent("movies", "Movies")
+//    }
 
 
     val homePageItemsResource by contentViewModel.homePageData.collectAsState()

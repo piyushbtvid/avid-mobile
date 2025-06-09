@@ -94,30 +94,41 @@ fun MainAppNavHost(
             )
         }
 
-        composable(route = Routes.Movies.route) { navBackStackEntry ->
+        composable(
+            route = Routes.Movies.route,
+            arguments = listOf(navArgument("contentType") { type = NavType.StringType })
+        ) { navBackStackEntry ->
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
-            MoviesPage(contentViewModel = contentViewModel, onItemClick = { item, list ->
-                if (!item.slug.isNullOrEmpty()) {
-                    val filteredList = list.filterNot { it.slug == item.slug }
-                    val json = Json.encodeToString(filteredList)
-                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+            MoviesPage(
+                contentViewModel = contentViewModel,
+                onItemClick = { item, list ->
+                    if (!item.slug.isNullOrEmpty()) {
+                        val filteredList = list.filterNot { it.slug == item.slug }
+                        val json = Json.encodeToString(filteredList)
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                    }
                 }
-            })
+            )
         }
 
-        composable(route = Routes.Series.route) { navBackStackEntry ->
+        composable(
+            route = Routes.Series.route,
+            arguments = listOf(navArgument("contentType") { type = NavType.StringType })
+        ) { navBackStackEntry ->
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
-            SeriesPage(contentViewModel = contentViewModel, onItemClick = { item, list ->
-                if (!item.slug.isNullOrEmpty()) {
-                    val filteredList = list.filterNot { it.slug == item.slug }
-                    val json = Json.encodeToString(filteredList)
-                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+            SeriesPage(
+                contentViewModel = contentViewModel,
+                onItemClick = { item, list ->
+                    if (!item.slug.isNullOrEmpty()) {
+                        val filteredList = list.filterNot { it.slug == item.slug }
+                        val json = Json.encodeToString(filteredList)
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                    }
                 }
-            })
+            )
         }
-
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
             MyListPage(contentViewModel = myListViewModel, onItemClick = { item, list ->

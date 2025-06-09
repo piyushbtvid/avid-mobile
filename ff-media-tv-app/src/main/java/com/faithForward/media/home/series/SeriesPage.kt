@@ -25,10 +25,10 @@ fun SeriesPage(
     val uiEvent by contentViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
 
-
-    LaunchedEffect(Unit) {
-        contentViewModel.loadSectionContent("series", "Series")
-    }
+//
+//    LaunchedEffect(Unit) {
+//        contentViewModel.loadSectionContent("series", "Series")
+//    }
 
 
     val homePageItemsResource by contentViewModel.homePageData.collectAsState()

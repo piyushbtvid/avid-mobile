@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.navigation.Routes
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
@@ -25,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContentViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _homepageData: MutableStateFlow<Resource<List<HomePageItem>>> =
@@ -37,6 +40,12 @@ class ContentViewModel @Inject constructor(
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
 
+
+    init {
+        val contentType = savedStateHandle.get<String>("contentType") ?: "movies"
+        val title = if (contentType == "movies") "Movies" else "Series"
+        loadSectionContent(contentType, title)
+    }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
