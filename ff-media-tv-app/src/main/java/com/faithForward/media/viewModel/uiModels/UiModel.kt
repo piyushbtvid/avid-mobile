@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel.uiModels
 
+import android.util.Log
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRowDto
@@ -13,6 +14,7 @@ import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.creator.UserData
 import com.faithForward.network.dto.myList.MyListResponse
+import com.faithForward.util.MyFavList
 
 sealed interface HomePageItem {
     data class CarouselRow(val dto: CarouselContentRowDto) : HomePageItem
@@ -173,7 +175,28 @@ fun MyListResponse.toHomePageItems(): List<HomePageItem> {
 
 
 fun ContentItem.toCarouselItemDto(): CarouselItemDto {
-    // Return the DTO
+    val likedList = MyFavList.likedList
+    val myList = MyFavList.myFavList
+    val disLikeList = MyFavList.disLikedList
+
+    Log.e("CAROUSEL", "toCarouselItemDto MyFavList is $myList")
+
+// check based on .content (flattening the nested list)
+    val isFavourite = myList
+        ?.flatMap { it.content }
+        ?.any {
+            it.id.toString() == this.id.toString()
+        } == true
+
+    val isLiked = likedList
+        ?.flatMap { it.content }
+        ?.any { it.id.toString() == this.id.toString() } == true
+
+
+    val isDisliked = disLikeList
+        ?.flatMap { it.content }
+        ?.any { it.id.toString() == this.id.toString() } == true && !isLiked
+
     return CarouselItemDto(
         description = description,
         duration = null,
@@ -181,8 +204,12 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
         imgSrc = landscape,
         releaseDate = uploadedYear,
         title = name,
-        slug = slug
+        slug = slug,
+        isLiked = isLiked,
+        isDisliked = isDisliked,
+        isFavourite = isFavourite
     )
+
 }
 
 
@@ -198,8 +225,7 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         imdbRating = rating,
         releaseDate = dateUploaded,
         videoHlsUrl = video_link,
-        slug = slug
-    )
+        slug = slug)
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(

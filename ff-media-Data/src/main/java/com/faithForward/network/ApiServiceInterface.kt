@@ -98,8 +98,17 @@ interface ApiServiceInterface {
     suspend fun likeOrDisLikeContent(
         @Path("slug") slug: String,
         @Header("Authorization") token: String,
-        @Body body: LikeRequest
+        @Body body: LikeRequest,
     ): Response<ApiMessageResponse>
 
+    @GET(Constants.LIKED_LIST_END_POINT)
+    suspend fun getLikedList(
+        @Header("Authorization") token: String,
+    ): Response<MyListResponse>
+
+    @GET(Constants.DIS_lIKED_LIST_END_POINT)
+    suspend fun getDisLikedList(
+        @Header("Authorization") token: String,
+    ): Response<MyListResponse>
 
 }

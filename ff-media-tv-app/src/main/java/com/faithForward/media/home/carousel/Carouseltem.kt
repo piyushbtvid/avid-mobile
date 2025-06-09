@@ -1,5 +1,6 @@
 package com.faithForward.media.home.carousel
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,6 +72,14 @@ fun CarouselItem(
     @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder,
 ) {
 
+    LaunchedEffect(
+        carouselItemDto
+    ) {
+        Log.e(
+            "CARSOUEL",
+            "carousel item isFav is ${carouselItemDto.isFavourite} and ${carouselItemDto.isLiked}  ${carouselItemDto.isDisliked}"
+        )
+    }
 
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {

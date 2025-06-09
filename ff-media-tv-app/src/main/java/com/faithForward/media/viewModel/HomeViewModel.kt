@@ -11,6 +11,7 @@ import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
 import com.faithForward.repository.NetworkRepository
+import com.faithForward.util.MyFavList
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -52,9 +53,21 @@ class HomeViewModel @Inject constructor(
                 // Fetch both APIs concurrently
                 val sectionDataDeferred = async { networkRepository.getHomeSectionData() }
                 val myListResponse = async { networkRepository.getMyListSectionData("my-list") }
+                val likedListResponse = async { networkRepository.getLikedList() }
+                val disLikedListResponse = async { networkRepository.getDisLikedList() }
 
                 val sectionData = sectionDataDeferred.await()
                 val myListData = myListResponse.await()
+                val likedListData = likedListResponse.await()
+                val disLikedData = disLikedListResponse.await()
+
+                //Setting MyList and liked and disLiked List data
+
+                if (myListData.isSuccessful && likedListData.isSuccessful && disLikedData.isSuccessful) {
+                    MyFavList.myFavList = myListData.body()?.data
+                    MyFavList.likedList = likedListData.body()?.data
+                    MyFavList.disLikedList = disLikedData.body()?.data
+                }
 
                 Log.e("HOME_DATA", "home data in viewModel is ${sectionData.body()?.data}")
 

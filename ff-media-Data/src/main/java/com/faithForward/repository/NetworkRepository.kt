@@ -136,4 +136,18 @@ class NetworkRepository @Inject constructor(
             body = body
         )
     }
+
+    suspend fun getLikedList(
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getLikedList(token)
+    }
+
+    suspend fun getDisLikedList(
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getDisLikedList(token)
+    }
 }

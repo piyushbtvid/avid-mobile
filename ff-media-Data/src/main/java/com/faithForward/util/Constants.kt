@@ -15,4 +15,6 @@ object Constants {
     const val SINGLE_SERIES_DETAIL_API = "client/v1/series/{id}"
     const val MY_LIST_END_POINT = "client/v1/my-list/{slug}"
     const val LIKE_DISLIKE_END_POINT = "client/v1/like-dislike/{slug}"
+    const val LIKED_LIST_END_POINT = "client/v1/liked"
+    const val DIS_lIKED_LIST_END_POINT = "client/v1/disliked"
 }
