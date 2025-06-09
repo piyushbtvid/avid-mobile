@@ -1,6 +1,7 @@
 package com.faithForward.media.detail
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
@@ -48,6 +50,8 @@ fun DetailScreen(
     val btnFocusRequester = remember { FocusRequester() }
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
+    val uiEvent by detailViewModel.uiEvent.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var lastFocusedItem by rememberSaveable { mutableStateOf(-1) }
     var seasonNumberSelectedItem by rememberSaveable { mutableStateOf(-1) }
@@ -56,6 +60,15 @@ fun DetailScreen(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
         animationSpec = tween(durationMillis = 500)
     )
+
+    // Showing Toast when uiEvent changes
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
+            // detailViewModel.resetUiEvent()
+        }
+    }
 
     when (cardDetail) {
         is Resource.Loading, is Resource.Unspecified -> {
@@ -91,6 +104,20 @@ fun DetailScreen(
                             )
                         }
                     },
+                    onToggleDisLike = {
+                        if (detailPageItem.detailDto.slug != null) {
+                            detailViewModel.handleEvent(
+                                DetailScreenEvent.ToggleDisLike(detailPageItem.detailDto.slug)
+                            )
+                        }
+                    },
+                    onToggleLike = {
+                        if (detailPageItem.detailDto.slug != null) {
+                            detailViewModel.handleEvent(
+                                DetailScreenEvent.ToggleLike(detailPageItem.detailDto.slug)
+                            )
+                        }
+                    }
                 )
 
                 when (val contentData = relatedContentData) {

@@ -9,6 +9,7 @@ import com.faithForward.media.detail.SeasonsNumberDto
 import com.faithForward.media.viewModel.uiModels.DetailPageItem
 import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
 import com.faithForward.media.viewModel.uiModels.RelatedContentData
+import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.UiState
 import com.faithForward.media.viewModel.uiModels.toDetailDto
 import com.faithForward.media.viewModel.uiModels.toSeasonDto
@@ -17,6 +18,7 @@ import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -39,6 +41,9 @@ class DetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _uiEvent = MutableStateFlow<UiEvent?>(null)
+    val uiEvent: StateFlow<UiEvent?> = _uiEvent
+
     val id: String? = savedStateHandle["itemId"]
     var relatedList: List<PosterCardDto>? = emptyList()
 
@@ -60,6 +65,8 @@ class DetailViewModel @Inject constructor(
             is DetailScreenEvent.RelatedRowUpClick -> handleRelatedRowUpClick()
             is DetailScreenEvent.SeasonSelected -> updateSeasonEpisodes(event.seasonNumber)
             is DetailScreenEvent.ToggleFavorite -> toggleFavorite(event.slug)
+            is DetailScreenEvent.ToggleLike -> toggleLike(event.slug)
+            is DetailScreenEvent.ToggleDisLike -> toggleDislike(event.slug)
         }
     }
 
@@ -146,18 +153,122 @@ class DetailViewModel @Inject constructor(
                                 )
                             )
                         )
+                        // Emiting UI event for Toast
+                        _uiEvent.emit(
+                            UiEvent(
+                                if (!isCurrentlyFavorite) "Added to MyList" else "Removed from MyList"
+                            )
+                        )
                     } else {
                         Log.e("TOGGLE_FAVORITE", "Failed to toggle favorite: ${response.message()}")
                         // Optionally emit an error state to the UI
                         _cardDetail.emit(Resource.Error("Failed to update favorite status"))
+                        _uiEvent.emit(UiEvent("Failed to update favorite"))
                     }
                 } else {
                     Log.e("TOGGLE_FAVORITE", "Invalid detail state or type")
+                    _uiEvent.emit(UiEvent("Failed to update favorite"))
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 Log.e("TOGGLE_FAVORITE", "Error toggling favorite: ${ex.message}")
                 _cardDetail.emit(Resource.Error(ex.message ?: "Something went wrong"))
+                _uiEvent.emit(UiEvent("Failed to update favorite"))
+            }
+        }
+    }
+
+    private fun toggleLike(slug: String) {
+        viewModelScope.launch {
+            try {
+                val currentDetail = _cardDetail.value
+                if (currentDetail is Resource.Success && currentDetail.data is DetailPageItem.Card) {
+                    val card = currentDetail.data as DetailPageItem.Card
+                    val isCurrentlyLiked = card.detailDto.isLiked ?: false
+                    val response = networkRepository.likeDisLikeContent(slug, type = "like")
+                    if (response.isSuccessful) {
+                        val newIsLiked = !isCurrentlyLiked // Toggle like state
+                        // If liking, ensure dislike is cleared
+                        val newIsDisliked =
+                            if (newIsLiked) false else card.detailDto.isDisliked ?: false
+                        _cardDetail.emit(
+                            Resource.Success(
+                                DetailPageItem.Card(
+                                    detailDto = card.detailDto.copy(
+                                        isLiked = newIsLiked,
+                                        isDisliked = newIsDisliked
+                                    )
+                                )
+                            )
+                        )
+                        // Emiting UI event for Toast
+                        _uiEvent.emit(
+                            UiEvent(
+                                if (newIsLiked) "Added to Liked" else "Removed from Liked"
+                            )
+                        )
+                    } else {
+                        Log.e("TOGGLE_LIKE", "Failed to toggle like: ${response.message()}")
+                        _cardDetail.emit(Resource.Error("Failed to update like status"))
+                        _uiEvent.emit(UiEvent("Failed to update like"))
+                    }
+                } else {
+                    Log.e("TOGGLE_LIKE", "Invalid detail state or type")
+                    _cardDetail.emit(Resource.Error("Invalid detail state"))
+                    _uiEvent.emit(UiEvent("Failed to update like"))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("TOGGLE_LIKE", "Error toggling like: ${ex.message}")
+                _cardDetail.emit(Resource.Error(ex.message ?: "Something went wrong"))
+                _uiEvent.emit(UiEvent("Failed to update like"))
+            }
+        }
+    }
+
+    private fun toggleDislike(slug: String) {
+        viewModelScope.launch {
+            try {
+                val currentDetail = _cardDetail.value
+                if (currentDetail is Resource.Success && currentDetail.data is DetailPageItem.Card) {
+                    val card = currentDetail.data as DetailPageItem.Card
+                    val isCurrentlyDisliked = card.detailDto.isDisliked ?: false
+                    val response = networkRepository.likeDisLikeContent(slug, type = "dislike")
+                    if (response.isSuccessful) {
+                        val newIsDisliked = !isCurrentlyDisliked // Toggle dislike state
+                        // If disliking, ensure like is cleared
+                        val newIsLiked =
+                            if (newIsDisliked) false else card.detailDto.isLiked ?: false
+                        _cardDetail.emit(
+                            Resource.Success(
+                                DetailPageItem.Card(
+                                    detailDto = card.detailDto.copy(
+                                        isLiked = newIsLiked,
+                                        isDisliked = newIsDisliked
+                                    )
+                                )
+                            )
+                        )
+                        // Emiting UI event for Toast
+                        _uiEvent.emit(
+                            UiEvent(
+                                if (newIsDisliked) "Disliked" else "Removed from Disliked"
+                            )
+                        )
+                    } else {
+                        Log.e("TOGGLE_DISLIKE", "Failed to toggle dislike: ${response.message()}")
+                        _cardDetail.emit(Resource.Error("Failed to update dislike status"))
+                    }
+                } else {
+                    Log.e("TOGGLE_DISLIKE", "Invalid detail state or type")
+                    _cardDetail.emit(Resource.Error("Invalid detail state"))
+                    _uiEvent.emit(UiEvent("Failed to update dislike"))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("TOGGLE_DISLIKE", "Error toggling dislike: ${ex.message}")
+                _cardDetail.emit(Resource.Error(ex.message ?: "Something went wrong"))
+                _uiEvent.emit(UiEvent("Failed to update dislike"))
             }
         }
     }

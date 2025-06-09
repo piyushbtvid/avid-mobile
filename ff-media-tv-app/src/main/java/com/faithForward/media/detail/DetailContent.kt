@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +42,6 @@ import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.util.FocusState
-import com.faithForward.util.Resource
 
 data class DetailDto(
     val id: String? = null,
@@ -59,6 +57,8 @@ data class DetailDto(
     val title: String? = null,
     val subscribers: String? = null,
     val videoLink: String? = null,
+    val isLiked: Boolean? = null,
+    val isDisliked: Boolean? = null,
 )
 
 @Composable
@@ -70,6 +70,8 @@ fun DetailContent(
     isContentVisible: Boolean = true,
     detailDto: DetailDto,
     onToggleFavorite: () -> Unit,
+    onToggleLike: () -> Unit,
+    onToggleDisLike: () -> Unit,
 ) {
     var addToWatchListUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var likeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
@@ -89,7 +91,10 @@ fun DetailContent(
                 else -> FocusState.UNFOCUSED
             }
         }
-        .clickable { onToggleFavorite() }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onToggleFavorite()
+        }
+        )
         .focusable()
 
     val likeModifier = Modifier
@@ -100,6 +105,10 @@ fun DetailContent(
                 else -> FocusState.UNFOCUSED
             }
         }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onToggleLike()
+        }
+        )
         .focusable()
 
     val disLikeModifier = Modifier
@@ -110,6 +119,10 @@ fun DetailContent(
                 else -> FocusState.UNFOCUSED
             }
         }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onToggleDisLike()
+        }
+        )
         .focusable()
 
     with(detailDto) {
@@ -155,6 +168,8 @@ fun DetailContent(
                     textColor = Color.Black,
                     buttonModifier = Modifier,
                     isFavourite = isFavourite ?: false,
+                    isLiked = isLiked ?: false,
+                    isUnLiked = isDisliked ?: false,
                     addToWatchListModifier = addToWatchListModifier,
                     likeModifier = likeModifier,
                     disLikeModifier = disLikeModifier,
@@ -215,6 +230,12 @@ private fun DetailPagePreview() {
 
         },
         onToggleFavorite = {
+
+        },
+        onToggleLike = {
+
+        },
+        onToggleDisLike = {
 
         }
     )

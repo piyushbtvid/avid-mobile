@@ -4,15 +4,17 @@ import com.faithForward.network.dto.CategoryDetailResponse
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
+import com.faithForward.network.dto.common.ApiMessageResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.LoginResponse
-import com.faithForward.network.dto.myList.AddRemoveMyListResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
+import com.faithForward.network.request.LikeRequest
 import com.faithForward.network.request.LoginRequest
 import com.faithForward.util.Constants
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -84,12 +86,20 @@ interface ApiServiceInterface {
     suspend fun addToMyList(
         @Path("slug") slug: String,
         @Header("Authorization") token: String,
-    ): Response<AddRemoveMyListResponse>
+    ): Response<ApiMessageResponse>
 
     @DELETE(Constants.MY_LIST_END_POINT)
     suspend fun removeFromMyList(
         @Path("slug") slug: String,
         @Header("Authorization") token: String,
-    ): Response<AddRemoveMyListResponse>
+    ): Response<ApiMessageResponse>
+
+    @POST(Constants.LIKE_DISLIKE_END_POINT)
+    suspend fun likeOrDisLikeContent(
+        @Path("slug") slug: String,
+        @Header("Authorization") token: String,
+        @Body body: LikeRequest
+    ): Response<ApiMessageResponse>
+
 
 }

@@ -126,4 +126,8 @@ sealed interface DetailScreenEvent {
     data object RelatedRowUpClick : DetailScreenEvent
     data class SeasonSelected(val seasonNumber: Int) : DetailScreenEvent
     data class ToggleFavorite(val slug: String) : DetailScreenEvent // New event
+    data class ToggleLike(val slug: String) : DetailScreenEvent // New event
+    data class ToggleDisLike(val slug: String) : DetailScreenEvent // New event
 }
+
+data class UiEvent(val message: String)

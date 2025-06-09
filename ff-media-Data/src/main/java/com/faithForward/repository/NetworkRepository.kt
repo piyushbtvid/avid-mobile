@@ -4,6 +4,7 @@ import android.util.Log
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.request.LikeRequest
 import com.faithForward.network.request.LoginRequest
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +133,22 @@ class NetworkRepository @Inject constructor(
         val userSession = userPreferences.userSessionFlow.firstOrNull()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         apiServiceInterface.removeFromMyList(slug = slug, token = token)
+    }
+
+    suspend fun likeDisLikeContent(
+        slug: String,
+        type: String
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.userSessionFlow.firstOrNull()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+
+        val body = LikeRequest(type = type)
+
+        apiServiceInterface.likeOrDisLikeContent(
+            slug = slug,
+            token = token,
+            body = body
+        )
     }
 
 
