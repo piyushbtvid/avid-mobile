@@ -60,10 +60,13 @@ fun RelatedContent(
     )
 
     LaunchedEffect(relatedRowFocusedIndex) {
+        Log.e("RELATED_ROW", "related row focused index is $relatedRowFocusedIndex")
         if (relatedRowFocusedIndex > -1) {
             currentFocusedItem =
                 relatedContentRowDto.relatedContentDto.getOrNull(relatedRowFocusedIndex)
             Log.e("CURRENT_FOCUS", "current focus item is ${currentFocusedItem?.title}")
+        } else {
+            currentFocusedItem = null
         }
     }
 
