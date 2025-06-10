@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,10 +60,12 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
-                    val playerViewModel: PlayerViewModel = hiltViewModel()
+                    playerViewModel = hiltViewModel()
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = navBackStackEntry?.destination?.route
+                    currentRoute = navBackStackEntry?.destination?.route
+                    isControlsVisible =
+                        playerViewModel.state.collectAsState().value.isControlsVisible
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
                     MainScreen(
@@ -79,37 +83,44 @@ class MainActivity : ComponentActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        if (currentRoute == Routes.PlayerScreen.route) {
+        Log.e("PLAY_EVENT", "on use interction is called ")
+        if (currentRoute == Routes.PlayerScreen.route && isControlsVisible) {
             Log.e("PLAY_EVENT", "on use interction is called ")
-            playerViewModel.onUserInteraction()
+            //  playerViewModel.onUserInteraction("onUSerInterction")
         }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
-                if (isControlsVisible) {
+                if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
                     playerViewModel.togglePlayPause()
                 } else {
-                    playerViewModel.onUserInteraction()
+                    if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+                        playerViewModel.onUserInteraction("center and PlayPause")
+                    }
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (isControlsVisible) {
+                if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
                     playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
                 } else {
-                    playerViewModel.onUserInteraction()
+                    if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+                        playerViewModel.onUserInteraction("Rewind and Left")
+                    }
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                if (isControlsVisible) {
+                if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
                     playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
                 } else {
-                    playerViewModel.onUserInteraction()
+                    if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+                        playerViewModel.onUserInteraction("forward and right")
+                    }
                 }
                 return true
             }
@@ -117,7 +128,9 @@ class MainActivity : ComponentActivity() {
 
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (!isControlsVisible) {
-                    playerViewModel.onUserInteraction()
+                    if (currentRoute == Routes.PlayerScreen.route) {
+                        playerViewModel.onUserInteraction("down")
+                    }
                 }
                 return true
             }
