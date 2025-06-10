@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRow
+import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
 import com.faithForward.media.home.creator.list.CreatorCardGrid
@@ -33,6 +34,10 @@ fun HomeContentSections(
     onCategoryItemClick: (String) -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
+    onToggleFavorite: (String?) -> Unit,
+    onCarouselItemClick: (CarouselItemDto) -> Unit,
+    onToggleLike: (String?) -> Unit,
+    onToggleDisLike: (String?) -> Unit,
 ) {
     // State for the vertical LazyColumn
     val listState = rememberLazyListState()
@@ -66,7 +71,11 @@ fun HomeContentSections(
                     onItemFocused = { newFocus ->
                         lastFocusedItem = newFocus
                     },
-                    listState = listState
+                    listState = listState,
+                    onToggleFavorite = onToggleFavorite,
+                    onToggleLike = onToggleLike,
+                    onToggleDisLike = onToggleDisLike,
+                    onCarouselItemClick = onCarouselItemClick
                 )
 
                 is HomePageItem.CategoryRow -> CategoryRow(
@@ -82,8 +91,7 @@ fun HomeContentSections(
                     onCategoryItemClick = onCategoryItemClick
                 )
 
-                is HomePageItem.PosterRow -> ContentRow(
-                    posterRowDto = homePageItem.dto,
+                is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
                     shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                     onItemClick = onItemClick,
                     rowIndex = rowIndex,
@@ -95,8 +103,7 @@ fun HomeContentSections(
                     listState = rowListStates[rowIndex] ?: rememberLazyListState(),
                     onChangeContentRowFocusedIndex = { index ->
                         onChangeContentRowFocusedIndex.invoke(index)
-                    }
-                )
+                    })
 
                 is HomePageItem.CreatorGrid -> {
                     CreatorCardGrid(

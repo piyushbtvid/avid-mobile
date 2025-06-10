@@ -33,6 +33,7 @@ data class GenreCardDto(
     val imdbRating: String? = null,
     val releaseDate: String? = null,
     val videoUrl: String? = null,
+    val slug: String?,
 )
 
 @Composable
@@ -105,6 +106,7 @@ private fun GenreCardPreview(
                 description = "A sci-fi adventure exploring the edge of human survival in space.",
                 image = "",
                 views = "300k Views",
+                slug = ""
             ),
             focusState = FocusState.UNFOCUSED,
             onItemClick = {

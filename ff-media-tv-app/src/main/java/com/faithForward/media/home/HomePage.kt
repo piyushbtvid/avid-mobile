@@ -1,14 +1,17 @@
 package com.faithForward.media.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -16,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
 import com.faithForward.util.Resource
 
 @Composable
@@ -23,17 +27,17 @@ fun HomePage(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel,
     changeSideBarSelectedPosition: (Int) -> Unit,
-    onItemClick: (PosterCardDto , List<PosterCardDto>) -> Unit,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
+    onCarouselItemClick: (PosterCardDto) -> Unit,
     onDataLoadedSuccess: () -> Unit,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
+    val context = LocalContext.current
+    val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
 
-
-//    LaunchedEffect(Unit) {
-//        homeViewModel.fetchHomePageData(sectionId = 1)
-//    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -51,12 +55,9 @@ fun HomePage(
     }
 
 
-    val homePageItemsResource by homeViewModel.homePageData.collectAsStateWithLifecycle()
+    val homePageItemsResource by homeViewModel.homePageData.collectAsState()
 
-    if (homePageItemsResource is Resource.Unspecified
-        || homePageItemsResource is Resource.Error
-        || homePageItemsResource is Resource.Loading
-    ) return
+    if (homePageItemsResource is Resource.Unspecified || homePageItemsResource is Resource.Error || homePageItemsResource is Resource.Loading) return
 
     val homePageItems = homePageItemsResource.data ?: return
 
@@ -64,13 +65,37 @@ fun HomePage(
         onDataLoadedSuccess.invoke()
     }
 
+    when (val state = carouselClickUiState) {
+        is CarsouelClickUiState.NavigateToPlayer -> {
+            LaunchedEffect(state.posterCardDto) {
+                onCarouselItemClick.invoke(state.posterCardDto)
+                // Reset state to prevent repeated navigation
+                homeViewModel.loadBannerDetail("") // Reset to idle
+            }
+        }
+
+        is CarsouelClickUiState.Idle -> {}
+        null -> {
+
+        }
+    }
+
+    // Showing Toast when uiEvent changes
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
+            // detailViewModel.resetUiEvent()
+        }
+    }
+
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(unFocusMainColor)
     ) {
-        HomeContentSections(
-            modifier = Modifier,
+        HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
@@ -78,8 +103,28 @@ fun HomePage(
             onItemClick = onItemClick,
             onCategoryItemClick = { id ->
                 onCategoryClick.invoke(id)
-            }
-        )
+            },
+            onToggleFavorite = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleFavorite(slug)
+                }
+            },
+            onToggleLike = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleLike(slug)
+                }
+            },
+            onToggleDisLike = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleDislike(slug)
+                }
+            },
+            onCarouselItemClick = { item ->
+                Log.e("CARSOUEL_SLUG", "item slug is ${item.slug}")
+                if (item.slug != null) {
+                    homeViewModel.loadBannerDetail(item.slug)
+                }
+            })
     }
 
 }

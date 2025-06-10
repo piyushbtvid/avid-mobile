@@ -6,34 +6,36 @@ import com.faithForward.network.dto.series.Season
 data class HomeSectionApiResponse(
     val status: String?,
     val message: String?,
-    val data: ContentData?
+    val data: ContentData?,
 )
 
 data class ContentData(
     val genres: List<Genre>?,
-    val sections: List<Section>?
+    val sections: List<Section>?,
 )
 
 data class Genre(
     val name: String?,
-    val id: String?
+    val id: Int?,
 )
 
 data class Section(
     val title: String?,
-    val id: String?,
-    val content: List<ContentItem>?
+    val sectionID: String?,
+    val content: List<ContentItem>?,
 )
 
 
 data class Creator(
     val id: Int,
-    val name: String
+    val name: String,
 )
 
 
 data class ContentItem(
-    val id: String?,
+    val content_type: String?,
+    val id: Int?,
+    val slug: String?,
     val name: String?,
     val description: String?,
     val portrait: String?,
@@ -47,5 +49,7 @@ data class ContentItem(
     var views: Int? = null,
     var creator: Creator? = null,
     var duration: Int? = null,
+    val likeDislike: String? = null,
+    val myList: Boolean? = null,
     val seasons: List<Season>? = null,
 )

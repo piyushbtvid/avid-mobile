@@ -5,15 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class CreatorsListApiResponse(
     @SerializedName("data")
     val data: List<UserData>,
-
-    @SerializedName("current_page")
-    val currentPage: Int,
-
-    @SerializedName("last_page")
-    val lastPage: Int,
-
-    @SerializedName("total")
-    val total: Int
 )
 
 data class UserData(
@@ -48,5 +39,5 @@ data class UserData(
     val channelDescription: String?,
 
     @SerializedName("channel_subscribers")
-    val channelSubscribers: String // "100" is a String in JSON, could be Int if API guarantees it
+    val channelSubscribers: String, // "100" is a String in JSON, could be Int if API guarantees it
 )

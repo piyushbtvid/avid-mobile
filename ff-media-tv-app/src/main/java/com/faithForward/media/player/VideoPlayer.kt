@@ -195,7 +195,7 @@ fun VideoPlayer(
         }
 
         playerViewModel.interactionFlow.collectLatest {
-            Log.e("PLAY_EVENT", "User interaction collected in DetailScreen")
+            Log.e("PLAYER_UI", "User interaction collected in DetailScreen")
             playerViewModel.handleEvent(PlayerEvent.ShowControls) // Reset the auto-play timer
         }
     }
@@ -344,6 +344,7 @@ fun VideoPlayer(
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     },
                     inControllerUp = {
+                        Log.e("PLAYER_UI", "IS controlerUp called in videoPlayer")
                         playerViewModel.handleEvent(PlayerEvent.HideControls)
                         true
                     },

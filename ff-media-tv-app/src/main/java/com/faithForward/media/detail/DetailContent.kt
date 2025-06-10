@@ -2,6 +2,7 @@ package com.faithForward.media.detail
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,16 +45,21 @@ import com.faithForward.media.util.FocusState
 
 data class DetailDto(
     val id: String? = null,
+    val slug: String?,
     val imgSrc: String? = null,
     val description: String? = null,
     val releaseDate: String? = null,
     val genre: String? = null,
     val seasons: Int? = null,
+    var isFavourite: Boolean? = null,
     val duration: String? = null,
     val imdbRating: String? = null,
     val title: String? = null,
     val subscribers: String? = null,
     val videoLink: String? = null,
+    val isLiked: Boolean? = null,
+    val isDisliked: Boolean? = null,
+    val isSeries: Boolean? = null,
 )
 
 @Composable
@@ -65,6 +70,9 @@ fun DetailContent(
     onWatchNowFocusChange: (Boolean) -> Unit,
     isContentVisible: Boolean = true,
     detailDto: DetailDto,
+    onToggleFavorite: () -> Unit,
+    onToggleLike: () -> Unit,
+    onToggleDisLike: () -> Unit,
 ) {
     var addToWatchListUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var likeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
@@ -84,6 +92,10 @@ fun DetailContent(
                 else -> FocusState.UNFOCUSED
             }
         }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onToggleFavorite()
+        }
+        )
         .focusable()
 
     val likeModifier = Modifier
@@ -94,6 +106,10 @@ fun DetailContent(
                 else -> FocusState.UNFOCUSED
             }
         }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onToggleLike()
+        }
+        )
         .focusable()
 
     val disLikeModifier = Modifier
@@ -104,13 +120,16 @@ fun DetailContent(
                 else -> FocusState.UNFOCUSED
             }
         }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onToggleDisLike()
+        }
+        )
         .focusable()
 
     with(detailDto) {
         Box(
             modifier = modifier
                 .fillMaxSize()
-
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -127,7 +146,6 @@ fun DetailContent(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Play Now Button and Content Info
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -150,6 +168,9 @@ fun DetailContent(
                     title = title,
                     textColor = Color.Black,
                     buttonModifier = Modifier,
+                    isFavourite = isFavourite ?: false,
+                    isLiked = isLiked ?: false,
+                    isUnLiked = isDisliked ?: false,
                     addToWatchListModifier = addToWatchListModifier,
                     likeModifier = likeModifier,
                     disLikeModifier = disLikeModifier,
@@ -169,7 +190,6 @@ fun DetailContent(
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     onCategoryItemClick = { id ->
                         onWatchNowClick.invoke(id)
-                        // onCategoryItemClick.invoke(id)
                     },
                     focusState = if (isFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
@@ -177,7 +197,6 @@ fun DetailContent(
                 Spacer(modifier = Modifier.height(40.dp))
             }
 
-            // Item Title
             title?.let {
                 ContentDescription(
                     modifier = Modifier
@@ -195,7 +214,6 @@ fun DetailContent(
             }
         }
     }
-
 }
 
 
@@ -205,11 +223,20 @@ fun DetailContent(
 @Composable
 private fun DetailPagePreview() {
     DetailContent(
-        detailDto = DetailDto(),
+        detailDto = DetailDto(slug = ""),
         onWatchNowClick = {
 
         },
         onWatchNowFocusChange = {
+
+        },
+        onToggleFavorite = {
+
+        },
+        onToggleLike = {
+
+        },
+        onToggleDisLike = {
 
         }
     )

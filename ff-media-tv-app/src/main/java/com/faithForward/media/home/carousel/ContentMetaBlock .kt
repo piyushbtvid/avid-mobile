@@ -38,6 +38,9 @@ fun ContentMetaBlock(
     imdbRating: String? = null,
     subscribers: String? = null,
     title: String?,
+    isFavourite: Boolean = false,
+    isLiked: Boolean = false,
+    isUnLiked: Boolean = false,
     textColor: Color = Color.White,
     addToWatchListModifier: Modifier = Modifier,
     likeModifier: Modifier = Modifier,
@@ -48,7 +51,6 @@ fun ContentMetaBlock(
     dislikeUiState: FocusState = FocusState.UNDEFINED,
     contentRowTint: Color = Color.White,
 ) {
-
     LaunchedEffect(addToWatchListUiState) {
         Log.e(
             "UTIL",
@@ -59,7 +61,6 @@ fun ContentMetaBlock(
     Box(
         modifier = modifier
     ) {
-        // Main content inside Column
         Column(
             modifier = Modifier
         ) {
@@ -70,7 +71,6 @@ fun ContentMetaBlock(
                 subscribers?.takeIf { it.isNotBlank() },
                 imdbRating?.let { "IMDB $it" }?.takeIf { it.isNotBlank() })
 
-            // Show metadata row only if there's something to display
             if (metaList.isNotEmpty()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -79,8 +79,7 @@ fun ContentMetaBlock(
                         if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
                             ContentDescription(
-                                text = "|",
-                                color = textColor
+                                text = "|", color = textColor
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
@@ -91,7 +90,6 @@ fun ContentMetaBlock(
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-            // Description
             description?.let {
                 ContentDescription(
                     modifier = Modifier
@@ -107,35 +105,49 @@ fun ContentMetaBlock(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Show Icon buttons Row only when none of the UiStates are UNDEFINED
-            if (addToWatchListUiState != FocusState.UNDEFINED &&
-                likeUiState != FocusState.UNDEFINED &&
-                dislikeUiState != FocusState.UNDEFINED
-            ) {
+            if (addToWatchListUiState != FocusState.UNDEFINED && likeUiState != FocusState.UNDEFINED && dislikeUiState != FocusState.UNDEFINED) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        modifier = addToWatchListModifier,
-                        painter = painterResource(R.drawable.vector),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
-                    )
+                    Box {
+                        Image(
+                            modifier = addToWatchListModifier,
+                            painter = painterResource(if (isFavourite) R.drawable.subtract else R.drawable.vector),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor
+                                else contentRowTint
+                            )
+                        )
+                    }
                     Image(
                         modifier = likeModifier,
                         painter = painterResource(R.drawable.fi_sr_thumbs_up),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(if (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                        colorFilter = ColorFilter.tint(
+                            when {
+                                isLiked -> textFocusedMainColor
+                                likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED -> textFocusedMainColor
+                                else -> contentRowTint
+                            }
+                        )
                     )
                     Image(
                         modifier = disLikeModifier,
                         painter = painterResource(R.drawable.fi_sr_thumbs_down),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(if (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) textFocusedMainColor else contentRowTint)
+                        colorFilter = ColorFilter.tint(
+                            when {
+                                isUnLiked -> textFocusedMainColor
+                                dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED -> textFocusedMainColor
+                                else -> contentRowTint
+                            }
+                        )
                     )
                 }
             }
+
 
             Box(
                 modifier = buttonModifier

@@ -50,7 +50,7 @@ fun CardDetail.toDetailDto(): DetailDto {
     }
 
     return DetailDto(
-        id = data.id,
+        id = data.id.toString(),
         imgSrc = data.landscape,
         title = data.name,
         description = data.description,
@@ -58,7 +58,12 @@ fun CardDetail.toDetailDto(): DetailDto {
         genre = data.genres?.mapNotNull { it.name }?.joinToString(", "),
         duration = data.duration?.toString(),
         imdbRating = data.rating,
-        videoLink = resolvedVideoLink
+        videoLink = resolvedVideoLink,
+        slug = data.slug,
+        isFavourite = data.myList,
+        isLiked = data.likeDislike == "like",
+        isDisliked = data.likeDislike == "dislike",
+        isSeries = data.content_type == "Series"
     )
 }
 
@@ -75,6 +80,7 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         duration = duration,
         releaseDate = releaseDate,
         videoHlsUrl = videoLink,
+        slug = slug
     )
 }
 
@@ -101,7 +107,8 @@ fun Episode.toPosterDto(): PosterCardDto {
         duration = duration.toString(),
         imdbRating = rating,
         releaseDate = dateUploaded,
-        videoHlsUrl = video_link
+        videoHlsUrl = video_link,
+        slug = slug
     )
 }
 
@@ -114,10 +121,15 @@ data class UiState(
 
 // Sealed class for UI events
 sealed interface DetailScreenEvent {
-    data class LoadCardDetail(val id: String, val relatedList: List<PosterCardDto>) :
+    data class LoadCardDetail(val slug: String, val relatedList: List<PosterCardDto>) :
         DetailScreenEvent
 
     data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent
     data object RelatedRowUpClick : DetailScreenEvent
     data class SeasonSelected(val seasonNumber: Int) : DetailScreenEvent
+    data class ToggleFavorite(val slug: String) : DetailScreenEvent // New event
+    data class ToggleLike(val slug: String) : DetailScreenEvent // New event
+    data class ToggleDisLike(val slug: String) : DetailScreenEvent // New event
 }
+
+data class UiEvent(val message: String)

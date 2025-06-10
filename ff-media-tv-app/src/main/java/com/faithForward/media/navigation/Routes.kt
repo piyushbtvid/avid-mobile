@@ -10,9 +10,17 @@ sealed class Routes(val route: String) {
     data object Home : Routes("HOME_SCREEN")
     data object Creator : Routes("CREATOR_SCREEN")
     data object Login : Routes("LOGIN_SCREEN")
-    data object Movies : Routes("MOVIES_SCREEN")
+    object Movies {
+        const val route = "movies/{contentType}"
+        fun createRoute(contentType: String) = "movies/$contentType"
+    }
+
+    object Series {
+        const val route = "series/{contentType}"
+        fun createRoute(contentType: String) = "series/$contentType"
+    }
+
     data object MyList : Routes("MY_LIST_SCREEN")
-    data object Series : Routes("SERIES_SCREEN")
     data object GenreData : Routes("GENRE_DATA_SCREEN/{genreId}") {
         fun createRoute(genreId: String) = "GENRE_DATA_SCREEN/$genreId"
     }
@@ -21,10 +29,11 @@ sealed class Routes(val route: String) {
         fun createRoute(itemId: String, listJson: String) = "DETAIL_SCREEN/$itemId/$listJson"
     }
 
-    data object PlayerScreen : Routes("PLAYER_SCREEN/{playerDto}") {
-        fun createRoute(item: PosterCardDto): String {
-            val json = Uri.encode(Json.encodeToString(item))
-            return "PLAYER_SCREEN/$json"
+    data object PlayerScreen {
+        const val route = "playerScreen/{playerDtoList}"
+        fun createRoute(playerDtoList: List<PosterCardDto>): String {
+            val json = Json.encodeToString(playerDtoList)
+            return "playerScreen/${Uri.encode(json)}"
         }
     }
 

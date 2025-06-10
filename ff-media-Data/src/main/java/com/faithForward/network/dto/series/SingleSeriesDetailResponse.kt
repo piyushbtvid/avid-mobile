@@ -14,6 +14,7 @@ data class SingleSeriesDetailResponse(
 data class Season(
     val id: String,
     val name: String,
+    val slug: String?,
     val season_number: Int,
     val description: String? = null,
     val portrait: String,
@@ -26,6 +27,7 @@ data class Episode(
     val id: String,
     val episode_number: Int,
     val name: String,
+    val slug: String?,
     val description: String,
     val portrait: String,
     val landscape: String,

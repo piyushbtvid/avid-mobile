@@ -9,7 +9,7 @@ import com.faithForward.network.dto.genre.GenreResponse
 
 fun ContentItem.toGenreCardDto(): GenreCardDto {
     return GenreCardDto(
-        genreId = id ?: "",
+        genreId = id.toString() ?: "",
         name = creator?.name ?: "",
         image = portrait ?: "",
         description = name ?: "",
@@ -20,7 +20,8 @@ fun ContentItem.toGenreCardDto(): GenreCardDto {
         duration = duration.toString(),
         imdbRating = rating,
         releaseDate = dateUploaded,
-        videoUrl = video_link
+        videoUrl = video_link,
+        slug = slug
     )
 }
 
@@ -47,6 +48,7 @@ fun GenreCardDto.toPosterCardDto(): PosterCardDto {
         duration = duration.toString(),
         imdbRating = imdbRating,
         releaseDate = releaseDate,
-        videoHlsUrl = videoUrl
+        videoHlsUrl = videoUrl,
+        slug = slug
     )
 }

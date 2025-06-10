@@ -36,7 +36,7 @@ fun RelatedContentRow(
     onItemFocused: (Int) -> Unit,
     lazyListState: LazyListState,
     onRelatedUpClick: () -> Boolean,
-    onItemClick: (PosterCardDto) -> Unit,
+    onItemClick: (PosterCardDto, Int) -> Unit,
     onRelatedRowFocusedIndexChange: (Int) -> Unit,
 ) {
 
@@ -80,31 +80,28 @@ fun RelatedContentRow(
                 else -> FocusState.UNFOCUSED
             }
 
-            RelatedContentItem(
-                modifier = Modifier
-                    .focusRequester(safeFocusRequester)
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            onItemFocused(index)
-                            onRelatedRowFocusedIndexChange.invoke(index)
-                        } else {
-                            if (relatedRowFocusedIndex == index) {
-                                onRelatedRowFocusedIndexChange.invoke(-1)
-                            }
+            RelatedContentItem(modifier = Modifier
+                .focusRequester(safeFocusRequester)
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        onItemFocused(index)
+                        onRelatedRowFocusedIndexChange.invoke(index)
+                    } else {
+                        if (relatedRowFocusedIndex == index) {
+                            onRelatedRowFocusedIndexChange.invoke(-1)
                         }
                     }
-                    .focusable()
-                    .onKeyEvent { keyEvent ->
-                        if (keyEvent.key == Key.DirectionUp && keyEvent.type == KeyEventType.KeyUp) {
-                            return@onKeyEvent onRelatedUpClick()
-                        } else {
-                            false
-                        }
-                    },
-                relatedContentDto = relatedContentItem,
-                uiState = uiState,
-                onItemClick = onItemClick
-            )
+                }
+                .focusable()
+                .onKeyEvent { keyEvent ->
+                    if (keyEvent.key == Key.DirectionUp && keyEvent.type == KeyEventType.KeyUp) {
+                        return@onKeyEvent onRelatedUpClick()
+                    } else {
+                        false
+                    }
+                }, relatedContentDto = relatedContentItem, uiState = uiState, onItemClick = {
+                onItemClick.invoke(relatedContentItem, index)
+            })
         }
     }
 

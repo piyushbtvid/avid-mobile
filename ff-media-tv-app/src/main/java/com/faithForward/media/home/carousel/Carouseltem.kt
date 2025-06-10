@@ -1,5 +1,6 @@
 package com.faithForward.media.home.carousel
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,8 @@ import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
 
 data class CarouselItemDto(
+    val id: String? = null,
+    val slug: String? = null,
     val imgSrc: String? = null,
     val description: String? = null,
     val releaseDate: String? = null,
@@ -45,7 +49,10 @@ data class CarouselItemDto(
     val imdbRating: String? = null,
     val title: String? = null,
     val subscribers: String? = null,
-    var isCreator: Boolean = false
+    var isCreator: Boolean = false,
+    val isLiked: Boolean? = null,
+    val isDisliked: Boolean? = null,
+    var isFavourite: Boolean? = null,
 )
 
 @Composable
@@ -63,9 +70,17 @@ fun CarouselItem(
     micUiState: FocusState,
     searchUiSate: FocusState,
     focusState: FocusState,
-    @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder
+    @DrawableRes placeholderRes: Int = R.drawable.preload_placeholder,
 ) {
 
+    LaunchedEffect(
+        carouselItemDto
+    ) {
+        Log.e(
+            "CARSOUEL",
+            "carousel item isFav is ${carouselItemDto.isFavourite} and ${carouselItemDto.isLiked}  ${carouselItemDto.isDisliked}"
+        )
+    }
 
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
@@ -156,7 +171,10 @@ fun CarouselItem(
                 disLikeModifier = disLikeModifier,
                 addToWatchListUiState = addToWatchListUiState,
                 likeUiState = likeUiState,
-                dislikeUiState = dislikeUiState
+                dislikeUiState = dislikeUiState,
+                isLiked = isLiked ?: false,
+                isUnLiked = isDisliked ?: false,
+                isFavourite = isFavourite ?: false
             )
 
             title?.let {
@@ -174,14 +192,13 @@ fun CarouselItem(
             }
 
             RoundedIconButton(
-                modifier = buttonModifier.align(alignment = Alignment.BottomStart)
+                modifier = buttonModifier.align(alignment = Alignment.BottomStart),
 //
-                ,
                 imageId = R.drawable.play_ic,
                 iconHeight = 30,
                 boxSize = 62,
                 iconWidth = 21,
-                backgroundColor = playButtonBackgroundColor
+                backgroundColor = playButtonBackgroundColor,
             )
 
             if (!isCreator) {

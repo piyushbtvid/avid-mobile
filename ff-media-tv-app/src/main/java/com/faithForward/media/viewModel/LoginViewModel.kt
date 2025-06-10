@@ -10,26 +10,52 @@ import com.faithForward.network.dto.login.LoginData
 import com.faithForward.repository.NetworkRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject
-constructor(
+class LoginViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
 ) : ViewModel() {
 
-
     private val _loginState = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+
+    init {
+        Log.e("USER_PREF", "login viewModel init called")
+        checkLoginStatus()
+    }
+
+    private fun checkLoginStatus() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                Log.e("USER_PREF", "check login status  in  viewModel  called")
+                val session = networkRepository.getCurrentSession()
+                Log.e("USER_PREF", "Initial session check in checkLoginStatus is called: $session")
+                //checking login based on token is null or not
+                _isLoggedIn.value = session?.token != null
+                Log.e(
+                    "USER_PREF",
+                    "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
+                )
+            }
+        }
+    }
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -46,7 +72,6 @@ constructor(
             }
         }
     }
-
 
     private fun loginUser() {
         val state = _loginState.value
@@ -72,9 +97,10 @@ constructor(
                         it.copy(isLoading = false, isLoggedIn = true)
                     }
                     if (body != null) {
-                        saveUserData(
-                            session = body.data
-                        )
+                        withContext(Dispatchers.IO) {
+                            networkRepository.saveUserSession(body.data)
+                        }
+                        _isLoggedIn.value = true
                     }
                 } else {
                     val errorBody = response.errorBody()
@@ -109,36 +135,23 @@ constructor(
                     )
                 }
             }
-
-        }
-    }
-
-    val userSession: StateFlow<UserSessionState> = networkRepository.userSession
-        .map { UserSessionState(data = it, isLoading = false) }
-        .catch { emit(UserSessionState(isLoading = false, error = it.message)) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UserSessionState(isLoading = true)
-        )
-
-    private fun saveUserData(session: LoginData) {
-        viewModelScope.launch {
-            networkRepository.saveUserSession(session)
         }
     }
 
     fun logout() {
         viewModelScope.launch {
-            networkRepository.clearSession()
+            withContext(Dispatchers.IO) {
+                networkRepository.clearSession()
+            }
+            _isLoggedIn.value = false
+            _loginState.update {
+                it.copy(
+                    isLoggedIn = false,
+                    email = "",
+                    password = "",
+                    errorMessage = null
+                )
+            }
         }
     }
-
 }
-
-
-data class UserSessionState(
-    val data: LoginData? = null,
-    val isLoading: Boolean = true,
-    val error: String? = null,
-)

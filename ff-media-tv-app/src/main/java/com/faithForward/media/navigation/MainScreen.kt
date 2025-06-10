@@ -102,7 +102,7 @@ fun MainScreen(
                         }
 
                         Routes.Movies.route -> {
-                            navController.navigate(Routes.Movies.route) {
+                            navController.navigate(Routes.Movies.createRoute("movies")) {
                                 popUpTo(Routes.Home.route) { inclusive = false }
                                 launchSingleTop = true
                             }
@@ -116,7 +116,7 @@ fun MainScreen(
                         }
 
                         Routes.Series.route -> {
-                            navController.navigate(Routes.Series.route) {
+                            navController.navigate(Routes.Series.createRoute("series")) {
                                 popUpTo(Routes.Home.route) { inclusive = false }
                                 launchSingleTop = true
                             }

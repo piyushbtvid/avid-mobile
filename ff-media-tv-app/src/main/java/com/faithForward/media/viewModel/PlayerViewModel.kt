@@ -52,6 +52,7 @@ class PlayerViewModel : ViewModel() {
             }
 
             is PlayerEvent.HideControls -> {
+                Log.e("PLAYER_UI", "Handling HideControls even")
                 Log.e("PLAYER", "Handling HideControls event")
                 _state.value = _state.value.copy(isControlsVisible = false)
             }
@@ -122,9 +123,9 @@ class PlayerViewModel : ViewModel() {
         }
     }
 
-    fun onUserInteraction() {
+    fun onUserInteraction(from: String) {
         viewModelScope.launch {
-            Log.e("USER_INTERCTION", "on use interction is called  in viewModel")
+            Log.e("PLAYER_UI", "on use interction is called  in viewModel from $from")
             _interactionFlow.emit(Unit)
         }
     }

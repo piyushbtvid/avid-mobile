@@ -4,17 +4,20 @@ import com.faithForward.network.dto.CategoryDetailResponse
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
+import com.faithForward.network.dto.common.ApiMessageResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.LoginResponse
-import com.faithForward.network.dto.myList.AddRemoveMyListResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
+import com.faithForward.network.request.LikeRequest
 import com.faithForward.network.request.LoginRequest
 import com.faithForward.util.Constants
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -38,7 +41,9 @@ interface ApiServiceInterface {
     ): Response<CategoryDetailResponse>
 
     @GET(Constants.CREATOR_END_POINT)
-    suspend fun getCreatorsList(): Response<CreatorsListApiResponse>
+    suspend fun getCreatorsList(
+        @Header("Authorization") token: String,
+    ): Response<CreatorsListApiResponse>
 
     @POST(Constants.LOGIN_END_POINT)
     suspend fun loginUser(
@@ -59,7 +64,7 @@ interface ApiServiceInterface {
     ): Response<MyListResponse>
 
 
-    @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
+    @GET(Constants.SINGLE_GENRE_DETAIL_END_POINT)
     suspend fun getGivenGenreData(
         @Path("id") id: String,
     ): Response<GenreResponse>
@@ -67,7 +72,8 @@ interface ApiServiceInterface {
 
     @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
     suspend fun getGivenCardDetail(
-        @Path("id") id: String,
+        @Path("slug") slug: String,
+        @Header("Authorization") token: String,
     ): Response<CardDetail>
 
 
@@ -78,14 +84,31 @@ interface ApiServiceInterface {
 
     @POST(Constants.MY_LIST_END_POINT)
     suspend fun addToMyList(
-        @Path("id") id: String,
+        @Path("slug") slug: String,
         @Header("Authorization") token: String,
-    ): Response<AddRemoveMyListResponse>
+    ): Response<ApiMessageResponse>
 
-    @POST(Constants.MY_LIST_END_POINT)
+    @DELETE(Constants.MY_LIST_END_POINT)
     suspend fun removeFromMyList(
-        @Path("id") id: String,
+        @Path("slug") slug: String,
         @Header("Authorization") token: String,
-    ): Response<AddRemoveMyListResponse>
+    ): Response<ApiMessageResponse>
+
+    @POST(Constants.LIKE_DISLIKE_END_POINT)
+    suspend fun likeOrDisLikeContent(
+        @Path("slug") slug: String,
+        @Header("Authorization") token: String,
+        @Body body: LikeRequest,
+    ): Response<ApiMessageResponse>
+
+    @GET(Constants.LIKED_LIST_END_POINT)
+    suspend fun getLikedList(
+        @Header("Authorization") token: String,
+    ): Response<MyListResponse>
+
+    @GET(Constants.DIS_lIKED_LIST_END_POINT)
+    suspend fun getDisLikedList(
+        @Header("Authorization") token: String,
+    ): Response<MyListResponse>
 
 }

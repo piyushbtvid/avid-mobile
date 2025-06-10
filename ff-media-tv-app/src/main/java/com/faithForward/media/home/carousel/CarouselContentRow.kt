@@ -2,13 +2,11 @@ package com.faithForward.media.home.carousel
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -27,8 +25,6 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 data class CarouselContentRowDto(
     val carouselItemsDto: List<CarouselItemDto>,
@@ -45,6 +41,10 @@ fun CarouselContentRow(
     onItemFocused: (Pair<Int, Int>) -> Unit,
     shouldFocusOnFirstItem: Boolean = false,
     listState: LazyListState,
+    onCarouselItemClick: (CarouselItemDto) -> Unit,
+    onToggleFavorite: (String?) -> Unit,
+    onToggleLike: (String?) -> Unit,
+    onToggleDisLike: (String?) -> Unit,
 ) {
 
     val scope = rememberCoroutineScope()
@@ -141,6 +141,10 @@ fun CarouselContentRow(
                         }
                     }
                 }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onCarouselItemClick.invoke(carouselItem)
+                }
+                )
                 .focusable(),
             carouselItemDto = carouselItem,
             focusState = uiState,
@@ -184,6 +188,10 @@ fun CarouselContentRow(
                         }
                     }
                 }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onToggleFavorite(carouselItem.slug)
+                }
+                )
                 .focusable(),
             likeModifier = Modifier
                 .onFocusChanged {
@@ -195,6 +203,10 @@ fun CarouselContentRow(
                         }
                     }
                 }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onToggleLike(carouselItem.slug)
+                }
+                )
                 .focusable(),
             disLikeModifier = Modifier
                 .onFocusChanged {
@@ -206,6 +218,10 @@ fun CarouselContentRow(
                         }
                     }
                 }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onToggleDisLike(carouselItem.slug)
+                }
+                )
                 .focusable(),
             addToWatchListUiState = addToWatchListUiState,
             likeUiState = likeUiState,

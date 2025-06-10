@@ -232,6 +232,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -239,6 +240,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -246,6 +248,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -253,6 +256,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -260,6 +264,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -267,6 +272,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -274,6 +280,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -281,6 +288,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -288,6 +296,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
                 GenreCardDto(
                     genreId = "1",
@@ -295,6 +304,7 @@ private fun GenreGridPreview() {
                     description = "A sci-fi adventure exploring the edge of human survival in space.",
                     image = "",
                     views = "300k Views",
+                    slug = ""
                 ),
             ),
         ),
