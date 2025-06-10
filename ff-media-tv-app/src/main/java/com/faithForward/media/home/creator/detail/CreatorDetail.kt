@@ -22,7 +22,7 @@ import com.faithForward.media.theme.creatorTitleStyle
 import com.faithForward.media.theme.tv_02
 
 
-data class CreatorDetailDto(
+data class CreatorContentDto(
     val about: String,
     val subscribersText: String,
     val genre: String,
@@ -32,7 +32,7 @@ data class CreatorDetailDto(
 @Composable
 fun CreatorDetail(
     modifier: Modifier = Modifier,
-    creatorDetailDto: CreatorDetailDto
+    creatorDetailDto: CreatorContentDto
 ) {
     with(creatorDetailDto) {
         Column(
@@ -84,7 +84,7 @@ fun CreatorDetail(
 @Composable
 private fun CreatorDetailPreview() {
     CreatorDetail(
-        creatorDetailDto = CreatorDetailDto(
+        creatorDetailDto = CreatorContentDto(
             about = "About the Creator: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.",
             genre = "Comedy",
             subscribersText = "130K Subscribers",

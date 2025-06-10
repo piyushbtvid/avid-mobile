@@ -12,25 +12,31 @@ import com.faithForward.media.R
 import com.faithForward.media.commanComponents.SubscribeButton
 import com.faithForward.media.util.FocusState
 
+data class CreatorDetailDto(
+    val creatorName: String? = null,
+    val creatorImageUrl: String? = null,
+    val creatorBackgroundImageUrl: String? = null,
+    val creatorContentDto: CreatorContentDto? = null,
+)
 
 @Composable
-fun CreatorDetailPage(modifier: Modifier = Modifier) {
+fun CreatorDetailPage(
+    modifier: Modifier = Modifier,
+    creatorDetailDto: CreatorDetailDto,
+) {
     Row(modifier = modifier) {
         Column {
             AnchoredImage(
-                creatorName = "kdjfkdjf",
-                creatorImageUrl = "",
-                creatorBackgroundImageUrl = ""
+                creatorName = creatorDetailDto.creatorName ?: "",
+                creatorImageUrl = creatorDetailDto.creatorImageUrl ?: "",
+                creatorBackgroundImageUrl = creatorDetailDto.creatorBackgroundImageUrl ?: ""
             )
-            CreatorDetail(
-                modifier = Modifier.padding(start = 110.dp, top = 6.dp),
-                creatorDetailDto = CreatorDetailDto(
-                    about = "About the Creator: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.",
-                    genre = "Comedy",
-                    subscribersText = "130K Subscribers",
-                    creatorChannelCategory = "Reality"
+            if (creatorDetailDto.creatorContentDto != null) {
+                CreatorDetail(
+                    modifier = Modifier.padding(start = 110.dp, top = 6.dp),
+                    creatorDetailDto = creatorDetailDto.creatorContentDto
                 )
-            )
+            }
 
             Row(
                 modifier = Modifier.padding(start = 110.dp, top = 20.dp),
@@ -58,5 +64,5 @@ fun CreatorDetailPage(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun CreatorDetailPagePreview() {
-    CreatorDetailPage()
+    // CreatorDetailPage()
 }
