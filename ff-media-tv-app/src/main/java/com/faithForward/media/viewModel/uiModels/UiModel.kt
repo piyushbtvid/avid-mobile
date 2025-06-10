@@ -182,19 +182,15 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     Log.e("CAROUSEL", "toCarouselItemDto MyFavList is $myList")
 
 // check based on .content (flattening the nested list)
-    val isFavourite = myList
-        ?.flatMap { it.content }
-        ?.any {
-            it.id.toString() == this.id.toString()
-        } == true
+    val isFavourite = myList?.flatMap { it.content }?.any {
+        it.id.toString() == this.id.toString()
+    } == true
 
-    val isLiked = likedList
-        ?.flatMap { it.content }
-        ?.any { it.id.toString() == this.id.toString() } == true
+    val isLiked =
+        likedList?.flatMap { it.content }?.any { it.id.toString() == this.id.toString() } == true
 
 
-    val isDisliked = disLikeList
-        ?.flatMap { it.content }
+    val isDisliked = disLikeList?.flatMap { it.content }
         ?.any { it.id.toString() == this.id.toString() } == true && !isLiked
 
     return CarouselItemDto(
@@ -235,6 +231,26 @@ fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
         title = creatorName,
         isCreator = true
     )
+}
+
+fun CarouselItemDto.toPosterCardDto(): PosterCardDto {
+    return PosterCardDto(
+        id = id,
+        slug = slug,
+        posterImageSrc = imgSrc ?: "",
+        title = title ?: "",
+        description = description ?: "",
+        genre = genre,
+        seasons = seasons,
+        duration = duration,
+        imdbRating = imdbRating,
+        releaseDate = releaseDate,
+    )
+}
+
+sealed class CarsouelClickUiState {
+    data object Idle : CarsouelClickUiState()
+    data class NavigateToPlayer(val posterCardDto: PosterCardDto) : CarsouelClickUiState()
 }
 
 

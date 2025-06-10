@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.CarouselContentRow
+import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
 import com.faithForward.media.home.creator.list.CreatorCardGrid
@@ -34,6 +35,7 @@ fun HomeContentSections(
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
     onToggleFavorite: (String?) -> Unit,
+    onCarouselItemClick: (CarouselItemDto) -> Unit,
     onToggleLike: (String?) -> Unit,
     onToggleDisLike: (String?) -> Unit,
 ) {
@@ -72,7 +74,8 @@ fun HomeContentSections(
                     listState = listState,
                     onToggleFavorite = onToggleFavorite,
                     onToggleLike = onToggleLike,
-                    onToggleDisLike = onToggleDisLike
+                    onToggleDisLike = onToggleDisLike,
+                    onCarouselItemClick = onCarouselItemClick
                 )
 
                 is HomePageItem.CategoryRow -> CategoryRow(

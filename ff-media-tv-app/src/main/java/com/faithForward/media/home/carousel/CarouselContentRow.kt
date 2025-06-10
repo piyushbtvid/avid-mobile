@@ -41,6 +41,7 @@ fun CarouselContentRow(
     onItemFocused: (Pair<Int, Int>) -> Unit,
     shouldFocusOnFirstItem: Boolean = false,
     listState: LazyListState,
+    onCarouselItemClick: (CarouselItemDto) -> Unit,
     onToggleFavorite: (String?) -> Unit,
     onToggleLike: (String?) -> Unit,
     onToggleDisLike: (String?) -> Unit,
@@ -140,6 +141,10 @@ fun CarouselContentRow(
                         }
                     }
                 }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onCarouselItemClick.invoke(carouselItem)
+                }
+                )
                 .focusable(),
             carouselItemDto = carouselItem,
             focusState = uiState,

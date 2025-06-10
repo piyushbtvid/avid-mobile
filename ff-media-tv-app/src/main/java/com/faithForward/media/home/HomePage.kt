@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
 import com.faithForward.util.Resource
 
 @Composable
@@ -28,17 +29,15 @@ fun HomePage(
     changeSideBarSelectedPosition: (Int) -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
+    onCarouselItemClick: (PosterCardDto) -> Unit,
     onDataLoadedSuccess: () -> Unit,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
+    val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
 
-
-//    LaunchedEffect(Unit) {
-//        homeViewModel.fetchHomePageData(sectionId = 1)
-//    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -58,15 +57,27 @@ fun HomePage(
 
     val homePageItemsResource by homeViewModel.homePageData.collectAsState()
 
-    if (homePageItemsResource is Resource.Unspecified
-        || homePageItemsResource is Resource.Error
-        || homePageItemsResource is Resource.Loading
-    ) return
+    if (homePageItemsResource is Resource.Unspecified || homePageItemsResource is Resource.Error || homePageItemsResource is Resource.Loading) return
 
     val homePageItems = homePageItemsResource.data ?: return
 
     if (homePageItemsResource is Resource.Success) {
         onDataLoadedSuccess.invoke()
+    }
+
+    when (val state = carouselClickUiState) {
+        is CarsouelClickUiState.NavigateToPlayer -> {
+            LaunchedEffect(state.posterCardDto) {
+                onCarouselItemClick.invoke(state.posterCardDto)
+                // Reset state to prevent repeated navigation
+                homeViewModel.loadBannerDetail("") // Reset to idle
+            }
+        }
+
+        is CarsouelClickUiState.Idle -> {}
+        null -> {
+
+        }
     }
 
     // Showing Toast when uiEvent changes
@@ -84,8 +95,7 @@ fun HomePage(
             .fillMaxSize()
             .background(unFocusMainColor)
     ) {
-        HomeContentSections(
-            modifier = Modifier,
+        HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
@@ -108,8 +118,13 @@ fun HomePage(
                 if (slug != null) {
                     homeViewModel.toggleDislike(slug)
                 }
-            }
-        )
+            },
+            onCarouselItemClick = { item ->
+                Log.e("CARSOUEL_SLUG", "item slug is ${item.slug}")
+                if (item.slug != null) {
+                    homeViewModel.loadBannerDetail(item.slug)
+                }
+            })
     }
 
 }

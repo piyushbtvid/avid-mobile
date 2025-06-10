@@ -13,22 +13,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.viewModel.ContentViewModel
+import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
 import com.faithForward.util.Resource
 
 @Composable
 fun SeriesPage(
     modifier: Modifier = Modifier,
     contentViewModel: ContentViewModel,
+    onCarouselItemClick: (PosterCardDto) -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
     val uiEvent by contentViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
-
-//
-//    LaunchedEffect(Unit) {
-//        contentViewModel.loadSectionContent("series", "Series")
-//    }
+    val carouselClickUiState by contentViewModel.carouselClickUiState.collectAsState(null)
 
 
     val homePageItemsResource by contentViewModel.homePageData.collectAsState()
@@ -39,6 +37,21 @@ fun SeriesPage(
     ) return
 
     val homePageItems = homePageItemsResource.data ?: return
+
+    when (val state = carouselClickUiState) {
+        is CarsouelClickUiState.NavigateToPlayer -> {
+            LaunchedEffect(state.posterCardDto) {
+                onCarouselItemClick.invoke(state.posterCardDto)
+                // Reset state to prevent repeated navigation
+                contentViewModel.loadBannerDetail("") // Reset to idle
+            }
+        }
+
+        is CarsouelClickUiState.Idle -> {}
+        null -> {
+
+        }
+    }
 
     // Showing Toast when uiEvent changes
     LaunchedEffect(uiEvent) {
@@ -78,6 +91,11 @@ fun SeriesPage(
             onToggleDisLike = { slug ->
                 if (slug != null) {
                     contentViewModel.toggleDislike(slug)
+                }
+            },
+            onCarouselItemClick = { item ->
+                if (item.slug != null) {
+                    contentViewModel.loadBannerDetail(item.slug)
                 }
             }
         )

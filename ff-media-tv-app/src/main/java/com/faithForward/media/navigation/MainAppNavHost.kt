@@ -50,8 +50,7 @@ fun MainAppNavHost(
     ) {
         composable(route = Routes.Login.route) {
             LoginScreen(
-                loginViewModel = loginViewModel,
-                navController = navController
+                loginViewModel = loginViewModel, navController = navController
             )
         }
 
@@ -77,6 +76,10 @@ fun MainAppNavHost(
                         navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                     }
                 },
+                onCarouselItemClick = { carouselItem ->
+                    val route = Routes.PlayerScreen.createRoute(carouselItem)
+                    navController.navigate(route)
+                },
                 onCategoryClick = { id ->
                     if (id.isNotEmpty()) {
                         navController.navigate(Routes.GenreData.createRoute(id)) {
@@ -99,17 +102,17 @@ fun MainAppNavHost(
             arguments = listOf(navArgument("contentType") { type = NavType.StringType })
         ) { navBackStackEntry ->
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
-            MoviesPage(
-                contentViewModel = contentViewModel,
-                onItemClick = { item, list ->
-                    if (!item.slug.isNullOrEmpty()) {
-                        val filteredList = list.filterNot { it.slug == item.slug }
-                        val json = Json.encodeToString(filteredList)
-                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
-                    }
+            MoviesPage(contentViewModel = contentViewModel, onItemClick = { item, list ->
+                if (!item.slug.isNullOrEmpty()) {
+                    val filteredList = list.filterNot { it.slug == item.slug }
+                    val json = Json.encodeToString(filteredList)
+                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                 }
-            )
+            }, onCarouselItemClick = { carouselItem ->
+                val route = Routes.PlayerScreen.createRoute(carouselItem)
+                navController.navigate(route)
+            })
         }
 
         composable(
@@ -117,17 +120,17 @@ fun MainAppNavHost(
             arguments = listOf(navArgument("contentType") { type = NavType.StringType })
         ) { navBackStackEntry ->
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
-            SeriesPage(
-                contentViewModel = contentViewModel,
-                onItemClick = { item, list ->
-                    if (!item.slug.isNullOrEmpty()) {
-                        val filteredList = list.filterNot { it.slug == item.slug }
-                        val json = Json.encodeToString(filteredList)
-                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
-                    }
+            SeriesPage(contentViewModel = contentViewModel, onItemClick = { item, list ->
+                if (!item.slug.isNullOrEmpty()) {
+                    val filteredList = list.filterNot { it.slug == item.slug }
+                    val json = Json.encodeToString(filteredList)
+                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                 }
-            )
+            }, onCarouselItemClick = { carouselItem ->
+                val route = Routes.PlayerScreen.createRoute(carouselItem)
+                navController.navigate(route)
+            })
         }
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
@@ -138,7 +141,13 @@ fun MainAppNavHost(
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                 }
-            })
+            },
+                onCarouselItemClick = { carouselItem ->
+                    val route = Routes.PlayerScreen.createRoute(carouselItem)
+                    navController.navigate(route)
+                }
+
+            )
         }
 
         composable(route = Routes.GenreData.route, arguments = listOf(navArgument("genreId") {
@@ -148,8 +157,7 @@ fun MainAppNavHost(
 
             val genreViewModel: GenreViewModel = hiltViewModel()
 
-            GenreDataScreen(
-                genreId = genreId,
+            GenreDataScreen(genreId = genreId,
                 viewModel = genreViewModel,
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {

@@ -54,6 +54,9 @@ fun CreatorScreen(
             },
             onToggleDisLike = {
 
+            },
+            onCarouselItemClick = {
+
             }
         )
     }

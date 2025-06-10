@@ -6,9 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.UiEvent
+import com.faithForward.media.viewModel.uiModels.toDetailDto
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +39,11 @@ class MyListViewModel @Inject constructor(
 
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
+
+    private val _carouselClickUiState =
+        MutableSharedFlow<CarsouelClickUiState>()
+    val carouselClickUiState = _carouselClickUiState.asSharedFlow()
+
 
 
     fun onContentRowFocusedIndexChange(value: Int) {
@@ -253,6 +261,27 @@ class MyListViewModel @Inject constructor(
                 ex.printStackTrace()
                 Log.e("TOGGLE_DISLIKE", "Error toggling dislike: ${ex.message}")
                 _uiEvent.emit(UiEvent("Error: ${ex.message ?: "Something went wrong"}"))
+            }
+        }
+    }
+
+    fun loadBannerDetail(slug: String) {
+        viewModelScope.launch {
+            try {
+                val response = networkRepository.getGivenCardDetail(slug)
+                if (response.isSuccessful) {
+                    val cardDetail = response.body()
+                    if (cardDetail != null) {
+                        _carouselClickUiState.emit(
+                            CarsouelClickUiState.NavigateToPlayer(
+                                cardDetail.toDetailDto().toPosterCardDto()
+                            )
+                        )
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("BANNER_DETAIL", "banner detail excepiton is ${ex.message}")
             }
         }
     }

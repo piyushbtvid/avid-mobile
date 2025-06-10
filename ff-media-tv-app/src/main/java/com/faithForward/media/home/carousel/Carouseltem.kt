@@ -38,6 +38,7 @@ import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
 
 data class CarouselItemDto(
+    val id: String? = null,
     val slug: String? = null,
     val imgSrc: String? = null,
     val description: String? = null,
@@ -191,14 +192,13 @@ fun CarouselItem(
             }
 
             RoundedIconButton(
-                modifier = buttonModifier.align(alignment = Alignment.BottomStart)
+                modifier = buttonModifier.align(alignment = Alignment.BottomStart),
 //
-                ,
                 imageId = R.drawable.play_ic,
                 iconHeight = 30,
                 boxSize = 62,
                 iconWidth = 21,
-                backgroundColor = playButtonBackgroundColor
+                backgroundColor = playButtonBackgroundColor,
             )
 
             if (!isCreator) {

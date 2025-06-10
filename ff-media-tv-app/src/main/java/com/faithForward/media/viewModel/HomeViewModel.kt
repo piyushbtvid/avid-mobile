@@ -8,8 +8,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.viewModel.uiModels.HomePageItem
+import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
 import com.faithForward.media.viewModel.uiModels.UiEvent
+import com.faithForward.media.viewModel.uiModels.toDetailDto
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.MyFavList
 import com.faithForward.util.Resource
@@ -34,6 +37,11 @@ class HomeViewModel @Inject constructor(
 
     private val _uiEvent = MutableSharedFlow<UiEvent?>()
     val uiEvent = _uiEvent.asSharedFlow()
+
+    private val _carouselClickUiState =
+        MutableSharedFlow<CarsouelClickUiState>()
+    val carouselClickUiState = _carouselClickUiState.asSharedFlow()
+
 
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
@@ -100,6 +108,27 @@ class HomeViewModel @Inject constructor(
                 ex.printStackTrace()
                 _homepageData.emit(Resource.Error(ex.message ?: "Something went wrong!"))
                 _uiEvent.emit(UiEvent("Error: ${ex.message ?: "Something went wrong"}"))
+            }
+        }
+    }
+
+    fun loadBannerDetail(slug: String) {
+        viewModelScope.launch {
+            try {
+                val response = networkRepository.getGivenCardDetail(slug)
+                if (response.isSuccessful) {
+                    val cardDetail = response.body()
+                    if (cardDetail != null) {
+                        _carouselClickUiState.emit(
+                            CarsouelClickUiState.NavigateToPlayer(
+                                cardDetail.toDetailDto().toPosterCardDto()
+                            )
+                        )
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("BANNER_DETAIL", "banner detail excepiton is ${ex.message}")
             }
         }
     }
@@ -227,7 +256,8 @@ class HomeViewModel @Inject constructor(
                     if (carouselRow != null && carouselRow.dto.carouselItemsDto.isNotEmpty()) {
                         val carouselItem = carouselRow.dto.carouselItemsDto[0]
                         val isCurrentlyDisliked = carouselItem.isDisliked ?: false
-                        val response = networkRepository.likeDisLikeContent(slug, type = "dislike")
+                        val response =
+                            networkRepository.likeDisLikeContent(slug, type = "dislike")
                         if (response.isSuccessful) {
                             val newIsDisliked = !isCurrentlyDisliked
                             val newIsLiked =
@@ -254,7 +284,8 @@ class HomeViewModel @Inject constructor(
                             )
                         } else {
                             Log.e(
-                                "TOGGLE_DISLIKE", "Failed to toggle dislike: ${response.message()}"
+                                "TOGGLE_DISLIKE",
+                                "Failed to toggle dislike: ${response.message()}"
                             )
                             _uiEvent.emit(UiEvent("Failed to update dislike"))
                         }
