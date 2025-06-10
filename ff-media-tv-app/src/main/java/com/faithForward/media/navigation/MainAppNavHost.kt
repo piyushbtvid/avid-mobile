@@ -77,7 +77,7 @@ fun MainAppNavHost(
                     }
                 },
                 onCarouselItemClick = { carouselItem ->
-                    val route = Routes.PlayerScreen.createRoute(carouselItem)
+                    val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
                 },
                 onCategoryClick = { id ->
@@ -110,7 +110,7 @@ fun MainAppNavHost(
                     navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                 }
             }, onCarouselItemClick = { carouselItem ->
-                val route = Routes.PlayerScreen.createRoute(carouselItem)
+                val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                 navController.navigate(route)
             })
         }
@@ -128,7 +128,7 @@ fun MainAppNavHost(
                     navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                 }
             }, onCarouselItemClick = { carouselItem ->
-                val route = Routes.PlayerScreen.createRoute(carouselItem)
+                val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                 navController.navigate(route)
             })
         }
@@ -141,11 +141,10 @@ fun MainAppNavHost(
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
                 }
-            },
-                onCarouselItemClick = { carouselItem ->
-                    val route = Routes.PlayerScreen.createRoute(carouselItem)
-                    navController.navigate(route)
-                }
+            }, onCarouselItemClick = { carouselItem ->
+                val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
+                navController.navigate(route)
+            }
 
             )
         }
@@ -176,35 +175,45 @@ fun MainAppNavHost(
         ) {
             val detailViewModel: DetailViewModel = hiltViewModel()
 
-            DetailScreen(detailViewModel = detailViewModel, onWatchNowClick = { item ->
-                val route = Routes.PlayerScreen.createRoute(item)
-                navController.navigate(route)
-            }, onRelatedItemClick = { item, list ->
-                if (!item.slug.isNullOrEmpty()) {
-                    val filteredList = list.filterNot { it.slug == item.slug }
-                    val json = Json.encodeToString(filteredList)
-                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
-                }
-            })
+            DetailScreen(detailViewModel = detailViewModel,
+                onWatchNowClick = { item, posterItemList ->
+                    if (item != null) {
+                        val route =
+                            Routes.PlayerScreen.createRoute(listOf(item)) // Wrap item in a list
+                        navController.navigate(route)
+                    } else {
+                        if (posterItemList != null) {
+                            val route =
+                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                            navController.navigate(route)
+                        }
+                    }
+                },
+                onRelatedItemClick = { item, list ->
+                    if (!item.slug.isNullOrEmpty()) {
+                        val filteredList = list.filterNot { it.slug == item.slug }
+                        val json = Json.encodeToString(filteredList)
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                    }
+                })
         }
 
 
         composable(
             route = Routes.PlayerScreen.route,
-            arguments = listOf(navArgument("playerDto") { type = NavType.StringType })
+            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType })
         ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("playerDto")
-            val playerDto = json?.let { Json.decodeFromString<PosterCardDto>(Uri.decode(it)) }
+            val json = backStackEntry.arguments?.getString("playerDtoList")
+            val playerDtoList =
+                json?.let { Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it)) }
 
-
-            playerDto?.let {
+            playerDtoList?.let {
                 playerViewModel.handleEvent(
                     PlayerEvent.UpdateVideoPlayerDto(
-                        itemList = listOf(playerDto)
+                        itemList = it // Pass the list directly
                     )
                 )
-
             }
 
             PlayerScreen(

@@ -40,7 +40,7 @@ import com.faithForward.util.Resource
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    onWatchNowClick: (PosterCardDto) -> Unit,
+    onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
     onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     detailViewModel: DetailViewModel,
 ) {
@@ -89,7 +89,16 @@ fun DetailScreen(
                     isContentVisible = uiState.isContentVisible,
                     modifier = Modifier.fillMaxSize(),
                     onWatchNowClick = {
-                        onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto())
+                        if (detailPageItem.detailDto.isSeries == true) {
+                            if (relatedContentData is RelatedContentData.SeriesSeasons) {
+                                onWatchNowClick.invoke(
+                                    null,
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes
+                                )
+                            }
+                        } else {
+                            onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto(), null)
+                        }
                     },
                     onWatchNowFocusChange = { hasFocus ->
                         if (hasFocus) {
@@ -154,7 +163,9 @@ fun DetailScreen(
                                     }
                                     true
                                 },
-                                onItemClick = onRelatedItemClick,
+                                onItemClick = { item, list, index ->
+                                    onRelatedItemClick.invoke(item, list)
+                                },
                                 isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                                 lastFocusedItemIndex = lastFocusedItem,
                                 onLastFocusedIndexChange = { item ->
@@ -192,8 +203,12 @@ fun DetailScreen(
                                 false
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
-                            onItemClick = { item, ls ->
-                                onWatchNowClick.invoke(item)
+                            onItemClick = { item, ls, index ->
+                                val newLs = ls.subList(
+                                    index,
+                                    ls.size
+                                )  // This creates a new list from index to end
+                                onWatchNowClick.invoke(null, newLs)
                             },
                             lastFocusedItemIndex = lastFocusedItem,
                             onLastFocusedIndexChange = { int ->

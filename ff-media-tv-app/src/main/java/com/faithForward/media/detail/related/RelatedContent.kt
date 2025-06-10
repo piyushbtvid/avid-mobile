@@ -40,7 +40,7 @@ fun RelatedContent(
     onRelatedUpClick: () -> Boolean,
     contentRowModifier: Modifier = Modifier,
     relatedContentRowDto: RelatedContentRowDto,
-    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    onItemClick: (PosterCardDto, List<PosterCardDto>, Int) -> Unit,
     lastFocusedItemIndex: Int,
     onLastFocusedIndexChange: (Int) -> Unit,
     isRelatedContentMetaDataVisible: Boolean = false,
@@ -93,8 +93,8 @@ fun RelatedContent(
             modifier = contentRowModifier,
             relatedRowFocusedIndex = relatedRowFocusedIndex,
             onRelatedUpClick = onRelatedUpClick,
-            onItemClick = { item ->
-                onItemClick.invoke(item, relatedContentRowDto.relatedContentDto)
+            onItemClick = { item, index ->
+                onItemClick.invoke(item, relatedContentRowDto.relatedContentDto, index)
             },
             onRelatedRowFocusedIndexChange = { index ->
                 relatedRowFocusedIndex = index
