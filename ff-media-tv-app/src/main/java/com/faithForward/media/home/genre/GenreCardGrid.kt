@@ -44,6 +44,7 @@ import com.faithForward.media.R
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.commanComponents.TopMenu
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
@@ -146,7 +147,6 @@ fun GenreCardGrid(
                 )
 
             }
-
             Column(
                 modifier = Modifier.padding(top = 20.dp)
             ) {
