@@ -17,8 +17,10 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -41,8 +43,8 @@ class DetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _uiEvent = MutableStateFlow<UiEvent?>(null)
-    val uiEvent: StateFlow<UiEvent?> = _uiEvent
+    private val _uiEvent = MutableSharedFlow<UiEvent?>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     val id: String? = savedStateHandle["itemId"]
     var relatedList: List<PosterCardDto>? = emptyList()
