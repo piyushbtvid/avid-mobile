@@ -161,4 +161,15 @@ class NetworkRepository @Inject constructor(
             token = token
         )
     }
+
+    suspend fun getCreatorContentList(
+        id: Int,
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getCreatorContentList(
+            id = id,
+            token = token
+        )
+    }
 }

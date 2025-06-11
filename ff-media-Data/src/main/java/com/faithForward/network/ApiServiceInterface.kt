@@ -53,6 +53,12 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<CreatorResponse>
 
+    @GET(Constants.CREATOR_CONTENT_LIST_END_POINT)
+    suspend fun getCreatorContentList(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String,
+    ) : Response<SectionContentResponse>
+
     @POST(Constants.LOGIN_END_POINT)
     suspend fun loginUser(
         @Body loginRequest: LoginRequest,

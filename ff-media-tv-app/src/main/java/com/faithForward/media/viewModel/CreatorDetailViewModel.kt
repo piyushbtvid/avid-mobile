@@ -8,13 +8,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.viewModel.uiModels.CreatorDetailItem
-import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.toCreatorDetailDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,13 +45,25 @@ class CreatorDetailViewModel
         }
     }
 
-    private fun fetchCreatorDetail(id: Int) {
+    fun fetchCreatorDetail(id: Int) {
         viewModelScope.launch {
             _creatorDetailPageData.emit(Resource.Loading())
             try {
-                val creatorResponse = networkRepository.getCreatorDetail(id)
-                if (creatorResponse.isSuccessful) {
-                    val creatorDetail = creatorResponse.body()
+                val creatorResponse = async { networkRepository.getCreatorDetail(id) }
+                val creatorContentList = async { networkRepository.getCreatorContentList(id) }
+
+                val creatorDetailResponse = creatorResponse.await()
+                val creatorContentListResponse = creatorContentList.await()
+
+                if (creatorContentListResponse.isSuccessful) {
+                    Log.e(
+                        "CREATOR_CONTENT",
+                        "creatorContentList is ${creatorContentListResponse.body()?.data}"
+                    )
+                }
+
+                if (creatorDetailResponse.isSuccessful) {
+                    val creatorDetail = creatorDetailResponse.body()
                     _creatorDetailPageData.emit(
                         Resource.Success(creatorDetail?.toCreatorDetailDto()
                             ?.let {
@@ -63,14 +74,14 @@ class CreatorDetailViewModel
                     )
                     Log.e(
                         "CREATOR_DETAIL",
-                        "creator detail Success in viewModel is ${creatorResponse.body()}"
+                        "creator detail Success in viewModel is ${creatorDetailResponse.body()}"
                     )
                 } else {
                     Log.e(
                         "CREATOR_DETAIL",
-                        "creator detail error in viewModel is ${creatorResponse.message()}"
+                        "creator detail error in viewModel is ${creatorDetailResponse.message()}"
                     )
-                    _creatorDetailPageData.emit(Resource.Error(creatorResponse.message()))
+                    _creatorDetailPageData.emit(Resource.Error(creatorDetailResponse.message()))
                 }
 
             } catch (ex: Exception) {
@@ -81,5 +92,6 @@ class CreatorDetailViewModel
             }
         }
     }
+
 
 }
