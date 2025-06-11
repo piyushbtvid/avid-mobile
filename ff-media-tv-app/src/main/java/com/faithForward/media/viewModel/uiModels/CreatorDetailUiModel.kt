@@ -2,11 +2,17 @@ package com.faithForward.media.viewModel.uiModels
 
 import com.faithForward.media.home.creator.detail.CreatorContentDto
 import com.faithForward.media.home.creator.detail.CreatorDetailDto
+import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.creator.CreatorResponse
 
 sealed interface CreatorDetailItem {
-    data class CreatorDetail(val creatorDetailDto: CreatorDetailDto) : CreatorDetailItem
+    data class CreatorDetail(
+        val creatorDetailDto: CreatorDetailDto,
+        val contentList: List<ContentDto> = emptyList(),
+    ) : CreatorDetailItem
 }
+
 
 fun CreatorResponse.toCreatorDetailDto(): CreatorDetailDto {
     val creatorContentDto = CreatorContentDto(
@@ -21,5 +27,16 @@ fun CreatorResponse.toCreatorDetailDto(): CreatorDetailDto {
         creatorImageUrl = data.profile_img,
         creatorBackgroundImageUrl = data.channel_banner,
         creatorContentDto = creatorContentDto
+    )
+}
+
+fun ContentItem.toContentDto(): ContentDto {
+    return ContentDto(
+        image = portrait ?: "",
+        title = name ?: "",
+        views = views.toString(),
+        duration = "$duration m",
+        description = description ?: "",
+        time = dateUploaded ?: "",
     )
 }

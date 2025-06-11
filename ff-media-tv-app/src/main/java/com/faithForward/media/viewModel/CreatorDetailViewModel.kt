@@ -7,7 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.home.creator.detail.content.ContentDto
 import com.faithForward.media.viewModel.uiModels.CreatorDetailItem
+import com.faithForward.media.viewModel.uiModels.toContentDto
 import com.faithForward.media.viewModel.uiModels.toCreatorDetailDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
@@ -29,6 +31,7 @@ class CreatorDetailViewModel
         MutableStateFlow(Resource.Unspecified())
     val creatorDetailPageData = _creatorDetailPageData.asStateFlow()
 
+
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
 
@@ -45,7 +48,7 @@ class CreatorDetailViewModel
         }
     }
 
-    fun fetchCreatorDetail(id: Int) {
+    private fun fetchCreatorDetail(id: Int) {
         viewModelScope.launch {
             _creatorDetailPageData.emit(Resource.Loading())
             try {
@@ -55,40 +58,38 @@ class CreatorDetailViewModel
                 val creatorDetailResponse = creatorResponse.await()
                 val creatorContentListResponse = creatorContentList.await()
 
-                if (creatorContentListResponse.isSuccessful) {
-                    Log.e(
-                        "CREATOR_CONTENT",
-                        "creatorContentList is ${creatorContentListResponse.body()?.data}"
-                    )
+                val contentList = if (creatorContentListResponse.isSuccessful) {
+                    creatorContentListResponse.body()?.data?.map { it.toContentDto() }.orEmpty()
+                } else {
+                    emptyList()
                 }
 
                 if (creatorDetailResponse.isSuccessful) {
-                    val creatorDetail = creatorDetailResponse.body()
-                    _creatorDetailPageData.emit(
-                        Resource.Success(creatorDetail?.toCreatorDetailDto()
-                            ?.let {
-                                CreatorDetailItem.CreatorDetail(
-                                    it
-                                )
-                            })
-                    )
+                    val creatorDetail = creatorDetailResponse.body()?.toCreatorDetailDto()
+                    val combined = creatorDetail?.let {
+                        CreatorDetailItem.CreatorDetail(
+                            creatorDetailDto = it,
+                            contentList = contentList
+                        )
+                    }
+
+                    _creatorDetailPageData.emit(Resource.Success(combined))
                     Log.e(
                         "CREATOR_DETAIL",
-                        "creator detail Success in viewModel is ${creatorDetailResponse.body()}"
+                        "creator detail Success: ${creatorDetailResponse.body()}"
                     )
                 } else {
                     Log.e(
                         "CREATOR_DETAIL",
-                        "creator detail error in viewModel is ${creatorDetailResponse.message()}"
+                        "creator detail error: ${creatorDetailResponse.message()}"
                     )
                     _creatorDetailPageData.emit(Resource.Error(creatorDetailResponse.message()))
                 }
 
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                Log.e(
-                    "CREATOR_DETAIL", "creator detail error in viewModel is ${ex.message}"
-                )
+                Log.e("CREATOR_DETAIL", "Exception: ${ex.message}")
+                _creatorDetailPageData.emit(Resource.Error(ex.message ?: "Unknown error"))
             }
         }
     }

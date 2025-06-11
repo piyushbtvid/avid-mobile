@@ -19,36 +19,29 @@ fun CreatorDetailScreen(
 ) {
     val creatorDetail by creatorDetailViewModel.creatorDetailPageData.collectAsStateWithLifecycle()
 
-
     when (creatorDetail) {
-
         is Resource.Loading, is Resource.Unspecified -> {
-            // Add loading indicator here if required
+            // Loading UI if needed
             return
         }
 
         is Resource.Error -> {
-            // Error UI here if required
+            // Error UI if needed
             return
         }
 
         is Resource.Success -> {
-            val creatorDetailPageDto = creatorDetail.data as? CreatorDetailItem.CreatorDetail
+            val detailData = creatorDetail.data as? CreatorDetailItem.CreatorDetail
 
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                if (creatorDetailPageDto?.creatorDetailDto != null) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                detailData?.let {
                     CreatorDetailPage(
                         modifier = Modifier.padding(start = 31.dp, top = 20.dp),
-                        creatorDetailDto = creatorDetailPageDto.creatorDetailDto
+                        creatorDetailDto = it.creatorDetailDto,
+                        contentDtoList = it.contentList // <- pass content list here
                     )
                 }
-
-
             }
         }
-
     }
-
 }

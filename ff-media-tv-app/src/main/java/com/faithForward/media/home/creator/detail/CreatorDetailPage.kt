@@ -17,8 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +27,8 @@ import com.faithForward.media.R
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.commanComponents.SubscribeButton
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.theme.playButtonBackgroundColor
+import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.media.home.creator.detail.content.ContentPage
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.util.FocusState
 
@@ -42,6 +43,7 @@ data class CreatorDetailDto(
 fun CreatorDetailPage(
     modifier: Modifier = Modifier,
     creatorDetailDto: CreatorDetailDto,
+    contentDtoList: List<ContentDto>,
 ) {
 
     var isButtonFocused by remember { mutableStateOf(false) }
@@ -66,8 +68,7 @@ fun CreatorDetailPage(
     }
 
     Row(modifier = modifier) {
-        Column(
-        ) {
+        Column(modifier = Modifier.weight(1.2f)) {
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -85,7 +86,9 @@ fun CreatorDetailPage(
                 )
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(0f)
                 ) {
                     RoundedIconButton(
                         modifier = Modifier
@@ -184,6 +187,14 @@ fun CreatorDetailPage(
             }
 
         }
+
+        ContentPage(
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 67.dp), // Take up right half roughly
+            contentDtoList = contentDtoList
+        )
+
     }
 }
 
