@@ -1,5 +1,6 @@
 package com.faithForward.media.home.creator.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,8 @@ import com.faithForward.media.home.creator.card.CreatorCardDto
 @Composable
 fun CreatorCardGrid(
     modifier: Modifier = Modifier,
-    creators: List<CreatorCardDto>
+    onItemClick: (CreatorCardDto) -> Unit,
+    creators: List<CreatorCardDto>,
 ) {
     var focusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
@@ -67,6 +69,9 @@ fun CreatorCardGrid(
                                     }
                                 }
                             }
+                            .clickable(interactionSource = null, indication = null, onClick = {
+                                onItemClick.invoke(creator)
+                            })
                             .focusable(),
                     )
                 }
@@ -113,26 +118,33 @@ private fun CreatorCardGridPreview() {
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
-                channelDescription = "jhb,hb"
+                channelDescription = "jhb,hb",
+                id = 1
             ),
             CreatorCardDto(
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
-                channelDescription = "jhb,hb"
+                channelDescription = "jhb,hb",
+                id = 1
             ),
             CreatorCardDto(
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
-                channelDescription = "jhb,hb"
+                channelDescription = "jhb,hb",
+                id = 1
             ),
             CreatorCardDto(
                 creatorSubscriberText = "130K Subscribers",
                 creatorImageUrl = "",
                 creatorName = "Jasmine Wright",
-                channelDescription = "jhb,hb"
+                channelDescription = "jhb,hb",
+                id = 1
             ),
-        )
+        ),
+        onItemClick = {
+
+        }
     )
 }

@@ -124,7 +124,11 @@ fun HomePage(
                 if (item.slug != null) {
                     homeViewModel.loadBannerDetail(item.slug)
                 }
-            })
+            },
+            onCreatorItemClick = {
+
+            }
+        )
     }
 
 }

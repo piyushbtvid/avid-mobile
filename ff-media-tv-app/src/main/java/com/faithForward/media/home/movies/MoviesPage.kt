@@ -93,7 +93,11 @@ fun MoviesPage(
                 if (item.slug != null) {
                     contentViewModel.loadBannerDetail(item.slug)
                 }
-            })
+            },
+            onCreatorItemClick = {
+
+            }
+        )
     }
 
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.viewModel.uiModels.CreatorDetailItem
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreatorDetailViewModel
 @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val networkRepository: NetworkRepository,
 ) : ViewModel() {
 
@@ -36,23 +38,29 @@ class CreatorDetailViewModel
         contentRowFocusedIndex = value
     }
 
-    init {
+    val id: Int? = savedStateHandle["creatorId"]
 
+    init {
+        id?.let {
+            fetchCreatorDetail(id)
+        }
     }
 
-    fun fetchCreatorDetail(id: Int) {
+    private fun fetchCreatorDetail(id: Int) {
         viewModelScope.launch {
             _creatorDetailPageData.emit(Resource.Loading())
             try {
                 val creatorResponse = networkRepository.getCreatorDetail(id)
                 if (creatorResponse.isSuccessful) {
                     val creatorDetail = creatorResponse.body()
-                    _creatorDetailPageData.emit(Resource.Success(creatorDetail?.toCreatorDetailDto()
-                        ?.let {
-                            CreatorDetailItem.CreatorDetail(
-                                it
-                            )
-                        }))
+                    _creatorDetailPageData.emit(
+                        Resource.Success(creatorDetail?.toCreatorDetailDto()
+                            ?.let {
+                                CreatorDetailItem.CreatorDetail(
+                                    it
+                                )
+                            })
+                    )
                     Log.e(
                         "CREATOR_DETAIL",
                         "creator detail Success in viewModel is ${creatorResponse.body()}"

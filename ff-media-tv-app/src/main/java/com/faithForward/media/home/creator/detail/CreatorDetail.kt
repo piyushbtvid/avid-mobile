@@ -32,7 +32,7 @@ data class CreatorContentDto(
 @Composable
 fun CreatorDetail(
     modifier: Modifier = Modifier,
-    creatorDetailDto: CreatorContentDto
+    creatorDetailDto: CreatorContentDto,
 ) {
     with(creatorDetailDto) {
         Column(
@@ -67,7 +67,8 @@ fun CreatorDetail(
                         .padding(start = 40.dp),
                     text = subscribersText,
                     maxLines = 1,
-                    style = tv_02)
+                    style = tv_02
+                )
             }
             Text(
                 modifier = Modifier,

@@ -98,6 +98,9 @@ fun MyListPage(
                 if (item.slug != null) {
                     contentViewModel.loadBannerDetail(item.slug)
                 }
+            },
+            onCreatorItemClick = {
+
             }
         )
     }

@@ -13,6 +13,7 @@ import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.DetailScreen
 import com.faithForward.media.home.HomePage
 import com.faithForward.media.home.creator.CreatorScreen
+import com.faithForward.media.home.creator.detail.CreatorDetailScreen
 import com.faithForward.media.home.genre.GenreDataScreen
 import com.faithForward.media.home.movies.MoviesPage
 import com.faithForward.media.home.myList.MyListPage
@@ -20,6 +21,7 @@ import com.faithForward.media.home.series.SeriesPage
 import com.faithForward.media.login.LoginScreen
 import com.faithForward.media.player.PlayerScreen
 import com.faithForward.media.viewModel.ContentViewModel
+import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
 import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
@@ -92,9 +94,9 @@ fun MainAppNavHost(
 
         composable(route = Routes.Creator.route) {
             val creatorViewModel: CreatorViewModel = hiltViewModel()
-            CreatorScreen(
-                creatorViewModel = creatorViewModel,
-            )
+            CreatorScreen(creatorViewModel = creatorViewModel, onCreatorItemClick = { item ->
+                navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
+            })
         }
 
         composable(
@@ -200,6 +202,7 @@ fun MainAppNavHost(
         }
 
 
+
         composable(
             route = Routes.PlayerScreen.route,
             arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType })
@@ -221,6 +224,19 @@ fun MainAppNavHost(
             )
         }
 
+
+        composable(
+            route = Routes.CREATOR_DETAIL.route,
+            arguments = listOf(navArgument("creatorId") { type = NavType.IntType })
+        ) {
+
+            val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
+
+            CreatorDetailScreen(
+                creatorDetailViewModel = creatorDetailViewModel
+            )
+
+        }
 
     }
 

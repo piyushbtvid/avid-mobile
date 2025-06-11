@@ -29,6 +29,10 @@ sealed class Routes(val route: String) {
         fun createRoute(itemId: String, listJson: String) = "DETAIL_SCREEN/$itemId/$listJson"
     }
 
+    data object CREATOR_DETAIL : Routes("CREATOR_DETAIL_SCREEN/{creatorId}") {
+        fun createRoute(creatorId: Int) = "CREATOR_DETAIL_SCREEN/$creatorId"
+    }
+
     data object PlayerScreen {
         const val route = "playerScreen/{playerDtoList}"
         fun createRoute(playerDtoList: List<PosterCardDto>): String {

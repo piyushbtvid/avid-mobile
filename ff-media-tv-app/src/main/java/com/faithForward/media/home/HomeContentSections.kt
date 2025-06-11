@@ -23,6 +23,7 @@ import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
+import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.media.home.creator.list.CreatorCardGrid
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 
@@ -36,6 +37,7 @@ fun HomeContentSections(
     onChangeContentRowFocusedIndex: (Int) -> Unit,
     onToggleFavorite: (String?) -> Unit,
     onCarouselItemClick: (CarouselItemDto) -> Unit,
+    onCreatorItemClick: (CreatorCardDto) -> Unit,
     onToggleLike: (String?) -> Unit,
     onToggleDisLike: (String?) -> Unit,
 ) {
@@ -107,7 +109,10 @@ fun HomeContentSections(
 
                 is HomePageItem.CreatorGrid -> {
                     CreatorCardGrid(
-                        creators = homePageItem.dto
+                        creators = homePageItem.dto,
+                        onItemClick = { creator ->
+                            onCreatorItemClick.invoke(creator)
+                        }
                     )
                 }
             }
