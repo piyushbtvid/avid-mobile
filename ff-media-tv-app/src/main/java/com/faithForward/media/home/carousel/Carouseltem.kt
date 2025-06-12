@@ -53,6 +53,8 @@ data class CarouselItemDto(
     val isLiked: Boolean? = null,
     val isDisliked: Boolean? = null,
     var isFavourite: Boolean? = null,
+    val contentType: String? = null,
+    val seriesSlug: String? = null,
 )
 
 @Composable

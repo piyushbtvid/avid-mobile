@@ -20,6 +20,7 @@ import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
 
 @Composable
@@ -133,10 +134,48 @@ fun HomePage(
                 }
             },
             onCarouselItemClick = { item ->
-                Log.e("CARSOUEL_SLUG", "item slug is ${item.slug}")
-                if (item.slug != null) {
-                    homeViewModel.loadDetailForUrl(item.slug, isFromContinueWatching = false)
+                Log.e(
+                    "CARSOUEL_SLUG",
+                    "item slug is ${item.slug} and content type ${item.contentType}  ${item.seriesSlug}"
+                )
+                if (item.contentType != null && item.contentType == "Series" || item.contentType == "Episode") {
+                    Log.e(
+                        "CARSOUEL_SLUG",
+                        "first block"
+                    )
+                    if (item.contentType == "Episode") {
+                        var newItem = item.toPosterCardDto()
+                        newItem = newItem.copy(
+                            slug = newItem.seriesSlug
+                        )
+                        Log.e(
+                            "CARSOUEL_SLUG",
+                            "second block"
+                        )
+
+                        Log.e(
+                            "CARSOUEL_SLUG",
+                            "second block after slug is $newItem"
+                        )
+
+                        onItemClick.invoke(newItem, emptyList())
+                    } else {
+                        Log.e(
+                            "CARSOUEL_SLUG",
+                            "thrid block"
+                        )
+                        onItemClick.invoke(item.toPosterCardDto(), emptyList())
+                    }
+                } else {
+                    Log.e(
+                        "CARSOUEL_SLUG",
+                        "fourth block"
+                    )
+                    if (item.slug != null) {
+                        homeViewModel.loadDetailForUrl(item.slug, isFromContinueWatching = false)
+                    }
                 }
+
             },
             onCreatorItemClick = {
 

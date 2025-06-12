@@ -14,6 +14,7 @@ import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
 
 @Composable
@@ -94,8 +95,12 @@ fun SeriesPage(
                 }
             },
             onCarouselItemClick = { item ->
-                if (item.slug != null) {
-                    contentViewModel.loadBannerDetail(item.slug)
+                if (item.contentType != null && item.contentType == "Series") {
+                    onItemClick.invoke(item.toPosterCardDto(), emptyList())
+                } else {
+                    if (item.slug != null) {
+                        contentViewModel.loadBannerDetail(item.slug)
+                    }
                 }
             },
             onCreatorItemClick = {

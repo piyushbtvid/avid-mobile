@@ -185,7 +185,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     val myList = MyFavList.myFavList
     val disLikeList = MyFavList.disLikedList
 
-    Log.e("CAROUSEL", "toCarouselItemDto MyFavList is $myList")
+    Log.e("CAROUSEL_CONTENT", "content type in Carsouel is $content_type")
 
 // check based on .content (flattening the nested list)
     val isFavourite = myList?.flatMap { it.content }?.any {
@@ -209,7 +209,9 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
         slug = slug,
         isLiked = isLiked,
         isDisliked = isDisliked,
-        isFavourite = isFavourite
+        isFavourite = isFavourite,
+        contentType = content_type,
+        seriesSlug = seriesSlug
     )
 
 }
@@ -255,6 +257,8 @@ fun CarouselItemDto.toPosterCardDto(): PosterCardDto {
         duration = duration,
         imdbRating = imdbRating,
         releaseDate = releaseDate,
+        contentType = contentType,
+        seriesSlug = seriesSlug
     )
 }
 

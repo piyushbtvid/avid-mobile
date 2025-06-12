@@ -1,6 +1,7 @@
 package com.faithForward.media.navigation
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,6 +68,10 @@ fun MainAppNavHost(
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
+                        Log.e(
+                            "CARSOUEL_SLUG",
+                            "onItem with ${item.slug}"
+                        )
                         val filteredList =
                             list.filterNot { it.id == item.id }
 
