@@ -62,19 +62,21 @@ fun GenreCardGrid(
     onItemClick: (PosterCardDto) -> Unit,
     genreGridDto: GenreGridDto,
 ) {
-
-    var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    // Create a list of FocusRequesters, one for each grid item
+    val focusRequesters = remember(genreGridDto.genreCardList) {
+        List(genreGridDto.genreCardList.size) { FocusRequester() }
+    }
+    // Track the last focused index
+    var lastFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberLazyGridState()
-    val gridFocusRequester = remember { FocusRequester() }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(start = 41.dp),
-
-        ) {
+    ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -89,6 +91,7 @@ fun GenreCardGrid(
                     modifier = Modifier
                         .onFocusChanged {
                             isMicFocused = it.hasFocus
+                            if (it.hasFocus) lastFocusedIndex = -1
                         }
                         .focusable()
                         .then(
@@ -120,6 +123,7 @@ fun GenreCardGrid(
                     modifier = Modifier
                         .onFocusChanged {
                             isSearchFocused = it.hasFocus
+                            if (it.hasFocus) lastFocusedIndex = -1
                         }
                         .focusable()
                         .then(
@@ -144,9 +148,7 @@ fun GenreCardGrid(
                     iconWidth = 15,
                     backgroundColor = Color.White.copy(alpha = .75f)
                 )
-
             }
-
             Column(
                 modifier = Modifier.padding(top = 20.dp)
             ) {
@@ -179,21 +181,16 @@ fun GenreCardGrid(
                         .focusRestorer()
                 ) {
                     itemsIndexed(genreGridDto.genreCardList) { index, genreCardItem ->
-
                         val uiState = when (index) {
-                            contentRowFocusedIndex -> FocusState.FOCUSED
+                            lastFocusedIndex -> FocusState.FOCUSED
                             else -> FocusState.UNFOCUSED
                         }
                         GenreCard(
                             modifier = Modifier
-                                .focusRequester(if (index == 0) gridFocusRequester else FocusRequester())
+                                .focusRequester(focusRequesters[index])
                                 .onFocusChanged {
                                     if (it.hasFocus) {
-                                        contentRowFocusedIndex = index
-                                    } else {
-                                        if (contentRowFocusedIndex == index) {
-                                            contentRowFocusedIndex = -1
-                                        }
+                                        lastFocusedIndex = index
                                     }
                                 }
                                 .focusable(),
@@ -209,14 +206,18 @@ fun GenreCardGrid(
         }
     }
 
+    // Restore focus to the last focused item when returning to the screen
     LaunchedEffect(Unit) {
         try {
-            gridFocusRequester.requestFocus()
+            if (lastFocusedIndex >= 0 && lastFocusedIndex < focusRequesters.size) {
+                focusRequesters[lastFocusedIndex].requestFocus()
+            } else if (focusRequesters.isNotEmpty()) {
+                focusRequesters[0].requestFocus() // Fallback to first item if no last focused
+            }
         } catch (ex: Exception) {
-            Log.e("LOG", "${ex.message}")
+            Log.e("GenreCardGrid", "Error requesting focus: ${ex.message}")
         }
     }
-
 }
 
 @Preview

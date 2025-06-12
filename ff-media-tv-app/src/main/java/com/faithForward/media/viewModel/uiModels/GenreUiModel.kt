@@ -9,19 +9,19 @@ import com.faithForward.network.dto.genre.GenreResponse
 
 fun ContentItem.toGenreCardDto(): GenreCardDto {
     return GenreCardDto(
-        genreId = id.toString() ?: "",
-        name = creator?.name ?: "",
-        image = portrait ?: "",
-        description = name ?: "",
-        views = "$views Views",
-        genre = genres?.mapNotNull { it.name }  // safely extract non-null names
-            ?.joinToString(", "),
-        seasons = seasons?.size,
-        duration = duration.toString(),
-        imdbRating = rating,
-        releaseDate = dateUploaded,
-        videoUrl = video_link,
-        slug = slug
+        genreId = id?.toString().takeIf { !it.isNullOrBlank() },
+        name = creator?.name.takeIf { !it.isNullOrBlank() },
+        image = portrait.takeIf { !it.isNullOrBlank() },
+        description = name.takeIf { !it.isNullOrBlank() },
+        views = views?.takeIf { it > 0 }?.let { "$it Views" },
+        genre = genres?.mapNotNull { it.name }?.filter { it.isNotBlank() }?.joinToString(", ")
+            .takeIf { !it.isNullOrBlank() },
+        seasons = seasons?.takeIf { it.isNotEmpty() }?.size,
+        duration = duration?.toString().takeIf { !it.isNullOrBlank() },
+        imdbRating = rating.takeIf { !it.isNullOrBlank() },
+        releaseDate = dateUploaded.takeIf { !it.isNullOrBlank() },
+        videoUrl = video_link.takeIf { !it.isNullOrBlank() },
+        slug = slug.takeIf { !it.isNullOrBlank() }
     )
 }
 
@@ -39,16 +39,16 @@ fun GenreResponse.toGenreCardGridDto(): GenreGridDto {
 
 fun GenreCardDto.toPosterCardDto(): PosterCardDto {
     return PosterCardDto(
-        id = genreId,
-        posterImageSrc = image,
-        title = name,
-        description = description,
-        genre = genre,
-        seasons = seasons,
-        duration = duration.toString(),
-        imdbRating = imdbRating,
-        releaseDate = releaseDate,
-        videoHlsUrl = videoUrl,
-        slug = slug
+        id = genreId?.takeIf { it.isNotBlank() },
+        posterImageSrc = image?.takeIf { it.isNotBlank() } ?: "",
+        title = name?.takeIf { it.isNotBlank() } ?: "",
+        description = description?.takeIf { it.isNotBlank() } ?: "",
+        genre = genre?.takeIf { it.isNotBlank() },
+        seasons = seasons?.takeIf { it > 0 },
+        duration = duration?.takeIf { it.isNotBlank() },
+        imdbRating = imdbRating?.takeIf { it.isNotBlank() },
+        releaseDate = releaseDate?.takeIf { it.isNotBlank() },
+        videoHlsUrl = videoUrl?.takeIf { it.isNotBlank() },
+        slug = slug?.takeIf { it.isNotBlank() }
     )
 }

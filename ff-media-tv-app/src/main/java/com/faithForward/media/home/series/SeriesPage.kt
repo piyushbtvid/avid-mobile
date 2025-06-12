@@ -97,6 +97,9 @@ fun SeriesPage(
                 if (item.slug != null) {
                     contentViewModel.loadBannerDetail(item.slug)
                 }
+            },
+            onCreatorItemClick = {
+
             }
         )
     }

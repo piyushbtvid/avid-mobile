@@ -5,14 +5,16 @@ import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.common.ApiMessageResponse
+import com.faithForward.network.dto.creator.CreatorDetailData
+import com.faithForward.network.dto.creator.CreatorResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
-import com.faithForward.network.request.LikeRequest
-import com.faithForward.network.request.LoginRequest
+import com.faithForward.network.dto.request.LikeRequest
+import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.util.Constants
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -44,6 +46,18 @@ interface ApiServiceInterface {
     suspend fun getCreatorsList(
         @Header("Authorization") token: String,
     ): Response<CreatorsListApiResponse>
+
+    @GET(Constants.CREATOR_DETAIL_END_POINT)
+    suspend fun getCreatorDetail(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String,
+    ): Response<CreatorResponse>
+
+    @GET(Constants.CREATOR_CONTENT_LIST_END_POINT)
+    suspend fun getCreatorContentList(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String,
+    ) : Response<SectionContentResponse>
 
     @POST(Constants.LOGIN_END_POINT)
     suspend fun loginUser(

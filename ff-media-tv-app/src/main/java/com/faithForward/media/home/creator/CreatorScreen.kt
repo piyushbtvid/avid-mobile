@@ -1,5 +1,6 @@
 package com.faithForward.media.home.creator
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -7,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.home.HomeContentSections
+import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.media.viewModel.CreatorViewModel
 import com.faithForward.util.Resource
 
@@ -14,6 +16,7 @@ import com.faithForward.util.Resource
 fun CreatorScreen(
     modifier: Modifier = Modifier,
     creatorViewModel: CreatorViewModel,
+    onCreatorItemClick: (CreatorCardDto) -> Unit,
 ) {
 
 
@@ -44,7 +47,7 @@ fun CreatorScreen(
 
             },
             onItemClick = { item, list ->
-
+                Log.e("CREATOR_DETAIL", "creator id when click in grid item is ${item.id}")
             },
             onToggleFavorite = {
 
@@ -57,7 +60,8 @@ fun CreatorScreen(
             },
             onCarouselItemClick = {
 
-            }
+            },
+            onCreatorItemClick = onCreatorItemClick
         )
     }
 }

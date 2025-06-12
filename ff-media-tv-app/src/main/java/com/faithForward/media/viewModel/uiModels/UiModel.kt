@@ -37,7 +37,8 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
             creatorImageUrl = user.profileImg.orEmpty(), // fallback to empty string if null
             creatorName = user.name,
             creatorSubscriberText = "${user.channelSubscribers} Subscribers",
-            channelDescription = user.channelDescription ?: ""
+            channelDescription = user.channelDescription ?: "",
+            id = user.id
         )
     }
 }
@@ -247,6 +248,7 @@ fun CarouselItemDto.toPosterCardDto(): PosterCardDto {
         releaseDate = releaseDate,
     )
 }
+
 
 sealed class CarsouelClickUiState {
     data object Idle : CarsouelClickUiState()

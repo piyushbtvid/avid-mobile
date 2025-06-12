@@ -3,7 +3,6 @@ package com.faithForward.media.home.genre
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,14 +14,13 @@ import com.faithForward.util.Resource
 @Composable
 fun GenreDataScreen(
     modifier: Modifier = Modifier,
-    genreId: String,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     viewModel: GenreViewModel,
 ) {
 
-    LaunchedEffect(Unit) {
-        viewModel.getGivenGenreDetail(genreId)
-    }
+//    LaunchedEffect(Unit) {
+//        viewModel.getGivenGenreDetail(genreId)
+//    }
 
     val genreDataResource by viewModel.genreData.collectAsStateWithLifecycle()
 

@@ -22,11 +22,11 @@ import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
 
 data class GenreCardDto(
-    val genreId: String,
-    val name: String,
-    val image: String,
-    val views: String,
-    val description: String,
+    val genreId: String?,
+    val name: String?,
+    val image: String?,
+    val views: String?,
+    val description: String?,
     val genre: String? = null,
     val seasons: Int? = null,
     val duration: String? = null,
@@ -43,51 +43,61 @@ fun GenreCard(
     onItemClick: () -> Unit,
     focusState: FocusState,
 ) {
-
     Column(
         modifier = Modifier.wrapContentWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        GenreImageCard(
-            modifier = modifier,
-            posterCardDto = GenreImageCardDto(
-                posterImageSrc = genreCardDto.image
-            ),
-            focusState = focusState,
-            onItemClick = onItemClick
-        )
-        Spacer(modifier = Modifier.height(19.dp))
-        Column(
-            modifier = Modifier.width(135.dp)
-        ) {
-            TitleText(
-                text = genreCardDto.description,
-                color = Color.Black,
-                fontWeight = FontWeight.W600,
-                textSize = 10
+        genreCardDto.image?.let {
+            GenreImageCard(
+                modifier = modifier,
+                posterCardDto = GenreImageCardDto(posterImageSrc = it),
+                focusState = focusState,
+                onItemClick = onItemClick
             )
+        }
+
+        Spacer(modifier = Modifier.height(19.dp))
+
+        Column(modifier = Modifier.width(135.dp)) {
+            genreCardDto.description?.let {
+                TitleText(
+                    text = it,
+                    color = Color.Black,
+                    fontWeight = FontWeight.W600,
+                    textSize = 10
+                )
+            }
+
             Spacer(modifier = Modifier.height(1.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                TitleText(
-                    text = genreCardDto.name,
-                    color = Color.Black,
-                    fontWeight = FontWeight.W400,
-                    textSize = 7
-                )
-                TitleText(
-                    text = genreCardDto.views.toString(),
-                    color = Color.Black,
-                    fontWeight = FontWeight.W400,
-                    textSize = 7
-                )
+
+            if (!genreCardDto.name.isNullOrBlank() || !genreCardDto.views.isNullOrBlank()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    genreCardDto.name?.let {
+                        TitleText(
+                            text = it,
+                            color = Color.Black,
+                            fontWeight = FontWeight.W400,
+                            textSize = 7
+                        )
+                    }
+                    genreCardDto.views?.let {
+                        TitleText(
+                            text = it,
+                            color = Color.Black,
+                            fontWeight = FontWeight.W400,
+                            textSize = 7
+                        )
+                    }
+                }
             }
         }
     }
 }
+
 
 
 @Preview(showBackground = true, showSystemUi = true)

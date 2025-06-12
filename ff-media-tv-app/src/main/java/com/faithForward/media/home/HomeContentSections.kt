@@ -23,6 +23,7 @@ import com.faithForward.media.home.carousel.CarouselContentRow
 import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRow
 import com.faithForward.media.home.content.ContentRow
+import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.media.home.creator.list.CreatorCardGrid
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 
@@ -36,6 +37,7 @@ fun HomeContentSections(
     onChangeContentRowFocusedIndex: (Int) -> Unit,
     onToggleFavorite: (String?) -> Unit,
     onCarouselItemClick: (CarouselItemDto) -> Unit,
+    onCreatorItemClick: (CreatorCardDto) -> Unit,
     onToggleLike: (String?) -> Unit,
     onToggleDisLike: (String?) -> Unit,
 ) {
@@ -107,7 +109,16 @@ fun HomeContentSections(
 
                 is HomePageItem.CreatorGrid -> {
                     CreatorCardGrid(
-                        creators = homePageItem.dto
+                        creators = homePageItem.dto,
+                        onItemClick = { creator ->
+                            onCreatorItemClick.invoke(creator)
+                        },
+                        rowIndex = rowIndex,
+                        focusRequesters = focusRequesters,
+                        lastFocusedItem = lastFocusedItem,
+                        onItemFocused = { newFocus ->
+                            lastFocusedItem = newFocus
+                        },
                     )
                 }
             }
@@ -115,10 +126,14 @@ fun HomeContentSections(
     }
 
     // Scroll to the last focused item for the correct row
+    // Scroll to the last focused item for the correct row
     LaunchedEffect(Unit) {
         try {
             val (rowIndex, itemIndex) = lastFocusedItem
-            rowListStates[rowIndex]?.scrollToItem(itemIndex)
+            // Skip scrolling for CreatorCardGrid since it manages its own LazyRow states
+            if (homePageItems.getOrNull(rowIndex) !is HomePageItem.CreatorGrid) {
+                rowListStates[rowIndex]?.scrollToItem(itemIndex)
+            }
             focusRequesters[lastFocusedItem]?.requestFocus()
         } catch (_: Exception) {
             // Handle any errors (e.g., index out of bounds)

@@ -25,8 +25,12 @@ sealed class Routes(val route: String) {
         fun createRoute(genreId: String) = "GENRE_DATA_SCREEN/$genreId"
     }
 
-    data object Detail : Routes("DETAIL_SCREEN/{itemId}/{listJson}") {
-        fun createRoute(itemId: String, listJson: String) = "DETAIL_SCREEN/$itemId/$listJson"
+    data object Detail : Routes("DETAIL_SCREEN/{itemId}") {
+        fun createRoute(itemId: String) = "DETAIL_SCREEN/$itemId"
+    }
+
+    data object CREATOR_DETAIL : Routes("CREATOR_DETAIL_SCREEN/{creatorId}") {
+        fun createRoute(creatorId: Int) = "CREATOR_DETAIL_SCREEN/$creatorId"
     }
 
     data object PlayerScreen {

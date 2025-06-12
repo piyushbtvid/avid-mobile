@@ -4,8 +4,8 @@ import android.util.Log
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
-import com.faithForward.network.request.LikeRequest
-import com.faithForward.network.request.LoginRequest
+import com.faithForward.network.dto.request.LikeRequest
+import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -149,5 +149,27 @@ class NetworkRepository @Inject constructor(
         val userSession = userPreferences.getUserSession()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         apiServiceInterface.getDisLikedList(token)
+    }
+
+    suspend fun getCreatorDetail(
+        id: Int,
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getCreatorDetail(
+            id = id,
+            token = token
+        )
+    }
+
+    suspend fun getCreatorContentList(
+        id: Int,
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.getCreatorContentList(
+            id = id,
+            token = token
+        )
     }
 }
