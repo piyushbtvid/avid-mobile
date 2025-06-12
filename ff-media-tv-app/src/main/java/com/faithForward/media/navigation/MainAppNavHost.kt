@@ -67,15 +67,12 @@ fun MainAppNavHost(
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
-                        val filteredList = if (item.slug.contains("series")) {
-                            emptyList()
-                        } else {
+                        val filteredList =
                             list.filterNot { it.id == item.id }
-                        }
 
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                        navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
                 onCarouselItemClick = { carouselItem ->
@@ -109,7 +106,7 @@ fun MainAppNavHost(
                     val filteredList = list.filterNot { it.slug == item.slug }
                     val json = Json.encodeToString(filteredList)
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                    navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
             }, onCarouselItemClick = { carouselItem ->
                 val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
@@ -127,7 +124,7 @@ fun MainAppNavHost(
                     val filteredList = list.filterNot { it.slug == item.slug }
                     val json = Json.encodeToString(filteredList)
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                    navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
             }, onCarouselItemClick = { carouselItem ->
                 val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
@@ -141,7 +138,7 @@ fun MainAppNavHost(
                     val filteredList = list.filterNot { it.slug == item.slug }
                     val json = Json.encodeToString(filteredList)
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                    navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
             }, onCarouselItemClick = { carouselItem ->
                 val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
@@ -165,15 +162,14 @@ fun MainAppNavHost(
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                        navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 })
         }
 
         composable(
             route = Routes.Detail.route,
-            arguments = listOf(navArgument("itemId") { type = NavType.StringType },
-                navArgument("listJson") { type = NavType.StringType })
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
         ) {
             val detailViewModel: DetailViewModel = hiltViewModel()
 
@@ -196,7 +192,7 @@ fun MainAppNavHost(
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.slug, encodedList))
+                        navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 })
         }
@@ -233,7 +229,12 @@ fun MainAppNavHost(
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
             CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel
+                creatorDetailViewModel = creatorDetailViewModel,
+                onCreatorContentClick = { item ->
+                    if (item.slug != null) {
+                        navController.navigate(Routes.Detail.createRoute(item.slug))
+                    }
+                }
             )
 
         }

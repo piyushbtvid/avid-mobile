@@ -1,6 +1,7 @@
 package com.faithForward.media.commanComponents
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,8 +38,7 @@ fun SubscribeButton(
     buttonText: String,
     onCategoryItemClick: () -> Unit,
     focusState: FocusState,
-    @DrawableRes
-    icon: Int? = null,
+    @DrawableRes icon: Int? = null,
 ) {
     val containerColor = when (focusState) {
         FocusState.SELECTED, FocusState.FOCUSED -> backgroundFocusedColor
@@ -53,23 +54,33 @@ fun SubscribeButton(
 
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
-            modifier.shadow(
-                color = backgroundFocusedColor.copy(alpha = .56f),
-                borderRadius = 20.dp,
-                blurRadius = 15.dp,
-                offsetY = 4.dp,
-                offsetX = 0.dp,
-                spread = 4.dp
-            )
+            modifier
+                .shadow(
+                    color = backgroundFocusedColor.copy(alpha = .56f),
+                    borderRadius = 20.dp,
+                    blurRadius = 15.dp,
+                    offsetY = 4.dp,
+                    offsetX = 0.dp,
+                    spread = 4.dp
+                )
+                .focusable(false)
+                .focusProperties {
+                    canFocus = false
+                }
         } else {
-            modifier.shadow(
-                color = btnShadowColor,
-                borderRadius = 20.dp,
-                blurRadius = 10.dp,
-                offsetY = 3.dp,
-                offsetX = 0.dp,
-                spread = 1.dp
-            )
+            modifier
+                .shadow(
+                    color = btnShadowColor,
+                    borderRadius = 20.dp,
+                    blurRadius = 10.dp,
+                    offsetY = 3.dp,
+                    offsetX = 0.dp,
+                    spread = 1.dp
+                )
+                .focusable(false)
+                .focusProperties {
+                    canFocus = false
+                }
         }
 
     Button(
@@ -86,15 +97,12 @@ fun SubscribeButton(
         ) {
             if (icon != null) {
                 LoadImage(
-                    imageResId = icon,
-                    modifier = Modifier.size(12.dp)
+                    imageResId = icon, modifier = Modifier.size(12.dp)
                 )
             }
 
             Text(
-                buttonText,
-                color = textColor,
-                fontSize = 15.sp
+                buttonText, color = textColor, fontSize = 15.sp
             )
         }
 
@@ -105,8 +113,7 @@ fun SubscribeButton(
 @Preview
 @Composable
 fun SubscribeButtonPreview(modifier: Modifier = Modifier) {
-    SubscribeButton(
-        focusState = FocusState.UNFOCUSED,
+    SubscribeButton(focusState = FocusState.UNFOCUSED,
         buttonText = "Subscribe",
         onCategoryItemClick = {
 
@@ -117,8 +124,7 @@ fun SubscribeButtonPreview(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun SubscribeButtonIconPreview(modifier: Modifier = Modifier) {
-    SubscribeButton(
-        focusState = FocusState.UNFOCUSED,
+    SubscribeButton(focusState = FocusState.UNFOCUSED,
         buttonText = "Access Premium ",
         icon = R.drawable.lock,
         onCategoryItemClick = {

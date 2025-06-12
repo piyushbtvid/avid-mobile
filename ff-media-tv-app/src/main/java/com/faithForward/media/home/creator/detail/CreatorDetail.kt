@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,15 +17,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.theme.cardShadowColor
-import com.faithForward.media.theme.creatorTitleStyle
 import com.faithForward.media.theme.tv_02
 
 
 data class CreatorContentDto(
-    val about: String,
-    val subscribersText: String,
-    val genre: String,
-    val creatorChannelCategory: String,
+    val about: String?,
+    val subscribersText: String?,
+    val genre: String?,
+    val creatorChannelCategory: String?,
 )
 
 @Composable
@@ -42,12 +40,14 @@ fun CreatorDetail(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    modifier = Modifier,
-                    text = creatorChannelCategory,
-                    maxLines = 1,
-                    style = tv_02
-                )
+                if (creatorChannelCategory != null) {
+                    Text(
+                        modifier = Modifier,
+                        text = creatorChannelCategory,
+                        maxLines = 1,
+                        style = tv_02
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .padding(start = 7.5.dp)
@@ -55,27 +55,33 @@ fun CreatorDetail(
                         .size(5.dp)
                         .background(color = cardShadowColor)
                 )
+                if (genre != null) {
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 7.5.dp),
+                        text = genre,
+                        maxLines = 1,
+                        style = tv_02
+                    )
+                }
+                if (subscribersText != null) {
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 40.dp),
+                        text = subscribersText,
+                        maxLines = 1,
+                        style = tv_02
+                    )
+                }
+            }
+            if (about != null) {
                 Text(
-                    modifier = Modifier
-                        .padding(start = 7.5.dp),
-                    text = genre,
-                    maxLines = 1,
-                    style = tv_02
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 40.dp),
-                    text = subscribersText,
-                    maxLines = 1,
-                    style = tv_02
+                    modifier = Modifier,
+                    text = about,
+                    style = tv_02,
+                    textAlign = TextAlign.Start
                 )
             }
-            Text(
-                modifier = Modifier,
-                text = about,
-                style = tv_02,
-                textAlign = TextAlign.Start
-            )
 
         }
     }

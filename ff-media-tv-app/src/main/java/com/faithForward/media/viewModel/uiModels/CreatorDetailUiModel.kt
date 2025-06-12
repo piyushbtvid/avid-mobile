@@ -38,5 +38,6 @@ fun ContentItem.toContentDto(): ContentDto {
         duration = "$duration m",
         description = description ?: "",
         time = dateUploaded ?: "",
+        slug = slug
     )
 }

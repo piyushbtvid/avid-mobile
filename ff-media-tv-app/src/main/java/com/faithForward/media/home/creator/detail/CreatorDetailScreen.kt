@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.faithForward.media.home.creator.detail.content.ContentDto
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.uiModels.CreatorDetailItem
 import com.faithForward.util.Resource
@@ -15,6 +16,7 @@ import com.faithForward.util.Resource
 @Composable
 fun CreatorDetailScreen(
     modifier: Modifier = Modifier,
+    onCreatorContentClick: (ContentDto) -> Unit,
     creatorDetailViewModel: CreatorDetailViewModel,
 ) {
     val creatorDetail by creatorDetailViewModel.creatorDetailPageData.collectAsStateWithLifecycle()
@@ -38,7 +40,8 @@ fun CreatorDetailScreen(
                     CreatorDetailPage(
                         modifier = Modifier.padding(start = 31.dp, top = 20.dp),
                         creatorDetailDto = it.creatorDetailDto,
-                        contentDtoList = it.contentList // <- pass content list here
+                        contentDtoList = it.contentList, // <- pass content list here
+                        onCreatorContentClick = onCreatorContentClick
                     )
                 }
             }

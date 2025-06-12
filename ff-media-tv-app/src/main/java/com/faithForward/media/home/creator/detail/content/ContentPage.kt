@@ -1,6 +1,7 @@
 package com.faithForward.media.home.creator.detail.content
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,15 +12,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.faithForward.media.home.creator.detail.ContentCard
 import com.faithForward.media.theme.focusedMainColor
 
 data class ContentDto(
+    val slug: String?,
     val image: String,
     val title: String,
     val views: String,
@@ -37,10 +40,12 @@ data class ContentDto(
 )
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ContentPage(
     modifier: Modifier = Modifier,
     contentDtoList: List<ContentDto>,
+    onCreatorContentClick: (ContentDto) -> Unit,
 ) {
     var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
@@ -48,7 +53,7 @@ fun ContentPage(
 
     LazyColumn(
         modifier = modifier
-            .focusRequester(focusRequester)
+            .focusRestorer()
             .fillMaxHeight()
             .padding(start = 40.dp, top = 20.dp)
             .width(350.dp),
@@ -71,6 +76,10 @@ fun ContentPage(
                     .onFocusChanged { focusState ->
                         contentRowFocusedIndex = if (focusState.isFocused) index else -1
                     }
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onCreatorContentClick.invoke(item)
+                    }
+                    )
                     .focusable()
                     .border(
                         width = if (contentRowFocusedIndex == index) 2.dp else 0.dp,
@@ -82,11 +91,11 @@ fun ContentPage(
         }
     }
 
-    LaunchedEffect(Unit) {
-        try {
-            focusRequester.requestFocus()
-        } catch (_: Exception) {
-
-        }
-    }
+//    LaunchedEffect(Unit) {
+//        try {
+//            focusRequester.requestFocus()
+//        } catch (_: Exception) {
+//
+//        }
+//    }
 }

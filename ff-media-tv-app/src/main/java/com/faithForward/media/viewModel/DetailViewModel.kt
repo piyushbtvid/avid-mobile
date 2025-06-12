@@ -51,8 +51,8 @@ class DetailViewModel @Inject constructor(
 
     init {
         val encodedJson = savedStateHandle.get<String>("listJson")
-        relatedList = encodedJson?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
-            ?.let { Json.decodeFromString<List<PosterCardDto>>(it) }
+//        relatedList = encodedJson?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
+//            ?.let { Json.decodeFromString<List<PosterCardDto>>(it) }
 
         id?.let {
             handleEvent(DetailScreenEvent.LoadCardDetail(id, relatedList!!))
@@ -94,11 +94,11 @@ class DetailViewModel @Inject constructor(
                                 "detail isFavourite in viewModel is ${cardDetail.data.myList}"
                             )
                             _relatedContentData.emit(
-                                if (relatedList.isNotEmpty()) {
-                                    RelatedContentData.RelatedMovies(relatedList)
-                                } else {
-                                    RelatedContentData.None
-                                }
+//                                if (relatedList?.isNotEmpty()) {
+//                                    RelatedContentData.RelatedMovies(relatedList)
+//                                } else {
+                                RelatedContentData.None
+//                                }
                             )
                         } else if (!cardDetail.data.seasons.isNullOrEmpty()) {
                             val seasonList = cardDetail.data.seasons!!.map { it.toSeasonDto() }

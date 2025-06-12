@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +45,7 @@ fun CreatorDetailPage(
     modifier: Modifier = Modifier,
     creatorDetailDto: CreatorDetailDto,
     contentDtoList: List<ContentDto>,
+    onCreatorContentClick: (ContentDto) -> Unit,
 ) {
 
     var isButtonFocused by remember { mutableStateOf(false) }
@@ -77,7 +79,11 @@ fun CreatorDetailPage(
                         .onFocusChanged { focusState ->
                             isButtonFocused = focusState.isFocused
                         }
-                        .focusable(),
+                        .focusable(enabled = false)
+                        .focusProperties {
+                            canFocus = false
+                        }
+                    ,
                     imageId = R.drawable.fi_rr_arrow_left,
                     iconHeight = 25,
                     boxSize = 42,
@@ -95,7 +101,10 @@ fun CreatorDetailPage(
                             .onFocusChanged {
                                 isMicFocused = it.hasFocus
                             }
-                            .focusable()
+                            .focusable(enabled = false)
+                            .focusProperties {
+                                canFocus = false
+                            }
                             .then(
                                 if (isMicFocused) {
                                     Modifier
@@ -126,7 +135,10 @@ fun CreatorDetailPage(
                             .onFocusChanged {
                                 isSearchFocused = it.hasFocus
                             }
-                            .focusable()
+                            .focusable(enabled = false)
+                            .focusProperties {
+                                canFocus = false
+                            }
                             .then(
                                 if (isSearchFocused) {
                                     Modifier
@@ -192,7 +204,8 @@ fun CreatorDetailPage(
             modifier = Modifier
                 .weight(1f)
                 .padding(top = 67.dp), // Take up right half roughly
-            contentDtoList = contentDtoList
+            contentDtoList = contentDtoList,
+            onCreatorContentClick = onCreatorContentClick
         )
 
     }

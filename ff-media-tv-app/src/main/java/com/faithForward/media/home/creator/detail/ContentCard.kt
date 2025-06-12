@@ -118,6 +118,7 @@ private fun ContentCardPreview() {
             duration = "30000",
             description = "kdskbk bdlhids",
             time = "lbslibv",
+            slug = ""
         )
     )
 }
