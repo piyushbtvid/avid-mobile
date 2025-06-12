@@ -47,6 +47,7 @@ class HomeViewModel @Inject constructor(
         private set
 
     init {
+        Log.e("HOME_VIEWMODEL", "home viewModel init called")
         fetchHomePageData()
     }
 

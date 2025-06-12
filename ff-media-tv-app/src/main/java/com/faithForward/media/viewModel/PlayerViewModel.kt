@@ -86,6 +86,20 @@ class PlayerViewModel @Inject constructor(
             is PlayerEvent.UpdatePlayerBuffering -> {
                 _state.value = _state.value.copy(isPlayerBuffering = event.isBuffering)
             }
+
+            is PlayerEvent.SaveToContinueWatching -> {
+                saveContinueWatching(
+                    itemSlug = event.itemSlug,
+                    progress_seconds = event.progressSeconds,
+                    videoDuration = event.videoDuration
+                )
+            }
+
+            is PlayerEvent.UpdateVideoEndedState -> {
+                _state.value = _state.value.copy(
+                    hasVideoEnded = event.isEnded
+                )
+            }
         }
     }
 
@@ -137,11 +151,15 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    fun saveContinueWatching(
+    private fun saveContinueWatching(
         itemSlug: String,
         progress_seconds: String,
         videoDuration: String,
     ) {
+        Log.e(
+            "CONTINUE_WATCHING",
+            "save to continue watching called with $itemSlug  $progress_seconds  $videoDuration"
+        )
         viewModelScope.launch {
             try {
                 val request = ContinueWatchingRequest(

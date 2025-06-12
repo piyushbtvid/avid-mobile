@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 data class VideoPlayerDto(
     val url: String?,
+    val itemSlug: String?,
     val itemId: String,
     val progress: Long = 0,
 )
@@ -64,6 +65,7 @@ fun VideoPlayer(
     var currentPosition by remember { mutableIntStateOf(initialIndex) }
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
+
 
     // Animate alpha for controls
     val controlsAlpha by animateFloatAsState(
@@ -117,6 +119,9 @@ fun VideoPlayer(
 
                         Player.STATE_ENDED -> {
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
+                            playerViewModel.handleEvent(
+                                PlayerEvent.UpdateVideoEndedState(true)
+                            )
                             onVideoEnd()
                         }
 
@@ -127,6 +132,9 @@ fun VideoPlayer(
                 }
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                    playerViewModel.handleEvent(
+                        PlayerEvent.UpdateVideoEndedState(false)
+                    )
                     currentPosition = currentMediaItemIndex
                     currentVideoDuration = duration.toInt()
                     if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
@@ -140,8 +148,7 @@ fun VideoPlayer(
 
     LaunchedEffect(playerState) {
         androidx.media3.common.util.Log.e(
-            "EXOPLAY",
-            "launchEffect in player is runned with $playerState"
+            "EXOPLAY", "launchEffect in player is runned with $playerState"
         )
         when (playerState) {
             PlayerPlayingState.PLAYING -> {
@@ -243,6 +250,19 @@ fun VideoPlayer(
                 }
 
                 Lifecycle.Event.ON_STOP -> {
+                    Log.e("CONTINUE_WATCHING", "on stop called of videoPlayer")
+                    if (!state.hasVideoEnded) {
+                        val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
+                        if (item.itemSlug != null) {
+                            playerViewModel.handleEvent(
+                                PlayerEvent.SaveToContinueWatching(
+                                    itemSlug = item.itemSlug,
+                                    progressSeconds = exoPlayer.currentPosition.toString(), // Current progress in seconds
+                                    videoDuration = exoPlayer.duration.toString()    // Total duration in seconds
+                                )
+                            )
+                        }
+                    }
                     exoPlayer.pause()
                 }
 
@@ -264,9 +284,7 @@ fun VideoPlayer(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter
     ) {
         AndroidView(
             factory = { ctx ->
@@ -274,15 +292,13 @@ fun VideoPlayer(
                     player = exoPlayer
                     useController = false
                 }
-            },
-            modifier = Modifier.fillMaxSize()
+            }, modifier = Modifier.fillMaxSize()
         )
 
         // Loading Indicator
         if (state.isLoading || state.isPlayerBuffering) {
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
                 Log.e("PLAYER", "Video player is loading or buffering")
                 CircularProgressIndicator(
@@ -304,22 +320,19 @@ fun VideoPlayer(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
-                PlayerControls(
-                    currentPosition = state.currentPosition,
+                PlayerControls(currentPosition = state.currentPosition,
                     duration = state.duration,
                     onSeekTo = { exoPlayer.seekTo(it) },
                     onPlayPause = {
                         Log.e(
-                            "PLAYER_CONTROLERS",
-                            "on pause called with ${state.isControlsVisible}"
+                            "PLAYER_CONTROLERS", "on pause called with ${state.isControlsVisible}"
                         )
                         exoPlayer.playWhenReady = !exoPlayer.isPlaying
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     },
                     onRewind = {
                         Log.e(
-                            "PLAYER_CONTROLERS",
-                            "on Rewind called with ${state.isControlsVisible}"
+                            "PLAYER_CONTROLERS", "on Rewind called with ${state.isControlsVisible}"
                         )
                         val rewindMillis = 15_000L
                         val newPosition =
@@ -329,8 +342,7 @@ fun VideoPlayer(
                     },
                     onForward = {
                         Log.e(
-                            "PLAYER_CONTROLERS",
-                            "on forward called with ${state.isControlsVisible}"
+                            "PLAYER_CONTROLERS", "on forward called with ${state.isControlsVisible}"
                         )
                         exoPlayer.seekForward()
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
@@ -350,8 +362,7 @@ fun VideoPlayer(
                     },
                     isPlaying = state.isPlaying,
                     focusRequester = focusRequester,
-                    onBackClick = {}
-                )
+                    onBackClick = {})
             }
         }
     }

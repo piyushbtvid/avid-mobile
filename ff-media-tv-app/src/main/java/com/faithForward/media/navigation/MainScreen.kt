@@ -96,7 +96,7 @@ fun MainScreen(
 
                         Routes.Home.route -> {
                             navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.Home.route) { inclusive = false }
+                                popUpTo(Routes.Home.route) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }

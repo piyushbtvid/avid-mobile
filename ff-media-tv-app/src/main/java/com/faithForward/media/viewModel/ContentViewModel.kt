@@ -48,6 +48,7 @@ class ContentViewModel @Inject constructor(
 
 
     init {
+        Log.e("CONTENT_VIEWMODEL", "content viewmodel init called")
         val contentType = savedStateHandle.get<String>("contentType") ?: "movies"
         val title = if (contentType == "movies") "Movies" else "Series"
         loadSectionContent(contentType, title)
