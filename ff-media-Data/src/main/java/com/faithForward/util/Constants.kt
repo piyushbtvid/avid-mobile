@@ -1,9 +1,9 @@
 package com.faithForward.util
 
 object Constants {
-     const val BASE_URL = "http://107.180.208.127:8000/api/"
+    const val BASE_URL = "http://107.180.208.127:8000/api/"
 
-   // const val BASE_URL = "http://107.180.208.127:8001/api/"
+    // const val BASE_URL = "http://107.180.208.127:8001/api/"
     const val CATEGORY_END_POINT = "http://107.180.208.127/api/get-category"
     const val CATEGORY_DETAIL_END_POINT = "category/{id}"
     const val HOME_SECTION_END_POINT = "client/v1/home"
@@ -19,4 +19,5 @@ object Constants {
     const val LIKE_DISLIKE_END_POINT = "client/v1/like-dislike/{slug}"
     const val LIKED_LIST_END_POINT = "client/v1/liked"
     const val DIS_lIKED_LIST_END_POINT = "client/v1/disliked"
+    const val SAVE_CONTINUE_WATCHING_END_POINT = "client/v1/continue-watching"
 }

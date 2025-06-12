@@ -4,6 +4,7 @@ import android.util.Log
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.preferences.UserPreferences
@@ -170,6 +171,18 @@ class NetworkRepository @Inject constructor(
         apiServiceInterface.getCreatorContentList(
             id = id,
             token = token
+        )
+    }
+
+    suspend fun saveContinueWatching(
+        request: ContinueWatchingRequest,
+    ) = withContext(Dispatchers.IO)
+    {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.saveContinueWatching(
+            token = token,
+            request = request
         )
     }
 }

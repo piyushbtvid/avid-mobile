@@ -68,7 +68,6 @@ class MainActivity : ComponentActivity() {
                     isControlsVisible =
                         playerViewModel.state.collectAsState().value.isControlsVisible
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
-
                     MainScreen(
                         modifier = Modifier.padding(innerPadding),
                         sideBarViewModel = sideBarViewModel,
