@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
@@ -91,7 +92,10 @@ fun GenreCardGrid(
                         .onFocusChanged {
                             isMicFocused = it.hasFocus
                         }
-                        .focusable()
+                        .focusable(enabled = false)
+                        .focusProperties {
+                            canFocus = false
+                        }
                         .then(
                             if (isMicFocused) {
                                 Modifier
@@ -122,7 +126,10 @@ fun GenreCardGrid(
                         .onFocusChanged {
                             isSearchFocused = it.hasFocus
                         }
-                        .focusable()
+                        .focusable(enabled = false)
+                        .focusProperties {
+                            canFocus = false
+                        }
                         .then(
                             if (isSearchFocused) {
                                 Modifier
@@ -208,14 +215,14 @@ fun GenreCardGrid(
             }
         }
     }
-
-    LaunchedEffect(Unit) {
-        try {
-            gridFocusRequester.requestFocus()
-        } catch (ex: Exception) {
-            Log.e("LOG", "${ex.message}")
-        }
-    }
+//
+//    LaunchedEffect(Unit) {
+//        try {
+//            gridFocusRequester.requestFocus()
+//        } catch (ex: Exception) {
+//            Log.e("LOG", "${ex.message}")
+//        }
+//    }
 
 }
 

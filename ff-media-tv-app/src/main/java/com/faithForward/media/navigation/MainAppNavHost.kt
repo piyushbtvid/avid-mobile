@@ -151,11 +151,11 @@ fun MainAppNavHost(
         composable(route = Routes.GenreData.route, arguments = listOf(navArgument("genreId") {
             type = NavType.StringType
         })) { backStackEntry ->
-            val genreId = backStackEntry.arguments?.getString("genreId") ?: ""
+            // val genreId = backStackEntry.arguments?.getString("genreId") ?: ""
 
             val genreViewModel: GenreViewModel = hiltViewModel()
 
-            GenreDataScreen(genreId = genreId,
+            GenreDataScreen(
                 viewModel = genreViewModel,
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
