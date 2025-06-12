@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
+import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toDetailDto
@@ -43,7 +43,7 @@ class ContentViewModel @Inject constructor(
         private set
 
     private val _carouselClickUiState =
-        MutableSharedFlow<CarsouelClickUiState>()
+        MutableSharedFlow<CarouselClickUiState>()
     val carouselClickUiState = _carouselClickUiState.asSharedFlow()
 
 
@@ -121,7 +121,7 @@ class ContentViewModel @Inject constructor(
                     val cardDetail = response.body()
                     if (cardDetail != null) {
                         _carouselClickUiState.emit(
-                            CarsouelClickUiState.NavigateToPlayer(
+                            CarouselClickUiState.NavigateToPlayer(
                                 cardDetail.toDetailDto().toPosterCardDto()
                             )
                         )

@@ -33,7 +33,7 @@ fun HomeContentSections(
     modifier: Modifier = Modifier,
     homePageItems: List<HomePageItem>,
     onCategoryItemClick: (String) -> Unit,
-    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    onItemClick: (PosterCardDto, List<PosterCardDto> , String) -> Unit,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
     onToggleFavorite: (String?) -> Unit,
     onCarouselItemClick: (CarouselItemDto) -> Unit,

@@ -9,7 +9,8 @@ fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
     return VideoPlayerDto(
         url = videoHlsUrl,
         itemId = id ?: "",
-        itemSlug = slug
+        itemSlug = slug,
+        progress = progress ?: 0
     )
 }
 

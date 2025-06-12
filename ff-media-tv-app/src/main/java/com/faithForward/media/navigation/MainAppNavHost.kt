@@ -75,8 +75,11 @@ fun MainAppNavHost(
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
-                onCarouselItemClick = { carouselItem ->
-                    val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
+                onCarouselItemClick = { carouselItem, isFromContinueWatching ->
+                    val route = Routes.PlayerScreen.createRoute(
+                        listOf(carouselItem),
+                        isContinueWatching = isFromContinueWatching
+                    )
                     navController.navigate(route)
                 },
                 onCategoryClick = { id ->
@@ -201,9 +204,17 @@ fun MainAppNavHost(
 
         composable(
             route = Routes.PlayerScreen.route,
-            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("playerDtoList") { type = NavType.StringType },
+                navArgument("isContinueWatching") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
         ) { backStackEntry ->
             val json = backStackEntry.arguments?.getString("playerDtoList")
+            val isContinueWatching =
+                backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
             val playerDtoList =
                 json?.let { Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it)) }
 
@@ -216,7 +227,34 @@ fun MainAppNavHost(
             }
 
             PlayerScreen(
-                playerViewModel = playerViewModel
+                playerViewModel = playerViewModel,
+                isFromContinueWatching = isContinueWatching,
+                onPlayerBackClick = {
+                    if (isContinueWatching) {
+                        // Get the current item's slug from playerDtoList
+                        val currentItem = playerDtoList?.getOrNull(0)
+                        if (currentItem?.slug != null) {
+                            // Navigate to Detail screen
+                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.Home.route) { inclusive = false }
+                                }
+                            } else {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.Home.route) { inclusive = false }
+                                }
+                            }
+                        } else {
+                            // Fallback to default back navigation if slug is unavailable
+                            navController.popBackStack()
+                        }
+                    } else {
+                        // Default back navigation (to Detail or Home)
+                        navController.popBackStack()
+                    }
+                }
             )
         }
 

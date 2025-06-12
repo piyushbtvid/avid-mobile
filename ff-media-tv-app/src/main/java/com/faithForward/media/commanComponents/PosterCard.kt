@@ -50,6 +50,9 @@ data class PosterCardDto(
     val imdbRating: String? = null,
     val releaseDate: String? = null,
     val videoHlsUrl: String? = null,
+    val seriesSlug: String? = null,
+    val progress: Long? = null,
+    val contentType: String? = null,
 )
 
 @Composable

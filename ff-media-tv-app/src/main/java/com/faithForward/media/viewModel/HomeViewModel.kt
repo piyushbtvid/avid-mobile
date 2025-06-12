@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.media.viewModel.uiModels.HomePageItem
-import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toDetailDto
 import com.faithForward.media.viewModel.uiModels.toHomePageItems
@@ -38,8 +38,7 @@ class HomeViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<UiEvent?>()
     val uiEvent = _uiEvent.asSharedFlow()
 
-    private val _carouselClickUiState =
-        MutableSharedFlow<CarsouelClickUiState>()
+    private val _carouselClickUiState = MutableSharedFlow<CarouselClickUiState>()
     val carouselClickUiState = _carouselClickUiState.asSharedFlow()
 
 
@@ -113,16 +112,34 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadBannerDetail(slug: String) {
+    fun loadDetailForUrl(
+        slug: String,
+        progress: Long = 0,
+        isFromContinueWatching: Boolean,
+    ) {
         viewModelScope.launch {
             try {
                 val response = networkRepository.getGivenCardDetail(slug)
                 if (response.isSuccessful) {
                     val cardDetail = response.body()
                     if (cardDetail != null) {
+                        var detailPosterCardDto = cardDetail.toDetailDto().toPosterCardDto()
+                        Log.e(
+                            "IS_FROM_CONTINUE",
+                            " slugs are series ${cardDetail.data.seriesSlug}  slug ${cardDetail.data.slug}"
+                        )
+                        if (isFromContinueWatching) {
+                            detailPosterCardDto = detailPosterCardDto.copy(
+                                slug = detailPosterCardDto.slug,
+                                progress = progress,
+                                seriesSlug = cardDetail.data.seriesSlug
+
+                            )
+                        }
                         _carouselClickUiState.emit(
-                            CarsouelClickUiState.NavigateToPlayer(
-                                cardDetail.toDetailDto().toPosterCardDto()
+                            CarouselClickUiState.NavigateToPlayer(
+                                posterCardDto = detailPosterCardDto,
+                                isFromContinueWatching = isFromContinueWatching
                             )
                         )
                     }
@@ -133,6 +150,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
 
     fun toggleFavorite(slug: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -257,8 +275,7 @@ class HomeViewModel @Inject constructor(
                     if (carouselRow != null && carouselRow.dto.carouselItemsDto.isNotEmpty()) {
                         val carouselItem = carouselRow.dto.carouselItemsDto[0]
                         val isCurrentlyDisliked = carouselItem.isDisliked ?: false
-                        val response =
-                            networkRepository.likeDisLikeContent(slug, type = "dislike")
+                        val response = networkRepository.likeDisLikeContent(slug, type = "dislike")
                         if (response.isSuccessful) {
                             val newIsDisliked = !isCurrentlyDisliked
                             val newIsLiked =
@@ -285,8 +302,7 @@ class HomeViewModel @Inject constructor(
                             )
                         } else {
                             Log.e(
-                                "TOGGLE_DISLIKE",
-                                "Failed to toggle dislike: ${response.message()}"
+                                "TOGGLE_DISLIKE", "Failed to toggle dislike: ${response.message()}"
                             )
                             _uiEvent.emit(UiEvent("Failed to update dislike"))
                         }

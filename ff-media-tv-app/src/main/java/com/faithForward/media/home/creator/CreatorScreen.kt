@@ -46,7 +46,7 @@ fun CreatorScreen(
             onCategoryItemClick = {
 
             },
-            onItemClick = { item, list ->
+            onItemClick = { item, list  , id->
                 Log.e("CREATOR_DETAIL", "creator id when click in grid item is ${item.id}")
             },
             onToggleFavorite = {
