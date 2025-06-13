@@ -2,15 +2,14 @@ package com.faithForward.media.player
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.faithForward.media.theme.focusedMainColor
+import androidx.compose.ui.graphics.Color
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.util.Resource
 
@@ -33,7 +32,9 @@ fun PlayerScreen(
         onPlayerBackClick.invoke()
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(color = Color.Black)) {
         when (val resource = state.videoPlayerDto) {
             is Resource.Unspecified, is Resource.Error -> {
                 // Do nothing, just return empty Box
@@ -41,10 +42,10 @@ fun PlayerScreen(
 
             is Resource.Loading -> {
                 Log.e("PLAYER", "player screen is loading called")
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = focusedMainColor
-                )
+//                CircularProgressIndicator(
+//                    modifier = Modifier.align(Alignment.Center),
+//                    color = focusedMainColor
+//                )
             }
 
             is Resource.Success -> {

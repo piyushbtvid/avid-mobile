@@ -41,7 +41,7 @@ import com.faithForward.util.Resource
 fun DetailScreen(
     modifier: Modifier = Modifier,
     onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
-    onRelatedItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    onRelatedItemClick: (PosterCardDto) -> Unit,
     detailViewModel: DetailViewModel,
 ) {
     val cardDetail by detailViewModel.cardDetail.collectAsStateWithLifecycle()
@@ -164,7 +164,7 @@ fun DetailScreen(
                                     true
                                 },
                                 onItemClick = { item, list, index ->
-                                    onRelatedItemClick.invoke(item, list)
+                                    onRelatedItemClick.invoke(item)
                                 },
                                 isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                                 lastFocusedItemIndex = lastFocusedItem,
@@ -204,11 +204,17 @@ fun DetailScreen(
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls, index ->
-                                val newLs = ls.subList(
-                                    index,
-                                    ls.size
-                                )  // This creates a new list from index to end
-                                onWatchNowClick.invoke(null, newLs)
+                                Log.e("RELATED_SERIES", "on item is $item")
+                                if (item.isRelatedSeries == true) {
+                                    onRelatedItemClick.invoke(item)
+                                } else {
+                                    val newLs = ls.subList(
+                                        index,
+                                        ls.size
+                                    )  // This creates a new list from index to end
+                                    onWatchNowClick.invoke(null, newLs)
+                                }
+
                             },
                             lastFocusedItemIndex = lastFocusedItem,
                             onLastFocusedIndexChange = { int ->

@@ -4,6 +4,7 @@ import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.detail.DetailDto
 import com.faithForward.media.detail.SeasonDto
 import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.series.Episode
 import com.faithForward.network.dto.series.Season
@@ -21,6 +22,7 @@ sealed interface RelatedContentData {
         val seasonNumberList: List<SeasonsNumberDto>,
         val selectedSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
+        val relatedSeries: List<PosterCardDto>,
     ) : RelatedContentData
 
     data object None : RelatedContentData
@@ -37,11 +39,8 @@ fun CardDetail.toDetailDto(): DetailDto {
     //for series detail giving 1 seasons 1 episode url
     // and for movie giving its url
 
-    val firstEpisodeVideoLink = data.seasons
-        ?.firstOrNull { it.episodes.isNotEmpty() }
-        ?.episodes
-        ?.firstOrNull()
-        ?.video_link
+    val firstEpisodeVideoLink =
+        data.seasons?.firstOrNull { it.episodes.isNotEmpty() }?.episodes?.firstOrNull()?.video_link
 
     val resolvedVideoLink = when {
         !firstEpisodeVideoLink.isNullOrEmpty() -> firstEpisodeVideoLink
@@ -56,7 +55,7 @@ fun CardDetail.toDetailDto(): DetailDto {
         description = data.description,
         releaseDate = data.dateUploaded,
         genre = data.genres?.mapNotNull { it.name }?.joinToString(", "),
-        duration = data.duration?.toString(),
+        duration = data.duration?.let { formatDuration(it) } ?: "",
         imdbRating = data.rating,
         videoLink = resolvedVideoLink,
         slug = data.slug,
@@ -87,15 +86,14 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
 }
 
 fun Season.toSeasonDto(): SeasonDto {
-    return SeasonDto(
-        episodesContentDto = episodes.map {
-            it.toPosterDto()
-        })
+    return SeasonDto(episodesContentDto = episodes.map {
+        it.toPosterDto()
+    })
 }
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
     return SeasonsNumberDto(
-        seasonNumber = season_number
+        seasonNumber = season_number.toString()
     )
 }
 
@@ -106,12 +104,11 @@ fun Episode.toPosterDto(): PosterCardDto {
         description = description,
         genre = genres.mapNotNull { it.name }  // safely extract non-null names
             .joinToString(", "),
-        duration = duration.toString(),
+        duration = duration?.let { formatDuration(it) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
         videoHlsUrl = video_link,
-        slug = slug
-    )
+        slug = slug)
 }
 
 
@@ -128,7 +125,7 @@ sealed interface DetailScreenEvent {
 
     data class RelatedRowFocusChanged(val hasFocus: Boolean) : DetailScreenEvent
     data object RelatedRowUpClick : DetailScreenEvent
-    data class SeasonSelected(val seasonNumber: Int) : DetailScreenEvent
+    data class SeasonSelected(val seasonNumber: String) : DetailScreenEvent
     data class ToggleFavorite(val slug: String) : DetailScreenEvent // New event
     data class ToggleLike(val slug: String) : DetailScreenEvent // New event
     data class ToggleDisLike(val slug: String) : DetailScreenEvent // New event

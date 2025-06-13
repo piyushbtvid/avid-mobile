@@ -3,6 +3,7 @@ package com.faithForward.media.viewModel.uiModels
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.genre.GenreCardDto
 import com.faithForward.media.home.genre.GenreGridDto
+import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.genre.GenreResponse
 
@@ -17,7 +18,7 @@ fun ContentItem.toGenreCardDto(): GenreCardDto {
         genre = genres?.mapNotNull { it.name }?.filter { it.isNotBlank() }?.joinToString(", ")
             .takeIf { !it.isNullOrBlank() },
         seasons = seasons?.takeIf { it.isNotEmpty() }?.size,
-        duration = duration?.toString().takeIf { !it.isNullOrBlank() },
+        duration = duration?.let { formatDuration(it) } ?: "",
         imdbRating = rating.takeIf { !it.isNullOrBlank() },
         releaseDate = dateUploaded.takeIf { !it.isNullOrBlank() },
         videoUrl = video_link.takeIf { !it.isNullOrBlank() },

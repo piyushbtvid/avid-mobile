@@ -1,5 +1,6 @@
 package com.faithForward.media.login
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -58,7 +59,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
@@ -166,6 +167,7 @@ fun LoginScreen(
                 onNext = {
                     scope.launch {
                         delay(200)
+                        Log.e("KEY_BOARD", "keyboard controler is $keyboardController")
                         buttonFocusRequester.requestFocus()
                     }
                 },
