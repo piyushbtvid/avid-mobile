@@ -60,6 +60,7 @@ data class DetailDto(
     val isLiked: Boolean? = null,
     val isDisliked: Boolean? = null,
     val isSeries: Boolean? = null,
+    val contentType: String? = null,
 )
 
 @Composable

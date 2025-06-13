@@ -93,7 +93,9 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
             homePageItems.add(
                 HomePageItem.PosterRow(
                     PosterRowDto(
-                        heading = section.title ?: "", dtos = posterItems
+                        heading = section.title ?: "",
+                        dtos = posterItems,
+                        rowId = section.id ?: ""
                     )
                 )
             )
@@ -124,7 +126,8 @@ fun SectionContentResponse.toHomePageItems(
                 HomePageItem.PosterRow(
                     PosterRowDto(
                         heading = rowHeading, // Or dynamic heading if available
-                        dtos = posterItems
+                        dtos = posterItems,
+                        rowId = rowHeading
                     )
                 )
             )
@@ -163,7 +166,9 @@ fun MyListResponse.toHomePageItems(): List<HomePageItem> {
                 homePageItems.add(
                     HomePageItem.PosterRow(
                         PosterRowDto(
-                            heading = category.title, dtos = posterItems
+                            heading = category.title,
+                            dtos = posterItems,
+                            rowId = category.id
                         )
                     )
                 )
@@ -180,7 +185,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     val myList = MyFavList.myFavList
     val disLikeList = MyFavList.disLikedList
 
-    Log.e("CAROUSEL", "toCarouselItemDto MyFavList is $myList")
+    Log.e("CAROUSEL_CONTENT", "content type in Carsouel is $content_type")
 
 // check based on .content (flattening the nested list)
     val isFavourite = myList?.flatMap { it.content }?.any {
@@ -204,7 +209,9 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
         slug = slug,
         isLiked = isLiked,
         isDisliked = isDisliked,
-        isFavourite = isFavourite
+        isFavourite = isFavourite,
+        contentType = content_type,
+        seriesSlug = seriesSlug
     )
 
 }
@@ -222,7 +229,11 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         imdbRating = rating,
         releaseDate = dateUploaded,
         videoHlsUrl = video_link,
-        slug = slug)
+        slug = slug,
+        seriesSlug = seriesSlug,
+        progress = progressSeconds,
+        contentType = content_type
+    )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(
@@ -246,13 +257,24 @@ fun CarouselItemDto.toPosterCardDto(): PosterCardDto {
         duration = duration,
         imdbRating = imdbRating,
         releaseDate = releaseDate,
+        contentType = contentType,
+        seriesSlug = seriesSlug
     )
 }
 
 
-sealed class CarsouelClickUiState {
-    data object Idle : CarsouelClickUiState()
-    data class NavigateToPlayer(val posterCardDto: PosterCardDto) : CarsouelClickUiState()
+sealed class CarouselClickUiState {
+    data object Idle : CarouselClickUiState()
+    data class NavigateToPlayer(
+        val posterCardDto: PosterCardDto,
+        val isFromContinueWatching: Boolean = false,
+    ) :
+        CarouselClickUiState()
+}
+
+sealed class ToPlayerBackDetailUiState {
+    data object Idle : ToPlayerBackDetailUiState()
+    data class NavigateToPlayer(val posterCardDto: PosterCardDto) : ToPlayerBackDetailUiState()
 }
 
 

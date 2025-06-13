@@ -63,7 +63,8 @@ fun CardDetail.toDetailDto(): DetailDto {
         isFavourite = data.myList,
         isLiked = data.likeDislike == "like",
         isDisliked = data.likeDislike == "dislike",
-        isSeries = data.content_type == "Series"
+        isSeries = data.content_type == "Series" || data.content_type == "Episode",
+        contentType = data.content_type
     )
 }
 
@@ -80,7 +81,8 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         duration = duration,
         releaseDate = releaseDate,
         videoHlsUrl = videoLink,
-        slug = slug
+        slug = slug,
+        contentType = contentType
     )
 }
 

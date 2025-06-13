@@ -1,6 +1,7 @@
 package com.faithForward.media.player
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
@@ -20,9 +21,17 @@ data class PlayerDto(
 @Composable
 fun PlayerScreen(
     modifier: Modifier = Modifier,
+    isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
+    onPlayerBackClick: () -> Unit,
 ) {
     val state by playerViewModel.state.collectAsState()
+
+
+    BackHandler {
+        Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
+        onPlayerBackClick.invoke()
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         when (val resource = state.videoPlayerDto) {

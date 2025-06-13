@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.viewModel.ContentViewModel
-import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
+import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.util.Resource
 
 @Composable
@@ -37,7 +37,7 @@ fun MoviesPage(
 
 
     when (val state = carouselClickUiState) {
-        is CarsouelClickUiState.NavigateToPlayer -> {
+        is CarouselClickUiState.NavigateToPlayer -> {
             LaunchedEffect(state.posterCardDto) {
                 onCarouselItemClick.invoke(state.posterCardDto)
                 // Reset state to prevent repeated navigation
@@ -45,7 +45,7 @@ fun MoviesPage(
             }
         }
 
-        is CarsouelClickUiState.Idle -> {}
+        is CarouselClickUiState.Idle -> {}
         null -> {
 
         }
@@ -71,7 +71,7 @@ fun MoviesPage(
             onCategoryItemClick = {
 
             },
-            onItemClick = { item, list ->
+            onItemClick = { item, list , id ->
                 onItemClick.invoke(item, list)
             },
             onToggleFavorite = { slug ->

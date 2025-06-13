@@ -11,7 +11,10 @@ import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
 import com.faithForward.media.viewModel.uiModels.toVideoPlayerDto
+import com.faithForward.network.dto.request.ContinueWatchingRequest
+import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,8 +23,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PlayerViewModel : ViewModel() {
+@HiltViewModel
+class PlayerViewModel @Inject constructor(
+    private val networkRepository: NetworkRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state.asStateFlow()
 
@@ -79,6 +86,20 @@ class PlayerViewModel : ViewModel() {
             is PlayerEvent.UpdatePlayerBuffering -> {
                 _state.value = _state.value.copy(isPlayerBuffering = event.isBuffering)
             }
+
+            is PlayerEvent.SaveToContinueWatching -> {
+                saveContinueWatching(
+                    itemSlug = event.itemSlug,
+                    progress_seconds = event.progressSeconds,
+                    videoDuration = event.videoDuration
+                )
+            }
+
+            is PlayerEvent.UpdateVideoEndedState -> {
+                _state.value = _state.value.copy(
+                    hasVideoEnded = event.isEnded
+                )
+            }
         }
     }
 
@@ -127,6 +148,34 @@ class PlayerViewModel : ViewModel() {
         viewModelScope.launch {
             Log.e("PLAYER_UI", "on use interction is called  in viewModel from $from")
             _interactionFlow.emit(Unit)
+        }
+    }
+
+    private fun saveContinueWatching(
+        itemSlug: String,
+        progress_seconds: String,
+        videoDuration: String,
+    ) {
+        Log.e(
+            "CONTINUE_WATCHING",
+            "save to continue watching called with $itemSlug  $progress_seconds  $videoDuration"
+        )
+        viewModelScope.launch {
+            try {
+                val request = ContinueWatchingRequest(
+                    slug = itemSlug,
+                    progress_seconds = progress_seconds,
+                    duration = videoDuration
+                )
+                val response = networkRepository.saveContinueWatching(request)
+                if (response.isSuccessful) {
+                    Log.e("CONTINUE_WATCHING", "response success with ${response.body()}")
+                } else {
+                    Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
+                }
+            } catch (ex: Exception) {
+                Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.faithForward.network.dto
 
 import com.faithForward.network.dto.series.Season
+import com.google.gson.annotations.SerializedName
+import java.time.ZonedDateTime
 
 
 data class HomeSectionApiResponse(
@@ -21,7 +23,7 @@ data class Genre(
 
 data class Section(
     val title: String?,
-    val sectionID: String?,
+    val id: String?,
     val content: List<ContentItem>?,
 )
 
@@ -52,4 +54,11 @@ data class ContentItem(
     val likeDislike: String? = null,
     val myList: Boolean? = null,
     val seasons: List<Season>? = null,
+    @SerializedName("episode_number") val episodeNumber: Int? = null,
+    @SerializedName("series_name") val seriesName: String? = null,
+    @SerializedName("series_slug") val seriesSlug: String? = null,
+    @SerializedName("season_number") val seasonNumber: Int? = null,
+    @SerializedName("season_name") val seasonName: String? = null,
+    @SerializedName("season_slug") val seasonSlug: String? = null,
+    @SerializedName("progress_seconds") val progressSeconds: Long? = null,
 )

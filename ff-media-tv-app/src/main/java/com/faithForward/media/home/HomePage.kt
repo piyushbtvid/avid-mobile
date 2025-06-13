@@ -19,7 +19,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.HomeViewModel
-import com.faithForward.media.viewModel.uiModels.CarsouelClickUiState
+import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
 
 @Composable
@@ -29,7 +30,7 @@ fun HomePage(
     changeSideBarSelectedPosition: (Int) -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
-    onCarouselItemClick: (PosterCardDto) -> Unit,
+    onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
     onDataLoadedSuccess: () -> Unit,
 ) {
 
@@ -37,6 +38,7 @@ fun HomePage(
     val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
     val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
+
 
 
     DisposableEffect(lifecycleOwner) {
@@ -66,15 +68,15 @@ fun HomePage(
     }
 
     when (val state = carouselClickUiState) {
-        is CarsouelClickUiState.NavigateToPlayer -> {
+        is CarouselClickUiState.NavigateToPlayer -> {
             LaunchedEffect(state.posterCardDto) {
-                onCarouselItemClick.invoke(state.posterCardDto)
+                onCarouselItemClick.invoke(state.posterCardDto, state.isFromContinueWatching)
                 // Reset state to prevent repeated navigation
-                homeViewModel.loadBannerDetail("") // Reset to idle
+                homeViewModel.loadDetailForUrl("", isFromContinueWatching = false) // Reset to idle
             }
         }
 
-        is CarsouelClickUiState.Idle -> {}
+        is CarouselClickUiState.Idle -> {}
         null -> {
 
         }
@@ -100,7 +102,19 @@ fun HomePage(
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
             },
-            onItemClick = onItemClick,
+            onItemClick = { posterItem, list, rowId ->
+                if (rowId == "continue-watching") {
+                    if (posterItem.slug != null) {
+                        homeViewModel.loadDetailForUrl(
+                            posterItem.slug,
+                            progress = posterItem.progress ?: 0,
+                            isFromContinueWatching = true
+                        )
+                    }
+                } else {
+                    onItemClick.invoke(posterItem, list)
+                }
+            },
             onCategoryItemClick = { id ->
                 onCategoryClick.invoke(id)
             },
@@ -120,15 +134,38 @@ fun HomePage(
                 }
             },
             onCarouselItemClick = { item ->
-                Log.e("CARSOUEL_SLUG", "item slug is ${item.slug}")
-                if (item.slug != null) {
-                    homeViewModel.loadBannerDetail(item.slug)
+                val contentType = item.contentType?.trim()
+                Log.e(
+                    "CAROUSEL_SLUG",
+                    "item slug: ${item.slug}, contentType: $contentType, seriesSlug: ${item.seriesSlug}"
+                )
+
+                when {
+                    contentType.equals("Episode", ignoreCase = true) -> {
+                        Log.e("CAROUSEL_SLUG", "Episode block")
+                        val newItem = item.toPosterCardDto().copy(slug = item.seriesSlug)
+                        Log.e("CAROUSEL_SLUG", "Episode with updated slug: $newItem")
+                        onItemClick.invoke(newItem, emptyList())
+                    }
+
+                    contentType.equals("Series", ignoreCase = true) -> {
+                        Log.e("CAROUSEL_SLUG", "Series block")
+                        onItemClick.invoke(item.toPosterCardDto(), emptyList())
+                    }
+
+                    !item.slug.isNullOrEmpty() -> {
+                        Log.e("CAROUSEL_SLUG", "Fallback block - loading detail")
+                        homeViewModel.loadDetailForUrl(item.slug!!, isFromContinueWatching = false)
+                    }
+
+                    else -> {
+                        Log.e("CAROUSEL_SLUG", "Unknown content type or missing slug.")
+                    }
                 }
             },
             onCreatorItemClick = {
 
-            }
-        )
+            })
     }
 
 }

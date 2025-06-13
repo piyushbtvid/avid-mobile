@@ -9,10 +9,10 @@ fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
     return VideoPlayerDto(
         url = videoHlsUrl,
         itemId = id ?: "",
-
-        )
+        itemSlug = slug,
+        progress = progress ?: 0
+    )
 }
-
 
 
 data class PlayerState(
@@ -22,7 +22,8 @@ data class PlayerState(
     val isControlsVisible: Boolean = true,
     val isPlaying: Boolean = false,
     val isLoading: Boolean = false,
-    val isPlayerBuffering: Boolean = false
+    val isPlayerBuffering: Boolean = false,
+    val hasVideoEnded: Boolean = false,
 )
 
 sealed class PlayerEvent {
@@ -33,6 +34,12 @@ sealed class PlayerEvent {
     data class UpdateIsPlaying(val isPlaying: Boolean) : PlayerEvent()
     data class UpdateVideoPlayerDto(val itemList: List<PosterCardDto>) : PlayerEvent()
     data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
+    data class UpdateVideoEndedState(val isEnded: Boolean) : PlayerEvent()
+    data class SaveToContinueWatching(
+        val itemSlug: String,
+        val progressSeconds: String,
+        val videoDuration: String,
+    ) : PlayerEvent()
 }
 
 
