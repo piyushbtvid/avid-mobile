@@ -134,48 +134,34 @@ fun HomePage(
                 }
             },
             onCarouselItemClick = { item ->
+                val contentType = item.contentType?.trim()
                 Log.e(
-                    "CARSOUEL_SLUG",
-                    "item slug is ${item.slug} and content type ${item.contentType}  ${item.seriesSlug}"
+                    "CAROUSEL_SLUG",
+                    "item slug: ${item.slug}, contentType: $contentType, seriesSlug: ${item.seriesSlug}"
                 )
-                if (item.contentType != null && item.contentType == "Series" || item.contentType == "Episode") {
-                    Log.e(
-                        "CARSOUEL_SLUG",
-                        "first block"
-                    )
-                    if (item.contentType == "Episode") {
-                        var newItem = item.toPosterCardDto()
-                        newItem = newItem.copy(
-                            slug = newItem.seriesSlug
-                        )
-                        Log.e(
-                            "CARSOUEL_SLUG",
-                            "second block"
-                        )
 
-                        Log.e(
-                            "CARSOUEL_SLUG",
-                            "second block after slug is $newItem"
-                        )
-
+                when {
+                    contentType.equals("Episode", ignoreCase = true) -> {
+                        Log.e("CAROUSEL_SLUG", "Episode block")
+                        val newItem = item.toPosterCardDto().copy(slug = item.seriesSlug)
+                        Log.e("CAROUSEL_SLUG", "Episode with updated slug: $newItem")
                         onItemClick.invoke(newItem, emptyList())
-                    } else {
-                        Log.e(
-                            "CARSOUEL_SLUG",
-                            "thrid block"
-                        )
+                    }
+
+                    contentType.equals("Series", ignoreCase = true) -> {
+                        Log.e("CAROUSEL_SLUG", "Series block")
                         onItemClick.invoke(item.toPosterCardDto(), emptyList())
                     }
-                } else {
-                    Log.e(
-                        "CARSOUEL_SLUG",
-                        "fourth block"
-                    )
-                    if (item.slug != null) {
-                        homeViewModel.loadDetailForUrl(item.slug, isFromContinueWatching = false)
+
+                    !item.slug.isNullOrEmpty() -> {
+                        Log.e("CAROUSEL_SLUG", "Fallback block - loading detail")
+                        homeViewModel.loadDetailForUrl(item.slug!!, isFromContinueWatching = false)
+                    }
+
+                    else -> {
+                        Log.e("CAROUSEL_SLUG", "Unknown content type or missing slug.")
                     }
                 }
-
             },
             onCreatorItemClick = {
 
