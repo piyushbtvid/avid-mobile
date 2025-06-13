@@ -8,6 +8,7 @@ import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.category.CategoryRowDto
 import com.faithForward.media.home.content.PosterRowDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.HomeSectionApiResponse
@@ -218,14 +219,15 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
 
 
 fun ContentItem.toPosterCardDto(): PosterCardDto =
-    PosterCardDto(posterImageSrc = landscape ?: portrait ?: "",
+    PosterCardDto(
+        posterImageSrc = landscape ?: portrait ?: "",
         id = id.toString() ?: "",
         title = name ?: "",
         description = description ?: "",
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names
             ?.joinToString(", "),
         seasons = seasons?.size,
-        duration = duration.toString(),
+        duration = duration?.let { formatDuration(it) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
         videoHlsUrl = video_link,

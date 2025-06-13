@@ -61,4 +61,6 @@ data class ContentItem(
     @SerializedName("season_name") val seasonName: String? = null,
     @SerializedName("season_slug") val seasonSlug: String? = null,
     @SerializedName("progress_seconds") val progressSeconds: Long? = null,
+    @SerializedName("related_content")
+    val relatedContent: List<ContentItem>? = null,
 )

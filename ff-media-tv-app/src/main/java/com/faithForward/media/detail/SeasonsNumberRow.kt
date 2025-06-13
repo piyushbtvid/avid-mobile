@@ -33,14 +33,14 @@ import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
 
 data class SeasonsNumberDto(
-    val seasonNumber: Int,
+    val seasonNumber: String,
 )
 
 @Composable
 fun SeasonsNumberRow(
     seasonsNumberDtoList: List<SeasonsNumberDto>,
     onSeasonUpClick: () -> Boolean,
-    onSeasonNumberChanged: (Int) -> Unit,
+    onSeasonNumberChanged: (String) -> Unit,
     lastSelectedItemIndex: Int,
     onLastSelectedIndexChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -119,19 +119,19 @@ private fun SeasonsNumberRowPreview() {
 
     val list = listOf(
         SeasonsNumberDto(
-            seasonNumber = 1
+            seasonNumber = "1"
         ),
         SeasonsNumberDto(
-            seasonNumber = 2
+            seasonNumber = "1"
         ),
         SeasonsNumberDto(
-            seasonNumber = 3
+            seasonNumber = "1"
         ),
         SeasonsNumberDto(
-            seasonNumber = 4
+            seasonNumber = "1"
         ),
         SeasonsNumberDto(
-            seasonNumber = 5
+            seasonNumber = "1"
         ),
     )
 

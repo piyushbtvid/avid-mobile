@@ -195,11 +195,8 @@ fun MainAppNavHost(
                         }
                     }
                 },
-                onRelatedItemClick = { item, list ->
+                onRelatedItemClick = { item, ->
                     if (!item.slug.isNullOrEmpty()) {
-                        val filteredList = list.filterNot { it.slug == item.slug }
-                        val json = Json.encodeToString(filteredList)
-                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 })

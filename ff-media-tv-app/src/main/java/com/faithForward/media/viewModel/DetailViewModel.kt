@@ -12,6 +12,7 @@ import com.faithForward.media.viewModel.uiModels.RelatedContentData
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.UiState
 import com.faithForward.media.viewModel.uiModels.toDetailDto
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.media.viewModel.uiModels.toSeasonDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
@@ -19,13 +20,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -87,33 +84,56 @@ class DetailViewModel @Inject constructor(
                                 )
                             )
                         )
-                        // if Content type is Movie then movie else for now its Series
-                        if (cardDetail.data.content_type == "Movie") {
+                        // if Content type is Series then Series seasons and related content else  Movie , Podcast etc
+                        if (cardDetail.data.content_type == "Series" && !cardDetail.data.seasons.isNullOrEmpty()) {
                             Log.e(
                                 "DETAIL_SLUG",
                                 "detail isFavourite in viewModel is ${cardDetail.data.myList}"
                             )
-                            _relatedContentData.emit(
-//                                if (relatedList?.isNotEmpty()) {
-//                                    RelatedContentData.RelatedMovies(relatedList)
-//                                } else {
-                                RelatedContentData.None
-//                                }
-                            )
-                        } else if (!cardDetail.data.seasons.isNullOrEmpty()) {
-                            val seasonList = cardDetail.data.seasons!!.map { it.toSeasonDto() }
 
-                            //creating season number dto by adding 1 in seasons array index
-                            val seasonNumberList = List(seasonList.size) { index ->
-                                SeasonsNumberDto(seasonNumber = index + 1)
+                            val seasonList = cardDetail.data.seasons!!.map { it.toSeasonDto() }
+                            val relatedMovieList = cardDetail.data.relatedContent?.map {
+                                it.toPosterCardDto().copy(isRelatedSeries = true)
+                            } ?: emptyList()
+
+
+                            // Create season number list
+                            val seasonNumberList = mutableListOf<SeasonsNumberDto>()
+
+                            if (seasonList.isNotEmpty()) {
+                                seasonNumberList.addAll(
+                                    List(seasonList.size) { index ->
+                                        SeasonsNumberDto(seasonNumber = (index + 1).toString())
+                                    }
+                                )
+                                if (relatedMovieList.isNotEmpty()) {
+                                    seasonNumberList.add(SeasonsNumberDto(seasonNumber = "Related"))
+                                }
+                            } else if (relatedMovieList.isNotEmpty()) {
+                                seasonNumberList.add(SeasonsNumberDto(seasonNumber = "Related"))
                             }
+
+                            val selectedSeasonEpisodes =
+                                seasonList.firstOrNull()?.episodesContentDto ?: emptyList()
+
                             _relatedContentData.emit(
                                 RelatedContentData.SeriesSeasons(
                                     seasonNumberList = seasonNumberList,
-                                    selectedSeasonEpisodes = seasonList.firstOrNull()?.episodesContentDto
-                                        ?: emptyList(),
-                                    allSeasons = seasonList
+                                    selectedSeasonEpisodes = selectedSeasonEpisodes,
+                                    allSeasons = seasonList,
+                                    relatedSeries = relatedMovieList
                                 )
+                            )
+                        } else {
+                            val relatedMovieList = cardDetail.data.relatedContent?.map {
+                                it.toPosterCardDto()
+                            }
+                            _relatedContentData.emit(
+                                if (!relatedMovieList.isNullOrEmpty()) {
+                                    RelatedContentData.RelatedMovies(relatedMovieList)
+                                } else {
+                                    RelatedContentData.None
+                                }
                             )
                         }
                     } else {
@@ -275,23 +295,35 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun updateSeasonEpisodes(seasonNumber: Int) {
+    private fun updateSeasonEpisodes(seasonNumber: String) {
         viewModelScope.launch {
             val currentData = _relatedContentData.value
+
             if (currentData is RelatedContentData.SeriesSeasons) {
-                val selectedSeason = currentData.allSeasons.getOrNull(seasonNumber - 1)
-                if (selectedSeason != null) {
-                    _relatedContentData.emit(
-                        currentData.copy(
-                            selectedSeasonEpisodes = selectedSeason.episodesContentDto
+                if (seasonNumber == "Related") {
+                    val relatedSeries = currentData.relatedSeries
+                    if (relatedSeries.isNotEmpty()) {
+                        _relatedContentData.emit(
+                            currentData.copy(
+                                selectedSeasonEpisodes = relatedSeries
+                            )
                         )
-                    )
+                    }
                 } else {
-                    _relatedContentData.emit(
-                        currentData.copy(
-                            selectedSeasonEpisodes = emptyList()
+                    val selectedSeason = currentData.allSeasons.getOrNull(seasonNumber.toInt() - 1)
+                    if (selectedSeason != null) {
+                        _relatedContentData.emit(
+                            currentData.copy(
+                                selectedSeasonEpisodes = selectedSeason.episodesContentDto
+                            )
                         )
-                    )
+                    } else {
+                        _relatedContentData.emit(
+                            currentData.copy(
+                                selectedSeasonEpisodes = emptyList()
+                            )
+                        )
+                    }
                 }
             }
         }
