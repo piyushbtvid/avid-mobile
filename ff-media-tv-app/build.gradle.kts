@@ -88,7 +88,7 @@ dependencies {
     implementation(project(":ff-media-Data"))
 
     //media
-    val media3 = "1.1.1"
+    val media3 = "1.7.1"
     implementation("androidx.media3:media3-exoplayer:$media3")
     implementation("androidx.media3:media3-ui:$media3")
     implementation("androidx.media3:media3-common:$media3")
@@ -111,7 +111,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     //material
-    implementation("androidx.compose.material:material:1.7.8")
+    implementation("androidx.compose.material:material:1.8.2")
 
 
     testImplementation(libs.junit)
