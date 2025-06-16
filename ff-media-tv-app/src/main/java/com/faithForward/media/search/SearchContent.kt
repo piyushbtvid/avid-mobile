@@ -60,7 +60,7 @@ fun SearchContent(
 
     val searchBarAnimatedHeight by animateDpAsState(
         targetValue = targetHeight,
-        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing)
+        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
     )
 
     Column(

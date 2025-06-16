@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.viewModel.uiModels.SearchEvent
@@ -36,6 +37,7 @@ class SearchViewModel @Inject constructor(
                 val response = networkRepository.searchContent(query)
                 if (response.isSuccessful) {
                     val body = response.body()
+                    Log.e("SEARCH_RESULT", "search result in viewModel is ${body?.data}")
                     _uiState.update {
                         it.copy(
                             searchResults = when {
