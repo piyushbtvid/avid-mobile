@@ -43,6 +43,7 @@ fun SearchContent(
     modifier: Modifier = Modifier,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
+    onSearchItemClick: (SearchItemDto) -> Unit,
     searchResults: Resource<SearchContentDto>,
 ) {
 
@@ -62,6 +63,10 @@ fun SearchContent(
         targetValue = targetHeight,
         animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
     )
+
+  //  val focusRequesters = remember(searchResults.data?.searchItemList) {
+//        List(searchResults.data?.searchItemList?.size) { FocusRequester() }
+//    }
 
     Column(
         modifier = modifier
@@ -117,7 +122,8 @@ fun SearchContent(
             lastFocusedIndex = lastFocusedIndex,
             onLastFocusIndexChange = { index ->
                 lastFocusedIndex = index
-            }
+            },
+            onSearchItemClick = onSearchItemClick
         )
     }
 

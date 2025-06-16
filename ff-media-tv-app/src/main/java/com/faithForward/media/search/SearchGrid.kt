@@ -10,10 +10,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -32,9 +28,12 @@ fun SearchGrid(
     gridFocusRequester: FocusRequester,
     searchResultList: List<SearchItemDto>,
     lastFocusedIndex: Int,
+    onSearchItemClick: (SearchItemDto) -> Unit,
     onLastFocusIndexChange: (Int) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
+
+
 
 
     LazyVerticalGrid(
@@ -71,6 +70,7 @@ fun SearchGrid(
                 searchItemDto = item,
                 onItemClick = {
                     Log.e("SEARCH_GRID", "Item $index clicked")
+                    onSearchItemClick.invoke(item)
                 },
                 focusState = uiState,
             )

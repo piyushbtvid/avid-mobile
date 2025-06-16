@@ -287,7 +287,12 @@ fun MainAppNavHost(
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
 
             SearchScreen(
-                viewModel = searchViewModel
+                viewModel = searchViewModel,
+                onSearchItemClick = { item ->
+                    if (item.contentSlug != null) {
+                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
+                    }
+                }
             )
         }
 

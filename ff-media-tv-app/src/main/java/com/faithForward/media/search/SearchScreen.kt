@@ -7,12 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.faithForward.media.search.item.SearchItemDto
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.uiModels.SearchEvent
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
+    onSearchItemClick: (SearchItemDto) -> Unit,
     viewModel: SearchViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -27,6 +29,7 @@ fun SearchScreen(
                 viewModel.onEvent(SearchEvent.SubmitQuery(query))
             }
         },
-        searchResults = uiState.searchResults
+        searchResults = uiState.searchResults,
+        onSearchItemClick = onSearchItemClick
     )
 }

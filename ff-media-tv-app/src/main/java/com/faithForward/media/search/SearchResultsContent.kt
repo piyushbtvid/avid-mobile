@@ -12,6 +12,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.search.item.SearchItemDto
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.util.Resource
 
@@ -21,6 +22,7 @@ fun SearchResultsContent(
     modifier: Modifier = Modifier,
     lastFocusedIndex: Int,
     focusRequester: FocusRequester,
+    onSearchItemClick: (SearchItemDto) -> Unit,
     onLastFocusIndexChange: (Int) -> Unit,
 ) {
     Box(
@@ -40,7 +42,8 @@ fun SearchResultsContent(
                         modifier = Modifier.padding(top = 16.dp),
                         lastFocusedIndex = lastFocusedIndex,
                         gridFocusRequester = focusRequester,
-                        onLastFocusIndexChange = onLastFocusIndexChange
+                        onLastFocusIndexChange = onLastFocusIndexChange,
+                        onSearchItemClick = onSearchItemClick
                     )
                 } else {
                     Text(
