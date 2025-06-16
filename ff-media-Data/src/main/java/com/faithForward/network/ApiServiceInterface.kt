@@ -14,6 +14,7 @@ import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
 import com.faithForward.util.Constants
 import retrofit2.Response
@@ -23,6 +24,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiServiceInterface {
 
@@ -130,5 +132,11 @@ interface ApiServiceInterface {
         @Body request: ContinueWatchingRequest,
     ): Response<ApiMessageResponse>
 
+
+    @GET(Constants.SEARCH_END_POINT)
+    suspend fun searchContent(
+        @Header("Authorization") token: String,
+        @Query("query") query: String,
+    ): Response<SearchResponse>
 
 }

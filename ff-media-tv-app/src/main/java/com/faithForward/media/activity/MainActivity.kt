@@ -43,6 +43,7 @@ import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,7 +61,6 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
-                    val creatorDetailViewModel: CreatorDetailViewModel = hiltViewModel()
                     playerViewModel = hiltViewModel()
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -91,13 +91,13 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.e("Logging","onKeyDown()")
+        Log.e("Logging", "onKeyDown()")
         when (keyCode) {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
                     playerViewModel.togglePlayPause()
                 } else {
-                    if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+                    if (currentRoute == Routes.PlayerScreen.route) {
                         playerViewModel.onUserInteraction("center and PlayPause")
                     }
                 }
@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
                 if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
                     playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
                 } else {
-                    if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+                    if (currentRoute == Routes.PlayerScreen.route) {
                         playerViewModel.onUserInteraction("Rewind and Left")
                     }
                 }
@@ -119,7 +119,7 @@ class MainActivity : ComponentActivity() {
                 if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
                     playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
                 } else {
-                    if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+                    if (currentRoute == Routes.PlayerScreen.route) {
                         playerViewModel.onUserInteraction("forward and right")
                     }
                 }

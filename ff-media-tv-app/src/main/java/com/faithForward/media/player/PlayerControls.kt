@@ -1,6 +1,6 @@
 package com.faithForward.media.player
 
-import androidx.activity.compose.BackHandler
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Slider
 import androidx.compose.material.SliderDefaults
 import androidx.compose.material3.Text
@@ -42,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.util.formatDuration
 
 
 @Composable
