@@ -121,6 +121,13 @@ fun MainScreen(
                                 launchSingleTop = true
                             }
                         }
+
+                        Routes.Search.route -> {
+                            navController.navigate(Routes.Search.route) {
+                                popUpTo(Routes.Home.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
                     }
                 },
                 onSideBarSelectedPositionChange = { index ->
@@ -138,5 +145,6 @@ val sidebarVisibleRoutes = listOf(
     Routes.Movies.route,
     Routes.Creator.route,
     Routes.MyList.route,
-    Routes.Series.route
+    Routes.Series.route,
+    Routes.Search.route
 )

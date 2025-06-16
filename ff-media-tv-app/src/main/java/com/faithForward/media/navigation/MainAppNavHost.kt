@@ -21,6 +21,7 @@ import com.faithForward.media.home.myList.MyListPage
 import com.faithForward.media.home.series.SeriesPage
 import com.faithForward.media.login.LoginScreen
 import com.faithForward.media.player.PlayerScreen
+import com.faithForward.media.search.SearchScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -30,6 +31,7 @@ import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -195,7 +197,7 @@ fun MainAppNavHost(
                         }
                     }
                 },
-                onRelatedItemClick = { item, ->
+                onRelatedItemClick = { item ->
                     if (!item.slug.isNullOrEmpty()) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
@@ -277,6 +279,16 @@ fun MainAppNavHost(
                 }
             )
 
+        }
+
+        composable(
+            route = Routes.Search.route
+        ) { backStackEntry ->
+            val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
+
+            SearchScreen(
+                viewModel = searchViewModel
+            )
         }
 
     }
