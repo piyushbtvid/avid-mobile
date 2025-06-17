@@ -51,7 +51,7 @@ fun RelatedContentRow(
     LazyRow(
         state = lazyListState,
         modifier = modifier,
-        contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 10.dp),
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         itemsIndexed(relatedContentRowDto) { index, relatedContentItem ->

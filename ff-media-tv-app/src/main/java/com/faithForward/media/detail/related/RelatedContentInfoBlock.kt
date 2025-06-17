@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.home.carousel.ContentMetaBlock
+import com.faithForward.media.theme.whiteMain
 
 @Composable
 fun RelatedContentInfoBlock(
@@ -30,15 +31,15 @@ fun RelatedContentInfoBlock(
                     .padding(start = 20.dp),
                 text = this?.title ?: "",
                 fontWeight = FontWeight.W600,
-                color = Color.Black
+                color = whiteMain
             )
             ContentMetaBlock(
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .wrapContentHeight(),
                 description = this?.description,
-                title = this?.title,
-                textColor = Color.Black,
+                title = null,
+                textColor = whiteMain,
                 buttonModifier = modifier,
                 releaseDate = this?.releaseDate,
                 imdbRating = this?.imdbRating,

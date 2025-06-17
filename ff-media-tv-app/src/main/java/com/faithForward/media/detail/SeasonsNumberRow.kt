@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 data class SeasonsNumberDto(
@@ -94,7 +95,7 @@ fun SeasonsNumberRow(
                     }),
                 text = seasonNumberItem.seasonNumber.toString(),
                 textSize = if (uiState == FocusState.FOCUSED) 18 else 15,
-                color = if (uiState == FocusState.FOCUSED || uiState == FocusState.SELECTED) Color.Black else Color.Black.copy(
+                color = if (uiState == FocusState.FOCUSED || uiState == FocusState.SELECTED) whiteMain else whiteMain.copy(
                     alpha = 0.5f
                 ),
                 fontWeight = if (uiState == FocusState.FOCUSED || uiState == FocusState.SELECTED) FontWeight.W600

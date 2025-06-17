@@ -166,7 +166,7 @@ fun CarouselItem(
                 duration = duration,
                 subscribers = subscribers,
                 imdbRating = imdbRating,
-                title = title,
+                title = null,
                 buttonModifier = modifier,
                 addToWatchListModifier = addToWatchListModifier,
                 likeModifier = likeModifier,

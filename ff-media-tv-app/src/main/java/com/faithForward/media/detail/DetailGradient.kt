@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import com.faithForward.media.theme.detailGradientEndColor
+import com.faithForward.media.theme.detailGradientStartColor
 import com.faithForward.media.theme.textFocusedMainColor
 
 @Composable
 fun DetailGradient(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     Box(
@@ -19,9 +21,8 @@ fun DetailGradient(
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        textFocusedMainColor,
-                        textFocusedMainColor.copy(alpha = 0f),
-                        textFocusedMainColor.copy(alpha = 0f)
+                        detailGradientStartColor,
+                        detailGradientEndColor
                     )
                 )
             )

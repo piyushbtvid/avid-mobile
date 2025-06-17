@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 @Composable
@@ -87,7 +88,21 @@ fun ContentMetaBlock(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+
+            title?.let {
+                ContentDescription(
+                    modifier = Modifier
+                        .width(400.dp),
+                    text = title,
+                    textSize = 28,
+                    lineHeight = 29,
+                    color = whiteMain,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(9.dp))
             }
 
             description?.let {
@@ -102,7 +117,7 @@ fun ContentMetaBlock(
                     textSize = 12
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
             if (addToWatchListUiState != FocusState.UNDEFINED && likeUiState != FocusState.UNDEFINED && dislikeUiState != FocusState.UNDEFINED) {

@@ -36,3 +36,7 @@ val pillButtonTextColor = Color(0XFFEAE3C9)
 val pillButtonUnFocusColor = Color(0XFFF4EFE6)
 val pillButtonTextUnFocusColor = Color(0XFF3B3B3B)
 val posterCardShadowColor = Color(0x87000000)
+val detailGradientStartColor = Color(0XFF3B3B3B)
+val detailGradientEndColor = Color(0x00EAE3C9)
+val focusedTextColor = Color(0xFFEAE3C9)
+

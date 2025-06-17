@@ -79,10 +79,10 @@ fun PosterCard(
             modifier.shadow(
                 color = cardShadowColor,
                 borderRadius = 23.dp,
-                blurRadius = 14.dp,
-                offsetY = 8.dp,
-                offsetX = 8.dp,
-                spread = 3.dp,
+                blurRadius = 8.dp,
+                offsetY = 0.dp,
+                offsetX = 0.dp,
+                spread = 5.dp,
                 scale = scale
             )
         } else {
