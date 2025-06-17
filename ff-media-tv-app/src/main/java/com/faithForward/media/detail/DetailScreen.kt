@@ -176,7 +176,7 @@ fun DetailScreen(
 
                     is RelatedContentData.SeriesSeasons -> {
                         RelatedContent(relatedContentRowDto = RelatedContentRowDto(
-                            heading = "Seasons:",
+                            heading = "Season:",
                             relatedContentDto = contentData.selectedSeasonEpisodes
                         ),
                             modifier = Modifier

@@ -1,13 +1,16 @@
 package com.faithForward.media.player
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,12 +33,12 @@ fun PlayerScreen(
     val state by playerViewModel.state.collectAsState()
 
     val context = LocalContext.current
-//    LaunchedEffect(Unit) {
-//        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//        (context as? Activity)?.window?.decorView?.let { view ->
-//            imm.hideSoftInputFromWindow(view.windowToken, 0)
-//        }
-//    }
+    LaunchedEffect(Unit) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        (context as? Activity)?.window?.decorView?.let { view ->
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
 
     DisposableEffect(Unit) {
         Log.d("FOCUS", "Current Focus: ${(context as? Activity)?.currentFocus}")
