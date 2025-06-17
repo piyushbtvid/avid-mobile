@@ -22,6 +22,7 @@ fun DetailGradient(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
                         detailGradientStartColor,
+                        detailGradientStartColor.copy(alpha = 0.5f),
                         detailGradientEndColor
                     )
                 )
