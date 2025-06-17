@@ -46,11 +46,11 @@ fun MainScreen(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(R.drawable.background_blur__1_),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize()
-        )
+//        Image(
+//            painter = painterResource(R.drawable.background_blur__1_),
+//            contentDescription = null,
+//            modifier = Modifier.fillMaxSize()
+//        )
         MainAppNavHost(
             navController = navController,
             onDataLoadedSuccess = {
