@@ -74,22 +74,22 @@ fun CreatorDetailPage(
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                RoundedIconButton(
-                    modifier = buttonModifier
-                        .onFocusChanged { focusState ->
-                            isButtonFocused = focusState.isFocused
-                        }
-                        .focusable(enabled = false)
-                        .focusProperties {
-                            canFocus = false
-                        }
-                    ,
-                    imageId = R.drawable.fi_rr_arrow_left,
-                    iconHeight = 25,
-                    boxSize = 42,
-                    iconWidth = 25,
-                    backgroundColor = textFocusedMainColor.copy(alpha = 4.5f),
-                )
+//                RoundedIconButton(
+//                    modifier = buttonModifier
+//                        .onFocusChanged { focusState ->
+//                            isButtonFocused = focusState.isFocused
+//                        }
+//                        .focusable(enabled = false)
+//                        .focusProperties {
+//                            canFocus = false
+//                        }
+//                    ,
+//                    imageId = R.drawable.fi_rr_arrow_left,
+//                    iconHeight = 25,
+//                    boxSize = 42,
+//                    iconWidth = 25,
+//                    backgroundColor = textFocusedMainColor.copy(alpha = 4.5f),
+//                )
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier

@@ -1,5 +1,6 @@
 package com.faithForward.media.home.creator.detail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.uiModels.CreatorDetailItem
 import com.faithForward.util.Resource
@@ -35,7 +37,9 @@ fun CreatorDetailScreen(
         is Resource.Success -> {
             val detailData = creatorDetail.data as? CreatorDetailItem.CreatorDetail
 
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(pageBlackBackgroundColor)) {
                 detailData?.let {
                     CreatorDetailPage(
                         modifier = Modifier.padding(start = 31.dp, top = 20.dp),

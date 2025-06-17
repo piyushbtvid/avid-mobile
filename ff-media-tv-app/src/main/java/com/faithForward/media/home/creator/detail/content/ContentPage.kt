@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.home.creator.detail.ContentCard
 import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.whiteMain
 
 data class ContentDto(
     val slug: String?,
@@ -63,7 +64,7 @@ fun ContentPage(
         item {
             TitleText(
                 text = "Content",
-                color = Color.Black,
+                color = whiteMain,
                 textSize = 20
             )
         }

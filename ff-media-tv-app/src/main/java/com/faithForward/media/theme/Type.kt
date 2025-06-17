@@ -44,13 +44,13 @@ val baseTextStyle = TextStyle(
 val creatorTitleStyle = baseTextStyle.copy(
     fontWeight = FontWeight.SemiBold,
     fontSize = 30.sp,
-    color = cardShadowColor
+    color = whiteMain
 )
 
 val tv_02 = baseTextStyle.copy(
     fontWeight = FontWeight.SemiBold,
     fontSize = 10.sp,
-    color = cardShadowColor
+    color = whiteMain
 )
 
 val SearchBasicTextFieldFocusedTextStyle = TextStyle(
