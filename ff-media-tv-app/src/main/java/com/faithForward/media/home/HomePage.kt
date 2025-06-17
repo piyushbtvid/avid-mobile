@@ -11,14 +11,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.theme.cardShadowColor
+import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
@@ -30,6 +35,7 @@ fun HomePage(
     changeSideBarSelectedPosition: (Int) -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
+    sideBarViewModel: SideBarViewModel,
     onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
     onDataLoadedSuccess: () -> Unit,
 ) {
@@ -38,7 +44,7 @@ fun HomePage(
     val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
     val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
-
+    val sideBarState by sideBarViewModel.sideBarState
 
 
     DisposableEffect(lifecycleOwner) {
@@ -95,7 +101,7 @@ fun HomePage(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(unFocusMainColor)
+            .background(pageBlackBackgroundColor)
     ) {
         HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
@@ -166,6 +172,23 @@ fun HomePage(
             onCreatorItemClick = {
 
             })
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                cardShadowColor.copy(alpha = 0.9f),
+                                cardShadowColor.copy(alpha = 0.6f),
+                                cardShadowColor.copy(alpha = 0.5f),
+                                cardShadowColor.copy(alpha = 0.4f),
+                                whiteMain.copy(alpha = 0f),
+                            )
+                        )
+                    )
+            )
+        }
     }
 
 }

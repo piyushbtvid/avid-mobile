@@ -1,6 +1,5 @@
 package com.faithForward.media.commanComponents
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,7 +17,9 @@ import androidx.compose.ui.unit.sp
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.btnShadowColor
 import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.pillButtonTextColor
+import com.faithForward.media.theme.pillButtonTextUnFocusColor
+import com.faithForward.media.theme.pillButtonUnFocusColor
 import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.util.FocusState
@@ -33,10 +34,9 @@ data class CategoryComposeDto(
 fun CategoryCompose(
     modifier: Modifier = Modifier,
     backgroundFocusedColor: Color = focusedMainColor,
-    backgroundUnFocusedColor: Color = unFocusMainColor,
-    buttonShadowColor: Color = focusedMainColor,
-    textFocusedColor: Color = textFocusedMainColor,
-    textUnFocusedColor: Color = textUnFocusColor,
+    backgroundUnFocusedColor: Color = pillButtonUnFocusColor,
+    textFocusedColor: Color = pillButtonTextColor,
+    textUnFocusedColor: Color = pillButtonTextUnFocusColor,
     categoryComposeDto: CategoryComposeDto,
     onCategoryItemClick: (String) -> Unit,
     focusState: FocusState,

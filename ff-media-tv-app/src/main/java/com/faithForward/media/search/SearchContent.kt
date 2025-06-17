@@ -29,7 +29,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.search.item.SearchItemDto
-import com.faithForward.media.theme.blackBackgroundColor
+import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.util.Resource
 
 
@@ -72,7 +72,7 @@ fun SearchContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(blackBackgroundColor)
+            .background(pageBlackBackgroundColor)
             .padding(start = 63.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

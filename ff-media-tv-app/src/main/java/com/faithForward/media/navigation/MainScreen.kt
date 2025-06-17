@@ -60,6 +60,7 @@ fun MainScreen(
                 sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(value))
             },
             startRoute = startRoute,
+            sideBarViewModel = sideBarViewModel,
             playerViewModel = playerViewModel,
             loginViewModel = loginViewModel
         )

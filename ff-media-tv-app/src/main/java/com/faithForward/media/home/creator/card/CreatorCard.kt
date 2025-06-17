@@ -26,7 +26,6 @@ import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.cardShadowColor
 import com.faithForward.media.theme.creatorShadowColor
 import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.theme.text100
 import com.faithForward.media.theme.unFocusMainColor
 
 

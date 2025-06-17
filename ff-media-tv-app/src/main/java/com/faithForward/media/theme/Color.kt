@@ -3,7 +3,7 @@ package com.faithForward.media.theme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
-val text100 = Color(0xFFFFFFFF)
+val whiteMain = Color(0xFFFFFFFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
@@ -27,5 +27,11 @@ val sideBarFocusedTextColor = Color(0xFFEAE3C9)
 val sideBarShadowColor = Color(0xFFEFE7C9)
 val sideBarShadowLightColor = Color(0xFFF3EED9)
 val placeHolderTextColor = Color(0xFFDEDEDE)
-val blackBackgroundColor = Color(0xFF1B1B1B)
+val pageBlackBackgroundColor = Color(0xFF1B1B1B)
 val gray = Color(0xFF3C3C3C)
+val sideBarItemDefaultColor = Color(0xFFEAE3C9)
+val sideBarItemSelectedHighlightedColor = Color(0XFFB87333)
+val rowTitleColor = Color(0XFFEAE3C9)
+val pillButtonTextColor = Color(0XFFEAE3C9)
+val pillButtonUnFocusColor = Color(0XFFF4EFE6)
+val pillButtonTextUnFocusColor = Color(0XFF3B3B3B)

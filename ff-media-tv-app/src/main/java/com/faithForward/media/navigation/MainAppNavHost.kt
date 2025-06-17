@@ -32,6 +32,7 @@ import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SearchViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -45,6 +46,7 @@ fun MainAppNavHost(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
     playerViewModel: PlayerViewModel,
+    sideBarViewModel: SideBarViewModel,
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
@@ -64,6 +66,7 @@ fun MainAppNavHost(
             val homeViewModel: HomeViewModel = hiltViewModel(navBackStackEntry)
             HomePage(modifier = modifier,
                 homeViewModel = homeViewModel,
+                sideBarViewModel =  sideBarViewModel,
                 onDataLoadedSuccess = onDataLoadedSuccess,
                 changeSideBarSelectedPosition = { value ->
                     changeSideBarSelectedPosition.invoke(value)

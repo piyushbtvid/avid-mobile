@@ -24,8 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
-import com.faithForward.media.theme.sideBarShadowColor
-import com.faithForward.media.theme.sideBarShadowLightColor
+import com.faithForward.media.theme.cardShadowColor
 
 
 @Composable
@@ -37,7 +36,7 @@ fun SideBar(
     isSideBarFocusable: Boolean,
     onSideBarFocusedIndexChange: (Int) -> Unit,
     onSideBarSelectedPositionChange: (Int) -> Unit,
-    onSideBarItemClick: (SideBarItem) -> Unit
+    onSideBarItemClick: (SideBarItem) -> Unit,
 ) {
 
     val animatedWidth by animateDpAsState(
@@ -58,13 +57,13 @@ fun SideBar(
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        sideBarShadowColor.copy(alpha = 0.9f),
-                        sideBarShadowColor.copy(alpha = 0.6f),
-                        sideBarShadowColor.copy(alpha = 0.5f),
-                        sideBarShadowColor.copy(alpha = 0.4f),
-                        sideBarShadowColor.copy(alpha = 0.3f),
-                        sideBarShadowColor.copy(alpha = 0.3f),
-                        sideBarShadowLightColor.copy(alpha = 0.0f)
+                        cardShadowColor.copy(alpha = 0.9f),
+                        cardShadowColor.copy(alpha = 0.6f),
+                        cardShadowColor.copy(alpha = 0.5f),
+                        cardShadowColor.copy(alpha = 0.4f),
+                        cardShadowColor.copy(alpha = 0.3f),
+                        cardShadowColor.copy(alpha = 0.3f),
+                        cardShadowColor.copy(alpha = 0.0f)
                     )
                 )
             )
@@ -74,7 +73,6 @@ fun SideBar(
     }
 
     Box(
-        modifier = outerModifier
     ) {
         Box(
             modifier = modifier
