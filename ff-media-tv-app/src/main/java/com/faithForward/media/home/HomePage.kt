@@ -44,7 +44,6 @@ fun HomePage(
     val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
     val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
-    val sideBarState by sideBarViewModel.sideBarState
 
 
     DisposableEffect(lifecycleOwner) {
@@ -101,7 +100,6 @@ fun HomePage(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(pageBlackBackgroundColor)
     ) {
         HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
@@ -139,6 +137,7 @@ fun HomePage(
                     homeViewModel.toggleDislike(slug)
                 }
             },
+            sideBarViewModel = sideBarViewModel,
             onCarouselItemClick = { item ->
                 val contentType = item.contentType?.trim()
                 Log.e(
@@ -172,23 +171,6 @@ fun HomePage(
             onCreatorItemClick = {
 
             })
-        if (sideBarState.sideBarFocusedIndex != -1) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                cardShadowColor.copy(alpha = 0.9f),
-                                cardShadowColor.copy(alpha = 0.6f),
-                                cardShadowColor.copy(alpha = 0.5f),
-                                cardShadowColor.copy(alpha = 0.4f),
-                                whiteMain.copy(alpha = 0f),
-                            )
-                        )
-                    )
-            )
-        }
     }
 
 }
