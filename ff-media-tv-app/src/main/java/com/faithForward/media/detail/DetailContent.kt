@@ -37,6 +37,7 @@ import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.theme.blackColor
 import com.faithForward.media.theme.focusedTextColor
+import com.faithForward.media.theme.watchNowTextStyle
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
@@ -186,7 +187,7 @@ fun DetailContent(
                         .focusable(),
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
                     backgroundFocusedColor = blackColor,
-                    textFocusedColor = focusedTextColor,
+                    textFocusedStyle = watchNowTextStyle,
                     onCategoryItemClick = { id ->
                         onWatchNowClick.invoke(id)
                     },

@@ -24,7 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
+import com.faithForward.media.theme.descriptionTextStyle
+import com.faithForward.media.theme.metaDataTextStyle
 import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.titleTextStyle
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
@@ -80,11 +83,11 @@ fun ContentMetaBlock(
                         if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
                             ContentDescription(
-                                text = "|", color = textColor
+                                text = "|", textStyle = metaDataTextStyle
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
-                        ContentDescription(text = item, color = textColor)
+                        ContentDescription(text = item, textStyle = metaDataTextStyle)
                     }
                 }
 
@@ -96,9 +99,7 @@ fun ContentMetaBlock(
                     modifier = Modifier
                         .width(400.dp),
                     text = title,
-                    textSize = 28,
-                    lineHeight = 29,
-                    color = whiteMain,
+                    textStyle = titleTextStyle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -111,10 +112,8 @@ fun ContentMetaBlock(
                         .width(289.dp)
                         .height(60.dp),
                     text = it,
-                    lineHeight = 13,
-                    color = textColor,
+                    textStyle = descriptionTextStyle,
                     overflow = TextOverflow.Ellipsis,
-                    textSize = 12
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))

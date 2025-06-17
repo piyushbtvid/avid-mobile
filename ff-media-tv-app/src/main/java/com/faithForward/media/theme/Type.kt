@@ -53,6 +53,39 @@ val tv_02 = baseTextStyle.copy(
     color = whiteMain
 )
 
+val metaDataTextStyle = TextStyle(
+    fontSize = 10.sp,
+    lineHeight = 10.sp,
+    color = whiteMain
+)
+
+val titleTextStyle = TextStyle(
+    fontSize = 28.sp,
+    lineHeight = 29.sp,
+    color = whiteMain
+)
+
+val pillTextFocusedStyle = TextStyle(
+    fontSize = 15.sp,
+    color = pillButtonTextColor
+)
+
+val pillTextUnFocusedStyle = TextStyle(
+    fontSize = 15.sp,
+    color = pillButtonTextUnFocusColor
+)
+
+val watchNowTextStyle = TextStyle(
+    fontSize = 15.sp,
+    color = focusedTextColor
+)
+
+val descriptionTextStyle = TextStyle(
+    fontSize = 12.sp,
+    lineHeight = 13.sp,
+    color = whiteMain
+)
+
 val SearchBasicTextFieldFocusedTextStyle = TextStyle(
     fontSize = 18.sp,
     lineHeight = 16.sp,

@@ -35,6 +35,7 @@ import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.playButtonBackgroundColor
 import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.titleTextStyle
 import com.faithForward.media.util.FocusState
 
 data class CarouselItemDto(
@@ -186,8 +187,7 @@ fun CarouselItem(
                         .padding(top = 15.dp, end = if (isCreator) 80.dp else 100.dp)
                         .align(Alignment.TopEnd),
                     text = title,
-                    textSize = 28,
-                    lineHeight = 29,
+                    textStyle = titleTextStyle,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
