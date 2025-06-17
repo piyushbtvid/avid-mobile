@@ -21,7 +21,7 @@ fun SearchResultsContent(
     searchResults: Resource<SearchContentDto>,
     modifier: Modifier = Modifier,
     lastFocusedIndex: Int,
-    focusRequester: FocusRequester,
+    focusRequesterList: List<FocusRequester>,
     onSearchItemClick: (SearchItemDto) -> Unit,
     onLastFocusIndexChange: (Int) -> Unit,
 ) {
@@ -41,7 +41,7 @@ fun SearchResultsContent(
                         searchResultList = searchResults.data?.searchItemList!!,
                         modifier = Modifier.padding(top = 16.dp),
                         lastFocusedIndex = lastFocusedIndex,
-                        gridFocusRequester = focusRequester,
+                        focusRequesterList = focusRequesterList,
                         onLastFocusIndexChange = onLastFocusIndexChange,
                         onSearchItemClick = onSearchItemClick
                     )

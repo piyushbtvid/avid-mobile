@@ -50,7 +50,6 @@ fun SearchContent(
     var isSearchBoxFocused by remember { mutableStateOf(false) }
     val searchBoxFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val gridFocusRequester = remember { FocusRequester() }
     var lastFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     val isSearchBoxVisible = remember(lastFocusedIndex) {
@@ -64,9 +63,11 @@ fun SearchContent(
         animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
     )
 
-  //  val focusRequesters = remember(searchResults.data?.searchItemList) {
-//        List(searchResults.data?.searchItemList?.size) { FocusRequester() }
-//    }
+    val focusRequesters = remember(searchResults.data?.searchItemList?.size ?: 0) {
+        List(searchResults.data?.searchItemList?.size ?: 0) { FocusRequester() }
+    }
+
+
 
     Column(
         modifier = modifier
@@ -103,7 +104,9 @@ fun SearchContent(
                         if (searchResults is Resource.Success && searchResults.data?.searchItemList?.isNotEmpty() == true) {
                             try {
                                 Log.e("SEARCH", "Requesting focus on grid")
-                                gridFocusRequester.requestFocus()
+                                if (focusRequesters.isNotEmpty()) {
+                                    focusRequesters[0].requestFocus()
+                                }
                             } catch (ex: Exception) {
                                 Log.e("SEARCH", "Focus exception: ${ex.message}")
                             }
@@ -118,7 +121,7 @@ fun SearchContent(
         SearchResultsContent(
             searchResults = searchResults,
             modifier = Modifier.fillMaxSize(),
-            focusRequester = gridFocusRequester,
+            focusRequesterList = focusRequesters,
             lastFocusedIndex = lastFocusedIndex,
             onLastFocusIndexChange = { index ->
                 lastFocusedIndex = index
@@ -135,6 +138,24 @@ fun SearchContent(
             }
         } catch (ex: Exception) {
             Log.e("SEARCH", "Search bar focus exception: ${ex.message}")
+        }
+    }
+
+
+    // Restore focus to the last focused item when returning to the screen of search grid
+    LaunchedEffect(Unit) {
+        try {
+            if (lastFocusedIndex >= 0 && lastFocusedIndex < focusRequesters.size) {
+                Log.e(
+                    "SEARCH_LAST",
+                    "last focused index request focus called with last index is $lastFocusedIndex"
+                )
+                focusRequesters[lastFocusedIndex].requestFocus()
+            } else if (focusRequesters.isNotEmpty()) {
+                //  focusRequesterList[0].requestFocus() // Fallback to first item if no last focused
+            }
+        } catch (ex: Exception) {
+            Log.e("GenreCardGrid", "Error requesting focus: ${ex.message}")
         }
     }
 }

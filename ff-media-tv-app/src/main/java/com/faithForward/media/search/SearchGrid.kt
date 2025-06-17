@@ -25,7 +25,7 @@ import com.faithForward.media.util.FocusState
 @Composable
 fun SearchGrid(
     modifier: Modifier = Modifier,
-    gridFocusRequester: FocusRequester,
+    focusRequesterList: List<FocusRequester>,
     searchResultList: List<SearchItemDto>,
     lastFocusedIndex: Int,
     onSearchItemClick: (SearchItemDto) -> Unit,
@@ -55,7 +55,7 @@ fun SearchGrid(
             }
             SearchItem(
                 modifier = Modifier
-                    .focusRequester(if (index == 0) gridFocusRequester else FocusRequester())
+                    .focusRequester(focusRequesterList[index])
                     .onFocusChanged {
                         if (it.isFocused) {
                             Log.e("SEARCH_GRID", "Item $index gained focus")
@@ -76,5 +76,7 @@ fun SearchGrid(
             )
         }
     }
+
+
 
 }
