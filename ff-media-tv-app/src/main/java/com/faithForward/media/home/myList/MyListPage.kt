@@ -1,6 +1,8 @@
 package com.faithForward.media.home.myList
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
+import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.theme.cardShadowColor
 import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.theme.whiteMain
@@ -28,13 +31,14 @@ fun MyListPage(
     contentViewModel: MyListViewModel,
     onCarouselItemClick: (PosterCardDto) -> Unit,
     sideBarViewModel: SideBarViewModel,
+    onBackClick: () -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
     val uiEvent by contentViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
     val carouselClickUiState by contentViewModel.carouselClickUiState.collectAsState(null)
-
+    val sideBarState by sideBarViewModel.sideBarState
 
     val homePageItemsResource by contentViewModel.homePageData.collectAsStateWithLifecycle()
 
@@ -44,6 +48,19 @@ fun MyListPage(
     ) return
 
     val homePageItems = homePageItemsResource.data ?: return
+
+    BackHandler {
+        Log.e("ON_BACK", "on back in myList called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
+            onBackClick.invoke()
+        } else {
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(2))
+        }
+    }
 
     when (val state = carouselClickUiState) {
         is CarouselClickUiState.NavigateToPlayer -> {

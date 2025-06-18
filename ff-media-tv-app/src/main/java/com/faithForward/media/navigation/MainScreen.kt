@@ -104,7 +104,7 @@ fun MainScreen(
                     when (item.tag) {
                         Routes.Creator.route -> {
                             navController.navigate(Routes.Creator.route) {
-                                popUpTo(Routes.Home.route) { inclusive = false }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
@@ -118,28 +118,28 @@ fun MainScreen(
 
                         Routes.Movies.route -> {
                             navController.navigate(Routes.Movies.createRoute("movies")) {
-                                popUpTo(Routes.Home.route) { inclusive = false }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
 
                         Routes.MyList.route -> {
                             navController.navigate(Routes.MyList.route) {
-                                popUpTo(Routes.Home.route) { inclusive = false }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
 
                         Routes.Series.route -> {
                             navController.navigate(Routes.Series.createRoute("series")) {
-                                popUpTo(Routes.Home.route) { inclusive = false }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
 
                         Routes.Search.route -> {
                             navController.navigate(Routes.Search.route) {
-                                popUpTo(Routes.Home.route) { inclusive = false }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }

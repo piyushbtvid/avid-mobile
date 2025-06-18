@@ -2,6 +2,7 @@ package com.faithForward.media.navigation
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,6 +53,8 @@ fun MainAppNavHost(
     onDataLoadedSuccess: () -> Unit,
 ) {
 
+    val activity = (LocalActivity.current)
+
     NavHost(
         navController = navController, startDestination = startRoute
     ) {
@@ -71,14 +74,16 @@ fun MainAppNavHost(
                 changeSideBarSelectedPosition = { value ->
                     changeSideBarSelectedPosition.invoke(value)
                 },
+                onBackClick = {
+                    Log.e("ON_BACK", "on back in home compose caled")
+                    activity?.finish()
+                },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
                         Log.e(
-                            "CARSOUEL_SLUG",
-                            "onItem with ${item.slug}"
+                            "CARSOUEL_SLUG", "onItem with ${item.slug}"
                         )
-                        val filteredList =
-                            list.filterNot { it.id == item.id }
+                        val filteredList = list.filterNot { it.id == item.id }
 
                         val json = Json.encodeToString(filteredList)
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
@@ -87,8 +92,7 @@ fun MainAppNavHost(
                 },
                 onCarouselItemClick = { carouselItem, isFromContinueWatching ->
                     val route = Routes.PlayerScreen.createRoute(
-                        listOf(carouselItem),
-                        isContinueWatching = isFromContinueWatching
+                        listOf(carouselItem), isContinueWatching = isFromContinueWatching
                     )
                     navController.navigate(route)
                 },
@@ -106,6 +110,9 @@ fun MainAppNavHost(
             val creatorViewModel: CreatorViewModel = hiltViewModel()
             CreatorScreen(creatorViewModel = creatorViewModel,
                 sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    activity?.finish()
+                },
                 onCreatorItemClick = { item ->
                     navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
                 })
@@ -125,7 +132,11 @@ fun MainAppNavHost(
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
-                }, onCarouselItemClick = { carouselItem ->
+                },
+                onBackClick = {
+                    activity?.finish()
+                },
+                onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
                 })
@@ -138,6 +149,9 @@ fun MainAppNavHost(
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
             SeriesPage(contentViewModel = contentViewModel,
                 sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    activity?.finish()
+                },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
@@ -145,16 +159,19 @@ fun MainAppNavHost(
                         val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
-                }, onCarouselItemClick = { carouselItem ->
+                },
+                onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
                 })
         }
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
-            MyListPage(
-                contentViewModel = myListViewModel,
+            MyListPage(contentViewModel = myListViewModel,
                 sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    activity?.finish()
+                },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
@@ -178,16 +195,14 @@ fun MainAppNavHost(
 
             val genreViewModel: GenreViewModel = hiltViewModel()
 
-            GenreDataScreen(
-                viewModel = genreViewModel,
-                onItemClick = { item, list ->
-                    if (!item.slug.isNullOrEmpty()) {
-                        val filteredList = list.filterNot { it.slug == item.slug }
-                        val json = Json.encodeToString(filteredList)
-                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail.createRoute(item.slug))
-                    }
-                })
+            GenreDataScreen(viewModel = genreViewModel, onItemClick = { item, list ->
+                if (!item.slug.isNullOrEmpty()) {
+                    val filteredList = list.filterNot { it.slug == item.slug }
+                    val json = Json.encodeToString(filteredList)
+                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    navController.navigate(Routes.Detail.createRoute(item.slug))
+                }
+            })
         }
 
         composable(
@@ -221,13 +236,11 @@ fun MainAppNavHost(
 
         composable(
             route = Routes.PlayerScreen.route,
-            arguments = listOf(
-                navArgument("playerDtoList") { type = NavType.StringType },
+            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
                     defaultValue = false
-                }
-            )
+                })
         ) { backStackEntry ->
             val json = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
@@ -243,8 +256,7 @@ fun MainAppNavHost(
                 )
             }
 
-            PlayerScreen(
-                playerViewModel = playerViewModel,
+            PlayerScreen(playerViewModel = playerViewModel,
                 isFromContinueWatching = isContinueWatching,
                 onPlayerBackClick = {
                     if (isContinueWatching) {
@@ -271,8 +283,7 @@ fun MainAppNavHost(
                         // Default back navigation (to Detail or Home)
                         navController.popBackStack()
                     }
-                }
-            )
+                })
         }
 
 
@@ -283,14 +294,12 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
-                }
-            )
+                })
 
         }
 
@@ -299,15 +308,16 @@ fun MainAppNavHost(
         ) { backStackEntry ->
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
 
-            SearchScreen(
-                viewModel = searchViewModel,
+            SearchScreen(viewModel = searchViewModel,
                 sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    activity?.finish()
+                },
                 onSearchItemClick = { item ->
                     if (item.contentSlug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
-                }
-            )
+                })
         }
 
     }

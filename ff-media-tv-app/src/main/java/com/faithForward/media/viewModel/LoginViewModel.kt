@@ -46,7 +46,7 @@ class LoginViewModel @Inject constructor(
                     "IS_LOGIN",
                     "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
                 )
-                delay(300)
+                delay(200)
                 _loginState.update { it.copy(isCheckingLoginStatus = false) } // Mark check as complete
             }
         }

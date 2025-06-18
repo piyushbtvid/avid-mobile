@@ -1,6 +1,8 @@
 package com.faithForward.media.sidebar
 
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
@@ -33,7 +35,6 @@ fun SideBarUiItem(
     focusedSideBarItem: Int,
     img: Int,
 ) {
-
 
     ConstraintLayout(
         modifier = Modifier
