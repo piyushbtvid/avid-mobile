@@ -2,7 +2,7 @@ package com.faithForward.media.home
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,17 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.theme.cardShadowColor
-import com.faithForward.media.theme.pageBlackBackgroundColor
-import com.faithForward.media.theme.unFocusMainColor
-import com.faithForward.media.theme.whiteMain
+import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
@@ -38,12 +34,14 @@ fun HomePage(
     sideBarViewModel: SideBarViewModel,
     onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
     onDataLoadedSuccess: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
     val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
+    val sideBarState by sideBarViewModel.sideBarState
 
 
     DisposableEffect(lifecycleOwner) {
@@ -84,6 +82,17 @@ fun HomePage(
         is CarouselClickUiState.Idle -> {}
         null -> {
 
+        }
+    }
+
+    BackHandler {
+        Log.e("ON_BACK", "on back in home called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e("ON_BACK", "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}")
+            onBackClick.invoke()
+        } else {
+            Log.e("ON_BACK", "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}")
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(1))
         }
     }
 

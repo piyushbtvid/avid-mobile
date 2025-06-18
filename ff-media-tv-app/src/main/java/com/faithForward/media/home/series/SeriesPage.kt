@@ -1,6 +1,8 @@
 package com.faithForward.media.home.series
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
+import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
@@ -24,13 +27,14 @@ fun SeriesPage(
     contentViewModel: ContentViewModel,
     onCarouselItemClick: (PosterCardDto) -> Unit,
     sideBarViewModel: SideBarViewModel,
+    onBackClick: () -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
     val uiEvent by contentViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
     val carouselClickUiState by contentViewModel.carouselClickUiState.collectAsState(null)
-
+    val sideBarState by sideBarViewModel.sideBarState
 
     val homePageItemsResource by contentViewModel.homePageData.collectAsState()
 
@@ -40,6 +44,19 @@ fun SeriesPage(
     ) return
 
     val homePageItems = homePageItemsResource.data ?: return
+
+    BackHandler {
+        Log.e("ON_BACK", "on back in series called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
+            onBackClick.invoke()
+        } else {
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(4))
+        }
+    }
 
     when (val state = carouselClickUiState) {
         is CarouselClickUiState.NavigateToPlayer -> {

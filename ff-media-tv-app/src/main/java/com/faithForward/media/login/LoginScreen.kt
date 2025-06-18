@@ -72,10 +72,12 @@ fun LoginScreen(
     var isPasswordFocused by rememberSaveable { mutableStateOf(false) }
     var isButtonFocused by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
+    LaunchedEffect(loginState) {
+        Log.e("LOGIN_STATE", "login state effect called with ${loginState.isLoggedIn}")
+        if (loginState.isLoggedIn) {
+            Log.e("LOGIN_STATE", "Is Loged in  ${loginState.isLoggedIn}")
             navController.navigate(Routes.Home.route) {
-                popUpTo(Routes.Login.route) { inclusive = false }
+                popUpTo(Routes.Login.route) { inclusive = true }
             }
         }
     }

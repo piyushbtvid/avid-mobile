@@ -1,5 +1,7 @@
 package com.faithForward.media.search
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import com.faithForward.media.search.item.SearchItemDto
+import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.theme.cardShadowColor
 import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.theme.whiteMain
@@ -24,11 +27,22 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     onSearchItemClick: (SearchItemDto) -> Unit,
     sideBarViewModel: SideBarViewModel,
+    onBackClick: () -> Unit,
     viewModel: SearchViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var searchQuery by remember { mutableStateOf(uiState.query) }
     val sideBarState by sideBarViewModel.sideBarState
+
+    BackHandler {
+        Log.e("ON_BACK", "on back in search called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e("ON_BACK", "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}")
+            onBackClick.invoke()
+        } else {
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(0))
+        }
+    }
 
     Box(
         modifier = Modifier

@@ -1,6 +1,7 @@
 package com.faithForward.media.sidebar
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,7 +36,7 @@ fun SideBarColumn(
     selectedPosition: Int,
     isSideBarFocusable: Boolean,
     onSelectedPositionChange: (Int) -> Unit,
-    onFocusChange: (index: Int) -> Unit
+    onFocusChange: (index: Int) -> Unit,
 ) {
     val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
 
@@ -44,6 +46,18 @@ fun SideBarColumn(
         animationSpec = tween(300),
         label = ""
     )
+
+
+    LaunchedEffect(focusedIndex) {
+        Log.e("FOCUSED_INDEX", "focused index changed with $focusedIndex")
+        if (focusedIndex != -1 && isSideBarFocusable) {
+            try {
+                itemFocusRequesters[focusedIndex].requestFocus()
+            } catch (ex: Exception) {
+                Log.e("SideBarColumn", "Error requesting focus: ${ex.message}")
+            }
+        }
+    }
 
     LazyColumn(
         modifier = modifier
