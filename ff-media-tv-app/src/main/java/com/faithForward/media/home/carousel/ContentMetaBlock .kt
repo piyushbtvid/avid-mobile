@@ -26,9 +26,9 @@ import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.theme.descriptionTextStyle
 import com.faithForward.media.theme.metaDataTextStyle
+import com.faithForward.media.theme.selectedMainColor
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.theme.titleTextStyle
-import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 @Composable
@@ -141,7 +141,7 @@ fun ContentMetaBlock(
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
                             when {
-                                isLiked -> textFocusedMainColor
+                                isLiked -> selectedMainColor
                                 likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED -> textFocusedMainColor
                                 else -> contentRowTint
                             }
@@ -153,7 +153,7 @@ fun ContentMetaBlock(
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
                             when {
-                                isUnLiked -> textFocusedMainColor
+                                isUnLiked -> selectedMainColor
                                 dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED -> textFocusedMainColor
                                 else -> contentRowTint
                             }
