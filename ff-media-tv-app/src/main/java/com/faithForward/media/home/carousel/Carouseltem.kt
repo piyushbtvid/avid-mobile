@@ -185,7 +185,7 @@ fun CarouselItem(
                 ContentDescription(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
-                        .padding(top = 15.dp, end = if (isCreator) 80.dp else 100.dp)
+                        .padding(top = 15.dp, end = if (isCreator) 80.dp else 50.dp)
                         .align(Alignment.TopEnd),
                     text = title,
                     textStyle = titleTextStyle,
