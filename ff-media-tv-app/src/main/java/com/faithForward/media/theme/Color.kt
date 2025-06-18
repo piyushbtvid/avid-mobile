@@ -41,3 +41,4 @@ val detailGradientStartColor = Color(0XFF3B3B3B)
 val detailGradientEndColor = Color(0x00EAE3C9)
 val focusedTextColor = Color(0xFFEAE3C9)
 
+
