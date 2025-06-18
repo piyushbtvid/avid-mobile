@@ -34,6 +34,7 @@ import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.playButtonBackgroundColor
+import com.faithForward.media.theme.selectedMainColor
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.theme.titleTextStyle
 import com.faithForward.media.util.FocusState
@@ -90,14 +91,12 @@ fun CarouselItem(
             Modifier
                 .padding(start = 20.dp, bottom = 20.dp)
                 .shadow(
-                    color = Color.White.copy(alpha = .46f),
+                    color = selectedMainColor.copy(alpha = .66f),
                     borderRadius = 40.dp,
                     blurRadius = 7.dp,
-                    spread = 5.dp,
+                    spread = 6.dp,
                 )
-                .border(
-                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
-                )
+
         } else {
             Modifier.padding(start = 20.dp, bottom = 20.dp)
         }
@@ -106,13 +105,15 @@ fun CarouselItem(
         if (micUiState == FocusState.FOCUSED || micUiState == FocusState.SELECTED) {
             micModifier
                 .shadow(
-                    color = Color.White.copy(alpha = .11f),
+                    color = selectedMainColor,
                     borderRadius = 40.dp,
                     blurRadius = 7.dp,
                     spread = 5.dp,
                 )
                 .border(
-                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
+                    width = 1.dp,
+                    color = textFocusedMainColor,
+                    shape = RoundedCornerShape(40.dp)
                 )
         } else {
             micModifier
@@ -122,7 +123,7 @@ fun CarouselItem(
         if (searchUiSate == FocusState.FOCUSED || searchUiSate == FocusState.SELECTED) {
             searchIcModifier
                 .shadow(
-                    color = Color.White.copy(alpha = .11f),
+                    color = selectedMainColor,
                     borderRadius = 40.dp,
                     blurRadius = 7.dp,
                     spread = 5.dp,
@@ -200,7 +201,7 @@ fun CarouselItem(
                 iconHeight = 30,
                 boxSize = 62,
                 iconWidth = 21,
-                backgroundColor = playButtonBackgroundColor,
+                backgroundColor = playButtonBackgroundColor.copy(alpha = 0.45f),
             )
 
             if (!isCreator) {
