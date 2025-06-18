@@ -6,6 +6,8 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,11 +43,11 @@ import com.faithForward.media.navigation.Routes
 import com.faithForward.media.sidebar.SideBar
 import com.faithForward.media.sidebar.SideBarItem
 import com.faithForward.media.theme.FfmediaTheme
+import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
-import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
-import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,15 +71,41 @@ class MainActivity : ComponentActivity() {
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
                         playerViewModel.state.collectAsState().value.isControlsVisible
+                    val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
-                    MainScreen(
+
+                    LaunchedEffect(loginState.isCheckingLoginStatus, isLoggedIn) {
+                        Log.e("IS_LOGIN", "is login status in mainActivity is $isLoggedIn")
+                    }
+
+                    // Use Crossfade to animate between loading and MainScreen
+                    Crossfade(
+                        targetState = loginState.isCheckingLoginStatus,
                         modifier = Modifier.padding(innerPadding),
-                        sideBarViewModel = sideBarViewModel,
-                        loginViewModel = loginViewModel,
-                        playerViewModel = playerViewModel,
-                        navController = navController,
-                        startRoute = if (isLoggedIn) Routes.Home.route else Routes.Login.route
-                    )
+                        animationSpec = tween(durationMillis = 100) // Adjust duration as needed
+                    ) { isChecking ->
+                        if (isChecking) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(pageBlackBackgroundColor),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = focusedMainColor
+                                )
+                            }
+                        } else {
+                            MainScreen(
+                                modifier = Modifier.fillMaxSize(),
+                                sideBarViewModel = sideBarViewModel,
+                                loginViewModel = loginViewModel,
+                                playerViewModel = playerViewModel,
+                                navController = navController,
+                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.Login.route
+                            )
+                        }
+                    }
                 }
             }
         }

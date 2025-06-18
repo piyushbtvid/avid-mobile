@@ -10,6 +10,7 @@ import com.faithForward.repository.NetworkRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,15 +38,16 @@ class LoginViewModel @Inject constructor(
     private fun checkLoginStatus() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("USER_PREF", "check login status  in  viewModel  called")
+                Log.e("USER_PREF", "check login status in viewModel called")
                 val session = networkRepository.getCurrentSession()
                 Log.e("USER_PREF", "Initial session check in checkLoginStatus is called: $session")
-                //checking login based on token is null or not
                 _isLoggedIn.value = session?.token != null
                 Log.e(
-                    "USER_PREF",
+                    "IS_LOGIN",
                     "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
                 )
+                delay(300)
+                _loginState.update { it.copy(isCheckingLoginStatus = false) } // Mark check as complete
             }
         }
     }
@@ -86,14 +88,14 @@ class LoginViewModel @Inject constructor(
                     val body = response.body()
                     Log.d("Login", "Success: ${body?.message}")
 
-                    _loginState.update {
-                        it.copy(isLoading = false, isLoggedIn = true)
-                    }
                     if (body != null) {
                         withContext(Dispatchers.IO) {
                             networkRepository.saveUserSession(body.data)
                         }
-                        _isLoggedIn.value = true
+                        _loginState.update {
+                            it.copy(isLoading = false, isLoggedIn = true)
+                        }
+                       // _isLoggedIn.value = true
                     }
                 } else {
                     val errorBody = response.errorBody()

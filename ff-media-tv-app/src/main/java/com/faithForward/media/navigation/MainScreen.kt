@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,18 @@ fun MainScreen(
     val showSidebar = currentRoute in sidebarVisibleRoutes
 
 
+    LaunchedEffect(startRoute) {
+        Log.e("IS_LOGIN", "start route in mainScreen is $startRoute")
+    }
+
+    LaunchedEffect(currentRoute) {
+        Log.e("CURRENT_ROUTE", "CURRENT ROUTE in mainScreen is $currentRoute")
+    }
+
+    LaunchedEffect(showSidebar) {
+        Log.e("CURRENT_ROUTE", "Show Side Bar  in mainScreen is $showSidebar")
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -67,7 +80,7 @@ fun MainScreen(
         )
 
         AnimatedVisibility(
-            visible = startRoute == Routes.Home.route && showSidebar, enter = slideInHorizontally(
+            visible = showSidebar, enter = slideInHorizontally(
                 initialOffsetX = { -it }, animationSpec = tween(
                     durationMillis = 1500, easing = FastOutSlowInEasing
                 )
