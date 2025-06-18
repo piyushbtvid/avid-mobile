@@ -46,6 +46,7 @@ import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 
@@ -163,7 +164,7 @@ fun GenreCardGrid(
                     Spacer(modifier = Modifier.width(5.dp))
                     TitleText(
                         text = genreGridDto.title,
-                        color = Color.Black,
+                        color = whiteMain,
                         fontWeight = FontWeight.W600,
                         textSize = 30
                     )

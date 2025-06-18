@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 data class GenreCardDto(
@@ -63,7 +64,7 @@ fun GenreCard(
             genreCardDto.description?.let {
                 TitleText(
                     text = it,
-                    color = Color.Black,
+                    color = whiteMain,
                     fontWeight = FontWeight.W600,
                     textSize = 10
                 )
@@ -79,7 +80,7 @@ fun GenreCard(
                     genreCardDto.name?.let {
                         TitleText(
                             text = it,
-                            color = Color.Black,
+                            color = whiteMain,
                             fontWeight = FontWeight.W400,
                             textSize = 7
                         )
@@ -87,7 +88,7 @@ fun GenreCard(
                     genreCardDto.views?.let {
                         TitleText(
                             text = it,
-                            color = Color.Black,
+                            color = whiteMain,
                             fontWeight = FontWeight.W400,
                             textSize = 7
                         )
@@ -97,7 +98,6 @@ fun GenreCard(
         }
     }
 }
-
 
 
 @Preview(showBackground = true, showSystemUi = true)

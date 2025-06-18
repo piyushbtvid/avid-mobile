@@ -24,7 +24,7 @@ class SideBarViewModel : ViewModel() {
     init {
         sideBarItems.addAll(
             listOf(
-                SideBarItem("Search", R.drawable.search_ic, "search"),
+                SideBarItem("Search", R.drawable.search_ic, Routes.Search.route),
                 SideBarItem("Home", R.drawable.home_ic, Routes.Home.route),
                 SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route),
                 SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),

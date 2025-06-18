@@ -20,4 +20,5 @@ object Constants {
     const val LIKED_LIST_END_POINT = "client/v1/liked"
     const val DIS_lIKED_LIST_END_POINT = "client/v1/disliked"
     const val SAVE_CONTINUE_WATCHING_END_POINT = "client/v1/continue-watching"
+    const val SEARCH_END_POINT = "client/v1/search"
 }

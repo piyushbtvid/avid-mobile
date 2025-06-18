@@ -1,6 +1,7 @@
 package com.faithForward.media.home.creator
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -9,13 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.CreatorViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.util.Resource
 
 @Composable
 fun CreatorScreen(
     modifier: Modifier = Modifier,
     creatorViewModel: CreatorViewModel,
+    sideBarViewModel: SideBarViewModel,
     onCreatorItemClick: (CreatorCardDto) -> Unit,
 ) {
 
@@ -36,9 +40,11 @@ fun CreatorScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(pageBlackBackgroundColor)
     ) {
         HomeContentSections(
             modifier = Modifier,
+            sideBarViewModel = sideBarViewModel,
             homePageItems = creatorPageItems,
             onChangeContentRowFocusedIndex = { index ->
                 creatorViewModel.onContentRowFocusedIndexChange(index)

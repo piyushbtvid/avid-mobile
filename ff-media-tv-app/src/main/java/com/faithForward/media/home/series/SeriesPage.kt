@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.viewModel.ContentViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.util.Resource
@@ -22,6 +23,7 @@ fun SeriesPage(
     modifier: Modifier = Modifier,
     contentViewModel: ContentViewModel,
     onCarouselItemClick: (PosterCardDto) -> Unit,
+    sideBarViewModel: SideBarViewModel,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
@@ -89,6 +91,7 @@ fun SeriesPage(
                     contentViewModel.toggleLike(slug)
                 }
             },
+            sideBarViewModel = sideBarViewModel,
             onToggleDisLike = { slug ->
                 if (slug != null) {
                     contentViewModel.toggleDislike(slug)

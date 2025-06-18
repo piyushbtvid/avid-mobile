@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.theme.cardShadowColor
 import com.faithForward.media.theme.tv_02
+import com.faithForward.media.theme.whiteMain
 
 
 data class CreatorContentDto(
@@ -53,7 +54,7 @@ fun CreatorDetail(
                         .padding(start = 7.5.dp)
                         .clip(shape = RoundedCornerShape(2.5.dp))
                         .size(5.dp)
-                        .background(color = cardShadowColor)
+                        .background(color = whiteMain)
                 )
                 if (genre != null) {
                     Text(

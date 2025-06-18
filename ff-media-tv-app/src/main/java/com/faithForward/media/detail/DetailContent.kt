@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,21 +25,20 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import coil3.request.error
-import com.faithForward.media.R
 import com.faithForward.media.commanComponents.CategoryCompose
 import com.faithForward.media.commanComponents.CategoryComposeDto
-import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.home.carousel.ContentMetaBlock
+import com.faithForward.media.theme.blackColor
+import com.faithForward.media.theme.focusedTextColor
+import com.faithForward.media.theme.watchNowTextStyle
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 data class DetailDto(
@@ -135,7 +133,6 @@ fun DetailContent(
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imgSrc)
-                    .error(R.drawable.banner_test_img)
                     .crossfade(true)
                     .build(),
                 contentDescription = "detail Image",
@@ -153,7 +150,7 @@ fun DetailContent(
                     .alpha(targetAlpha)
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 100.dp),
-                verticalArrangement = Arrangement.spacedBy(34.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ContentMetaBlock(
                     modifier = Modifier
@@ -167,7 +164,7 @@ fun DetailContent(
                     subscribers = subscribers,
                     imdbRating = imdbRating,
                     title = title,
-                    textColor = Color.Black,
+                    textColor = whiteMain,
                     buttonModifier = Modifier,
                     isFavourite = isFavourite ?: false,
                     isLiked = isLiked ?: false,
@@ -189,29 +186,15 @@ fun DetailContent(
                         }
                         .focusable(),
                     categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
+                    backgroundFocusedColor = blackColor,
+                    textFocusedStyle = watchNowTextStyle,
                     onCategoryItemClick = { id ->
                         onWatchNowClick.invoke(id)
                     },
                     focusState = if (isFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
 
-                Spacer(modifier = Modifier.height(40.dp))
-            }
 
-            title?.let {
-                ContentDescription(
-                    modifier = Modifier
-                        .widthIn(max = 400.dp)
-                        .alpha(targetAlpha)
-                        .padding(top = 15.dp, end = 100.dp)
-                        .align(Alignment.TopEnd),
-                    text = title,
-                    textSize = 28,
-                    lineHeight = 29,
-                    color = Color.Black,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
         }
     }

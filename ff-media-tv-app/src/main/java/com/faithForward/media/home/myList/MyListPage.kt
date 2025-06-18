@@ -1,6 +1,7 @@
 package com.faithForward.media.home.myList
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -8,11 +9,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
+import com.faithForward.media.theme.cardShadowColor
+import com.faithForward.media.theme.pageBlackBackgroundColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.viewModel.MyListViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.util.Resource
 
@@ -21,6 +27,7 @@ fun MyListPage(
     modifier: Modifier = Modifier,
     contentViewModel: MyListViewModel,
     onCarouselItemClick: (PosterCardDto) -> Unit,
+    sideBarViewModel: SideBarViewModel,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
@@ -70,13 +77,14 @@ fun MyListPage(
         HomeContentSections(
             modifier = Modifier,
             homePageItems = homePageItems,
+            sideBarViewModel = sideBarViewModel,
             onChangeContentRowFocusedIndex = { index ->
                 contentViewModel.onContentRowFocusedIndexChange(index)
             },
             onCategoryItemClick = {
 
             },
-            onItemClick = { item, list , id->
+            onItemClick = { item, list, id ->
                 onItemClick.invoke(item, list)
             },
             onToggleFavorite = { slug ->

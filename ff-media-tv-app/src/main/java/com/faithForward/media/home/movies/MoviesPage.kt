@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.HomeContentSections
 import com.faithForward.media.viewModel.ContentViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.util.Resource
 
@@ -21,6 +22,7 @@ fun MoviesPage(
     modifier: Modifier = Modifier,
     contentViewModel: ContentViewModel,
     onCarouselItemClick: (PosterCardDto) -> Unit,
+    sideBarViewModel: SideBarViewModel,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
@@ -61,7 +63,8 @@ fun MoviesPage(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
     ) {
         HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
@@ -71,7 +74,7 @@ fun MoviesPage(
             onCategoryItemClick = {
 
             },
-            onItemClick = { item, list , id ->
+            onItemClick = { item, list, id ->
                 onItemClick.invoke(item, list)
             },
             onToggleFavorite = { slug ->
@@ -89,6 +92,7 @@ fun MoviesPage(
                     contentViewModel.toggleDislike(slug)
                 }
             },
+            sideBarViewModel = sideBarViewModel,
             onCarouselItemClick = { item ->
                 if (item.slug != null) {
                     contentViewModel.loadBannerDetail(item.slug)

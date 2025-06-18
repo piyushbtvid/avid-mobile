@@ -49,7 +49,7 @@ fun GenreImageCard(
     focusState: FocusState,
     onItemClick: () -> Unit,
     cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
-    @DrawableRes placeholderRes: Int = R.drawable.test_poster // Your drawable
+    @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
     val scale by animateFloatAsState(

@@ -132,9 +132,7 @@ class NetworkRepository @Inject constructor(
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         val body = LikeRequest(type = type)
         apiServiceInterface.likeOrDisLikeContent(
-            slug = slug,
-            token = token,
-            body = body
+            slug = slug, token = token, body = body
         )
     }
 
@@ -158,8 +156,7 @@ class NetworkRepository @Inject constructor(
         val userSession = userPreferences.getUserSession()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         apiServiceInterface.getCreatorDetail(
-            id = id,
-            token = token
+            id = id, token = token
         )
     }
 
@@ -169,20 +166,27 @@ class NetworkRepository @Inject constructor(
         val userSession = userPreferences.getUserSession()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         apiServiceInterface.getCreatorContentList(
-            id = id,
-            token = token
+            id = id, token = token
         )
     }
 
     suspend fun saveContinueWatching(
         request: ContinueWatchingRequest,
-    ) = withContext(Dispatchers.IO)
-    {
+    ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         apiServiceInterface.saveContinueWatching(
-            token = token,
-            request = request
+            token = token, request = request
+        )
+    }
+
+    suspend fun searchContent(
+        query: String,
+    ) = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        apiServiceInterface.searchContent(
+            token = token, query = query
         )
     }
 }

@@ -9,6 +9,7 @@ sealed class Routes(val route: String) {
 
     data object Home : Routes("HOME_SCREEN")
     data object Creator : Routes("CREATOR_SCREEN")
+    data object Search : Routes("SEARCH_SCREEN")
     data object Login : Routes("LOGIN_SCREEN")
     object Movies {
         const val route = "movies/{contentType}"
@@ -35,7 +36,10 @@ sealed class Routes(val route: String) {
 
     data object PlayerScreen {
         const val route = "playerScreen/{playerDtoList}?isContinueWatching={isContinueWatching}"
-        fun createRoute(playerDtoList: List<PosterCardDto>, isContinueWatching: Boolean = false): String {
+        fun createRoute(
+            playerDtoList: List<PosterCardDto>,
+            isContinueWatching: Boolean = false,
+        ): String {
             val json = Json.encodeToString(playerDtoList)
             return "playerScreen/${Uri.encode(json)}?isContinueWatching=$isContinueWatching"
         }

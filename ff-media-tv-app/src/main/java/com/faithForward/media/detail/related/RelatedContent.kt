@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.whiteMain
 
 data class RelatedContentRowDto(
     val heading: String,
@@ -76,11 +77,11 @@ fun RelatedContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 25.dp),
+                .padding(start = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             TitleText(text = relatedContentRowDto.heading,
-                color = if (isRelatedTextFocused) focusedMainColor else Color.Black,
+                color = if (isRelatedTextFocused) focusedMainColor else whiteMain,
                 fontWeight = if (isRelatedTextFocused) FontWeight.W600 else FontWeight.Normal,
                 modifier = Modifier.onFocusChanged {
                     isRelatedTextFocused = it.hasFocus

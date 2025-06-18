@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.rowTitleColor
 
 @Composable
 fun TitleText(
@@ -20,7 +21,7 @@ fun TitleText(
     text: String,
     textSize: Int = 15,
     fontWeight: FontWeight = FontWeight.Normal,
-    color: Color = focusedMainColor
+    color: Color = rowTitleColor
 ) {
     Text(
         text = text,

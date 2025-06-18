@@ -1,6 +1,5 @@
 package com.faithForward.media.commanComponents
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -12,13 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.btnShadowColor
 import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.pillButtonTextColor
+import com.faithForward.media.theme.pillButtonTextUnFocusColor
+import com.faithForward.media.theme.pillButtonUnFocusColor
+import com.faithForward.media.theme.pillTextFocusedStyle
+import com.faithForward.media.theme.pillTextUnFocusedStyle
 import com.faithForward.media.theme.textUnFocusColor
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.util.FocusState
@@ -33,10 +37,9 @@ data class CategoryComposeDto(
 fun CategoryCompose(
     modifier: Modifier = Modifier,
     backgroundFocusedColor: Color = focusedMainColor,
-    backgroundUnFocusedColor: Color = unFocusMainColor,
-    buttonShadowColor: Color = focusedMainColor,
-    textFocusedColor: Color = textFocusedMainColor,
-    textUnFocusedColor: Color = textUnFocusColor,
+    backgroundUnFocusedColor: Color = pillButtonUnFocusColor,
+    textFocusedStyle: TextStyle = pillTextFocusedStyle,
+    textUnFocusedStyle: TextStyle = pillTextUnFocusedStyle,
     categoryComposeDto: CategoryComposeDto,
     onCategoryItemClick: (String) -> Unit,
     focusState: FocusState,
@@ -47,10 +50,10 @@ fun CategoryCompose(
         FocusState.UNDEFINED -> backgroundUnFocusedColor // Default to unfocused color for UNDEFINED
     }
 
-    val textColor = when (focusState) {
-        FocusState.SELECTED, FocusState.FOCUSED -> textFocusedColor
-        FocusState.UNFOCUSED -> textUnFocusedColor
-        FocusState.UNDEFINED -> textUnFocusedColor // Default to unfocused text color for UNDEFINED
+    val pillTextStyle = when (focusState) {
+        FocusState.SELECTED, FocusState.FOCUSED -> textFocusedStyle
+        FocusState.UNFOCUSED -> textUnFocusedStyle
+        FocusState.UNDEFINED -> textUnFocusedStyle // Default to unfocused text color for UNDEFINED
     }
 
     val buttonModifier =
@@ -84,8 +87,7 @@ fun CategoryCompose(
     ) {
         Text(
             categoryComposeDto.btnText,
-            color = textColor,
-            fontSize = 15.sp
+            style = pillTextStyle,
         )
     }
 

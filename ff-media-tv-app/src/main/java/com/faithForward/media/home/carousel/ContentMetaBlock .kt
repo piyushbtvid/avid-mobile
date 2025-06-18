@@ -24,7 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
+import com.faithForward.media.theme.descriptionTextStyle
+import com.faithForward.media.theme.metaDataTextStyle
 import com.faithForward.media.theme.textFocusedMainColor
+import com.faithForward.media.theme.titleTextStyle
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 @Composable
@@ -79,15 +83,27 @@ fun ContentMetaBlock(
                         if (index > 0) {
                             Spacer(modifier = Modifier.width(8.dp))
                             ContentDescription(
-                                text = "|", color = textColor
+                                text = "|", textStyle = metaDataTextStyle
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
-                        ContentDescription(text = item, color = textColor)
+                        ContentDescription(text = item, textStyle = metaDataTextStyle)
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+
+            title?.let {
+                ContentDescription(
+                    modifier = Modifier
+                        .width(400.dp),
+                    text = title,
+                    textStyle = titleTextStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(9.dp))
             }
 
             description?.let {
@@ -96,13 +112,11 @@ fun ContentMetaBlock(
                         .width(289.dp)
                         .height(60.dp),
                     text = it,
-                    lineHeight = 13,
-                    color = textColor,
+                    textStyle = descriptionTextStyle,
                     overflow = TextOverflow.Ellipsis,
-                    textSize = 12
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
             if (addToWatchListUiState != FocusState.UNDEFINED && likeUiState != FocusState.UNDEFINED && dislikeUiState != FocusState.UNDEFINED) {

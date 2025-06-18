@@ -34,6 +34,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.theme.posterCardShadowColor
 import com.faithForward.media.util.FocusState
 import kotlinx.serialization.Serializable
 
@@ -62,7 +63,7 @@ fun PosterCard(
     posterCardDto: PosterCardDto,
     focusState: FocusState,
     onItemClick: (PosterCardDto) -> Unit,
-    cardShadowColor: Color = com.faithForward.media.theme.cardShadowColor,
+    cardShadowColor: Color = posterCardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
@@ -78,10 +79,10 @@ fun PosterCard(
             modifier.shadow(
                 color = cardShadowColor,
                 borderRadius = 23.dp,
-                blurRadius = 14.dp,
-                offsetY = 8.dp,
+                blurRadius = 8.dp,
+                offsetY = 0.dp,
                 offsetX = 0.dp,
-                spread = 3.dp,
+                spread = 5.dp,
                 scale = scale
             )
         } else {
@@ -94,7 +95,7 @@ fun PosterCard(
         .graphicsLayer {
             scaleX = scale
             scaleY = scale
-            transformOrigin = TransformOrigin(0f, 0f) // X-center, Y-top
+            transformOrigin = TransformOrigin(0f, 0.5f) // X-center, Y-top
         }
         .zIndex(
             when (focusState) {

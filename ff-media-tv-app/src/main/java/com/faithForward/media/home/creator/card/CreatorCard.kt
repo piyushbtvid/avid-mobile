@@ -23,11 +23,10 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.faithForward.media.extensions.shadow
-import com.faithForward.media.theme.cardShadowColor
 import com.faithForward.media.theme.creatorShadowColor
 import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.theme.text100
 import com.faithForward.media.theme.unFocusMainColor
+import com.faithForward.media.theme.whiteMain
 
 
 data class CreatorCardDto(
@@ -86,13 +85,13 @@ fun CreatorCard(
 
         Text(
             text = creatorCardDto.creatorName,
-            color = if (isFocused) focusedMainColor else cardShadowColor,
+            color = if (isFocused) focusedMainColor else whiteMain,
             fontSize = 10.sp
         )
         Spacer(modifier = Modifier.height(3.dp))
         Text(
             text = creatorCardDto.creatorSubscriberText,
-            color = if (isFocused) focusedMainColor else cardShadowColor,
+            color = if (isFocused) focusedMainColor else whiteMain,
             fontSize = 7.5.sp
         )
 

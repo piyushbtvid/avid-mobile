@@ -26,6 +26,7 @@ import coil3.request.ImageRequest
 import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.media.theme.whiteMain
 
 @Composable
 fun ContentCard(
@@ -66,7 +67,7 @@ fun ContentCard(
                 Text(
                     text = contentDto.title,
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Normal),
-                    color = Color.Black,
+                    color = whiteMain,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f) // Title takes available space but leaves room for duration
@@ -77,7 +78,7 @@ fun ContentCard(
                 Text(
                     text = contentDto.duration,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                    color = Color.Black,
+                    color = whiteMain,
                     maxLines = 1,
                     overflow = TextOverflow.Visible // Ensure duration isn't clipped
                 )
@@ -89,7 +90,7 @@ fun ContentCard(
             Text(
                 text = contentDto.description,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                color = Color.Black,
+                color = whiteMain,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -100,7 +101,7 @@ fun ContentCard(
             Text(
                 text = "${contentDto.views} • ${contentDto.time}",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Black
+                color = whiteMain
             )
         }
     }
