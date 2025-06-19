@@ -63,7 +63,8 @@ fun CardDetail.toDetailDto(): DetailDto {
         isLiked = data.likeDislike == "like",
         isDisliked = data.likeDislike == "dislike",
         isSeries = data.content_type == "Series" || data.content_type == "Episode",
-        contentType = data.content_type
+        contentType = data.content_type,
+        progress = data.progressSeconds
     )
 }
 
@@ -81,7 +82,8 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         releaseDate = releaseDate,
         videoHlsUrl = videoLink,
         slug = slug,
-        contentType = contentType
+        contentType = contentType,
+        progress = progress
     )
 }
 
@@ -99,7 +101,7 @@ fun Season.toSeasonNumberDto(): SeasonsNumberDto {
 
 fun Episode.toPosterDto(): PosterCardDto {
     return PosterCardDto(id = id,
-        posterImageSrc = landscape,
+        posterImageSrc = portrait,
         title = name,
         description = description,
         genre = genres.mapNotNull { it.name }  // safely extract non-null names

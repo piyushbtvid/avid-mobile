@@ -2,6 +2,7 @@ package com.faithForward.media.home.carousel
 
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.theme.detailGradientStartColor
 import com.faithForward.media.theme.playButtonBackgroundColor
 import com.faithForward.media.theme.selectedMainColor
 import com.faithForward.media.theme.textFocusedMainColor
@@ -155,6 +157,19 @@ fun CarouselItem(
                         )
                     ),
                 alignment = Alignment.TopCenter
+            )
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clip(
+                        RoundedCornerShape(
+                            bottomStart = 10.dp
+                        )
+                    )
+                    .background(
+                        color = detailGradientStartColor.copy(alpha = 0.48f)
+                    )
+
             )
             ContentMetaBlock(
                 modifier = Modifier

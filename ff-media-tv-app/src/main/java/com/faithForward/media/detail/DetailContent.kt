@@ -59,6 +59,7 @@ data class DetailDto(
     val isDisliked: Boolean? = null,
     val isSeries: Boolean? = null,
     val contentType: String? = null,
+    val progress: Long? = null,
 )
 
 @Composable
