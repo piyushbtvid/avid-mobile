@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -34,6 +36,7 @@ import coil3.request.crossfade
 import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.posterCardShadowColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 import kotlinx.serialization.Serializable
 
@@ -55,6 +58,7 @@ data class PosterCardDto(
     val contentType: String? = null,
     val isRelatedSeries: Boolean? = false,
     val episodeNumber: Int? = null,
+    val uploadYear: String? = null,
 )
 
 @Composable
@@ -121,6 +125,34 @@ fun PosterCard(
                     onItemClick.invoke(posterCardDto)
                 })
         )
+        Column(modifier = Modifier.width(135.dp)) {
+            TitleText(
+                text = posterCardDto.title,
+                color = whiteMain,
+                fontWeight = FontWeight.W600,
+                textSize = 10
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TitleText(
+                    text = posterCardDto.imdbRating ?: "",
+                    color = whiteMain,
+                    fontWeight = FontWeight.W400,
+                    textSize = 7
+                )
+
+                TitleText(
+                    text = posterCardDto.uploadYear ?: "",
+                    color = whiteMain,
+                    fontWeight = FontWeight.W400,
+                    textSize = 7
+                )
+
+            }
+        }
     }
 }
 

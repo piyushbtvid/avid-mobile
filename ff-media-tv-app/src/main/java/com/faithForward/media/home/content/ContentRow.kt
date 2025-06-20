@@ -1,6 +1,5 @@
 package com.faithForward.media.home.content
 
-import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,9 +25,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.commanComponents.PosterCard
 import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
 
 data class PosterRowDto(

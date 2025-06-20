@@ -44,6 +44,12 @@ fun HomePage(
     val sideBarState by sideBarViewModel.sideBarState
 
 
+
+    LaunchedEffect(Unit) {
+        homeViewModel.fetchHomePageData()
+    }
+
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -101,7 +107,6 @@ fun HomePage(
             sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(1))
         }
     }
-
 
 
     // Showing Toast when uiEvent changes

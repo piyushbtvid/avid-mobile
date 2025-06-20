@@ -234,7 +234,8 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         slug = slug,
         seriesSlug = seriesSlug,
         progress = progressSeconds,
-        contentType = content_type
+        contentType = content_type,
+        uploadYear = uploadedYear
     )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
