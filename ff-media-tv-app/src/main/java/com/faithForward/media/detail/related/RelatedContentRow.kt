@@ -66,7 +66,7 @@ fun RelatedContentRow(
                 if (lastFocusedItem in 0 until itemFocusRequesters.size && lastFocusedItem == index) {
                     try {
 //                        if (lastFocusedItem > 0) {
-                        // lazyListState.scrollToItem(lastFocusedItem)
+                        //  lazyListState.scrollToItem(lastFocusedItem)
                         itemFocusRequesters[index].requestFocus()
                         //  }
                     } catch (ex: Exception) {

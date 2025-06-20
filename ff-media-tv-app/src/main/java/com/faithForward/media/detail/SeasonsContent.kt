@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.detail.related.RelatedContentInfoBlock
-import com.faithForward.media.detail.related.RelatedContentRow
 import com.faithForward.media.theme.focusedMainColor
 
 
@@ -33,6 +32,7 @@ data class SeasonsContentDto(
 )
 
 data class SeasonDto(
+    val seasonNumber: Int,
     val episodesContentDto: List<PosterCardDto>,
 )
 

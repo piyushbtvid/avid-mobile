@@ -4,23 +4,18 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -42,23 +37,17 @@ fun SeasonsNumberRow(
     seasonsNumberDtoList: List<SeasonsNumberDto>,
     onSeasonUpClick: () -> Boolean,
     onSeasonNumberChanged: (String) -> Unit,
-    lastSelectedItemIndex: Int,
     onLastSelectedIndexChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    seasonFocusRequesters: List<FocusRequester> = List(seasonsNumberDtoList.size) { FocusRequester() },
 ) {
-
     var seasonNumberFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-
-
 
     LazyRow(
         modifier = modifier.wrapContentWidth(),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-
         itemsIndexed(seasonsNumberDtoList) { index, seasonNumberItem ->
-
-
             val uiState = when (index) {
                 seasonNumberFocusedIndex -> FocusState.FOCUSED
                 else -> FocusState.UNFOCUSED
@@ -66,6 +55,7 @@ fun SeasonsNumberRow(
 
             TitleText(
                 modifier = Modifier
+                    .focusRequester(seasonFocusRequesters[index])
                     .onFocusChanged {
                         if (it.hasFocus) {
                             seasonNumberFocusedIndex = index
@@ -75,7 +65,6 @@ fun SeasonsNumberRow(
                             if (seasonNumberFocusedIndex == index) {
                                 seasonNumberFocusedIndex = -1
                             }
-                            //seasonNumberFocusedIndex = -1
                         }
                     }
                     .focusable()
@@ -90,8 +79,6 @@ fun SeasonsNumberRow(
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
                         // onSeasonNumberChanged.invoke(seasonNumberItem.seasonNumber)
-//                        seasonNumberSelectedIndex = index
-//                        seasonNumberFocusedIndex = -1
                     }),
                 text = seasonNumberItem.seasonNumber.toString(),
                 textSize = if (uiState == FocusState.FOCUSED) 18 else 15,
@@ -101,12 +88,8 @@ fun SeasonsNumberRow(
                 fontWeight = if (uiState == FocusState.FOCUSED || uiState == FocusState.SELECTED) FontWeight.W600
                 else FontWeight.W400
             )
-
         }
-
     }
-
-
 }
 
 @Preview(
@@ -136,24 +119,24 @@ private fun SeasonsNumberRowPreview() {
         ),
     )
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        SeasonsNumberRow(
-            seasonsNumberDtoList = list,
-            onSeasonUpClick = {
-                false
-            },
-            onSeasonNumberChanged = {
-
-            },
-            lastSelectedItemIndex = 1,
-            onLastSelectedIndexChange = {
-
-            },
-        )
-    }
+//    Box(
+//        modifier = Modifier.fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        SeasonsNumberRow(
+//            seasonsNumberDtoList = list,
+//            onSeasonUpClick = {
+//                false
+//            },
+//            onSeasonNumberChanged = {
+//
+//            },
+//            lastSelectedItemIndex = 1,
+//            onLastSelectedIndexChange = {
+//
+//            },
+//        )
+//    }
 
 
 }

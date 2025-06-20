@@ -1,8 +1,8 @@
 package com.faithForward.network.dto
 
+import com.faithForward.network.dto.detail.ResumeInfo
 import com.faithForward.network.dto.series.Season
 import com.google.gson.annotations.SerializedName
-import java.time.ZonedDateTime
 
 
 data class HomeSectionApiResponse(
@@ -63,4 +63,5 @@ data class ContentItem(
     @SerializedName("progress_seconds") val progressSeconds: Long? = null,
     @SerializedName("related_content")
     val relatedContent: List<ContentItem>? = null,
+    val resumeInfo: ResumeInfo? = null,
 )

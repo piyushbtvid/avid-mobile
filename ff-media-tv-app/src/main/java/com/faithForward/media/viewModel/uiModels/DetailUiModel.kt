@@ -21,6 +21,7 @@ sealed interface RelatedContentData {
     data class SeriesSeasons(
         val seasonNumberList: List<SeasonsNumberDto>,
         val selectedSeasonEpisodes: List<PosterCardDto>,
+        val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
         val relatedSeries: List<PosterCardDto>,
     ) : RelatedContentData
@@ -88,9 +89,12 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
 }
 
 fun Season.toSeasonDto(): SeasonDto {
-    return SeasonDto(episodesContentDto = episodes.map {
-        it.toPosterDto()
-    })
+    return SeasonDto(
+        episodesContentDto = episodes.map {
+            it.toPosterDto()
+        },
+        seasonNumber = season_number
+    )
 }
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
@@ -109,6 +113,7 @@ fun Episode.toPosterDto(): PosterCardDto {
         duration = duration?.let { formatDuration(it) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
+        episodeNumber = episode_number,
         videoHlsUrl = video_link,
         slug = slug)
 }
@@ -118,6 +123,7 @@ fun Episode.toPosterDto(): PosterCardDto {
 data class UiState(
     val targetHeight: Int = 280,
     val isContentVisible: Boolean = true,
+    val isResumeVisible: Boolean = false,
 )
 
 // Sealed class for UI events

@@ -208,15 +208,34 @@ fun MainAppNavHost(
         composable(
             route = Routes.Detail.route,
             arguments = listOf(navArgument("itemId") { type = NavType.StringType })
-        ) {
+        ) { backStackEntry ->
             val detailViewModel: DetailViewModel = hiltViewModel()
 
+            val slug = backStackEntry.arguments?.getString("itemId")
+
             DetailScreen(detailViewModel = detailViewModel,
+                slug = slug,
                 onWatchNowClick = { item, posterItemList ->
+                    if (item != null) {
+                        val itemWithProgressZero = item.copy(progress = 0)
+                        val route =
+                            Routes.PlayerScreen.createRoute(listOf(itemWithProgressZero)) // Wrap item in a list
+                        navController.navigate(route)
+                    } else {
+                        if (posterItemList != null) {
+                            val route =
+                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                            navController.navigate(route)
+                        }
+                    }
+                },
+                onResumeNowClick = { item, posterItemList ->
                     if (item != null) {
                         val route =
                             Routes.PlayerScreen.createRoute(listOf(item)) // Wrap item in a list
-                        navController.navigate(route)
+                        if (item.progress != null && item.progress > 0) {
+                            navController.navigate(route)
+                        }
                     } else {
                         if (posterItemList != null) {
                             val route =
@@ -294,7 +313,8 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(
+                creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))

@@ -54,6 +54,7 @@ data class PosterCardDto(
     val progress: Long? = null,
     val contentType: String? = null,
     val isRelatedSeries: Boolean? = false,
+    val episodeNumber: Int? = null,
 )
 
 @Composable

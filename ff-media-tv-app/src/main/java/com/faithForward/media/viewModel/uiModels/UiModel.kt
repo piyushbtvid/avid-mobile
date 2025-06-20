@@ -220,7 +220,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
 
 fun ContentItem.toPosterCardDto(): PosterCardDto =
     PosterCardDto(
-        posterImageSrc = landscape ?: portrait ?: "",
+        posterImageSrc = portrait ?: landscape ?: "",
         id = id.toString() ?: "",
         title = name ?: "",
         description = description ?: "",

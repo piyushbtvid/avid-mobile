@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.commanComponents.PosterCardDto
@@ -41,8 +41,10 @@ fun RelatedContent(
     onRelatedUpClick: () -> Boolean,
     contentRowModifier: Modifier = Modifier,
     relatedContentRowDto: RelatedContentRowDto,
+    focusRequesters: MutableMap<Int, FocusRequester>,
     onItemClick: (PosterCardDto, List<PosterCardDto>, Int) -> Unit,
     lastFocusedItemIndex: Int,
+    listState: LazyListState,
     onLastFocusedIndexChange: (Int) -> Unit,
     isRelatedContentMetaDataVisible: Boolean = false,
     seasonsNumberRow: (@Composable () -> Unit)? = null,
@@ -51,9 +53,6 @@ fun RelatedContent(
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
     var isRelatedTextFocused by remember { mutableStateOf(false) }
 
-    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
-
-    val listState = rememberLazyListState()
 
     val targetAlpha by animateFloatAsState(
         targetValue = if (isRelatedContentMetaDataVisible) 1f else 0f,

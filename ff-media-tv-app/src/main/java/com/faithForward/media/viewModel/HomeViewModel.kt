@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
         contentRowFocusedIndex = value
     }
 
-    private fun fetchHomePageData() {
+     fun fetchHomePageData() {
         viewModelScope.launch(Dispatchers.IO) {
             _homepageData.emit(Resource.Loading())
             try {
