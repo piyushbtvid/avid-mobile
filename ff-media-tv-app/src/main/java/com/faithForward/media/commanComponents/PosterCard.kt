@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,6 +68,7 @@ fun PosterCard(
     modifier: Modifier = Modifier,
     posterCardDto: PosterCardDto,
     focusState: FocusState,
+    showContent: Boolean = true,
     onItemClick: (PosterCardDto) -> Unit,
     cardShadowColor: Color = posterCardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
@@ -81,7 +84,7 @@ fun PosterCard(
     val posterModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier.shadow(
-                color = cardShadowColor,
+                color = Color.Transparent,  //cardShadowColor
                 borderRadius = 23.dp,
                 blurRadius = 8.dp,
                 offsetY = 0.dp,
@@ -125,32 +128,41 @@ fun PosterCard(
                     onItemClick.invoke(posterCardDto)
                 })
         )
-        Column(modifier = Modifier.width(135.dp)) {
-            TitleText(
-                text = posterCardDto.title,
-                color = whiteMain,
-                fontWeight = FontWeight.W600,
-                textSize = 10
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+        if (showContent) {
+            Column(
+                modifier = Modifier
+                    .width(135.dp)
+                    .padding(top = 10.dp)
             ) {
                 TitleText(
-                    text = posterCardDto.imdbRating ?: "",
+                    text = posterCardDto.title,
                     color = whiteMain,
-                    fontWeight = FontWeight.W400,
-                    textSize = 7
+                    lineHeight = 10,
+                    fontWeight = FontWeight.W600,
+                    textSize = 10,
                 )
+                Spacer(modifier = Modifier.height(1.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TitleText(
+                        text = posterCardDto.imdbRating ?: "",
+                        color = whiteMain,
+                        fontWeight = FontWeight.W400,
+                        lineHeight = 7,
+                        textSize = 7
+                    )
 
-                TitleText(
-                    text = posterCardDto.uploadYear ?: "",
-                    color = whiteMain,
-                    fontWeight = FontWeight.W400,
-                    textSize = 7
-                )
+                    TitleText(
+                        text = posterCardDto.uploadYear ?: "",
+                        color = whiteMain,
+                        fontWeight = FontWeight.W400,
+                        lineHeight = 7,
+                        textSize = 7
+                    )
 
+                }
             }
         }
     }

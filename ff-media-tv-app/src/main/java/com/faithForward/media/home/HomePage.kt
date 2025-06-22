@@ -125,6 +125,7 @@ fun HomePage(
     ) {
         HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
+            showContentOfCard = false,
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
             },

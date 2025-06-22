@@ -47,6 +47,7 @@ fun ContentRow(
     onItemFocused: (Pair<Int, Int>) -> Unit,
     lastFocusedItem: Pair<Int, Int>,
     listState: LazyListState,
+    showContentOfCard: Boolean,
     shouldFocusOnFirstItem: Boolean = false,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
@@ -126,6 +127,7 @@ fun ContentRow(
                         .focusable(),
                     posterCardDto = posterCardDto,
                     focusState = uiState,
+                    showContent = showContentOfCard,
                     onItemClick = { item ->
                         onItemClick.invoke(item, posterRowDto.dtos, posterRowDto.rowId)
                     }
