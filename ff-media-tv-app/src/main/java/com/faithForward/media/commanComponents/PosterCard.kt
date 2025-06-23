@@ -81,6 +81,7 @@ fun PosterCard(
         }, animationSpec = tween(300), label = ""
     )
 
+    // changed card shadow to transprent due to black background
     val posterModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier.shadow(
@@ -128,6 +129,8 @@ fun PosterCard(
                     onItemClick.invoke(posterCardDto)
                 })
         )
+
+        // showing meta data only in some screen with showContent parameter
         if (showContent) {
             Column(
                 modifier = Modifier

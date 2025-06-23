@@ -51,6 +51,7 @@ fun MainAppNavHost(
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
+    onBackClickForExit: () -> Unit,
 ) {
 
     val activity = (LocalActivity.current)
@@ -76,7 +77,8 @@ fun MainAppNavHost(
                 },
                 onBackClick = {
                     Log.e("ON_BACK", "on back in home compose caled")
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //activity?.finish()
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -111,7 +113,8 @@ fun MainAppNavHost(
             CreatorScreen(creatorViewModel = creatorViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //   activity?.finish()
                 },
                 onCreatorItemClick = { item ->
                     navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
@@ -134,7 +137,8 @@ fun MainAppNavHost(
                     }
                 },
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //  activity?.finish()
                 },
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
@@ -150,7 +154,8 @@ fun MainAppNavHost(
             SeriesPage(contentViewModel = contentViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    // activity?.finish()
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -170,7 +175,8 @@ fun MainAppNavHost(
             MyListPage(contentViewModel = myListViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //   activity?.finish()
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -331,7 +337,8 @@ fun MainAppNavHost(
             SearchScreen(viewModel = searchViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //activity?.finish()
                 },
                 onSearchItemClick = { item ->
                     if (item.contentSlug != null) {

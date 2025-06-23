@@ -76,6 +76,7 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    // method for loading item  detail from api
     private fun loadCardDetail(slug: String, relatedList: List<PosterCardDto>) {
         Log.e("DETAIL_VIEWMODEL", "load card detail is called with $slug")
 
@@ -94,11 +95,12 @@ class DetailViewModel @Inject constructor(
                     return@launch
                 }
 
+                // using a cachedCardDetail for comparing new data and old data change in every api call
                 val newDetailDto = cardDetail.toDetailDto()
                 val newData = cardDetail.data
                 val oldData = cachedCardDetail?.data
 
-                //for first call
+                //for first call when cachedCardDetail was null for the first time
                 if (cachedCardDetail == null) {
                     _cardDetail.emit(Resource.Success(DetailPageItem.Card(newDetailDto)))
 
@@ -144,10 +146,15 @@ class DetailViewModel @Inject constructor(
 
                     cachedCardDetail = cardDetail
 
-                    // If new card is different from cached
-                } else if (cachedCardDetail != cardDetail) {
+
+                }
+                // If new card is different from cached card
+                else if (cachedCardDetail != cardDetail) {
                     // Only update resume-related UI
+                    //comparing only resume related data like progress seconds changed or not etc
                     if (oldData?.resumeInfo != newData.resumeInfo || oldData?.progressSeconds != newData.progressSeconds) {
+
+                        //For Series
                         if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
                             val seasonList = newData.seasons!!.map { it.toSeasonDto() }
                             val resumeSeasonEpisodes =
@@ -161,7 +168,9 @@ class DetailViewModel @Inject constructor(
                             (_relatedContentData.value as? RelatedContentData.SeriesSeasons)?.let { current ->
                                 _relatedContentData.emit(current.copy(resumeSeasonEpisodes = resumeSeasonEpisodes))
                             }
-                        } else {
+                        }
+                        // For Movies etc
+                        else {
                             updateResumeUI(progressSeconds = newData.progressSeconds?.toInt())
                             updateMovieProgress(progressSeconds = newData.progressSeconds)
                         }

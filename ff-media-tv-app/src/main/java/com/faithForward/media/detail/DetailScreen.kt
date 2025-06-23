@@ -73,7 +73,7 @@ fun DetailScreen(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
         animationSpec = tween(durationMillis = 500)
     )
-
+    // calling load detail of any item from LaunchEffect inside unit every time recomposition happens
     LaunchedEffect(Unit) {
         Log.e("DETAIL_SCREEN", "detail screen unit is called")
         if (slug != null) {
