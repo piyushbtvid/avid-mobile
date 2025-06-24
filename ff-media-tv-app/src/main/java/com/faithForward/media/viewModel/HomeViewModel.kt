@@ -47,16 +47,16 @@ class HomeViewModel @Inject constructor(
 
     init {
         Log.e("HOME_VIEWMODEL", "home viewModel init called")
-        fetchHomePageData()
+       // fetchHomePageData()
     }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
 
-    private fun fetchHomePageData() {
+     fun fetchHomePageData() {
         viewModelScope.launch(Dispatchers.IO) {
-            _homepageData.emit(Resource.Loading())
+       //     _homepageData.emit(Resource.Loading())
             try {
                 // Fetch both APIs concurrently
                 val sectionDataDeferred = async { networkRepository.getHomeSectionData() }

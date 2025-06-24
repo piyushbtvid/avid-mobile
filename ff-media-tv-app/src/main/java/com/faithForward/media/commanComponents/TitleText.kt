@@ -21,7 +21,8 @@ fun TitleText(
     text: String,
     textSize: Int = 15,
     fontWeight: FontWeight = FontWeight.Normal,
-    color: Color = rowTitleColor
+    lineHeight: Int = 15,
+    color: Color = rowTitleColor,
 ) {
     Text(
         text = text,
@@ -29,6 +30,7 @@ fun TitleText(
         fontWeight = fontWeight,
         color = color,
         maxLines = 1,
+        lineHeight = lineHeight.sp,
         overflow = TextOverflow.Ellipsis,
         fontSize = textSize.sp
     )

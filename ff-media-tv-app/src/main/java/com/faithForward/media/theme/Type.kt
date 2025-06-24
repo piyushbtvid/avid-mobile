@@ -80,6 +80,17 @@ val watchNowTextStyle = TextStyle(
     color = focusedTextColor
 )
 
+val detailNowTextStyle = TextStyle(
+    fontSize = 15.sp,
+    color = whiteMain
+)
+
+val detailNowUnFocusTextStyle = TextStyle(
+    fontSize = 15.sp,
+    color = focusedTextColor
+)
+
+
 val descriptionTextStyle = TextStyle(
     fontSize = 12.sp,
     lineHeight = 13.sp,

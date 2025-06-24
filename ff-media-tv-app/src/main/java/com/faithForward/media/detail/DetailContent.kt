@@ -7,9 +7,8 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -36,7 +35,9 @@ import com.faithForward.media.commanComponents.CategoryCompose
 import com.faithForward.media.commanComponents.CategoryComposeDto
 import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.theme.blackColor
-import com.faithForward.media.theme.focusedTextColor
+import com.faithForward.media.theme.detailNowTextStyle
+import com.faithForward.media.theme.detailNowUnFocusTextStyle
+import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.watchNowTextStyle
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
@@ -59,16 +60,22 @@ data class DetailDto(
     val isDisliked: Boolean? = null,
     val isSeries: Boolean? = null,
     val contentType: String? = null,
+    val progress: Long? = null,
 )
 
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
-    btnFocusRequester: FocusRequester = FocusRequester(),
+    playNowBtnFocusRequester: FocusRequester = FocusRequester(),
+    resumeBtnFocusRequester: FocusRequester = FocusRequester(),
     onWatchNowClick: (String) -> Unit,
+    onResumeNowCLick: () -> Unit,
     onWatchNowFocusChange: (Boolean) -> Unit,
+    onResumeNowFocusChange: (Boolean) -> Unit,
     isContentVisible: Boolean = true,
+    isResumeVisible: Boolean = false,
     detailDto: DetailDto,
+    resumeNowTxt: String = "Resume Now",
     onToggleFavorite: () -> Unit,
     onToggleLike: () -> Unit,
     onToggleDisLike: () -> Unit,
@@ -76,11 +83,12 @@ fun DetailContent(
     var addToWatchListUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var likeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var dislikeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
-    var isFocused by remember { mutableStateOf(false) }
+    var isPlayFocused by remember { mutableStateOf(false) }
+    var isResumeFocused by remember { mutableStateOf(false) }
+
 
     val targetAlpha by animateFloatAsState(
-        targetValue = if (isContentVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 500)
+        targetValue = if (isContentVisible) 1f else 0f, animationSpec = tween(durationMillis = 500)
     )
 
     val addToWatchListModifier = Modifier
@@ -93,8 +101,7 @@ fun DetailContent(
         }
         .clickable(interactionSource = null, indication = null, onClick = {
             onToggleFavorite()
-        }
-        )
+        })
         .focusable()
 
     val likeModifier = Modifier
@@ -107,8 +114,7 @@ fun DetailContent(
         }
         .clickable(interactionSource = null, indication = null, onClick = {
             onToggleLike()
-        }
-        )
+        })
         .focusable()
 
     val disLikeModifier = Modifier
@@ -121,19 +127,15 @@ fun DetailContent(
         }
         .clickable(interactionSource = null, indication = null, onClick = {
             onToggleDisLike()
-        }
-        )
+        })
         .focusable()
 
     with(detailDto) {
         Box(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imgSrc)
-                    .crossfade(true)
+                model = ImageRequest.Builder(LocalContext.current).data(imgSrc).crossfade(true)
                     .build(),
                 contentDescription = "detail Image",
                 contentScale = ContentScale.Crop,
@@ -176,23 +178,53 @@ fun DetailContent(
                     likeUiState = likeUiState,
                     dislikeUiState = dislikeUiState,
                 )
-                CategoryCompose(
-                    modifier = Modifier
-                        .padding(start = 20.dp)
-                        .focusRequester(btnFocusRequester)
+                Row(
+                    modifier = Modifier.padding(start = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    //PLayNow Button
+                    CategoryCompose(modifier = Modifier
+                        .focusRequester(playNowBtnFocusRequester)
                         .onFocusChanged {
-                            isFocused = it.hasFocus
+                            isPlayFocused = it.hasFocus
                             onWatchNowFocusChange.invoke(it.hasFocus)
                         }
                         .focusable(),
-                    categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
-                    backgroundFocusedColor = blackColor,
-                    textFocusedStyle = watchNowTextStyle,
-                    onCategoryItemClick = { id ->
-                        onWatchNowClick.invoke(id)
-                    },
-                    focusState = if (isFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
-                )
+                        categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
+                        backgroundFocusedColor = focusedMainColor,
+                        textFocusedStyle = detailNowTextStyle,
+                        backgroundUnFocusedColor = blackColor,
+                        textUnFocusedStyle = detailNowUnFocusTextStyle,
+                        onCategoryItemClick = { id ->
+                            onWatchNowClick.invoke(id)
+                        },
+                        focusState = if (isPlayFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                    )
+
+                    //Resume Now Button
+                    if (isResumeVisible) {
+                        CategoryCompose(modifier = Modifier
+                            .focusRequester(resumeBtnFocusRequester)
+                            .onFocusChanged {
+                                isResumeFocused = it.hasFocus
+                                onResumeNowFocusChange.invoke(it.hasFocus)
+                            }
+                            .focusable(),
+                            categoryComposeDto = CategoryComposeDto(
+                                btnText = resumeNowTxt,
+                                id = ""
+                            ),
+                            backgroundFocusedColor = focusedMainColor,
+                            textFocusedStyle = detailNowTextStyle,
+                            backgroundUnFocusedColor = blackColor,
+                            textUnFocusedStyle = detailNowUnFocusTextStyle,
+                            onCategoryItemClick = { id ->
+                                onResumeNowCLick.invoke()
+                            },
+                            focusState = if (isResumeFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                        )
+                    }
+                }
 
 
             }
@@ -206,22 +238,23 @@ fun DetailContent(
 )
 @Composable
 private fun DetailPagePreview() {
-    DetailContent(
-        detailDto = DetailDto(slug = ""),
-        onWatchNowClick = {
+    DetailContent(detailDto = DetailDto(slug = ""), onWatchNowClick = {
+
+    }, onWatchNowFocusChange = {
+
+    }, onToggleFavorite = {
+
+    }, onToggleLike = {
+
+    }, onToggleDisLike = {
+
+    },
+        onResumeNowFocusChange = {
 
         },
-        onWatchNowFocusChange = {
-
-        },
-        onToggleFavorite = {
-
-        },
-        onToggleLike = {
-
-        },
-        onToggleDisLike = {
+        onResumeNowCLick = {
 
         }
+
     )
 }

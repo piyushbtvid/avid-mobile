@@ -46,6 +46,7 @@ fun HomeContentSections(
     onCarouselItemClick: (CarouselItemDto) -> Unit,
     onCreatorItemClick: (CreatorCardDto) -> Unit,
     sideBarViewModel: SideBarViewModel,
+    showContentOfCard: Boolean = true,
     onToggleLike: (String?) -> Unit,
     onToggleDisLike: (String?) -> Unit,
 ) {
@@ -116,6 +117,7 @@ fun HomeContentSections(
                         onItemFocused = { newFocus ->
                             lastFocusedItem = newFocus
                         },
+                        showContentOfCard = showContentOfCard,
                         listState = rowListStates[rowIndex] ?: rememberLazyListState(),
                         onChangeContentRowFocusedIndex = { index ->
                             onChangeContentRowFocusedIndex.invoke(index)

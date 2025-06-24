@@ -1,7 +1,5 @@
 package com.faithForward.media.sidebar
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -80,7 +78,7 @@ fun SideBar(
             modifier = modifier
                 .width(if (sideBarFocusedIndex != -1) 175.dp else 71.dp)
                 .height(if (sideBarFocusedIndex != -1) 574.dp else 384.dp)
-                .padding(start = 15.dp, top = 17.dp, bottom = 17.dp),
+                .padding(start = 15.dp, top = 17.dp, bottom = 17.dp, end = 4.dp),
             contentAlignment = Alignment.TopStart
         ) {
             Box(

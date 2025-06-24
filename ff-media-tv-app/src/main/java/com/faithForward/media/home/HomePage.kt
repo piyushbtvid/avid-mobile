@@ -44,6 +44,12 @@ fun HomePage(
     val sideBarState by sideBarViewModel.sideBarState
 
 
+
+    LaunchedEffect(Unit) {
+        homeViewModel.fetchHomePageData()
+    }
+
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -88,13 +94,20 @@ fun HomePage(
     BackHandler {
         Log.e("ON_BACK", "on back in home called")
         if (sideBarState.sideBarFocusedIndex != -1) {
-            Log.e("ON_BACK", "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}")
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
             onBackClick.invoke()
         } else {
-            Log.e("ON_BACK", "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}")
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
             sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(1))
         }
     }
+
 
     // Showing Toast when uiEvent changes
     LaunchedEffect(uiEvent) {
@@ -112,6 +125,7 @@ fun HomePage(
     ) {
         HomeContentSections(modifier = Modifier,
             homePageItems = homePageItems,
+            showContentOfCard = false,
             onChangeContentRowFocusedIndex = { index ->
                 homeViewModel.onContentRowFocusedIndexChange(index)
             },

@@ -2,6 +2,7 @@ package com.faithForward.media.home.carousel
 
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,7 +34,9 @@ import com.faithForward.media.R
 import com.faithForward.media.commanComponents.ContentDescription
 import com.faithForward.media.commanComponents.RoundedIconButton
 import com.faithForward.media.extensions.shadow
+import com.faithForward.media.theme.detailGradientStartColor
 import com.faithForward.media.theme.playButtonBackgroundColor
+import com.faithForward.media.theme.selectedMainColor
 import com.faithForward.media.theme.textFocusedMainColor
 import com.faithForward.media.theme.titleTextStyle
 import com.faithForward.media.util.FocusState
@@ -90,14 +93,12 @@ fun CarouselItem(
             Modifier
                 .padding(start = 20.dp, bottom = 20.dp)
                 .shadow(
-                    color = Color.White.copy(alpha = .46f),
+                    color = selectedMainColor.copy(alpha = .66f),
                     borderRadius = 40.dp,
                     blurRadius = 7.dp,
-                    spread = 5.dp,
+                    spread = 6.dp,
                 )
-                .border(
-                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
-                )
+
         } else {
             Modifier.padding(start = 20.dp, bottom = 20.dp)
         }
@@ -106,13 +107,15 @@ fun CarouselItem(
         if (micUiState == FocusState.FOCUSED || micUiState == FocusState.SELECTED) {
             micModifier
                 .shadow(
-                    color = Color.White.copy(alpha = .11f),
+                    color = selectedMainColor,
                     borderRadius = 40.dp,
                     blurRadius = 7.dp,
                     spread = 5.dp,
                 )
                 .border(
-                    width = 1.dp, color = textFocusedMainColor, shape = RoundedCornerShape(40.dp)
+                    width = 1.dp,
+                    color = textFocusedMainColor,
+                    shape = RoundedCornerShape(40.dp)
                 )
         } else {
             micModifier
@@ -122,7 +125,7 @@ fun CarouselItem(
         if (searchUiSate == FocusState.FOCUSED || searchUiSate == FocusState.SELECTED) {
             searchIcModifier
                 .shadow(
-                    color = Color.White.copy(alpha = .11f),
+                    color = selectedMainColor,
                     borderRadius = 40.dp,
                     blurRadius = 7.dp,
                     spread = 5.dp,
@@ -155,6 +158,19 @@ fun CarouselItem(
                     ),
                 alignment = Alignment.TopCenter
             )
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clip(
+                        RoundedCornerShape(
+                            bottomStart = 10.dp
+                        )
+                    )
+                    .background(
+                        color = detailGradientStartColor.copy(alpha = 0.48f)
+                    )
+
+            )
             ContentMetaBlock(
                 modifier = Modifier
                     .fillMaxSize()
@@ -184,7 +200,7 @@ fun CarouselItem(
                 ContentDescription(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
-                        .padding(top = 15.dp, end = if (isCreator) 80.dp else 100.dp)
+                        .padding(top = 15.dp, end = if (isCreator) 80.dp else 50.dp)
                         .align(Alignment.TopEnd),
                     text = title,
                     textStyle = titleTextStyle,
@@ -200,7 +216,7 @@ fun CarouselItem(
                 iconHeight = 30,
                 boxSize = 62,
                 iconWidth = 21,
-                backgroundColor = playButtonBackgroundColor,
+                backgroundColor = playButtonBackgroundColor.copy(alpha = 0.45f),
             )
 
             if (!isCreator) {

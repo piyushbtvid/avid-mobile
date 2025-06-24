@@ -1,6 +1,5 @@
 package com.faithForward.media.home.content
 
-import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,9 +25,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.commanComponents.PosterCard
 import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
 
 data class PosterRowDto(
@@ -48,6 +47,7 @@ fun ContentRow(
     onItemFocused: (Pair<Int, Int>) -> Unit,
     lastFocusedItem: Pair<Int, Int>,
     listState: LazyListState,
+    showContentOfCard: Boolean,
     shouldFocusOnFirstItem: Boolean = false,
     onChangeContentRowFocusedIndex: (Int) -> Unit,
 ) {
@@ -69,7 +69,7 @@ fun ContentRow(
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         TitleText(
             text = posterRowDto.heading, modifier = Modifier.padding(start = 25.dp)
@@ -127,6 +127,7 @@ fun ContentRow(
                         .focusable(),
                     posterCardDto = posterCardDto,
                     focusState = uiState,
+                    showContent = showContentOfCard,
                     onItemClick = { item ->
                         onItemClick.invoke(item, posterRowDto.dtos, posterRowDto.rowId)
                     }

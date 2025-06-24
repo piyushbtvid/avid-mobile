@@ -21,6 +21,7 @@ sealed interface RelatedContentData {
     data class SeriesSeasons(
         val seasonNumberList: List<SeasonsNumberDto>,
         val selectedSeasonEpisodes: List<PosterCardDto>,
+        val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
         val relatedSeries: List<PosterCardDto>,
     ) : RelatedContentData
@@ -63,7 +64,8 @@ fun CardDetail.toDetailDto(): DetailDto {
         isLiked = data.likeDislike == "like",
         isDisliked = data.likeDislike == "dislike",
         isSeries = data.content_type == "Series" || data.content_type == "Episode",
-        contentType = data.content_type
+        contentType = data.content_type,
+        progress = data.progressSeconds
     )
 }
 
@@ -81,14 +83,18 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         releaseDate = releaseDate,
         videoHlsUrl = videoLink,
         slug = slug,
-        contentType = contentType
+        contentType = contentType,
+        progress = progress
     )
 }
 
 fun Season.toSeasonDto(): SeasonDto {
-    return SeasonDto(episodesContentDto = episodes.map {
-        it.toPosterDto()
-    })
+    return SeasonDto(
+        episodesContentDto = episodes.map {
+            it.toPosterDto()
+        },
+        seasonNumber = season_number
+    )
 }
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
@@ -99,7 +105,7 @@ fun Season.toSeasonNumberDto(): SeasonsNumberDto {
 
 fun Episode.toPosterDto(): PosterCardDto {
     return PosterCardDto(id = id,
-        posterImageSrc = landscape,
+        posterImageSrc = portrait,
         title = name,
         description = description,
         genre = genres.mapNotNull { it.name }  // safely extract non-null names
@@ -107,6 +113,7 @@ fun Episode.toPosterDto(): PosterCardDto {
         duration = duration?.let { formatDuration(it) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
+        episodeNumber = episode_number,
         videoHlsUrl = video_link,
         slug = slug)
 }
@@ -116,6 +123,7 @@ fun Episode.toPosterDto(): PosterCardDto {
 data class UiState(
     val targetHeight: Int = 280,
     val isContentVisible: Boolean = true,
+    val isResumeVisible: Boolean = false,
 )
 
 // Sealed class for UI events

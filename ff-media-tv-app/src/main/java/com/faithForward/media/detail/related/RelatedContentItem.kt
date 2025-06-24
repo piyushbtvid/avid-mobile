@@ -19,6 +19,7 @@ fun RelatedContentItem(
         modifier = modifier,
         posterCardDto = relatedContentDto,
         focusState = uiState,
+        showContent = false,
         onItemClick = onItemClick
     )
 

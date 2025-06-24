@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,16 +28,17 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.extensions.shadow
 import com.faithForward.media.theme.posterCardShadowColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
 import kotlinx.serialization.Serializable
 
@@ -55,6 +59,8 @@ data class PosterCardDto(
     val progress: Long? = null,
     val contentType: String? = null,
     val isRelatedSeries: Boolean? = false,
+    val episodeNumber: Int? = null,
+    val uploadYear: String? = null,
 )
 
 @Composable
@@ -62,6 +68,7 @@ fun PosterCard(
     modifier: Modifier = Modifier,
     posterCardDto: PosterCardDto,
     focusState: FocusState,
+    showContent: Boolean = true,
     onItemClick: (PosterCardDto) -> Unit,
     cardShadowColor: Color = posterCardShadowColor,
     @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
@@ -69,15 +76,16 @@ fun PosterCard(
 
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.12f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
 
+    // changed card shadow to transprent due to black background
     val posterModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier.shadow(
-                color = cardShadowColor,
+                color = Color.Transparent,  //cardShadowColor
                 borderRadius = 23.dp,
                 blurRadius = 8.dp,
                 offsetY = 0.dp,
@@ -121,6 +129,45 @@ fun PosterCard(
                     onItemClick.invoke(posterCardDto)
                 })
         )
+
+        // showing meta data only in some screen with showContent parameter
+        if (showContent) {
+            Column(
+                modifier = Modifier
+                    .width(135.dp)
+                    .padding(top = 10.dp)
+            ) {
+                TitleText(
+                    text = posterCardDto.title,
+                    color = whiteMain,
+                    lineHeight = 10,
+                    fontWeight = FontWeight.W600,
+                    textSize = 10,
+                )
+                Spacer(modifier = Modifier.height(1.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TitleText(
+                        text = posterCardDto.imdbRating ?: "",
+                        color = whiteMain,
+                        fontWeight = FontWeight.W400,
+                        lineHeight = 7,
+                        textSize = 7
+                    )
+
+                    TitleText(
+                        text = posterCardDto.uploadYear ?: "",
+                        color = whiteMain,
+                        fontWeight = FontWeight.W400,
+                        lineHeight = 7,
+                        textSize = 7
+                    )
+
+                }
+            }
+        }
     }
 }
 

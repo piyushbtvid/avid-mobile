@@ -1,10 +1,12 @@
 package com.faithForward.media.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
+import com.faithForward.media.detail.SeasonDto
 import com.faithForward.media.detail.SeasonsNumberDto
 import com.faithForward.media.viewModel.uiModels.DetailPageItem
 import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
@@ -14,6 +16,8 @@ import com.faithForward.media.viewModel.uiModels.UiState
 import com.faithForward.media.viewModel.uiModels.toDetailDto
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.media.viewModel.uiModels.toSeasonDto
+import com.faithForward.network.dto.detail.CardDetail
+import com.faithForward.network.dto.detail.ResumeInfo
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +37,7 @@ class DetailViewModel @Inject constructor(
 
     private val _cardDetail = MutableStateFlow<Resource<DetailPageItem>>(Resource.Unspecified())
     val cardDetail = _cardDetail.asStateFlow()
+    private var cachedCardDetail: CardDetail? = null // Cache to store the last response
 
     private val _relatedContentData = MutableStateFlow<RelatedContentData>(RelatedContentData.None)
     val relatedContentData = _relatedContentData.asStateFlow()
@@ -46,13 +51,16 @@ class DetailViewModel @Inject constructor(
     val id: String? = savedStateHandle["itemId"]
     var relatedList: List<PosterCardDto>? = emptyList()
 
+    var resumeSeasonTxt = mutableStateOf("Resume Now")
+        private set
+
     init {
         val encodedJson = savedStateHandle.get<String>("listJson")
 //        relatedList = encodedJson?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
 //            ?.let { Json.decodeFromString<List<PosterCardDto>>(it) }
-
+        Log.e("DETAIL_VIEWMODEL", "detail viewmodel init called")
         id?.let {
-            handleEvent(DetailScreenEvent.LoadCardDetail(id, relatedList!!))
+            //   handleEvent(DetailScreenEvent.LoadCardDetail(id, relatedList!!))
         }
     }
 
@@ -68,89 +76,188 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    // method for loading item  detail from api
     private fun loadCardDetail(slug: String, relatedList: List<PosterCardDto>) {
+        Log.e("DETAIL_VIEWMODEL", "load card detail is called with $slug")
+
         viewModelScope.launch(Dispatchers.IO) {
-            _cardDetail.value = Resource.Loading()
-            _relatedContentData.value = RelatedContentData.None
             try {
                 val response = networkRepository.getGivenCardDetail(slug)
-                if (response.isSuccessful) {
-                    val cardDetail = response.body()
-                    if (cardDetail != null) {
-                        _cardDetail.emit(
-                            Resource.Success(
-                                DetailPageItem.Card(
-                                    detailDto = cardDetail.toDetailDto()
-                                )
-                            )
+
+                if (!response.isSuccessful) {
+                    emitError("API Error: ${response.message()}")
+                    return@launch
+                }
+
+                val cardDetail = response.body()
+                if (cardDetail == null) {
+                    emitError("No data received")
+                    return@launch
+                }
+
+                // using a cachedCardDetail for comparing new data and old data change in every api call
+                val newDetailDto = cardDetail.toDetailDto()
+                val newData = cardDetail.data
+                val oldData = cachedCardDetail?.data
+
+                //for first call when cachedCardDetail was null for the first time
+                if (cachedCardDetail == null) {
+                    _cardDetail.emit(Resource.Success(DetailPageItem.Card(newDetailDto)))
+
+                    if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
+                        val seasonList = newData.seasons!!.map { it.toSeasonDto() }
+                        val relatedMovieList = newData.relatedContent?.map {
+                            it.toPosterCardDto().copy(isRelatedSeries = true)
+                        } ?: emptyList()
+
+                        val seasonNumberList = buildSeasonNumberList(seasonList, relatedMovieList)
+                        val selectedSeasonEpisodes =
+                            seasonList.firstOrNull()?.episodesContentDto ?: emptyList()
+                        val resumeSeasonEpisodes =
+                            buildResumeEpisodes(newData.resumeInfo, seasonList)
+
+                        updateResumeUI(
+                            progressSeconds = newData.resumeInfo?.progress_seconds?.toInt(),
+                            resumeInfo = newData.resumeInfo
                         )
-                        // if Content type is Series then Series seasons and related content else  Movie , Podcast etc
-                        if (cardDetail.data.content_type == "Series" && !cardDetail.data.seasons.isNullOrEmpty()) {
-                            Log.e(
-                                "DETAIL_SLUG",
-                                "detail isFavourite in viewModel is ${cardDetail.data.myList}"
-                            )
 
-                            val seasonList = cardDetail.data.seasons!!.map { it.toSeasonDto() }
-                            val relatedMovieList = cardDetail.data.relatedContent?.map {
-                                it.toPosterCardDto().copy(isRelatedSeries = true)
-                            } ?: emptyList()
+                        val newRelatedContentData = RelatedContentData.SeriesSeasons(
+                            seasonNumberList = seasonNumberList,
+                            selectedSeasonEpisodes = selectedSeasonEpisodes,
+                            allSeasons = seasonList,
+                            relatedSeries = relatedMovieList,
+                            resumeSeasonEpisodes = resumeSeasonEpisodes
+                        )
+                        if (_relatedContentData.value != newRelatedContentData)
+                            _relatedContentData.emit(newRelatedContentData)
 
-
-                            // Create season number list
-                            val seasonNumberList = mutableListOf<SeasonsNumberDto>()
-
-                            if (seasonList.isNotEmpty()) {
-                                seasonNumberList.addAll(
-                                    List(seasonList.size) { index ->
-                                        SeasonsNumberDto(seasonNumber = (index + 1).toString())
-                                    }
-                                )
-                                if (relatedMovieList.isNotEmpty()) {
-                                    seasonNumberList.add(SeasonsNumberDto(seasonNumber = "Related"))
-                                }
-                            } else if (relatedMovieList.isNotEmpty()) {
-                                seasonNumberList.add(SeasonsNumberDto(seasonNumber = "Related"))
-                            }
-
-                            val selectedSeasonEpisodes =
-                                seasonList.firstOrNull()?.episodesContentDto ?: emptyList()
-
-                            _relatedContentData.emit(
-                                RelatedContentData.SeriesSeasons(
-                                    seasonNumberList = seasonNumberList,
-                                    selectedSeasonEpisodes = selectedSeasonEpisodes,
-                                    allSeasons = seasonList,
-                                    relatedSeries = relatedMovieList
-                                )
-                            )
-                        } else {
-                            val relatedMovieList = cardDetail.data.relatedContent?.map {
-                                it.toPosterCardDto()
-                            }
-                            _relatedContentData.emit(
-                                if (!relatedMovieList.isNullOrEmpty()) {
-                                    RelatedContentData.RelatedMovies(relatedMovieList)
-                                } else {
-                                    RelatedContentData.None
-                                }
-                            )
-                        }
                     } else {
-                        _cardDetail.emit(Resource.Error("No data received"))
-                        _relatedContentData.emit(RelatedContentData.None)
+                        val relatedMovies = newData.relatedContent?.map { it.toPosterCardDto() }
+                        val newRelated = if (!relatedMovies.isNullOrEmpty()) {
+                            RelatedContentData.RelatedMovies(relatedMovies)
+                        } else {
+                            RelatedContentData.None
+                        }
+
+                        updateResumeUI(progressSeconds = newData.progressSeconds?.toInt())
+                        if (_relatedContentData.value != newRelated)
+                            _relatedContentData.emit(newRelated)
                     }
-                } else {
-                    _cardDetail.emit(Resource.Error(response.message()))
-                    _relatedContentData.emit(RelatedContentData.None)
+
+                    cachedCardDetail = cardDetail
+
+
+                }
+                // If new card is different from cached card
+                else if (cachedCardDetail != cardDetail) {
+                    // Only update resume-related UI
+                    //comparing only resume related data like progress seconds changed or not etc
+                    if (oldData?.resumeInfo != newData.resumeInfo || oldData?.progressSeconds != newData.progressSeconds) {
+
+                        //For Series
+                        if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
+                            val seasonList = newData.seasons!!.map { it.toSeasonDto() }
+                            val resumeSeasonEpisodes =
+                                buildResumeEpisodes(newData.resumeInfo, seasonList)
+
+                            updateResumeUI(
+                                progressSeconds = newData.resumeInfo?.progress_seconds?.toInt(),
+                                resumeInfo = newData.resumeInfo
+                            )
+
+                            (_relatedContentData.value as? RelatedContentData.SeriesSeasons)?.let { current ->
+                                _relatedContentData.emit(current.copy(resumeSeasonEpisodes = resumeSeasonEpisodes))
+                            }
+                        }
+                        // For Movies etc
+                        else {
+                            updateResumeUI(progressSeconds = newData.progressSeconds?.toInt())
+                            updateMovieProgress(progressSeconds = newData.progressSeconds)
+                        }
+                    }
+                    cachedCardDetail = cardDetail
+                    Log.e("DETAIL_VIEWMODEL", "No changes detected for slug $slug")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                _cardDetail.emit(Resource.Error(ex.message ?: "Something went wrong"))
-                _relatedContentData.emit(RelatedContentData.None)
+                emitError(ex.message ?: "Something went wrong")
             }
         }
     }
+
+
+    private suspend fun emitError(message: String) {
+        _cardDetail.emit(Resource.Error(message))
+        _relatedContentData.emit(RelatedContentData.None)
+        cachedCardDetail = null
+    }
+
+    private fun buildSeasonNumberList(
+        seasons: List<SeasonDto>,
+        relatedList: List<PosterCardDto>,
+    ): List<SeasonsNumberDto> {
+        val list = mutableListOf<SeasonsNumberDto>()
+        list.addAll(seasons.indices.map { SeasonsNumberDto((it + 1).toString()) })
+        if (relatedList.isNotEmpty()) list.add(SeasonsNumberDto("Related"))
+        return list
+    }
+
+    private fun buildResumeEpisodes(
+        resumeInfo: ResumeInfo?,
+        seasons: List<SeasonDto>,
+    ): List<PosterCardDto> {
+        if (resumeInfo == null) return seasons.firstOrNull()?.episodesContentDto ?: emptyList()
+
+        val matchedSeason = seasons.firstOrNull { it.seasonNumber == resumeInfo.season_number }
+        val episodes = matchedSeason?.episodesContentDto ?: return emptyList()
+
+        val resumeEpisode = episodes.firstOrNull {
+            it.episodeNumber == resumeInfo.episode_number
+        }?.copy(progress = resumeInfo.progress_seconds)
+
+        val remaining = episodes.filter {
+            it.episodeNumber != null &&
+                    it.episodeNumber != resumeInfo.episode_number &&
+                    it.episodeNumber > (resumeInfo.episode_number ?: 0)
+        }
+
+        return listOfNotNull(resumeEpisode) + remaining
+    }
+
+    private fun updateResumeUI(progressSeconds: Int?, resumeInfo: ResumeInfo? = null) {
+        val isVisible = progressSeconds != null && progressSeconds > 0
+        if (_uiState.value.isResumeVisible != isVisible) {
+            _uiState.value = _uiState.value.copy(isResumeVisible = isVisible)
+        }
+
+        val resumeText = if (isVisible) {
+            resumeInfo?.let {
+                val s = it.season_number ?: 1
+                val e = it.episode_number ?: 1
+                "Resume S$s E$e"
+            } ?: "Resume Now"
+        } else ""
+
+        if (resumeSeasonTxt.value != resumeText) {
+            resumeSeasonTxt.value = resumeText
+        }
+    }
+
+    private fun updateMovieProgress(progressSeconds: Long?) {
+        if (progressSeconds == null) return
+
+        val currentValue = _cardDetail.value
+        if (currentValue is Resource.Success && currentValue.data is DetailPageItem.Card) {
+            val currentCard = currentValue.data as DetailPageItem.Card
+            val updatedDto = currentCard.detailDto.copy(progress = progressSeconds.toLong())
+
+            // Only emit if progress has changed
+            if (currentCard.detailDto.progress != progressSeconds.toLong()) {
+                _cardDetail.value = Resource.Success(DetailPageItem.Card(detailDto = updatedDto))
+            }
+        }
+    }
+
 
     private fun toggleFavorite(slug: String) {
         viewModelScope.launch(Dispatchers.IO) {

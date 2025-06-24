@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,25 +42,48 @@ import com.faithForward.util.Resource
 fun DetailScreen(
     modifier: Modifier = Modifier,
     onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
+    onResumeNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
     onRelatedItemClick: (PosterCardDto) -> Unit,
+    slug: String?,
     detailViewModel: DetailViewModel,
 ) {
     val cardDetail by detailViewModel.cardDetail.collectAsStateWithLifecycle()
     val uiState by detailViewModel.uiState.collectAsStateWithLifecycle()
     val relatedContentData by detailViewModel.relatedContentData.collectAsStateWithLifecycle()
-    val btnFocusRequester = remember { FocusRequester() }
+    val playNowBtnFocusRequester = remember { FocusRequester() }
+    val resumeNowBtnFocusRequester = remember { FocusRequester() }
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
     val uiEvent by detailViewModel.uiEvent.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
+    val resumeTxt = detailViewModel.resumeSeasonTxt
 
     var lastFocusedItem by rememberSaveable { mutableStateOf(-1) }
     var seasonNumberSelectedItem by rememberSaveable { mutableStateOf(-1) }
+    // Create a list of FocusRequesters for seasons
+    val seasonFocusRequesters = remember(relatedContentData) {
+        (relatedContentData as? RelatedContentData.SeriesSeasons)?.seasonNumberList?.map { FocusRequester() }
+            ?: emptyList()
+    }
+
+    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
+    val listState = rememberLazyListState()
 
     val animatedHeight by animateDpAsState(
         targetValue = if (uiState.targetHeight == Int.MAX_VALUE) screenHeight.dp else uiState.targetHeight.dp,
         animationSpec = tween(durationMillis = 500)
     )
+    // calling load detail of any item from LaunchEffect inside unit every time recomposition happens
+    LaunchedEffect(Unit) {
+        Log.e("DETAIL_SCREEN", "detail screen unit is called")
+        if (slug != null) {
+            detailViewModel.handleEvent(
+                DetailScreenEvent.LoadCardDetail(
+                    slug, emptyList()
+                )
+            )
+        }
+    }
 
     // Showing Toast when uiEvent changes
     LaunchedEffect(uiEvent) {
@@ -84,13 +108,26 @@ fun DetailScreen(
         is Resource.Success -> {
             val detailPageItem = cardDetail.data as? DetailPageItem.Card ?: return
             Box(modifier = modifier.fillMaxSize()) {
-                DetailContent(detailDto = detailPageItem.detailDto,
-                    btnFocusRequester = btnFocusRequester,
+                DetailContent(
+                    detailDto = detailPageItem.detailDto,
+                    playNowBtnFocusRequester = playNowBtnFocusRequester,
+                    resumeBtnFocusRequester = resumeNowBtnFocusRequester,
                     isContentVisible = uiState.isContentVisible,
+                    isResumeVisible = uiState.isResumeVisible,
+                    resumeNowTxt = resumeTxt.value,
                     modifier = Modifier.fillMaxSize(),
                     onWatchNowClick = {
                         if (detailPageItem.detailDto.isSeries == true) {
+                            Log.e("RESUME_INFO", "on watch Now click in deatil for series ")
                             if (relatedContentData is RelatedContentData.SeriesSeasons) {
+                                Log.e(
+                                    "RESUME_INFO",
+                                    "on watch Now click in deatil for series with selected series episode progress is ${
+                                        (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes.get(
+                                            0
+                                        ).progress
+                                    }."
+                                )
                                 onWatchNowClick.invoke(
                                     null,
                                     (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes
@@ -100,10 +137,26 @@ fun DetailScreen(
                             onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto(), null)
                         }
                     },
+                    onResumeNowCLick = {
+                        if (detailPageItem.detailDto.isSeries == true) {
+                            if (relatedContentData is RelatedContentData.SeriesSeasons) {
+                                onResumeNowClick.invoke(
+                                    null,
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes
+                                )
+                            }
+                        } else {
+                            onResumeNowClick.invoke(
+                                detailPageItem.detailDto.toPosterCardDto(), null
+                            )
+                        }
+                    },
                     onWatchNowFocusChange = { hasFocus ->
                         if (hasFocus) {
                             lastFocusedItem = -1
                         }
+                    },
+                    onResumeNowFocusChange = { boolean ->
                     },
                     onToggleFavorite = {
                         if (detailPageItem.detailDto.slug != null) {
@@ -125,7 +178,8 @@ fun DetailScreen(
                                 DetailScreenEvent.ToggleLike(detailPageItem.detailDto.slug)
                             )
                         }
-                    })
+                    }
+                )
 
                 when (val contentData = relatedContentData) {
                     is RelatedContentData.None -> {
@@ -134,10 +188,11 @@ fun DetailScreen(
 
                     is RelatedContentData.RelatedMovies -> {
                         if (contentData.movies.isNotEmpty()) {
-                            RelatedContent(relatedContentRowDto = RelatedContentRowDto(
-                                heading = "Related Movies",
-                                relatedContentDto = contentData.movies
-                            ),
+                            RelatedContent(
+                                relatedContentRowDto = RelatedContentRowDto(
+                                    heading = "Related Movies",
+                                    relatedContentDto = contentData.movies
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 30.dp)
@@ -157,7 +212,7 @@ fun DetailScreen(
                                 onRelatedUpClick = {
                                     detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                     try {
-                                        btnFocusRequester.requestFocus()
+                                        playNowBtnFocusRequester.requestFocus()
                                     } catch (ex: Exception) {
                                         Log.e("LOG", "exception is ${ex.message}")
                                     }
@@ -168,17 +223,21 @@ fun DetailScreen(
                                 },
                                 isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                                 lastFocusedItemIndex = lastFocusedItem,
+                                listState = listState,
+                                focusRequesters = focusRequesters,
                                 onLastFocusedIndexChange = { item ->
                                     lastFocusedItem = item
-                                })
+                                }
+                            )
                         }
                     }
 
                     is RelatedContentData.SeriesSeasons -> {
-                        RelatedContent(relatedContentRowDto = RelatedContentRowDto(
-                            heading = "Season:",
-                            relatedContentDto = contentData.selectedSeasonEpisodes
-                        ),
+                        RelatedContent(
+                            relatedContentRowDto = RelatedContentRowDto(
+                                heading = "Season:",
+                                relatedContentDto = contentData.selectedSeasonEpisodes
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 30.dp)
@@ -196,7 +255,7 @@ fun DetailScreen(
                             onRelatedUpClick = {
                                 detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                 try {
-                                    btnFocusRequester.requestFocus()
+                                    playNowBtnFocusRequester.requestFocus()
                                 } catch (ex: Exception) {
                                     Log.e("LOG", "exception is ${ex.message}")
                                 }
@@ -208,25 +267,23 @@ fun DetailScreen(
                                 if (item.isRelatedSeries == true) {
                                     onRelatedItemClick.invoke(item)
                                 } else {
-                                    val newLs = ls.subList(
-                                        index,
-                                        ls.size
-                                    )  // This creates a new list from index to end
+                                    val newLs = ls.subList(index, ls.size)
                                     onWatchNowClick.invoke(null, newLs)
                                 }
-
                             },
                             lastFocusedItemIndex = lastFocusedItem,
                             onLastFocusedIndexChange = { int ->
                                 lastFocusedItem = int
                             },
+                            focusRequesters = focusRequesters,
+                            listState = listState,
                             seasonsNumberRow = {
                                 SeasonsNumberRow(
                                     seasonsNumberDtoList = contentData.seasonNumberList,
                                     onSeasonUpClick = {
                                         detailViewModel.handleEvent(DetailScreenEvent.RelatedRowUpClick)
                                         try {
-                                            btnFocusRequester.requestFocus()
+                                            playNowBtnFocusRequester.requestFocus()
                                         } catch (ex: Exception) {
                                             Log.e("LOG", "exception is ${ex.message}")
                                         }
@@ -238,28 +295,31 @@ fun DetailScreen(
                                         )
                                     },
                                     modifier = Modifier.focusRestorer(),
-                                    lastSelectedItemIndex = seasonNumberSelectedItem,
                                     onLastSelectedIndexChange = { index ->
                                         seasonNumberSelectedItem = index
                                     },
+                                    seasonFocusRequesters = seasonFocusRequesters
                                 )
-                            })
+                            }
+                        )
                     }
                 }
             }
 
             LaunchedEffect(Unit) {
+                Log.e("DETAIL_VIEWMODEL", "detail screen second unit called")
                 Log.e(
                     "LAST_FOCUSED_INDEX",
-                    "current selected series in detail screen is $seasonNumberSelectedItem"
+                    "current selected series in detail screen is $seasonNumberSelectedItem and ${seasonFocusRequesters.size} and last focused is $lastFocusedItem"
                 )
                 if (lastFocusedItem == -1) {
                     try {
                         Log.e("LAST_FOCUSED", "last focused is $lastFocusedItem")
-                        btnFocusRequester.requestFocus()
+                        playNowBtnFocusRequester.requestFocus()
                     } catch (_: Exception) {
                     }
                 }
+
             }
         }
     }

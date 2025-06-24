@@ -1,6 +1,7 @@
 package com.faithForward.media.navigation
 
 import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -14,6 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -41,6 +45,9 @@ fun MainScreen(
     val currentRoute = navBackStackEntry?.destination?.route
 
     val showSidebar = currentRoute in sidebarVisibleRoutes
+
+    var showExitDialog by remember { mutableStateOf(false) }
+    val activity = (LocalActivity.current)
 
 
     LaunchedEffect(startRoute) {
@@ -76,7 +83,10 @@ fun MainScreen(
             startRoute = startRoute,
             sideBarViewModel = sideBarViewModel,
             playerViewModel = playerViewModel,
-            loginViewModel = loginViewModel
+            loginViewModel = loginViewModel,
+            onBackClickForExit = {
+                showExitDialog = true
+            }
         )
 
         AnimatedVisibility(
@@ -152,6 +162,17 @@ fun MainScreen(
                     sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(index))
                 })
         }
+
+        ExitDialog(
+            showDialog = showExitDialog,
+            onDismiss = {
+                showExitDialog = false
+            },
+            onExitConfirm = {
+                showExitDialog = false
+                activity?.finish()
+            },
+        )
     }
 }
 

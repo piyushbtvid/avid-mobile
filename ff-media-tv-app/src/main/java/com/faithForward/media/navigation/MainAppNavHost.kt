@@ -2,7 +2,6 @@ package com.faithForward.media.navigation
 
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,16 +50,21 @@ fun MainAppNavHost(
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
+    onBackClickForExit: () -> Unit,
 ) {
 
-    val activity = (LocalActivity.current)
 
     NavHost(
         navController = navController, startDestination = startRoute
     ) {
         composable(route = Routes.Login.route) {
             LoginScreen(
-                loginViewModel = loginViewModel, navController = navController
+                loginViewModel = loginViewModel,
+                onLogin = {
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -76,7 +80,8 @@ fun MainAppNavHost(
                 },
                 onBackClick = {
                     Log.e("ON_BACK", "on back in home compose caled")
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //activity?.finish()
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -111,7 +116,8 @@ fun MainAppNavHost(
             CreatorScreen(creatorViewModel = creatorViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //   activity?.finish()
                 },
                 onCreatorItemClick = { item ->
                     navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
@@ -134,7 +140,8 @@ fun MainAppNavHost(
                     }
                 },
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //  activity?.finish()
                 },
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
@@ -150,7 +157,8 @@ fun MainAppNavHost(
             SeriesPage(contentViewModel = contentViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    // activity?.finish()
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -170,7 +178,8 @@ fun MainAppNavHost(
             MyListPage(contentViewModel = myListViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //   activity?.finish()
                 },
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -208,15 +217,34 @@ fun MainAppNavHost(
         composable(
             route = Routes.Detail.route,
             arguments = listOf(navArgument("itemId") { type = NavType.StringType })
-        ) {
+        ) { backStackEntry ->
             val detailViewModel: DetailViewModel = hiltViewModel()
 
+            val slug = backStackEntry.arguments?.getString("itemId")
+
             DetailScreen(detailViewModel = detailViewModel,
+                slug = slug,
                 onWatchNowClick = { item, posterItemList ->
+                    if (item != null) {
+                        val itemWithProgressZero = item.copy(progress = 0)
+                        val route =
+                            Routes.PlayerScreen.createRoute(listOf(itemWithProgressZero)) // Wrap item in a list
+                        navController.navigate(route)
+                    } else {
+                        if (posterItemList != null) {
+                            val route =
+                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                            navController.navigate(route)
+                        }
+                    }
+                },
+                onResumeNowClick = { item, posterItemList ->
                     if (item != null) {
                         val route =
                             Routes.PlayerScreen.createRoute(listOf(item)) // Wrap item in a list
-                        navController.navigate(route)
+                        if (item.progress != null && item.progress > 0) {
+                            navController.navigate(route)
+                        }
                     } else {
                         if (posterItemList != null) {
                             val route =
@@ -294,7 +322,8 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(
+                creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -311,7 +340,8 @@ fun MainAppNavHost(
             SearchScreen(viewModel = searchViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
-                    activity?.finish()
+                    onBackClickForExit.invoke()
+                    //activity?.finish()
                 },
                 onSearchItemClick = { item ->
                     if (item.contentSlug != null) {
