@@ -34,6 +34,7 @@ import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -311,7 +312,23 @@ fun MainAppNavHost(
                         // Default back navigation (to Detail or Home)
                         navController.popBackStack()
                     }
-                })
+                },
+                onItemClick = { item ->
+                    val posterCard = item.toPosterCardDto()
+                    val route =
+                        Routes.PlayerScreen.createRoute(listOf(posterCard)) // Wrap item in a list
+
+                    navController.navigate(route) {
+                        popUpTo(Routes.PlayerScreen.route) {
+                            inclusive =
+                                true // This removes the current PlayerScreen from the back stack
+                        }
+                        launchSingleTop = true // Prevent multiple instances if the same route
+                    }
+                }
+
+
+            )
         }
 
 

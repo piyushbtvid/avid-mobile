@@ -49,6 +49,7 @@ data class PlayerRelatedContentRowDto(
 @Composable
 fun PlayerRelatedContentRow(
     modifier: Modifier = Modifier,
+    onItemClick: (RelatedContentItemDto) -> Unit,
     onUp: () -> Boolean = {
         false
     },
@@ -110,7 +111,10 @@ fun PlayerRelatedContentRow(
                             } else {
                                 false
                             }
-                        }, focusState = uiState, relatedContentItemDto = item
+                        },
+                        focusState = uiState,
+                        relatedContentItemDto = item,
+                        onItemClick = onItemClick
                     )
                 }
                 item {
@@ -147,6 +151,7 @@ private fun RowPreview() {
             id = "",
             slug = "",
             title = "The Last Ride",
+            description = ""
         ),
 
         RelatedContentItemDto(
@@ -154,24 +159,28 @@ private fun RowPreview() {
             id = "",
             slug = "",
             title = "The Last Ride",
+            description = ""
         ),
         RelatedContentItemDto(
             image = "",
             id = "",
             slug = "",
             title = "The Last Ride",
+            description = ""
         ),
         RelatedContentItemDto(
             image = "",
             id = "",
             slug = "",
             title = "The Last Ride",
+            description = ""
         ),
         RelatedContentItemDto(
             image = "",
             id = "",
             slug = "",
             title = "The Last Ride",
+            description = ""
         ),
     )
 
@@ -184,7 +193,9 @@ private fun RowPreview() {
         PlayerRelatedContentRow(
             playerRelatedContentRowDto = PlayerRelatedContentRowDto(
                 title = "Next Up...", rowList = ls
-            )
+            ), onItemClick = {
+
+            }
         )
     }
 

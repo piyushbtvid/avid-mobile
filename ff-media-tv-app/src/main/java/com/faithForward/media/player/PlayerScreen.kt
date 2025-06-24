@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.util.Resource
@@ -32,6 +33,7 @@ fun PlayerScreen(
     isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
     onPlayerBackClick: () -> Unit,
+    onItemClick: (RelatedContentItemDto) -> Unit,
 ) {
     val state by playerViewModel.state.collectAsState()
 
@@ -77,13 +79,16 @@ fun PlayerScreen(
             is Resource.Success -> {
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
                 val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
-                VideoPlayer(
-                    videoPlayerItem = playerDtoItems,
+                VideoPlayer(videoPlayerItem = playerDtoItems,
                     initialIndex = 0,
                     playerViewModel = playerViewModel,
                     playerRelatedContentRowDto = relatedList,
-                    onVideoEnd = {}
-                )
+                    onVideoEnd = {},
+                    onItemClick = { item ->
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        onItemClick.invoke(item)
+                    })
             }
         }
     }

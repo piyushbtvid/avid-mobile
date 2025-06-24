@@ -56,7 +56,7 @@ data class PosterCardDto(
     val releaseDate: String? = null,
     val videoHlsUrl: String? = null,
     val seriesSlug: String? = null,
-    val progress: Long? = null,
+    val progress: Long? = 0,
     val contentType: String? = null,
     val isRelatedSeries: Boolean? = false,
     val episodeNumber: Int? = null,

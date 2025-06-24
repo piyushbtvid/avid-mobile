@@ -41,13 +41,15 @@ data class RelatedContentItemDto(
     val id: String,
     val slug: String,
     val title: String,
-
-    )
+    val description: String,
+    val url: String? = null,
+)
 
 @Composable
 fun RelatedContentItem(
     modifier: Modifier = Modifier,
     focusState: FocusState,
+    onItemClick: (RelatedContentItemDto) -> Unit,
     relatedContentItemDto: RelatedContentItemDto,
 ) {
 
@@ -88,7 +90,7 @@ fun RelatedContentItem(
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable(interactionSource = null, indication = null, onClick = {
-                        //   onItemClick.invoke()
+                        onItemClick.invoke(relatedContentItemDto)
                     }
                     )
             )
@@ -129,7 +131,12 @@ private fun RowItemPreview() {
                 id = "",
                 slug = "",
                 title = "The Last Ride",
-            )
+                url = "",
+                description = ""
+            ),
+            onItemClick = {
+
+            }
         )
     }
 }

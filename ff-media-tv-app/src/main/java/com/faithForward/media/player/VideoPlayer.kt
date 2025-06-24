@@ -36,6 +36,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRow
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
@@ -59,6 +60,7 @@ fun VideoPlayer(
     playerRelatedContentRowDto: PlayerRelatedContentRowDto,
     initialIndex: Int,
     playerViewModel: PlayerViewModel,
+    onItemClick: (RelatedContentItemDto) -> Unit,
     onVideoEnd: () -> Unit,
 ) {
     val playerState = playerViewModel.playerState
@@ -192,14 +194,16 @@ fun VideoPlayer(
 
     // Start auto-hide timer when composable is first composed and controls are visible
     LaunchedEffect(Unit) {
-        if (state.isControlsVisible) {
-            playerViewModel.handleEvent(PlayerEvent.ShowControls)
-        }
-
-        playerViewModel.interactionFlow.collectLatest {
-            Log.e("PLAYER_UI", "User interaction collected in DetailScreen")
-            // playerViewModel.handleEvent(PlayerEvent.ShowControls) // Reset the auto-play timer
-        }
+//        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+//        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+//        if (state.isControlsVisible) {
+//            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+//        }
+//
+//        playerViewModel.interactionFlow.collectLatest {
+//            Log.e("PLAYER_UI", "User interaction collected in DetailScreen")
+//            // playerViewModel.handleEvent(PlayerEvent.ShowControls) // Reset the auto-play timer
+//        }
     }
 
     // Set Playlist
@@ -312,12 +316,16 @@ fun VideoPlayer(
                 animationSpec = tween(durationMillis = 500)
             )
         ) {
-            PlayerRelatedContentRow(playerRelatedContentRowDto = playerRelatedContentRowDto,
+            PlayerRelatedContentRow(
+                playerRelatedContentRowDto = playerRelatedContentRowDto,
                 onUp = {
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     true
-                })
+                },
+                onItemClick = onItemClick
+
+            )
         }
 
         // Controls with slide animation, hidden when related content is visible
