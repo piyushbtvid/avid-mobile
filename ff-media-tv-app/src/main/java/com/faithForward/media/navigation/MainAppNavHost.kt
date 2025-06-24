@@ -2,7 +2,6 @@ package com.faithForward.media.navigation
 
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,14 +53,18 @@ fun MainAppNavHost(
     onBackClickForExit: () -> Unit,
 ) {
 
-    val activity = (LocalActivity.current)
 
     NavHost(
         navController = navController, startDestination = startRoute
     ) {
         composable(route = Routes.Login.route) {
             LoginScreen(
-                loginViewModel = loginViewModel, navController = navController
+                loginViewModel = loginViewModel,
+                onLogin = {
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                }
             )
         }
 

@@ -69,7 +69,7 @@ fun ContentRow(
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         TitleText(
             text = posterRowDto.heading, modifier = Modifier.padding(start = 25.dp)
