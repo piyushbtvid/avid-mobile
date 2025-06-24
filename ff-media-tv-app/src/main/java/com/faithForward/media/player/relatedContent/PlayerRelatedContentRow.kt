@@ -63,7 +63,7 @@ fun PlayerRelatedContentRow(
     with(playerRelatedContentRowDto) {
 
         Column(
-            modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(15.dp)
+            modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
             TitleText(
                 text = title, modifier = Modifier.padding(start = 25.dp), color = whiteMain
@@ -118,7 +118,7 @@ fun PlayerRelatedContentRow(
                     )
                 }
                 item {
-                    Spacer(modifier = Modifier.width(120.dp))
+                    Spacer(modifier = Modifier.width(250.dp))
                 }
             }
         }
