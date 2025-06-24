@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.util.Resource
 
 data class PlayerDto(
@@ -50,6 +51,8 @@ fun PlayerScreen(
 
     BackHandler {
         Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
+        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+        playerViewModel.handleEvent(PlayerEvent.ShowControls)
         onPlayerBackClick.invoke()
     }
 

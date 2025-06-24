@@ -324,7 +324,7 @@ fun VideoPlayer(
         AnimatedVisibility(
             visible = state.isControlsVisible && !state.isRelatedVisible, enter = slideInVertically(
                 initialOffsetY = { it }, // Start from bottom
-                animationSpec = tween(durationMillis = 500)
+                animationSpec = tween(durationMillis = 300)
             ), exit = slideOutVertically(
                 targetOffsetY = { it }, // Slide out to bottom
                 animationSpec = tween(durationMillis = 500)
