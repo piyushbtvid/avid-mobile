@@ -93,18 +93,14 @@ fun PlayerControls(
             onRewind = { onRewind() },
             onForward = { onForward() })
 
-        //Row with icons of player
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = formatTime(currentPosition),
-                color = Color.White,
-                modifier = Modifier.focusable(enabled = false)
-            )
             Row(
-                horizontalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 FocusableIconButton(
                     onClick = onPrev,
@@ -142,11 +138,24 @@ fun PlayerControls(
                     description = "Next"
                 )
             }
-            Text(
-                text = formatTime(duration),
-                color = Color.White,
-                modifier = Modifier.focusable(enabled = false)
-            )
+            //Row with icons of player
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = formatTime(currentPosition),
+                    color = Color.White,
+                    modifier = Modifier.focusable(enabled = false)
+                )
+
+                Text(
+                    text = formatTime(duration),
+                    color = Color.White,
+                    modifier = Modifier.focusable(enabled = false)
+                )
+            }
         }
 
 
@@ -166,7 +175,6 @@ fun formatTime(millis: Long): String {
         else -> String.format("%02d:%02d", minutes, seconds)
     }
 }
-
 
 
 @Composable
