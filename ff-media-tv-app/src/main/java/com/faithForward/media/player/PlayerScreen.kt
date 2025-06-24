@@ -16,11 +16,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.util.Resource
 
 data class PlayerDto(
     val videoPlayerDtoList: List<VideoPlayerDto>,
+    val playerRelatedContentRowDto: PlayerRelatedContentRowDto,
 )
 
 @Composable
@@ -71,10 +73,12 @@ fun PlayerScreen(
 
             is Resource.Success -> {
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
+                val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
                 VideoPlayer(
                     videoPlayerItem = playerDtoItems,
                     initialIndex = 0,
                     playerViewModel = playerViewModel,
+                    playerRelatedContentRowDto = relatedList,
                     onVideoEnd = {}
                 )
             }

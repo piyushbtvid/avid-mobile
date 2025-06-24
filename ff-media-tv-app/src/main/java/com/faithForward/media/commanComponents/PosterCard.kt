@@ -120,7 +120,7 @@ fun PosterCard(
                     Log.e("CoilSuccess", "Image loaded successfully")
                 }).crossfade(true).build(),
             contentDescription = "Poster Image",
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(210.dp)

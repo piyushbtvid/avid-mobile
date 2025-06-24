@@ -49,6 +49,7 @@ import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -124,43 +125,65 @@ class MainActivity : ComponentActivity() {
         Log.e("Logging", "onKeyDown()")
         when (keyCode) {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
-                if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
-                    playerViewModel.togglePlayPause()
-                } else {
-                    if (currentRoute == Routes.PlayerScreen.route) {
-                        playerViewModel.onUserInteraction("center and PlayPause")
+                if (currentRoute == Routes.PlayerScreen.route) {
+                    if (isControlsVisible) {
+                        playerViewModel.togglePlayPause()
+                    } else {
+                        //   playerViewModel.onUserInteraction("center and PlayPause")
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
-                    playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
-                } else {
-                    if (currentRoute == Routes.PlayerScreen.route) {
-                        playerViewModel.onUserInteraction("Rewind and Left")
+                if (currentRoute == Routes.PlayerScreen.route) {
+                    if (isControlsVisible) {
+                        playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
+                    } else {
+                        // playerViewModel.onUserInteraction("Rewind and Left")
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
+
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                if (isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
-                    playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
-                } else {
-                    if (currentRoute == Routes.PlayerScreen.route) {
-                        playerViewModel.onUserInteraction("forward and right")
+                if (currentRoute == Routes.PlayerScreen.route) {
+                    if (isControlsVisible) {
+                        playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
+                    } else {
+                        //  playerViewModel.onUserInteraction("forward and right")
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
+
                 return true
             }
 
 
             KeyEvent.KEYCODE_DPAD_DOWN -> {
+                Log.e("DPAD", "on dpad down called in main")
                 if (!isControlsVisible) {
                     if (currentRoute == Routes.PlayerScreen.route) {
-                        playerViewModel.onUserInteraction("down")
+                        //playerViewModel.onUserInteraction("down")
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                    }
+                }
+                return true
+            }
+
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                Log.e("DPAD", "on dpad up called in main")
+                if (!isControlsVisible) {
+                    if (currentRoute == Routes.PlayerScreen.route) {
+                        playerViewModel.handleEvent(PlayerEvent.HideControls)
+                        playerViewModel.handleEvent(PlayerEvent.ShowRelated)
                     }
                 }
                 return true

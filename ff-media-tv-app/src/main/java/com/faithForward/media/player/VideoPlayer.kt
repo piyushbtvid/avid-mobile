@@ -3,8 +3,10 @@ package com.faithForward.media.player
 import android.media.MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 import android.util.Log
 import androidx.annotation.OptIn
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.faithForward.media.player.relatedContent.PlayerRelatedContentRow
+import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
@@ -53,6 +56,7 @@ data class VideoPlayerDto(
 fun VideoPlayer(
     modifier: Modifier = Modifier,
     videoPlayerItem: List<VideoPlayerDto>,
+    playerRelatedContentRowDto: PlayerRelatedContentRowDto,
     initialIndex: Int,
     playerViewModel: PlayerViewModel,
     onVideoEnd: () -> Unit,
@@ -65,15 +69,6 @@ fun VideoPlayer(
     var currentPosition by remember { mutableIntStateOf(initialIndex) }
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
-
-
-    // Animate alpha for controls
-    val controlsAlpha by animateFloatAsState(
-        targetValue = if (state.isControlsVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 500), // 500ms fade animation
-        label = "controlsAlpha"
-    )
-
 
     // Initialize ExoPlayer
     val exoPlayer = remember {
@@ -203,7 +198,7 @@ fun VideoPlayer(
 
         playerViewModel.interactionFlow.collectLatest {
             Log.e("PLAYER_UI", "User interaction collected in DetailScreen")
-            playerViewModel.handleEvent(PlayerEvent.ShowControls) // Reset the auto-play timer
+            // playerViewModel.handleEvent(PlayerEvent.ShowControls) // Reset the auto-play timer
         }
     }
 
@@ -307,62 +302,93 @@ fun VideoPlayer(
             }
         }
 
-        // Controls with animated alpha
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.BottomCenter)
-                .alpha(controlsAlpha),
-            contentAlignment = Alignment.BottomCenter
+        // Related content row with slide animation
+        AnimatedVisibility(
+            visible = state.isRelatedVisible, enter = slideInVertically(
+                initialOffsetY = { it }, // Start from bottom
+                animationSpec = tween(durationMillis = 500)
+            ), exit = slideOutVertically(
+                targetOffsetY = { it }, // Slide out to bottom
+                animationSpec = tween(durationMillis = 500)
+            )
+        ) {
+            PlayerRelatedContentRow(playerRelatedContentRowDto = playerRelatedContentRowDto,
+                onUp = {
+                    playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                    playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                    true
+                })
+        }
+
+        // Controls with slide animation, hidden when related content is visible
+        AnimatedVisibility(
+            visible = state.isControlsVisible && !state.isRelatedVisible, enter = slideInVertically(
+                initialOffsetY = { it }, // Start from bottom
+                animationSpec = tween(durationMillis = 500)
+            ), exit = slideOutVertically(
+                targetOffsetY = { it }, // Slide out to bottom
+                animationSpec = tween(durationMillis = 500)
+            )
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .fillMaxSize()
+                    .align(Alignment.BottomCenter),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                PlayerControls(currentPosition = state.currentPosition,
-                    duration = state.duration,
-                    onSeekTo = { exoPlayer.seekTo(it) },
-                    onPlayPause = {
-                        Log.e(
-                            "PLAYER_CONTROLERS", "on pause called with ${state.isControlsVisible}"
-                        )
-                        exoPlayer.playWhenReady = !exoPlayer.isPlaying
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                    },
-                    onRewind = {
-                        Log.e(
-                            "PLAYER_CONTROLERS", "on Rewind called with ${state.isControlsVisible}"
-                        )
-                        val rewindMillis = 15_000L
-                        val newPosition =
-                            (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
-                        exoPlayer.seekTo(newPosition)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                    },
-                    onForward = {
-                        Log.e(
-                            "PLAYER_CONTROLERS", "on forward called with ${state.isControlsVisible}"
-                        )
-                        exoPlayer.seekForward()
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                    },
-                    onPrev = {
-                        exoPlayer.seekToPreviousMediaItem()
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                    },
-                    onNext = {
-                        exoPlayer.seekToNextMediaItem()
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                    },
-                    inControllerUp = {
-                        Log.e("PLAYER_UI", "IS controlerUp called in videoPlayer")
-                        playerViewModel.handleEvent(PlayerEvent.HideControls)
-                        true
-                    },
-                    isPlaying = state.isPlaying,
-                    focusRequester = focusRequester,
-                    onBackClick = {})
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    PlayerControls(currentPosition = state.currentPosition,
+                        duration = state.duration,
+                        onSeekTo = { exoPlayer.seekTo(it) },
+                        onPlayPause = {
+                            Log.e(
+                                "PLAYER_CONTROLERS",
+                                "on pause called with ${state.isControlsVisible}"
+                            )
+                            exoPlayer.playWhenReady = !exoPlayer.isPlaying
+                            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        },
+                        onRewind = {
+                            Log.e(
+                                "PLAYER_CONTROLERS",
+                                "on Rewind called with ${state.isControlsVisible}"
+                            )
+                            val rewindMillis = 15_000L
+                            val newPosition =
+                                (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
+                            exoPlayer.seekTo(newPosition)
+                            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        },
+                        onForward = {
+                            Log.e(
+                                "PLAYER_CONTROLERS",
+                                "on forward called with ${state.isControlsVisible}"
+                            )
+                            exoPlayer.seekForward()
+                            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        },
+                        onPrev = {
+                            exoPlayer.seekToPreviousMediaItem()
+                            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        },
+                        onNext = {
+                            exoPlayer.seekToNextMediaItem()
+                            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        },
+                        inControllerUp = {
+                            Log.e("PLAYER_UI", "IS controlerUp called in videoPlayer")
+                            playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+                            // playerViewModel.handleEvent(PlayerEvent.HideControls)
+                            true
+                        },
+                        isPlaying = state.isPlaying,
+                        focusRequester = focusRequester,
+                        onBackClick = {})
+                }
             }
         }
     }

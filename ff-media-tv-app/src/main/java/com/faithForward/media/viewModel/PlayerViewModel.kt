@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.player.PlayerDto
+import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
+import com.faithForward.media.viewModel.uiModels.toRelatedItemDto
 import com.faithForward.media.viewModel.uiModels.toVideoPlayerDto
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.repository.NetworkRepository
@@ -64,6 +66,14 @@ class PlayerViewModel @Inject constructor(
                 _state.value = _state.value.copy(isControlsVisible = false)
             }
 
+            is PlayerEvent.HideRelated -> {
+                _state.value = _state.value.copy(isRelatedVisible = false)
+            }
+
+            is PlayerEvent.ShowRelated -> {
+                _state.value = _state.value.copy(isRelatedVisible = true)
+            }
+
             is PlayerEvent.UpdateIsPlaying -> {
                 _state.value = _state.value.copy(isPlaying = event.isPlaying)
             }
@@ -74,9 +84,20 @@ class PlayerViewModel @Inject constructor(
                     val videoPlayerDtoList = event.itemList.map {
                         it.toVideoPlayerDto()
                     }
+
+                    val relatedContentItemDtoList =
+                        List(10) { event.itemList.first().toRelatedItemDto() }
+
+
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
-                            PlayerDto(videoPlayerDtoList = videoPlayerDtoList)
+                            PlayerDto(
+                                videoPlayerDtoList = videoPlayerDtoList,
+                                playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                    title = "Next Up...",
+                                    rowList = relatedContentItemDtoList
+                                )
+                            )
                         ),
                         isLoading = false
                     )
