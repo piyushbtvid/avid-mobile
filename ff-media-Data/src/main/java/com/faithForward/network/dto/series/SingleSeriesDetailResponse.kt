@@ -7,7 +7,7 @@ import com.faithForward.network.dto.Genre
 data class SingleSeriesDetailResponse(
     val status: String,
     val message: String,
-    val data: ContentItem
+    val data: ContentItem,
 )
 
 
@@ -19,11 +19,12 @@ data class Season(
     val description: String? = null,
     val portrait: String,
     val landscape: String,
-    val episodes: List<Episode>
+    val episodes: List<Episode>,
 )
 
 
 data class Episode(
+    val content_type: String? = null,
     val id: String,
     val episode_number: Int,
     val name: String,

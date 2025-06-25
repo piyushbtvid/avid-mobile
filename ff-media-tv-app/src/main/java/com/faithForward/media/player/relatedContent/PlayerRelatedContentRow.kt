@@ -108,7 +108,11 @@ fun PlayerRelatedContentRow(
                                 Log.e("ON_UP", "on up in related row item")
                                 onUp.invoke()
                                 true
-                            } else {
+                            } else if (index == 0 && keyEvent.key == Key.DirectionLeft) {
+                                true
+                            } else if (index == rowList.size - 1 && keyEvent.key == Key.DirectionRight)
+                                true
+                            else {
                                 false
                             }
                         },
@@ -151,7 +155,8 @@ private fun RowPreview() {
             id = "",
             slug = "",
             title = "The Last Ride",
-            description = ""
+            description = "",
+            contentType = ""
         ),
 
         RelatedContentItemDto(
@@ -159,28 +164,32 @@ private fun RowPreview() {
             id = "",
             slug = "",
             title = "The Last Ride",
-            description = ""
+            description = "",
+            contentType = ""
         ),
         RelatedContentItemDto(
             image = "",
             id = "",
             slug = "",
             title = "The Last Ride",
-            description = ""
+            description = "",
+            contentType = ""
         ),
         RelatedContentItemDto(
             image = "",
             id = "",
             slug = "",
             title = "The Last Ride",
-            description = ""
+            description = "",
+            contentType = ""
         ),
         RelatedContentItemDto(
             image = "",
             id = "",
             slug = "",
             title = "The Last Ride",
-            description = ""
+            description = "",
+            contentType = ""
         ),
     )
 

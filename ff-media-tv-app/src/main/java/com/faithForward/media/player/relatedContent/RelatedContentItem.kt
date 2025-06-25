@@ -37,6 +37,7 @@ import com.faithForward.media.util.FocusState
 
 
 data class RelatedContentItemDto(
+    val contentType: String?,
     val image: String,
     val id: String,
     val slug: String,
@@ -132,7 +133,8 @@ private fun RowItemPreview() {
                 slug = "",
                 title = "The Last Ride",
                 url = "",
-                description = ""
+                description = "",
+                contentType = ""
             ),
             onItemClick = {
 

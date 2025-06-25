@@ -3,6 +3,7 @@ package com.faithForward.media.navigation
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -232,6 +233,10 @@ fun MainAppNavHost(
                             Routes.PlayerScreen.createRoute(listOf(itemWithProgressZero)) // Wrap item in a list
                         navController.navigate(route)
                     } else {
+                        Log.e(
+                            "SERIES_CONTENT",
+                            "SERIES CONTENT type is in AppNav ${posterItemList?.get(0)?.contentType}"
+                        )
                         if (posterItemList != null) {
                             val route =
                                 Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
@@ -278,11 +283,15 @@ fun MainAppNavHost(
                 json?.let { Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it)) }
 
             playerDtoList?.let {
-                playerViewModel.handleEvent(
-                    PlayerEvent.UpdateVideoPlayerDto(
-                        itemList = it // Pass the list directly
-                    )
-                )
+                LaunchedEffect(playerDtoList) {
+                    playerDtoList.let {
+                        playerViewModel.handleEvent(
+                            PlayerEvent.UpdateOrLoadPlayerData(itemList = it)
+                        )
+                    }
+                }
+
+
             }
 
             PlayerScreen(playerViewModel = playerViewModel,
@@ -313,7 +322,10 @@ fun MainAppNavHost(
                         navController.popBackStack()
                     }
                 },
-                onItemClick = { item ->
+                onVideoEnded = {
+                    navController.popBackStack()
+                },
+                onRelatedItemClick = { item ->
                     val posterCard = item.toPosterCardDto()
                     val route =
                         Routes.PlayerScreen.createRoute(listOf(posterCard)) // Wrap item in a list

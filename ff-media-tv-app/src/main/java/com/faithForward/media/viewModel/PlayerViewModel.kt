@@ -6,17 +6,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.player.PlayerDto
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
+import com.faithForward.media.viewModel.uiModels.toPosterDto
 import com.faithForward.media.viewModel.uiModels.toRelatedItemDto
 import com.faithForward.media.viewModel.uiModels.toVideoPlayerDto
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -78,30 +82,8 @@ class PlayerViewModel @Inject constructor(
                 _state.value = _state.value.copy(isPlaying = event.isPlaying)
             }
 
-            is PlayerEvent.UpdateVideoPlayerDto -> {
-                viewModelScope.launch {
-                    _state.value = _state.value.copy(isLoading = true)
-                    val videoPlayerDtoList = event.itemList.map {
-                        it.toVideoPlayerDto()
-                    }
-
-                    val relatedContentItemDtoList =
-                        List(10) { event.itemList.first().toRelatedItemDto() }
-
-
-                    _state.value = _state.value.copy(
-                        videoPlayerDto = Resource.Success(
-                            PlayerDto(
-                                videoPlayerDtoList = videoPlayerDtoList,
-                                playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                    title = "Next Up...",
-                                    rowList = relatedContentItemDtoList
-                                )
-                            )
-                        ),
-                        isLoading = false
-                    )
-                }
+            is PlayerEvent.UpdateOrLoadPlayerData -> {
+                updateOrLoadVideoPlayerData(event.itemList)
             }
 
             is PlayerEvent.UpdatePlayerBuffering -> {
@@ -121,6 +103,7 @@ class PlayerViewModel @Inject constructor(
                     hasVideoEnded = event.isEnded
                 )
             }
+
         }
     }
 
@@ -172,6 +155,173 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+
+    private fun loadUrlWithRelatedData(slug: String) {
+        Log.e("LOAD_RELATED", "load Related is called in player with slug $slug")
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value = _state.value.copy(isLoading = true)
+            try {
+                val response = networkRepository.getGivenCardDetail(slug)
+
+                if (!response.isSuccessful) {
+                    return@launch
+                }
+
+                val cardDetail = response.body()
+                if (cardDetail != null) {
+                    val relatedList = cardDetail.data.relatedContent
+                    if (!relatedList.isNullOrEmpty()) {
+
+                        val relatedContentRowDtoList = relatedList.map {
+                            it.toRelatedItemDto()
+                        }
+                        val currentPlayingVideoPosterCardDto =
+                            cardDetail.data.toPosterCardDto().toVideoPlayerDto()
+
+                        _state.value = _state.value.copy(
+                            videoPlayerDto = Resource.Success(
+                                PlayerDto(
+                                    videoPlayerDtoList = listOf(currentPlayingVideoPosterCardDto),
+                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                        title = "Next Up...", rowList = relatedContentRowDtoList
+                                    )
+                                )
+                            ), isLoading = false
+                        )
+
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("EXCEPTION", "exception in related in player viewmodel is ${ex.message}")
+            }
+        }
+
+    }
+
+    private fun updateOrLoadVideoPlayerData(itemList: List<PosterCardDto>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value = _state.value.copy(isLoading = true)
+
+            val firstItem = itemList.firstOrNull()
+            val hasUrl = firstItem?.videoHlsUrl?.isNotEmpty() == true
+            val hasRelated = !firstItem?.relatedList.isNullOrEmpty()
+
+            Log.e("RELATED_PLAYER", "related in player is ${firstItem?.relatedList}")
+
+            try {
+                //  If URL and Related List are available  use directly
+                if (hasUrl && hasRelated) {
+                    val relatedContentItemDtoList =
+                        firstItem!!.relatedList!!.map { it.toRelatedItemDto() }
+                    val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
+
+                    _state.value = _state.value.copy(
+                        videoPlayerDto = Resource.Success(
+                            PlayerDto(
+                                videoPlayerDtoList = videoPlayerDtoList,
+                                playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                    title = if (firstItem.contentType == "Episode"
+                                        || firstItem.contentType == "Series"
+                                    )
+                                        "Episodes..." else "Next Up...",
+                                    rowList = relatedContentItemDtoList
+                                )
+                            )
+                        ), isLoading = false
+                    )
+                }
+                //  Anything missing  fetch all from API using slug
+                else if (firstItem?.slug != null && firstItem.contentType == "Episode") {
+                    Log.e(
+                        "SERIES_CONTENT",
+                        "Fetching episode details for slug: ${firstItem.slug} and Content Type is ${firstItem.contentType}"
+                    )
+
+                    val episodeResponse = networkRepository.getGivenCardDetail(firstItem.slug)
+                    if (!episodeResponse.isSuccessful) return@launch
+
+                    val episodeDetail = episodeResponse.body()?.data ?: return@launch
+
+                    // If it's an Episode, then we need to fetch the series data
+                    if (episodeDetail.content_type == "Episode" && episodeDetail.seriesSlug != null) {
+                        val seriesSlug = episodeDetail.seriesSlug ?: ""
+                        val seasonNumber = episodeDetail.seasonNumber
+
+                        Log.e(
+                            "LOAD_RELATED",
+                            "Episode detected. Fetching series data for slug: $seriesSlug"
+                        )
+
+                        val seriesResponse = networkRepository.getGivenCardDetail(seriesSlug)
+                        if (!seriesResponse.isSuccessful) return@launch
+
+                        val seriesDetail = seriesResponse.body()?.data ?: return@launch
+
+                        // Find the matching season
+                        val season = seriesDetail.seasons?.find { it.season_number == seasonNumber }
+                        val allEpisodes = season?.episodes ?: emptyList()
+
+                        val relatedEpisodes = allEpisodes.filter { it.slug != episodeDetail.slug }
+
+                        val relatedContentRowDtoList =
+                            relatedEpisodes.map { it.toPosterDto().toRelatedItemDto() }
+
+                        val currentPlayingItem =
+                            episodeDetail.toPosterCardDto().toVideoPlayerDto().copy(progress = 0)
+
+                        _state.value = _state.value.copy(
+                            videoPlayerDto = Resource.Success(
+                                PlayerDto(
+                                    videoPlayerDtoList = listOf(currentPlayingItem),
+                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                        title = "Episodes...", rowList = relatedContentRowDtoList
+                                    )
+                                )
+                            ), isLoading = false
+                        )
+                    }
+                } else if (firstItem?.slug != null && firstItem.contentType == "Movie") {
+                    Log.e(
+                        "LOAD_RELATED",
+                        "Fallback: Fetching all from API for slug: ${firstItem.slug}"
+                    )
+
+                    val response = networkRepository.getGivenCardDetail(firstItem.slug)
+                    if (!response.isSuccessful) return@launch
+
+                    val cardDetail = response.body() ?: return@launch
+                    val relatedList = cardDetail.data.relatedContent ?: emptyList()
+
+                    val relatedContentRowDtoList = relatedList.map { it.toRelatedItemDto() }
+                    val currentPlayingItem = cardDetail.data
+                        .toPosterCardDto()
+                        .toVideoPlayerDto()
+                        .copy(progress = 0)
+
+                    _state.value = _state.value.copy(
+                        videoPlayerDto = Resource.Success(
+                            PlayerDto(
+                                videoPlayerDtoList = listOf(currentPlayingItem),
+                                playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                    title = "Next Up...",
+                                    rowList = relatedContentRowDtoList
+                                )
+                            )
+                        ),
+                        isLoading = false
+                    )
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("PLAYER_ERROR", "Error in updateOrLoad: ${ex.message}")
+                _state.value = _state.value.copy(isLoading = false)
+            }
+        }
+    }
+
+
     private fun saveContinueWatching(
         itemSlug: String,
         progress_seconds: String,
@@ -184,9 +334,7 @@ class PlayerViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val request = ContinueWatchingRequest(
-                    slug = itemSlug,
-                    progress_seconds = progress_seconds,
-                    duration = videoDuration
+                    slug = itemSlug, progress_seconds = progress_seconds, duration = videoDuration
                 )
                 val response = networkRepository.saveContinueWatching(request)
                 if (response.isSuccessful) {

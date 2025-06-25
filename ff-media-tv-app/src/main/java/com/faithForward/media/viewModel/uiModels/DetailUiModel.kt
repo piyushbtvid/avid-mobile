@@ -49,8 +49,11 @@ fun CardDetail.toDetailDto(): DetailDto {
         else -> "" // seasons present but no valid episodes
     }
 
-    return DetailDto(
-        id = data.id.toString(),
+    val relatedList = data.relatedContent?.map {
+        it.toPosterCardDto()
+    }
+
+    return DetailDto(id = data.id.toString(),
         imgSrc = data.landscape,
         title = data.name,
         description = data.description,
@@ -65,7 +68,8 @@ fun CardDetail.toDetailDto(): DetailDto {
         isDisliked = data.likeDislike == "dislike",
         isSeries = data.content_type == "Series" || data.content_type == "Episode",
         contentType = data.content_type,
-        progress = data.progressSeconds
+        progress = data.progressSeconds,
+        relatedList = relatedList
     )
 }
 
@@ -84,18 +88,24 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         videoHlsUrl = videoLink,
         slug = slug,
         contentType = contentType,
-        progress = progress
+        progress = progress,
+        relatedList = relatedList,
     )
 }
 
 fun Season.toSeasonDto(): SeasonDto {
     return SeasonDto(
-        episodesContentDto = episodes.map {
-            it.toPosterDto()
+        episodesContentDto = episodes.map { currentEpisode ->
+            currentEpisode.toPosterDto().copy(
+                relatedList = episodes
+                    .filter { it != currentEpisode } // Exclude the current episode
+                    .map { it.toPosterDto() }         // Convert others to PosterCardDto
+            )
         },
         seasonNumber = season_number
     )
 }
+
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
     return SeasonsNumberDto(
@@ -115,7 +125,9 @@ fun Episode.toPosterDto(): PosterCardDto {
         releaseDate = dateUploaded,
         episodeNumber = episode_number,
         videoHlsUrl = video_link,
-        slug = slug)
+        slug = slug,
+        contentType = content_type
+    )
 }
 
 

@@ -33,6 +33,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.faithForward.media.commanComponents.CategoryCompose
 import com.faithForward.media.commanComponents.CategoryComposeDto
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.home.carousel.ContentMetaBlock
 import com.faithForward.media.theme.blackColor
 import com.faithForward.media.theme.detailNowTextStyle
@@ -61,6 +62,7 @@ data class DetailDto(
     val isSeries: Boolean? = null,
     val contentType: String? = null,
     val progress: Long? = null,
+    val relatedList: List<PosterCardDto>? = null,
 )
 
 @Composable
