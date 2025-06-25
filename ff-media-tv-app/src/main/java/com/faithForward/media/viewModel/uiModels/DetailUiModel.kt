@@ -59,7 +59,7 @@ fun CardDetail.toDetailDto(): DetailDto {
         description = data.description,
         releaseDate = data.dateUploaded,
         genre = data.genres?.mapNotNull { it.name }?.joinToString(", "),
-        duration = data.duration?.let { formatDuration(it) } ?: "",
+        duration = data.duration?.let { formatDuration(it.toLong()) } ?: "",
         imdbRating = data.rating,
         videoLink = resolvedVideoLink,
         slug = data.slug,
@@ -120,7 +120,7 @@ fun Episode.toPosterDto(): PosterCardDto {
         description = description,
         genre = genres.mapNotNull { it.name }  // safely extract non-null names
             .joinToString(", "),
-        duration = duration?.let { formatDuration(it) } ?: "",
+        duration = duration?.let { formatDuration(it.toLong()) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
         episodeNumber = episode_number,

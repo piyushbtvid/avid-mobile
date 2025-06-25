@@ -231,7 +231,7 @@ class PlayerViewModel @Inject constructor(
                         ), isLoading = false
                     )
                 }
-                //  Anything missing  fetch all from API using slug
+                //  Anything missing  fetch all from API using slug for Episodes
                 else if (firstItem?.slug != null && firstItem.contentType == "Episode") {
                     Log.e(
                         "SERIES_CONTENT",
@@ -267,21 +267,37 @@ class PlayerViewModel @Inject constructor(
                         val relatedContentRowDtoList =
                             relatedEpisodes.map { it.toPosterDto().toRelatedItemDto() }
 
-                        val currentPlayingItem =
-                            episodeDetail.toPosterCardDto().toVideoPlayerDto().copy(progress = 0)
+                        // 1. Create the current playing item
+                        val currentPlayingItem = episodeDetail
+                            .toPosterCardDto()
+                            .toVideoPlayerDto()
+                            .copy(progress = 0)
 
+                        // 2. Create the remaining episodes excluding the current one
+                        val nextEpisodes =
+                            relatedEpisodes.map { it.toPosterDto().toVideoPlayerDto() }
+
+                        // 3. Final playlist: current + next episodes
+                        val fullPlaylist = listOf(currentPlayingItem) + nextEpisodes
+
+                        // 4. Set state with the full playlist
                         _state.value = _state.value.copy(
                             videoPlayerDto = Resource.Success(
                                 PlayerDto(
-                                    videoPlayerDtoList = listOf(currentPlayingItem),
+                                    videoPlayerDtoList = fullPlaylist,
                                     playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                        title = "Episodes...", rowList = relatedContentRowDtoList
+                                        title = "Episodes...",
+                                        rowList = relatedContentRowDtoList
                                     )
                                 )
-                            ), isLoading = false
+                            ),
+                            isLoading = false
                         )
+
                     }
-                } else if (firstItem?.slug != null && firstItem.contentType == "Movie") {
+                }
+                // For movies
+                else if (firstItem?.slug != null && firstItem.contentType == "Movie") {
                     Log.e(
                         "LOAD_RELATED",
                         "Fallback: Fetching all from API for slug: ${firstItem.slug}"

@@ -227,7 +227,7 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names
             ?.joinToString(", "),
         seasons = seasons?.size,
-        duration = duration?.let { formatDuration(it) } ?: "",
+        duration = duration?.let { formatDuration(it.toLong()) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
         videoHlsUrl = video_link,
