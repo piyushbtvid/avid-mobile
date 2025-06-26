@@ -49,7 +49,7 @@ data class PlayerRelatedContentRowDto(
 @Composable
 fun PlayerRelatedContentRow(
     modifier: Modifier = Modifier,
-    onItemClick: (RelatedContentItemDto) -> Unit,
+    onItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
     onUp: () -> Boolean = {
         false
     },
@@ -71,9 +71,7 @@ fun PlayerRelatedContentRow(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRestorer {
-                        itemFocusRequesters[0]
-                    },
+                    .focusRestorer(),
                 contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(9.dp)
             ) {
@@ -118,7 +116,13 @@ fun PlayerRelatedContentRow(
                         },
                         focusState = uiState,
                         relatedContentItemDto = item,
-                        onItemClick = onItemClick
+                        onItemClick = {
+                            if (item.contentType == "Series" || item.contentType == "Episode") {
+                                onItemClick.invoke(null, rowList, index)
+                            } else {
+                                onItemClick.invoke(item, null, 0)
+                            }
+                        }
                     )
                 }
                 item {
@@ -202,7 +206,7 @@ private fun RowPreview() {
         PlayerRelatedContentRow(
             playerRelatedContentRowDto = PlayerRelatedContentRowDto(
                 title = "Next Up...", rowList = ls
-            ), onItemClick = {
+            ), onItemClick = { item, ls , index ->
 
             }
         )

@@ -63,7 +63,7 @@ fun VideoPlayer(
     playerRelatedContentRowDto: PlayerRelatedContentRowDto,
     initialIndex: Int,
     playerViewModel: PlayerViewModel,
-    onRelatedItemClick: (RelatedContentItemDto) -> Unit,
+    onRelatedItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
     onVideoEnd: () -> Unit,
 ) {
     val playerState = playerViewModel.playerState
@@ -284,15 +284,19 @@ fun VideoPlayer(
                 Lifecycle.Event.ON_STOP -> {
                     Log.e("CONTINUE_WATCHING", "on stop called of videoPlayer")
                     if (!playerScreenState.hasVideoEnded) {
-                        val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
-                        if (item.itemSlug != null) {
-                            playerViewModel.handleEvent(
-                                PlayerEvent.SaveToContinueWatching(
-                                    itemSlug = item.itemSlug,
-                                    progressSeconds = exoPlayer.currentPosition.toString(), // Current progress in seconds
-                                    videoDuration = exoPlayer.duration.toString()    // Total duration in seconds
+                        val currentIndex = exoPlayer.currentMediaItemIndex
+                        if (currentIndex in videoPlayerItem.indices) {
+                            val item = videoPlayerItem[currentIndex]
+                            // Use item...
+                            if (item.itemSlug != null) {
+                                playerViewModel.handleEvent(
+                                    PlayerEvent.SaveToContinueWatching(
+                                        itemSlug = item.itemSlug,
+                                        progressSeconds = exoPlayer.currentPosition.toString(), // Current progress in seconds
+                                        videoDuration = exoPlayer.duration.toString()    // Total duration in seconds
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                     exoPlayer.pause()
@@ -370,7 +374,7 @@ fun VideoPlayer(
                     playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     true
                 },
-                onItemClick = { relatedItem ->
+                onItemClick = { relatedItem, relatedItemList, index ->
                     if (!playerScreenState.hasVideoEnded) {
                         val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
                         if (item.itemSlug != null) {
@@ -383,7 +387,7 @@ fun VideoPlayer(
                             )
                         }
                     }
-                    onRelatedItemClick.invoke(relatedItem)
+                    onRelatedItemClick.invoke(relatedItem, relatedItemList, index)
                 }
 
             )

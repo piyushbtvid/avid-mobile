@@ -13,7 +13,6 @@ import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
-import com.faithForward.media.viewModel.uiModels.toPosterDto
 import com.faithForward.media.viewModel.uiModels.toRelatedItemDto
 import com.faithForward.media.viewModel.uiModels.toVideoPlayerDto
 import com.faithForward.network.dto.request.ContinueWatchingRequest
@@ -207,11 +206,26 @@ class PlayerViewModel @Inject constructor(
             val hasUrl = firstItem?.videoHlsUrl?.isNotEmpty() == true
             val hasRelated = !firstItem?.relatedList.isNullOrEmpty()
 
-            Log.e("RELATED_PLAYER", "related in player is ${firstItem?.relatedList}")
+            val isMovie = firstItem?.contentType == "Movie"
 
+            Log.e(
+                "PLAYER_VIEWMODEL",
+                "item list in PlayerViewModel with  is ${firstItem?.relatedList}"
+            )
+
+            Log.e(
+                "PLAYER_VIEWMODEL",
+                "item content type in viewModel is ${firstItem?.contentType}"
+            )
+
+            Log.e(
+                "PLAYER_VIEWMODEL",
+                "item List size  in viewModel is ${itemList.size}"
+            )
             try {
-                //  If URL and Related List are available  use directly
-                if (hasUrl && hasRelated) {
+                //  If URL and Related List are available  use directly And this is for Movies and its related from detail
+                if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
+                    Log.e("PLAYER_VIEWMODEL", "item has related and url  calling for isMovie")
                     val relatedContentItemDtoList =
                         firstItem!!.relatedList!!.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
@@ -221,8 +235,27 @@ class PlayerViewModel @Inject constructor(
                             PlayerDto(
                                 videoPlayerDtoList = videoPlayerDtoList,
                                 playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                    title = if (firstItem.contentType == "Episode"
-                                        || firstItem.contentType == "Series"
+                                    title = "Next Up...",
+                                    rowList = relatedContentItemDtoList
+                                )
+                            )
+                        ), isLoading = false
+                    )
+                }
+                //this is for series season episodes for all case i.e from detail and from related
+                else if (hasUrl && !isMovie) {
+                    Log.e("PLAYER_VIEWMODEL", "item has url  calling for !isMovie with $itemList")
+                    val relatedContentItemDtoList =
+                        itemList.map { it.toRelatedItemDto() }
+                    val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
+
+                    _state.value = _state.value.copy(
+                        videoPlayerDto = Resource.Success(
+                            PlayerDto(
+                                videoPlayerDtoList = videoPlayerDtoList,
+                                playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                    title = if (firstItem?.contentType == "Episode"
+                                        || firstItem?.contentType == "Series"
                                     )
                                         "Episodes..." else "Next Up...",
                                     rowList = relatedContentItemDtoList
@@ -231,73 +264,78 @@ class PlayerViewModel @Inject constructor(
                         ), isLoading = false
                     )
                 }
-                //  Anything missing  fetch all from API using slug for Episodes
-                else if (firstItem?.slug != null && firstItem.contentType == "Episode") {
-                    Log.e(
-                        "SERIES_CONTENT",
-                        "Fetching episode details for slug: ${firstItem.slug} and Content Type is ${firstItem.contentType}"
-                    )
 
-                    val episodeResponse = networkRepository.getGivenCardDetail(firstItem.slug)
-                    if (!episodeResponse.isSuccessful) return@launch
-
-                    val episodeDetail = episodeResponse.body()?.data ?: return@launch
-
-                    // If it's an Episode, then we need to fetch the series data
-                    if (episodeDetail.content_type == "Episode" && episodeDetail.seriesSlug != null) {
-                        val seriesSlug = episodeDetail.seriesSlug ?: ""
-                        val seasonNumber = episodeDetail.seasonNumber
-
-                        Log.e(
-                            "LOAD_RELATED",
-                            "Episode detected. Fetching series data for slug: $seriesSlug"
-                        )
-
-                        val seriesResponse = networkRepository.getGivenCardDetail(seriesSlug)
-                        if (!seriesResponse.isSuccessful) return@launch
-
-                        val seriesDetail = seriesResponse.body()?.data ?: return@launch
-
-                        // Find the matching season
-                        val season = seriesDetail.seasons?.find { it.season_number == seasonNumber }
-                        val allEpisodes = season?.episodes ?: emptyList()
-
-                        val relatedEpisodes = allEpisodes.filter { it.slug != episodeDetail.slug }
-
-                        val relatedContentRowDtoList =
-                            relatedEpisodes.map { it.toPosterDto().toRelatedItemDto() }
-
-                        // 1. Create the current playing item
-                        val currentPlayingItem = episodeDetail
-                            .toPosterCardDto()
-                            .toVideoPlayerDto()
-                            .copy(progress = 0)
-
-                        // 2. Create the remaining episodes excluding the current one
-                        val nextEpisodes =
-                            relatedEpisodes.map { it.toPosterDto().toVideoPlayerDto() }
-
-                        // 3. Final playlist: current + next episodes
-                        val fullPlaylist = listOf(currentPlayingItem) + nextEpisodes
-
-                        // 4. Set state with the full playlist
-                        _state.value = _state.value.copy(
-                            videoPlayerDto = Resource.Success(
-                                PlayerDto(
-                                    videoPlayerDtoList = fullPlaylist,
-                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                        title = "Episodes...",
-                                        rowList = relatedContentRowDtoList
-                                    )
-                                )
-                            ),
-                            isLoading = false
-                        )
-
-                    }
-                }
-                // For movies
+//                //  Anything missing  fetch all from API using slug for Episodes
+//                else if (firstItem?.slug != null && firstItem.contentType == "Episode") {
+//                    Log.e(
+//                        "SERIES_CONTENT",
+//                        "Fetching episode details for slug: ${firstItem.slug} and Content Type is ${firstItem.contentType}"
+//                    )
+//
+//                    val episodeResponse = networkRepository.getGivenCardDetail(firstItem.slug)
+//                    if (!episodeResponse.isSuccessful) return@launch
+//
+//                    val episodeDetail = episodeResponse.body()?.data ?: return@launch
+//
+//                    // If it's an Episode, then we need to fetch the series data
+//                    if (episodeDetail.content_type == "Episode" && episodeDetail.seriesSlug != null) {
+//                        val seriesSlug = episodeDetail.seriesSlug ?: ""
+//                        val seasonNumber = episodeDetail.seasonNumber
+//
+//                        Log.e(
+//                            "LOAD_RELATED",
+//                            "Episode detected. Fetching series data for slug: $seriesSlug"
+//                        )
+//
+//                        val seriesResponse = networkRepository.getGivenCardDetail(seriesSlug)
+//                        if (!seriesResponse.isSuccessful) return@launch
+//
+//                        val seriesDetail = seriesResponse.body()?.data ?: return@launch
+//
+//                        // Find the matching season
+//                        val season = seriesDetail.seasons?.find { it.season_number == seasonNumber }
+//                        val allEpisodes = season?.episodes ?: emptyList()
+//
+//                        val relatedEpisodes = allEpisodes.filter { it.slug != episodeDetail.slug }
+//
+//                        val relatedContentRowDtoList =
+//                            relatedEpisodes.map { it.toPosterDto().toRelatedItemDto() }
+//
+//                        // 1. Create the current playing item
+//                        val currentPlayingItem = episodeDetail
+//                            .toPosterCardDto()
+//                            .toVideoPlayerDto()
+//                            .copy(progress = 0)
+//
+//                        // 2. Create the remaining episodes excluding the current one
+//                        val nextEpisodes =
+//                            relatedEpisodes.map { it.toPosterDto().toVideoPlayerDto() }
+//
+//                        // 3. Final playlist: current + next episodes
+//                        val fullPlaylist = listOf(currentPlayingItem) + nextEpisodes
+//
+//                        // 4. Set state with the full playlist
+//                        _state.value = _state.value.copy(
+//                            videoPlayerDto = Resource.Success(
+//                                PlayerDto(
+//                                    videoPlayerDtoList = fullPlaylist,
+//                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+//                                        title = "Episodes...",
+//                                        rowList = relatedContentRowDtoList
+//                                    )
+//                                )
+//                            ),
+//                            isLoading = false
+//                        )
+//
+//                    }
+//                }
+                // For movies from related Movie
                 else if (firstItem?.slug != null && firstItem.contentType == "Movie") {
+                    Log.e(
+                        "SERIES_RELATED",
+                        "item has not either related and url and content type is ${firstItem.contentType}"
+                    )
                     Log.e(
                         "LOAD_RELATED",
                         "Fallback: Fetching all from API for slug: ${firstItem.slug}"

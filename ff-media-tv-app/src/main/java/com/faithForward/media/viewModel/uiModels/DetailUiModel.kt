@@ -96,10 +96,7 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
 fun Season.toSeasonDto(): SeasonDto {
     return SeasonDto(
         episodesContentDto = episodes.map { currentEpisode ->
-            currentEpisode.toPosterDto().copy(
-                relatedList = episodes
-                    .map { it.toPosterDto() }         // Convert others to PosterCardDto
-            )
+            currentEpisode.toPosterDto()
         },
         seasonNumber = season_number
     )

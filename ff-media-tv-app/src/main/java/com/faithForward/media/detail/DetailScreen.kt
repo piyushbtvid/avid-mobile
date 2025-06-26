@@ -264,10 +264,15 @@ fun DetailScreen(
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls, index ->
                                 Log.e("RELATED_SERIES", "on item is $item")
+                                Log.e("RELATED_SERIES", "on item list is ${ls.get(0).relatedList}")
                                 if (item.isRelatedSeries == true) {
                                     onRelatedItemClick.invoke(item)
                                 } else {
                                     val newLs = ls.subList(index, ls.size)
+                                    Log.e(
+                                        "RELATED_SERIES",
+                                        "on item list is ${newLs.get(0).relatedList}"
+                                    )
                                     onWatchNowClick.invoke(null, newLs)
                                 }
                             },

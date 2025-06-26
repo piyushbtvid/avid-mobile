@@ -60,14 +60,11 @@ fun MainAppNavHost(
         navController = navController, startDestination = startRoute
     ) {
         composable(route = Routes.Login.route) {
-            LoginScreen(
-                loginViewModel = loginViewModel,
-                onLogin = {
-                    navController.navigate(Routes.Home.route) {
-                        popUpTo(Routes.Login.route) { inclusive = true }
-                    }
+            LoginScreen(loginViewModel = loginViewModel, onLogin = {
+                navController.navigate(Routes.Home.route) {
+                    popUpTo(Routes.Login.route) { inclusive = true }
                 }
-            )
+            })
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
@@ -227,6 +224,15 @@ fun MainAppNavHost(
             DetailScreen(detailViewModel = detailViewModel,
                 slug = slug,
                 onWatchNowClick = { item, posterItemList ->
+                    Log.e("SERIES_RELATED", "item is $item")
+                    Log.e(
+                        "SERIES_RELATED",
+                        "item List  Related list  when click in detail NavHost from series episode is ${
+                            posterItemList?.get(
+                                0
+                            )?.relatedList?.get(0)?.relatedList
+                        }"
+                    )
                     if (item != null) {
                         val itemWithProgressZero = item.copy(progress = 0)
                         val route =
@@ -270,36 +276,46 @@ fun MainAppNavHost(
 
         composable(
             route = Routes.PlayerScreen.route,
-            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
+            arguments = listOf(
+                navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
                     defaultValue = false
-                })
+                },
+                navArgument("initialIndex") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
         ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("playerDtoList")
+            val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
-            val playerDtoList =
-                json?.let { Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it)) }
+            // Fix: Use getInt instead of getString
+            val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
 
-            playerDtoList?.let {
-                LaunchedEffect(playerDtoList) {
-                    playerDtoList.let {
+            val playerList = encodedJson?.let {
+                Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
+            } ?: emptyList()
+
+            playerList?.let {
+                LaunchedEffect(playerList) {
+                    playerList.let {
                         playerViewModel.handleEvent(
                             PlayerEvent.UpdateOrLoadPlayerData(itemList = it)
                         )
                     }
                 }
-
-
             }
 
-            PlayerScreen(playerViewModel = playerViewModel,
+            PlayerScreen(
+                playerViewModel = playerViewModel,
                 isFromContinueWatching = isContinueWatching,
+                initialIndex = initialIndex,
                 onPlayerBackClick = {
                     if (isContinueWatching) {
                         // Get the current item's slug from playerDtoList
-                        val currentItem = playerDtoList?.getOrNull(0)
+                        val currentItem = playerList?.getOrNull(0)
                         if (currentItem?.slug != null) {
                             // Navigate to Detail screen
                             if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
@@ -325,21 +341,16 @@ fun MainAppNavHost(
                 onVideoEnded = {
                     navController.popBackStack()
                 },
-                onRelatedItemClick = { item ->
-                    val posterCard = item.toPosterCardDto()
+                onRelatedItemClick = { item, list, index ->
+                    val posterCardList =
+                        list?.map { it.toPosterCardDto() } ?: listOf(item!!.toPosterCardDto())
                     val route =
-                        Routes.PlayerScreen.createRoute(listOf(posterCard)) // Wrap item in a list
-
+                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
                     navController.navigate(route) {
-                        popUpTo(Routes.PlayerScreen.route) {
-                            inclusive =
-                                true // This removes the current PlayerScreen from the back stack
-                        }
-                        launchSingleTop = true // Prevent multiple instances if the same route
+                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
-
-
             )
         }
 

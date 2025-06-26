@@ -31,6 +31,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.faithForward.media.R
+import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
@@ -50,7 +51,7 @@ data class RelatedContentItemDto(
 fun RelatedContentItem(
     modifier: Modifier = Modifier,
     focusState: FocusState,
-    onItemClick: (RelatedContentItemDto) -> Unit,
+    onItemClick: () -> Unit,
     relatedContentItemDto: RelatedContentItemDto,
 ) {
 
@@ -91,7 +92,7 @@ fun RelatedContentItem(
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable(interactionSource = null, indication = null, onClick = {
-                        onItemClick.invoke(relatedContentItemDto)
+                        onItemClick.invoke()
                     }
                     )
             )

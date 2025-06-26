@@ -33,8 +33,9 @@ fun PlayerScreen(
     isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
     onPlayerBackClick: () -> Unit,
+    initialIndex: Int = 0,
     onVideoEnded: () -> Unit,
-onRelatedItemClick: (RelatedContentItemDto) -> Unit,
+    onRelatedItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
 ) {
     val state by playerViewModel.state.collectAsState()
 
@@ -81,17 +82,17 @@ onRelatedItemClick: (RelatedContentItemDto) -> Unit,
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
                 val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
                 VideoPlayer(videoPlayerItem = playerDtoItems,
-                    initialIndex = 0,
+                    initialIndex = initialIndex,
                     playerViewModel = playerViewModel,
                     playerRelatedContentRowDto = relatedList,
                     onVideoEnd = {
                         onVideoEnded.invoke()
                         Log.e("VIDEO_ENDED", "ON VIDEO ENDED IS CALLED")
                     },
-                    onRelatedItemClick = { item ->
+                    onRelatedItemClick = { item, list, index ->
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                        onRelatedItemClick.invoke(item)
+                        onRelatedItemClick.invoke(item, list, index)
                     })
             }
         }

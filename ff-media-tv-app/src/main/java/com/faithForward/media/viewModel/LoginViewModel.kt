@@ -38,16 +38,23 @@ class LoginViewModel @Inject constructor(
     private fun checkLoginStatus() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("USER_PREF", "check login status in viewModel called")
-                val session = networkRepository.getCurrentSession()
-                Log.e("USER_PREF", "Initial session check in checkLoginStatus is called: $session")
-                _isLoggedIn.value = session?.token != null
-                Log.e(
-                    "IS_LOGIN",
-                    "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
-                )
-                delay(200)
-                _loginState.update { it.copy(isCheckingLoginStatus = false) } // Mark check as complete
+                try {
+                    Log.e("USER_PREF", "check login status in viewModel called")
+                    val session = networkRepository.getCurrentSession()
+                    Log.e(
+                        "USER_PREF",
+                        "Initial session check in checkLoginStatus is called: $session"
+                    )
+                    _isLoggedIn.value = session?.token != null
+                    Log.e(
+                        "IS_LOGIN",
+                        "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
+                    )
+                    delay(200)
+                    _loginState.update { it.copy(isCheckingLoginStatus = false) } // Mark check as complete
+                } catch (ex: Exception) {
+                    Log.e("LOG", "exception is ${ex.printStackTrace()}")
+                }
             }
         }
     }
@@ -95,7 +102,7 @@ class LoginViewModel @Inject constructor(
                         _loginState.update {
                             it.copy(isLoading = false, isLoggedIn = true)
                         }
-                       // _isLoggedIn.value = true
+                        // _isLoggedIn.value = true
                     }
                 } else {
                     val errorBody = response.errorBody()

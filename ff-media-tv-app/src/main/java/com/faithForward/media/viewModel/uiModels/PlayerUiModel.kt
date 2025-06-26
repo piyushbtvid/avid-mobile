@@ -26,11 +26,12 @@ fun PosterCardDto.toRelatedItemDto(): RelatedContentItemDto {
         title = title,
         url = videoHlsUrl,
         description = description,
-        contentType = contentType
+        contentType = contentType,
     )
 }
 
 fun RelatedContentItemDto.toPosterCardDto(): PosterCardDto {
+
     return PosterCardDto(
         posterImageSrc = image,
         videoHlsUrl = url,
@@ -38,7 +39,7 @@ fun RelatedContentItemDto.toPosterCardDto(): PosterCardDto {
         slug = slug,
         title = title,
         description = description,
-        contentType = contentType
+        contentType = contentType,
     )
 }
 
