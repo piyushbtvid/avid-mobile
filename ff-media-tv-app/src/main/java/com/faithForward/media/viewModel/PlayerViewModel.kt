@@ -13,6 +13,7 @@ import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
+import com.faithForward.media.viewModel.uiModels.toPosterDto
 import com.faithForward.media.viewModel.uiModels.toRelatedItemDto
 import com.faithForward.media.viewModel.uiModels.toVideoPlayerDto
 import com.faithForward.network.dto.request.ContinueWatchingRequest
@@ -82,7 +83,11 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.UpdateOrLoadPlayerData -> {
-                updateOrLoadVideoPlayerData(event.itemList)
+                updateOrLoadVideoPlayerData(
+                    event.itemList,
+                    isFromContinueWatching = event.isFromContinueWatching,
+                    index = event.index
+                )
             }
 
             is PlayerEvent.UpdatePlayerBuffering -> {
@@ -198,7 +203,11 @@ class PlayerViewModel @Inject constructor(
 
     }
 
-    private fun updateOrLoadVideoPlayerData(itemList: List<PosterCardDto>) {
+    private fun updateOrLoadVideoPlayerData(
+        itemList: List<PosterCardDto>,
+        isFromContinueWatching: Boolean,
+        index: Int?,
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.value = _state.value.copy(isLoading = true)
 
@@ -222,10 +231,14 @@ class PlayerViewModel @Inject constructor(
                 "PLAYER_VIEWMODEL",
                 "item List size  in viewModel is ${itemList.size}"
             )
+            Log.e(
+                "PLAYER_CONTINUE",
+                "is from continue watching $isFromContinueWatching   player viewModel with ${firstItem?.seriesSlug}"
+            )
             try {
                 //  If URL and Related List are available  use directly And this is for Movies and its related from detail
                 if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
-                    Log.e("PLAYER_VIEWMODEL", "item has related and url  calling for isMovie")
+                    Log.e("PLAYER_CONTINUE", "item has related and url  calling for isMovie")
                     val relatedContentItemDtoList =
                         firstItem!!.relatedList!!.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
@@ -237,14 +250,18 @@ class PlayerViewModel @Inject constructor(
                                 playerRelatedContentRowDto = PlayerRelatedContentRowDto(
                                     title = "Next Up...",
                                     rowList = relatedContentItemDtoList
-                                )
+                                ),
                             )
-                        ), isLoading = false
+                        ), isLoading = false, videoPlayingIndex = index
                     )
+
                 }
                 //this is for series season episodes for all case i.e from detail and from related
-                else if (hasUrl && !isMovie) {
-                    Log.e("PLAYER_VIEWMODEL", "item has url  calling for !isMovie with $itemList")
+                else if (hasUrl && !isMovie && !isFromContinueWatching) {
+                    Log.e(
+                        "PLAYER_CONTINUE",
+                        "item has url  calling for !isMovie with item index $index $itemList"
+                    )
                     val relatedContentItemDtoList =
                         itemList.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
@@ -261,7 +278,7 @@ class PlayerViewModel @Inject constructor(
                                     rowList = relatedContentItemDtoList
                                 )
                             )
-                        ), isLoading = false
+                        ), isLoading = false, videoPlayingIndex = index
                     )
                 }
 
@@ -333,7 +350,7 @@ class PlayerViewModel @Inject constructor(
                 // For movies from related Movie
                 else if (firstItem?.slug != null && firstItem.contentType == "Movie") {
                     Log.e(
-                        "SERIES_RELATED",
+                        "PLAYER_CONTINUE",
                         "item has not either related and url and content type is ${firstItem.contentType}"
                     )
                     Log.e(
@@ -363,9 +380,69 @@ class PlayerViewModel @Inject constructor(
                                 )
                             )
                         ),
-                        isLoading = false
+                        isLoading = false,
+                        videoPlayingIndex = index
                     )
                 }
+                //is from continue watching and is a Series episode
+                else if (isFromContinueWatching && firstItem?.seriesSlug != null) {
+                    Log.e(
+                        "PLAYER_CONTINUE",
+                        "is from continue watching in player viewModel with ${firstItem.seriesSlug}"
+                    )
+                    val response = networkRepository.getGivenCardDetail(firstItem.seriesSlug)
+                    if (!response.isSuccessful) return@launch
+
+                    val cardDetail = response.body() ?: return@launch
+
+                    if (cardDetail.data.content_type == "Series") {
+                        val seasons = cardDetail.data.seasons
+                        val continueWatchingEpisodeSlug = firstItem.slug
+
+                        // Find the season that contains the episode
+                        val matchedSeason = seasons?.firstOrNull { season ->
+                            season.episodes.any { it.slug == continueWatchingEpisodeSlug }
+                        }
+
+                        val episodes = matchedSeason?.episodes ?: return@launch
+
+                        // Create a new list with updated progress episode in its original position
+                        val updatedEpisodes = episodes.map { episode ->
+                            if (episode.slug == continueWatchingEpisodeSlug) {
+                                episode.toPosterDto().copy(
+                                    progress = firstItem.progress
+                                )
+                            } else {
+                                episode.toPosterDto()
+                            }
+                        }
+
+                        val resumeIndex =
+                            updatedEpisodes.indexOfFirst { it.slug == continueWatchingEpisodeSlug }
+                        val videoPlayList = updatedEpisodes.map {
+                            it.toVideoPlayerDto()
+                        }
+
+                        val relatedList = updatedEpisodes.map {
+                            it.toRelatedItemDto()
+                        }
+                        Log.d("ResumeList", "Updated episodes: $updatedEpisodes")
+                        Log.d("ResumeList", "Resume episode index: $resumeIndex")
+                        _state.value = _state.value.copy(
+                            videoPlayerDto = Resource.Success(
+                                PlayerDto(
+                                    videoPlayerDtoList = videoPlayList,
+                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                        title = "Next Up...",
+                                        rowList = relatedList
+                                    )
+                                )
+                            ),
+                            isLoading = false, videoPlayingIndex = resumeIndex
+                        )
+                    }
+                }
+
 
             } catch (ex: Exception) {
                 ex.printStackTrace()

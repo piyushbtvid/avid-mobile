@@ -95,6 +95,7 @@ fun MainAppNavHost(
                     }
                 },
                 onCarouselItemClick = { carouselItem, isFromContinueWatching ->
+                    Log.e("CAROUSEL_CLICK", "item in carousel is $carouselItem")
                     val route = Routes.PlayerScreen.createRoute(
                         listOf(carouselItem), isContinueWatching = isFromContinueWatching
                     )
@@ -245,7 +246,10 @@ fun MainAppNavHost(
                         )
                         if (posterItemList != null) {
                             val route =
-                                Routes.PlayerScreen.createRoute(posterItemList, initialIndex = index) // Wrap item in a list
+                                Routes.PlayerScreen.createRoute(
+                                    posterItemList,
+                                    initialIndex = index
+                                ) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
@@ -308,7 +312,11 @@ fun MainAppNavHost(
                 LaunchedEffect(playerList) {
                     playerList.let {
                         playerViewModel.handleEvent(
-                            PlayerEvent.UpdateOrLoadPlayerData(itemList = it)
+                            PlayerEvent.UpdateOrLoadPlayerData(
+                                itemList = it,
+                                isFromContinueWatching = isContinueWatching,
+                                index = initialIndex
+                            )
                         )
                     }
                 }

@@ -68,6 +68,7 @@ data class PlayerState(
     val isLoading: Boolean = false,
     val isPlayerBuffering: Boolean = false,
     val hasVideoEnded: Boolean = false,
+    val videoPlayingIndex: Int? = 0,
 )
 
 sealed class PlayerEvent {
@@ -78,7 +79,13 @@ sealed class PlayerEvent {
     data object ShowRelated : PlayerEvent()
     data object HideRelated : PlayerEvent()
     data class UpdateIsPlaying(val isPlaying: Boolean) : PlayerEvent()
-    data class UpdateOrLoadPlayerData(val itemList: List<PosterCardDto>) : PlayerEvent()
+    data class UpdateOrLoadPlayerData(
+        val itemList: List<PosterCardDto>,
+        val index: Int? = null,
+        val isFromContinueWatching: Boolean = false,
+    ) :
+        PlayerEvent()
+
     data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
     data class UpdateVideoEndedState(val isEnded: Boolean) : PlayerEvent()
     data class SaveToContinueWatching(
