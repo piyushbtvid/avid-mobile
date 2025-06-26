@@ -41,8 +41,8 @@ import com.faithForward.util.Resource
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
-    onResumeNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
+    onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
+    onResumeNowClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
     onRelatedItemClick: (PosterCardDto) -> Unit,
     slug: String?,
     detailViewModel: DetailViewModel,
@@ -130,24 +130,34 @@ fun DetailScreen(
                                 )
                                 onWatchNowClick.invoke(
                                     null,
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes,
+                                    0
                                 )
                             }
                         } else {
-                            onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto(), null)
+                            onWatchNowClick.invoke(
+                                detailPageItem.detailDto.toPosterCardDto(),
+                                null,
+                                0
+                            )
                         }
                     },
                     onResumeNowCLick = {
                         if (detailPageItem.detailDto.isSeries == true) {
                             if (relatedContentData is RelatedContentData.SeriesSeasons) {
+                                Log.e(
+                                    "REMANING",
+                                    "resume season episode on watchclick are ${(relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes}"
+                                )
                                 onResumeNowClick.invoke(
                                     null,
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes,
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeIndex
                                 )
                             }
                         } else {
                             onResumeNowClick.invoke(
-                                detailPageItem.detailDto.toPosterCardDto(), null
+                                detailPageItem.detailDto.toPosterCardDto(), null, 0
                             )
                         }
                     },
@@ -268,12 +278,11 @@ fun DetailScreen(
                                 if (item.isRelatedSeries == true) {
                                     onRelatedItemClick.invoke(item)
                                 } else {
-                                    val newLs = ls.subList(index, ls.size)
-                                    Log.e(
-                                        "RELATED_SERIES",
-                                        "on item list is ${newLs.get(0).relatedList}"
-                                    )
-                                    onWatchNowClick.invoke(null, newLs)
+//                                    Log.e(
+//                                        "RELATED_SERIES",
+//                                        "on item list is ${newLs.get(0).relatedList}"
+//                                    )
+                                    onWatchNowClick.invoke(null, ls, index)
                                 }
                             },
                             lastFocusedItemIndex = lastFocusedItem,

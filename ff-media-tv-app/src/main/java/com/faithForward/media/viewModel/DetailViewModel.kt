@@ -130,7 +130,8 @@ class DetailViewModel @Inject constructor(
                             selectedSeasonEpisodes = selectedSeasonEpisodes,
                             allSeasons = seasonList,
                             relatedSeries = relatedMovieList,
-                            resumeSeasonEpisodes = resumeSeasonEpisodes
+                            resumeSeasonEpisodes = resumeSeasonEpisodes.first,
+                            resumeIndex = resumeSeasonEpisodes.second ?: 0
                         )
                         if (_relatedContentData.value != newRelatedContentData)
                             _relatedContentData.emit(newRelatedContentData)
@@ -170,7 +171,12 @@ class DetailViewModel @Inject constructor(
                             )
 
                             (_relatedContentData.value as? RelatedContentData.SeriesSeasons)?.let { current ->
-                                _relatedContentData.emit(current.copy(resumeSeasonEpisodes = resumeSeasonEpisodes))
+                                _relatedContentData.emit(
+                                    current.copy(
+                                        resumeSeasonEpisodes = resumeSeasonEpisodes.first,
+                                        resumeIndex = resumeSeasonEpisodes.second ?: 0
+                                    )
+                                )
                             }
                         }
                         // For Movies etc
@@ -209,24 +215,30 @@ class DetailViewModel @Inject constructor(
     private fun buildResumeEpisodes(
         resumeInfo: ResumeInfo?,
         seasons: List<SeasonDto>,
-    ): List<PosterCardDto> {
-        if (resumeInfo == null) return seasons.firstOrNull()?.episodesContentDto ?: emptyList()
-
-        val matchedSeason = seasons.firstOrNull { it.seasonNumber == resumeInfo.season_number }
-        val episodes = matchedSeason?.episodesContentDto ?: return emptyList()
-
-        val resumeEpisode = episodes.firstOrNull {
-            it.episodeNumber == resumeInfo.episode_number
-        }?.copy(progress = resumeInfo.progress_seconds)
-
-        val remaining = episodes.filter {
-            it.episodeNumber != null &&
-                    it.episodeNumber != resumeInfo.episode_number &&
-                    it.episodeNumber > (resumeInfo.episode_number ?: 0)
+    ): Pair<List<PosterCardDto>, Int?> {
+        if (resumeInfo == null) {
+            val defaultList = seasons.firstOrNull()?.episodesContentDto ?: emptyList()
+            return Pair(defaultList, 0)
         }
 
-        return listOfNotNull(resumeEpisode) + remaining
+        val matchedSeason = seasons.firstOrNull { it.seasonNumber == resumeInfo.season_number }
+        val episodes = matchedSeason?.episodesContentDto ?: return Pair(emptyList(), null)
+
+        // Create a new list with resume progress applied to the correct episode
+        val updatedEpisodes = episodes.map { episode ->
+            if (episode.episodeNumber == resumeInfo.episode_number) {
+                episode.copy(progress = resumeInfo.progress_seconds)
+            } else {
+                episode
+            }
+        }
+
+        val resumeIndex =
+            updatedEpisodes.indexOfFirst { it.episodeNumber == resumeInfo.episode_number }
+
+        return Pair(updatedEpisodes, if (resumeIndex != -1) resumeIndex else null)
     }
+
 
     private fun updateResumeUI(progressSeconds: Int?, resumeInfo: ResumeInfo? = null) {
         val isVisible = progressSeconds != null && progressSeconds > 0

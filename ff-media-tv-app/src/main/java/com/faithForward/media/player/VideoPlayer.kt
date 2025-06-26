@@ -223,6 +223,8 @@ fun VideoPlayer(
             super.onMediaItemTransition(mediaItem, reason)
             val index = exoPlayer.currentMediaItemIndex
             currentTitle = videoPlayerItem.getOrNull(index)?.title ?: ""
+            playerViewModel.handleEvent(PlayerEvent.HideRelated)
+            playerViewModel.handleEvent(PlayerEvent.ShowControls)
         }
     })
 

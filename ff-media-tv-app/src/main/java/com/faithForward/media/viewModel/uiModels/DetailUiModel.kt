@@ -24,6 +24,7 @@ sealed interface RelatedContentData {
         val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
         val relatedSeries: List<PosterCardDto>,
+        val resumeIndex : Int
     ) : RelatedContentData
 
     data object None : RelatedContentData

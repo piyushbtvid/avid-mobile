@@ -223,7 +223,7 @@ fun MainAppNavHost(
 
             DetailScreen(detailViewModel = detailViewModel,
                 slug = slug,
-                onWatchNowClick = { item, posterItemList ->
+                onWatchNowClick = { item, posterItemList, index ->
                     Log.e("SERIES_RELATED", "item is $item")
                     Log.e(
                         "SERIES_RELATED",
@@ -245,22 +245,28 @@ fun MainAppNavHost(
                         )
                         if (posterItemList != null) {
                             val route =
-                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                                Routes.PlayerScreen.createRoute(posterItemList, initialIndex = index) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
                 },
-                onResumeNowClick = { item, posterItemList ->
+                onResumeNowClick = { item, posterItemList, index ->
                     if (item != null) {
                         val route =
-                            Routes.PlayerScreen.createRoute(listOf(item)) // Wrap item in a list
+                            Routes.PlayerScreen.createRoute(
+                                listOf(item),
+                                initialIndex = index
+                            ) // Wrap item in a list
                         if (item.progress != null && item.progress > 0) {
                             navController.navigate(route)
                         }
                     } else {
                         if (posterItemList != null) {
                             val route =
-                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                                Routes.PlayerScreen.createRoute(
+                                    posterItemList,
+                                    initialIndex = index
+                                ) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
