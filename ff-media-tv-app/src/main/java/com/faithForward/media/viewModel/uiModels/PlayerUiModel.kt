@@ -10,7 +10,11 @@ import com.faithForward.util.Resource
 
 fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
     return VideoPlayerDto(
-        url = videoHlsUrl, itemId = id ?: "", itemSlug = slug, progress = progress ?: 0
+        url = videoHlsUrl,
+        itemId = id ?: "",
+        itemSlug = slug,
+        progress = progress ?: 0,
+        title = title
     )
 }
 

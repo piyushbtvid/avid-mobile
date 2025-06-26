@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -34,16 +35,19 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRow
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.theme.focusedMainColor
+import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import kotlinx.coroutines.delay
 
 data class VideoPlayerDto(
+    val title: String?,
     val url: String?,
     val itemSlug: String?,
     val itemId: String,
@@ -70,6 +74,7 @@ fun VideoPlayer(
     var currentPosition by remember { mutableIntStateOf(initialIndex) }
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
+    var currentTitle by remember { mutableStateOf(videoPlayerItem.firstOrNull()?.title) }
 
     // Initialize ExoPlayer
     val exoPlayer = remember {
@@ -213,6 +218,12 @@ fun VideoPlayer(
                 playerViewModel.handleEvent(PlayerEvent.ShowControls)
             }
         }
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            super.onMediaItemTransition(mediaItem, reason)
+            val index = exoPlayer.currentMediaItemIndex
+            currentTitle = videoPlayerItem.getOrNull(index)?.title ?: ""
+        }
     })
 
     // Start auto-hide timer when composable is first composed and controls are visible
@@ -234,7 +245,6 @@ fun VideoPlayer(
         val mediaItems = videoPlayerItem.map { item ->
             MediaItem.Builder().setUri(item.url).build()
         }
-
         exoPlayer.setMediaItems(mediaItems, initialIndex, 0L)
         exoPlayer.prepare()
 
@@ -316,6 +326,21 @@ fun VideoPlayer(
                 }
             }, modifier = Modifier.fillMaxSize()
         )
+
+
+        if (currentTitle != null) {
+            TitleText(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 20.dp),
+                text = currentTitle!!,
+                textSize = 28,
+                color = whiteMain,
+                lineHeight = 28,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
 
         // Loading Indicator
         if (playerScreenState.isLoading || playerScreenState.isPlayerBuffering) {

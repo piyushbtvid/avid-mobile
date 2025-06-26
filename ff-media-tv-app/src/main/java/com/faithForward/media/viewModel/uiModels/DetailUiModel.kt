@@ -98,7 +98,6 @@ fun Season.toSeasonDto(): SeasonDto {
         episodesContentDto = episodes.map { currentEpisode ->
             currentEpisode.toPosterDto().copy(
                 relatedList = episodes
-                    .filter { it != currentEpisode } // Exclude the current episode
                     .map { it.toPosterDto() }         // Convert others to PosterCardDto
             )
         },
