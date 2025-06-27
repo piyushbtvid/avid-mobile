@@ -39,6 +39,8 @@ import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRow
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.player.relatedContent.RelatedContentItemDto
+import com.faithForward.media.player.seriesNextUi.EpisodeNextUpDialog
+import com.faithForward.media.player.seriesNextUi.EpisodeNextUpItemDto
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.viewModel.PlayerViewModel
@@ -47,6 +49,7 @@ import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import kotlinx.coroutines.delay
 
 data class VideoPlayerDto(
+    val contentType : String,
     val title: String?,
     val url: String?,
     val itemSlug: String?,
@@ -75,8 +78,8 @@ fun VideoPlayer(
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
     var currentTitle by remember { mutableStateOf(videoPlayerItem.firstOrNull()?.title) }
+    var showNextEpisodeDialog by remember { mutableStateOf(false) }
 
-    // Initialize ExoPlayer
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             playWhenReady = false
@@ -92,13 +95,6 @@ fun VideoPlayer(
                     reason: Int,
                 ) {
                     currentPlayingVideoPosition = newPosition.positionMs.toInt()
-                    if (reason == Player.DISCONTINUITY_REASON_SEEK) {
-                        val currentItemIndex = currentMediaItemIndex
-                        val time = System.currentTimeMillis()
-                        val watchTime = oldPosition.positionMs.toString()
-                        val prevTime = oldPosition.positionMs.toInt()
-                        val newTime = newPosition.positionMs.toInt()
-                    }
                 }
 
                 override fun onPlaybackStateChanged(state: Int) {
@@ -121,32 +117,19 @@ fun VideoPlayer(
                         Player.STATE_ENDED -> {
                             if (!playerScreenState.hasVideoEnded) {
                                 val item = videoPlayerItem[currentMediaItemIndex]
-
                                 if (item.itemSlug != null) {
-                                    val currentProgressMillis = currentPosition
-                                    val videoDurationMillis = duration
-
-                                    val oneMinuteMillis = 60_000L
-
-                                    // Subtract 1 minute from duration, then ensure we don't exceed current position
-                                    val safeProgressMillis =
-                                        (videoDurationMillis - oneMinuteMillis)
-
+                                    val safeProgressMillis = (duration - 60_000L)
                                     playerViewModel.handleEvent(
                                         PlayerEvent.SaveToContinueWatching(
                                             itemSlug = item.itemSlug,
                                             progressSeconds = safeProgressMillis.toString(),
-                                            videoDuration = videoDurationMillis.toString()
+                                            videoDuration = duration.toString()
                                         )
                                     )
                                 }
                             }
-
-
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
-                            playerViewModel.handleEvent(
-                                PlayerEvent.UpdateVideoEndedState(true)
-                            )
+                            playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
                             onVideoEnd()
                         }
 
@@ -157,14 +140,10 @@ fun VideoPlayer(
                 }
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                    playerViewModel.handleEvent(
-                        PlayerEvent.UpdateVideoEndedState(false)
-                    )
+                    playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(false))
                     currentPosition = currentMediaItemIndex
                     currentVideoDuration = duration.toInt()
-                    if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
-                        val previousIndex = currentMediaItemIndex - 1
-                    }
+                    showNextEpisodeDialog = false // Reset dialog
                     playerViewModel.handleEvent(PlayerEvent.ShowControls)
                 }
             })
@@ -172,43 +151,14 @@ fun VideoPlayer(
     }
 
     LaunchedEffect(playerState) {
-        androidx.media3.common.util.Log.e(
-            "EXOPLAY", "launchEffect in player is runned with $playerState"
-        )
         when (playerState) {
-            PlayerPlayingState.PLAYING -> {
-                androidx.media3.common.util.Log.e("EXOPLAY", "playState in player is playing")
-                exoPlayer.play()
-                playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                // Start playing video
-            }
-
-            PlayerPlayingState.PAUSED -> {
-                androidx.media3.common.util.Log.e("EXOPLAY", "playState in player is paused")
-                exoPlayer.pause()
-                playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                // Pause video
-            }
-
-            PlayerPlayingState.REWINDING -> {
-                androidx.media3.common.util.Log.e("EXOPLAY", "playState in player is rewind")
-                exoPlayer.seekBack()
-                playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                // Rewind video
-            }
-
-            PlayerPlayingState.FORWARDING -> {
-                androidx.media3.common.util.Log.e("EXOPLAY", "playState in player is forwarding")
-                exoPlayer.seekForward()
-                playerViewModel.handleEvent(PlayerEvent.ShowControls)
-                // Fast forward video
-            }
-
-            PlayerPlayingState.IDLE -> {
-                // Do nothing
-                androidx.media3.common.util.Log.e("EXOPLAY", "playState in player is IDLE")
-            }
+            PlayerPlayingState.PLAYING -> exoPlayer.play()
+            PlayerPlayingState.PAUSED -> exoPlayer.pause()
+            PlayerPlayingState.REWINDING -> exoPlayer.seekBack()
+            PlayerPlayingState.FORWARDING -> exoPlayer.seekForward()
+            PlayerPlayingState.IDLE -> {}
         }
+        playerViewModel.handleEvent(PlayerEvent.ShowControls)
     }
 
     exoPlayer.addListener(object : Player.Listener {
@@ -220,7 +170,6 @@ fun VideoPlayer(
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            super.onMediaItemTransition(mediaItem, reason)
             val index = exoPlayer.currentMediaItemIndex
             currentTitle = videoPlayerItem.getOrNull(index)?.title ?: ""
             playerViewModel.handleEvent(PlayerEvent.HideRelated)
@@ -228,21 +177,6 @@ fun VideoPlayer(
         }
     })
 
-    // Start auto-hide timer when composable is first composed and controls are visible
-    LaunchedEffect(Unit) {
-//        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-//        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-//        if (state.isControlsVisible) {
-//            playerViewModel.handleEvent(PlayerEvent.ShowControls)
-//        }
-//
-//        playerViewModel.interactionFlow.collectLatest {
-//            Log.e("PLAYER_UI", "User interaction collected in DetailScreen")
-//            // playerViewModel.handleEvent(PlayerEvent.ShowControls) // Reset the auto-play timer
-//        }
-    }
-
-    // Set Playlist
     LaunchedEffect(videoPlayerItem) {
         val mediaItems = videoPlayerItem.map { item ->
             MediaItem.Builder().setUri(item.url).build()
@@ -256,15 +190,24 @@ fun VideoPlayer(
         }
 
         while (true) {
-            playerViewModel.handleEvent(PlayerEvent.UpdateCurrentPosition(exoPlayer.currentPosition))
-            playerViewModel.handleEvent(
-                PlayerEvent.UpdateDuration(
-                    exoPlayer.duration.coerceAtLeast(
-                        1L
-                    )
-                )
-            )
-            currentPlayingVideoPosition = exoPlayer.currentPosition.toInt()
+            val duration = exoPlayer.duration
+            val currentPos = exoPlayer.currentPosition
+
+            playerViewModel.handleEvent(PlayerEvent.UpdateCurrentPosition(currentPos))
+            playerViewModel.handleEvent(PlayerEvent.UpdateDuration(duration.coerceAtLeast(1L)))
+            currentPlayingVideoPosition = currentPos.toInt()
+
+            val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
+            Log.e("CURRENT_EPISODE", "item slug is ${currentItem?.contentType}")
+            if (
+                currentItem?.contentType == "Episode" &&
+                duration > 0 &&
+                duration - currentPos <= 10_000 &&
+                !showNextEpisodeDialog
+            ) {
+                showNextEpisodeDialog = true
+            }
+
             delay(500)
         }
     }
@@ -279,26 +222,19 @@ fun VideoPlayer(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_PAUSE -> {
-                    exoPlayer.pause()
-                }
-
+                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
                 Lifecycle.Event.ON_STOP -> {
-                    Log.e("CONTINUE_WATCHING", "on stop called of videoPlayer")
                     if (!playerScreenState.hasVideoEnded) {
                         val currentIndex = exoPlayer.currentMediaItemIndex
-                        if (currentIndex in videoPlayerItem.indices) {
-                            val item = videoPlayerItem[currentIndex]
-                            // Use item...
-                            if (item.itemSlug != null) {
-                                playerViewModel.handleEvent(
-                                    PlayerEvent.SaveToContinueWatching(
-                                        itemSlug = item.itemSlug,
-                                        progressSeconds = exoPlayer.currentPosition.toString(), // Current progress in seconds
-                                        videoDuration = exoPlayer.duration.toString()    // Total duration in seconds
-                                    )
+                        val item = videoPlayerItem.getOrNull(currentIndex)
+                        if (item?.itemSlug != null) {
+                            playerViewModel.handleEvent(
+                                PlayerEvent.SaveToContinueWatching(
+                                    itemSlug = item.itemSlug,
+                                    progressSeconds = exoPlayer.currentPosition.toString(),
+                                    videoDuration = exoPlayer.duration.toString()
                                 )
-                            }
+                            )
                         }
                     }
                     exoPlayer.pause()
@@ -314,7 +250,6 @@ fun VideoPlayer(
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             exoPlayer.release()
@@ -322,7 +257,8 @@ fun VideoPlayer(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
     ) {
         AndroidView(
             factory = { ctx ->
@@ -330,8 +266,40 @@ fun VideoPlayer(
                     player = exoPlayer
                     useController = false
                 }
-            }, modifier = Modifier.fillMaxSize()
+            },
+            modifier = Modifier.fillMaxSize()
         )
+
+        // ➕ Animated Next Episode Dialog
+        AnimatedVisibility(
+            visible = showNextEpisodeDialog,
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = tween(500)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(500)
+            ),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            val currentIndex = exoPlayer.currentMediaItemIndex
+            val nextItem = videoPlayerItem.getOrNull(currentIndex + 1)
+
+            if (nextItem != null && nextItem.contentType == "Episode") {
+                EpisodeNextUpDialog(
+                    time = "",
+                    episodeNextUpItemDto = EpisodeNextUpItemDto(
+                        image = "",
+                        title = nextItem.title ?: "",
+                        description = "jgvvjjgjfcjfcc",
+                        seasonEpisode = "Season Episode", // make sure this field exists in your DTO
+                        episodeSlug = nextItem.itemSlug ?: "",
+                        seriesSlug = ""
+                    )
+                )
+            }
+        }
 
 
         if (currentTitle != null) {
@@ -347,30 +315,22 @@ fun VideoPlayer(
             )
         }
 
-
-        // Loading Indicator
         if (playerScreenState.isLoading || playerScreenState.isPlayerBuffering) {
             Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Log.e("PLAYER", "Video player is loading or buffering")
-                CircularProgressIndicator(
-                    color = focusedMainColor
-                )
+                CircularProgressIndicator(color = focusedMainColor)
             }
         }
 
-        // Related content row with slide animation
         AnimatedVisibility(
-            visible = playerScreenState.isRelatedVisible, enter = slideInVertically(
-                initialOffsetY = { it }, // Start from bottom
-                animationSpec = tween(durationMillis = 500)
-            ), exit = slideOutVertically(
-                targetOffsetY = { it }, // Slide out to bottom
-                animationSpec = tween(durationMillis = 500)
-            )
+            visible = playerScreenState.isRelatedVisible,
+            enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(500)),
+            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(500))
         ) {
-            PlayerRelatedContentRow(playerRelatedContentRowDto = playerRelatedContentRowDto,
+            PlayerRelatedContentRow(
+                playerRelatedContentRowDto = playerRelatedContentRowDto,
                 onUp = {
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.ShowControls)
@@ -383,29 +343,21 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
                                     itemSlug = item.itemSlug,
-                                    progressSeconds = exoPlayer.currentPosition.toString(), // Current progress in seconds
-                                    videoDuration = exoPlayer.duration.toString()    // Total duration in seconds
+                                    progressSeconds = exoPlayer.currentPosition.toString(),
+                                    videoDuration = exoPlayer.duration.toString()
                                 )
                             )
                         }
                     }
-                    onRelatedItemClick.invoke(relatedItem, relatedItemList, index)
+                    onRelatedItemClick(relatedItem, relatedItemList, index)
                 }
-
             )
         }
 
-        // Controls with slide animation, hidden when related content is visible
         AnimatedVisibility(
             visible = playerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible,
-            enter = slideInVertically(
-                initialOffsetY = { it }, // Start from bottom
-                animationSpec = tween(durationMillis = 300)
-            ),
-            exit = slideOutVertically(
-                targetOffsetY = { it }, // Slide out to bottom
-                animationSpec = tween(durationMillis = 500)
-            )
+            enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(300)),
+            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(500))
         ) {
             Box(
                 modifier = Modifier
@@ -418,22 +370,15 @@ fun VideoPlayer(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                 ) {
-                    PlayerControls(currentPosition = playerScreenState.currentPosition,
+                    PlayerControls(
+                        currentPosition = playerScreenState.currentPosition,
                         duration = playerScreenState.duration,
                         onSeekTo = { exoPlayer.seekTo(it) },
                         onPlayPause = {
-                            Log.e(
-                                "PLAYER_CONTROLERS",
-                                "on pause called with ${playerScreenState.isControlsVisible}"
-                            )
                             exoPlayer.playWhenReady = !exoPlayer.isPlaying
                             playerViewModel.handleEvent(PlayerEvent.ShowControls)
                         },
                         onRewind = {
-                            Log.e(
-                                "PLAYER_CONTROLERS",
-                                "on Rewind called with ${playerScreenState.isControlsVisible}"
-                            )
                             val rewindMillis = 15_000L
                             val newPosition =
                                 (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
@@ -441,10 +386,6 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(PlayerEvent.ShowControls)
                         },
                         onForward = {
-                            Log.e(
-                                "PLAYER_CONTROLERS",
-                                "on forward called with ${playerScreenState.isControlsVisible}"
-                            )
                             exoPlayer.seekForward()
                             playerViewModel.handleEvent(PlayerEvent.ShowControls)
                         },
@@ -457,14 +398,13 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(PlayerEvent.ShowControls)
                         },
                         inControllerUp = {
-                            Log.e("PLAYER_UI", "IS controlerUp called in videoPlayer")
                             playerViewModel.handleEvent(PlayerEvent.ShowRelated)
-                            // playerViewModel.handleEvent(PlayerEvent.HideControls)
                             true
                         },
                         isPlaying = playerScreenState.isPlaying,
                         focusRequester = focusRequester,
-                        onBackClick = {})
+                        onBackClick = {}
+                    )
                 }
             }
         }

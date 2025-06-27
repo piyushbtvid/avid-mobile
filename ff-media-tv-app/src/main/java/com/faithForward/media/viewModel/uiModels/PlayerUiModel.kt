@@ -14,7 +14,8 @@ fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
         itemId = id ?: "",
         itemSlug = slug,
         progress = progress ?: 0,
-        title = title
+        title = title,
+        contentType = contentType ?: ""
     )
 }
 
