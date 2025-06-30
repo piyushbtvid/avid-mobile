@@ -27,6 +27,7 @@ data class Episode(
     val content_type: String? = null,
     val id: String,
     val episode_number: Int,
+    val season_number: Int,
     val name: String,
     val slug: String?,
     val description: String,

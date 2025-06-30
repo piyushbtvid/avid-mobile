@@ -24,7 +24,7 @@ sealed interface RelatedContentData {
         val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
         val relatedSeries: List<PosterCardDto>,
-        val resumeIndex : Int
+        val resumeIndex: Int,
     ) : RelatedContentData
 
     data object None : RelatedContentData
@@ -70,8 +70,7 @@ fun CardDetail.toDetailDto(): DetailDto {
         isSeries = data.content_type == "Series" || data.content_type == "Episode",
         contentType = data.content_type,
         progress = data.progressSeconds,
-        relatedList = relatedList
-    )
+        relatedList = relatedList)
 }
 
 
@@ -98,8 +97,7 @@ fun Season.toSeasonDto(): SeasonDto {
     return SeasonDto(
         episodesContentDto = episodes.map { currentEpisode ->
             currentEpisode.toPosterDto()
-        },
-        seasonNumber = season_number
+        }, seasonNumber = season_number
     )
 }
 
@@ -121,10 +119,10 @@ fun Episode.toPosterDto(): PosterCardDto {
         imdbRating = rating,
         releaseDate = dateUploaded,
         episodeNumber = episode_number,
+        seasonNumber = season_number,
         videoHlsUrl = video_link,
         slug = slug,
-        contentType = content_type
-    )
+        contentType = content_type)
 }
 
 

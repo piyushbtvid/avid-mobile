@@ -60,6 +60,7 @@ data class PosterCardDto(
     val contentType: String? = null,
     val isRelatedSeries: Boolean? = false,
     val episodeNumber: Int? = null,
+    val seasonNumber: Int? = null,
     val uploadYear: String? = null,
     val relatedList: List<PosterCardDto>? = null,
 )

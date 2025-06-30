@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun UpNextProgress(
-    initialTime: Int = 10,
+    initialTime: Int = 20,
     modifier: Modifier = Modifier
 ) {
     val timeLeft = remember { Animatable(initialTime.toFloat()) }

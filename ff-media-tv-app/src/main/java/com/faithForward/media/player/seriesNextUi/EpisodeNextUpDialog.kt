@@ -19,6 +19,8 @@ import com.faithForward.media.theme.pageBlackBackgroundColor
 fun EpisodeNextUpDialog(
     modifier: Modifier = Modifier,
     time: String,
+    onCancelClick: () -> Unit,
+    onPlayNowClick: () -> Unit,
     episodeNextUpItemDto: EpisodeNextUpItemDto,
 ) {
 
@@ -40,15 +42,14 @@ fun EpisodeNextUpDialog(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             EpisodeNextUpItem(
                 episodeNextUpItemDto = episodeNextUpItemDto
             )
 
-
-            EpisodeNextButtonsRow()
-
-
+            EpisodeNextButtonsRow(
+                onCancelClick = onCancelClick,
+                onPlayNowClick = onPlayNowClick
+            )
         }
 
     }
@@ -74,7 +75,13 @@ private fun NextUpPreview() {
             seasonEpisode = "Season 2, Episode 8",
             episodeSlug = "",
             seriesSlug = ""
-        )
+        ),
+        onCancelClick = {
+
+        },
+        onPlayNowClick = {
+
+        }
     )
 
 }

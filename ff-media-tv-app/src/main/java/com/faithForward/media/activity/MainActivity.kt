@@ -131,6 +131,7 @@ class MainActivity : ComponentActivity() {
                     } else {
                         //   playerViewModel.onUserInteraction("center and PlayPause")
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
@@ -144,6 +145,7 @@ class MainActivity : ComponentActivity() {
                     } else {
                         // playerViewModel.onUserInteraction("Rewind and Left")
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
@@ -158,6 +160,7 @@ class MainActivity : ComponentActivity() {
                     } else {
                         //  playerViewModel.onUserInteraction("forward and right")
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
@@ -172,6 +175,7 @@ class MainActivity : ComponentActivity() {
                     if (currentRoute == Routes.PlayerScreen.route) {
                         //playerViewModel.onUserInteraction("down")
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                     }
                 }
@@ -183,6 +187,7 @@ class MainActivity : ComponentActivity() {
                 if (!isControlsVisible) {
                     if (currentRoute == Routes.PlayerScreen.route) {
                         playerViewModel.handleEvent(PlayerEvent.HideControls)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowRelated)
                     }
                 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.player.PlayerDto
+import com.faithForward.media.player.VideoPlayerDto
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
@@ -78,6 +79,14 @@ class PlayerViewModel @Inject constructor(
                 _state.value = _state.value.copy(isRelatedVisible = true)
             }
 
+            is PlayerEvent.ShowNextEpisodeDialog -> {
+                _state.value = _state.value.copy(isNextEpisodeDialogVisible = true)
+            }
+
+            is PlayerEvent.HideNextEpisodeDialog -> {
+                _state.value = _state.value.copy(isNextEpisodeDialogVisible = false)
+            }
+
             is PlayerEvent.UpdateIsPlaying -> {
                 _state.value = _state.value.copy(isPlaying = event.isPlaying)
             }
@@ -105,6 +114,12 @@ class PlayerViewModel @Inject constructor(
             is PlayerEvent.UpdateVideoEndedState -> {
                 _state.value = _state.value.copy(
                     hasVideoEnded = event.isEnded
+                )
+            }
+
+            is PlayerEvent.UpdateVideoPlayingIndex -> {
+                _state.value = _state.value.copy(
+                    videoPlayingIndex = event.value
                 )
             }
 
@@ -223,18 +238,19 @@ class PlayerViewModel @Inject constructor(
             )
 
             Log.e(
-                "PLAYER_VIEWMODEL",
-                "item content type in viewModel is ${firstItem?.contentType}"
+                "PLAYER_VIEWMODEL", "item content type in viewModel is ${firstItem?.contentType}"
             )
 
             Log.e(
-                "PLAYER_VIEWMODEL",
-                "item List size  in viewModel is ${itemList.size}"
+                "PLAYER_VIEWMODEL", "item List size  in viewModel is ${itemList.size}"
             )
             Log.e(
                 "PLAYER_CONTINUE",
                 "is from continue watching $isFromContinueWatching   player viewModel with ${firstItem?.seriesSlug}"
             )
+
+            Log.e("PLAY_CLICK", "load Player data called in viewModel with $index and  $itemList")
+
             try {
                 //  If URL and Related List are available  use directly And this is for Movies and its related from detail
                 if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
@@ -248,8 +264,7 @@ class PlayerViewModel @Inject constructor(
                             PlayerDto(
                                 videoPlayerDtoList = videoPlayerDtoList,
                                 playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                    title = "Next Up...",
-                                    rowList = relatedContentItemDtoList
+                                    title = "Next Up...", rowList = relatedContentItemDtoList
                                 ),
                             )
                         ), isLoading = false, videoPlayingIndex = index
@@ -258,95 +273,28 @@ class PlayerViewModel @Inject constructor(
                 }
                 //this is for series season episodes for all case i.e from detail and from related
                 else if (hasUrl && !isMovie && !isFromContinueWatching) {
+                    Log.e("PLAY_CLICK", "has Url and not movie and is Series episode")
                     Log.e(
                         "PLAYER_CONTINUE",
-                        "item has url  calling for !isMovie with item index $index $itemList"
+                        "item has url  calling for !isMovie with item index $index "
                     )
-                    val relatedContentItemDtoList =
-                        itemList.map { it.toRelatedItemDto() }
+                    val relatedContentItemDtoList = itemList.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
+
+                    Log.e("PLAY_CLICK", "has Url and $videoPlayerDtoList ")
 
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
                             PlayerDto(
                                 videoPlayerDtoList = videoPlayerDtoList,
                                 playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                    title = if (firstItem?.contentType == "Episode"
-                                        || firstItem?.contentType == "Series"
-                                    )
-                                        "Episodes..." else "Next Up...",
+                                    title = if (firstItem?.contentType == "Episode" || firstItem?.contentType == "Series") "Episodes..." else "Next Up...",
                                     rowList = relatedContentItemDtoList
                                 )
                             )
                         ), isLoading = false, videoPlayingIndex = index
                     )
                 }
-
-//                //  Anything missing  fetch all from API using slug for Episodes
-//                else if (firstItem?.slug != null && firstItem.contentType == "Episode") {
-//                    Log.e(
-//                        "SERIES_CONTENT",
-//                        "Fetching episode details for slug: ${firstItem.slug} and Content Type is ${firstItem.contentType}"
-//                    )
-//
-//                    val episodeResponse = networkRepository.getGivenCardDetail(firstItem.slug)
-//                    if (!episodeResponse.isSuccessful) return@launch
-//
-//                    val episodeDetail = episodeResponse.body()?.data ?: return@launch
-//
-//                    // If it's an Episode, then we need to fetch the series data
-//                    if (episodeDetail.content_type == "Episode" && episodeDetail.seriesSlug != null) {
-//                        val seriesSlug = episodeDetail.seriesSlug ?: ""
-//                        val seasonNumber = episodeDetail.seasonNumber
-//
-//                        Log.e(
-//                            "LOAD_RELATED",
-//                            "Episode detected. Fetching series data for slug: $seriesSlug"
-//                        )
-//
-//                        val seriesResponse = networkRepository.getGivenCardDetail(seriesSlug)
-//                        if (!seriesResponse.isSuccessful) return@launch
-//
-//                        val seriesDetail = seriesResponse.body()?.data ?: return@launch
-//
-//                        // Find the matching season
-//                        val season = seriesDetail.seasons?.find { it.season_number == seasonNumber }
-//                        val allEpisodes = season?.episodes ?: emptyList()
-//
-//                        val relatedEpisodes = allEpisodes.filter { it.slug != episodeDetail.slug }
-//
-//                        val relatedContentRowDtoList =
-//                            relatedEpisodes.map { it.toPosterDto().toRelatedItemDto() }
-//
-//                        // 1. Create the current playing item
-//                        val currentPlayingItem = episodeDetail
-//                            .toPosterCardDto()
-//                            .toVideoPlayerDto()
-//                            .copy(progress = 0)
-//
-//                        // 2. Create the remaining episodes excluding the current one
-//                        val nextEpisodes =
-//                            relatedEpisodes.map { it.toPosterDto().toVideoPlayerDto() }
-//
-//                        // 3. Final playlist: current + next episodes
-//                        val fullPlaylist = listOf(currentPlayingItem) + nextEpisodes
-//
-//                        // 4. Set state with the full playlist
-//                        _state.value = _state.value.copy(
-//                            videoPlayerDto = Resource.Success(
-//                                PlayerDto(
-//                                    videoPlayerDtoList = fullPlaylist,
-//                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-//                                        title = "Episodes...",
-//                                        rowList = relatedContentRowDtoList
-//                                    )
-//                                )
-//                            ),
-//                            isLoading = false
-//                        )
-//
-//                    }
-//                }
                 // For movies from related Movie
                 else if (firstItem?.slug != null && firstItem.contentType == "Movie") {
                     Log.e(
@@ -365,23 +313,18 @@ class PlayerViewModel @Inject constructor(
                     val relatedList = cardDetail.data.relatedContent ?: emptyList()
 
                     val relatedContentRowDtoList = relatedList.map { it.toRelatedItemDto() }
-                    val currentPlayingItem = cardDetail.data
-                        .toPosterCardDto()
-                        .toVideoPlayerDto()
-                        .copy(progress = 0)
+                    val currentPlayingItem =
+                        cardDetail.data.toPosterCardDto().toVideoPlayerDto().copy(progress = 0)
 
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
                             PlayerDto(
                                 videoPlayerDtoList = listOf(currentPlayingItem),
                                 playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                    title = "Next Up...",
-                                    rowList = relatedContentRowDtoList
+                                    title = "Next Up...", rowList = relatedContentRowDtoList
                                 )
                             )
-                        ),
-                        isLoading = false,
-                        videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index
                     )
                 }
                 //is from continue watching and is a Series episode
@@ -433,12 +376,10 @@ class PlayerViewModel @Inject constructor(
                                 PlayerDto(
                                     videoPlayerDtoList = videoPlayList,
                                     playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                        title = "Next Up...",
-                                        rowList = relatedList
+                                        title = "Next Up...", rowList = relatedList
                                     )
                                 )
-                            ),
-                            isLoading = false, videoPlayingIndex = resumeIndex
+                            ), isLoading = false, videoPlayingIndex = resumeIndex
                         )
                     }
                 }

@@ -1,7 +1,6 @@
 package com.faithForward.media.player.seriesNextUi
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -13,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,7 +21,6 @@ import com.faithForward.media.commanComponents.LoadImage
 import com.faithForward.media.theme.episodeButtonBackground
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.pageBlackBackgroundColor
-import com.faithForward.media.theme.playButtonBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState

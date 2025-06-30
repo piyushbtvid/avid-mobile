@@ -31,7 +31,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.faithForward.media.R
-import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.commanComponents.TitleText
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
@@ -45,6 +44,8 @@ data class RelatedContentItemDto(
     val title: String,
     val description: String,
     val url: String? = null,
+    val seasonNumber: Int? = null,
+    val episodeNumber: Int? = null,
 )
 
 @Composable
@@ -59,8 +60,7 @@ fun RelatedContentItem(
         targetValue = when (focusState) {
             FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
             else -> 1f
-        },
-        animationSpec = tween(300), label = ""
+        }, animationSpec = tween(300), label = ""
     )
 
     with(relatedContentItemDto) {
@@ -79,12 +79,8 @@ fun RelatedContentItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(image)
-                    .error(R.drawable.banner_test_img)
-                    .crossfade(true)
-                    .build(),
+            AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(image)
+                .error(R.drawable.banner_test_img).crossfade(true).build(),
                 contentDescription = "Poster Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -93,9 +89,7 @@ fun RelatedContentItem(
                     .clip(RoundedCornerShape(10.dp))
                     .clickable(interactionSource = null, indication = null, onClick = {
                         onItemClick.invoke()
-                    }
-                    )
-            )
+                    }))
 
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -123,11 +117,9 @@ private fun RowItemPreview() {
         modifier = Modifier
             .background(Color.White)
             .fillMaxSize() // Optional: makes sure it takes available space
-        ,
-        contentAlignment = Alignment.Center
+        , contentAlignment = Alignment.Center
     ) {
-        RelatedContentItem(
-            focusState = FocusState.UNFOCUSED,
+        RelatedContentItem(focusState = FocusState.UNFOCUSED,
             relatedContentItemDto = RelatedContentItemDto(
                 image = "",
                 id = "",
@@ -139,7 +131,6 @@ private fun RowItemPreview() {
             ),
             onItemClick = {
 
-            }
-        )
+            })
     }
 }

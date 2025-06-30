@@ -38,6 +38,7 @@ fun PlayerScreen(
     onPlayerBackClick: () -> Unit,
     initialIndex: Int = 0,
     onVideoEnded: () -> Unit,
+    onEpisodePlayNowClick: (List<VideoPlayerDto>, index: Int?) -> Unit,
     onRelatedItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
 ) {
     val state by playerViewModel.state.collectAsState()
@@ -71,6 +72,7 @@ fun PlayerScreen(
     BackHandler {
         Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
         playerViewModel.handleEvent(PlayerEvent.HideRelated)
+        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
         playerViewModel.handleEvent(PlayerEvent.ShowControls)
         onPlayerBackClick.invoke()
     }
@@ -81,7 +83,10 @@ fun PlayerScreen(
             .background(color = Color.Black)
     ) {
         when (val resource = state.videoPlayerDto) {
-            is Resource.Unspecified, is Resource.Error -> {
+
+            is Resource.Unspecified,
+            is Resource.Error,
+                -> {
                 // Do nothing, just return empty Box
             }
 
@@ -104,8 +109,15 @@ fun PlayerScreen(
                         onVideoEnded.invoke()
                         Log.e("VIDEO_ENDED", "ON VIDEO ENDED IS CALLED")
                     },
+                    onEpisodePlayNowClick = { list, index ->
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        onEpisodePlayNowClick.invoke(list, index)
+                    },
                     onRelatedItemClick = { item, list, index ->
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowControls)
                         onRelatedItemClick.invoke(item, list, index)
                     })

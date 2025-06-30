@@ -15,7 +15,28 @@ fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
         itemSlug = slug,
         progress = progress ?: 0,
         title = title,
-        contentType = contentType ?: ""
+        contentType = contentType ?: "",
+        description = description,
+        seriesSlug = seriesSlug ?: "",
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+        image = posterImageSrc
+    )
+}
+
+fun VideoPlayerDto.toPosterCardDto(): PosterCardDto {
+    return PosterCardDto(
+        videoHlsUrl = url,
+        id = itemId ?: "",
+        slug = itemSlug,
+        progress = progress ?: 0,
+        title = title ?: "",
+        contentType = contentType ?: "",
+        description = description,
+        seriesSlug = seriesSlug ?: "",
+        posterImageSrc = image,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber
     )
 }
 
@@ -28,6 +49,8 @@ fun PosterCardDto.toRelatedItemDto(): RelatedContentItemDto {
         url = videoHlsUrl,
         description = description,
         contentType = contentType,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber
     )
 }
 
@@ -41,6 +64,8 @@ fun RelatedContentItemDto.toPosterCardDto(): PosterCardDto {
         title = title,
         description = description,
         contentType = contentType,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber
     )
 }
 
@@ -53,7 +78,7 @@ fun ContentItem.toRelatedItemDto(): RelatedContentItemDto {
         title = name ?: "",
         url = video_link,
         description = description ?: "",
-        contentType = content_type
+        contentType = content_type,
     )
 }
 
@@ -65,6 +90,7 @@ data class PlayerState(
     val playerRelatedContentRowDto: PlayerRelatedContentRowDto? = null,
     val isControlsVisible: Boolean = true,
     val isRelatedVisible: Boolean = false,
+    val isNextEpisodeDialogVisible: Boolean = false,
     val isPlaying: Boolean = false,
     val isLoading: Boolean = false,
     val isPlayerBuffering: Boolean = false,
@@ -77,9 +103,12 @@ sealed class PlayerEvent {
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
     data object ShowControls : PlayerEvent()
     data object HideControls : PlayerEvent()
+    data object ShowNextEpisodeDialog : PlayerEvent()
+    data object HideNextEpisodeDialog : PlayerEvent()
     data object ShowRelated : PlayerEvent()
     data object HideRelated : PlayerEvent()
     data class UpdateIsPlaying(val isPlaying: Boolean) : PlayerEvent()
+    data class UpdateVideoPlayingIndex(val value: Int) : PlayerEvent()
     data class UpdateOrLoadPlayerData(
         val itemList: List<PosterCardDto>,
         val index: Int? = null,

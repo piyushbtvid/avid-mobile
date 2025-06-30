@@ -63,6 +63,8 @@ interface ApiServiceInterface {
     @POST(Constants.LOGIN_END_POINT)
     suspend fun loginUser(
         @Body loginRequest: LoginRequest,
+        @Header("X-Device-Id") deviceId: String = "1234578",
+        @Header("X-Device-Type") deviceType: String = "fire_tv",
     ): Response<LoginResponse>
 
     @GET(Constants.GIVEN_SECTION_END_POINT)

@@ -325,7 +325,6 @@ fun MainAppNavHost(
             PlayerScreen(
                 playerViewModel = playerViewModel,
                 isFromContinueWatching = isContinueWatching,
-                initialIndex = initialIndex,
                 onPlayerBackClick = {
                     if (isContinueWatching) {
                         // Get the current item's slug from playerDtoList
@@ -352,8 +351,19 @@ fun MainAppNavHost(
                         navController.popBackStack()
                     }
                 },
+                initialIndex = initialIndex,
                 onVideoEnded = {
                     navController.popBackStack()
+                },
+                onEpisodePlayNowClick = { list, index ->
+                    val posterCardList =
+                        list.map { it.toPosterCardDto() }
+                    val route =
+                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
+                    navController.navigate(route) {
+                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 },
                 onRelatedItemClick = { item, list, index ->
                     val posterCardList =

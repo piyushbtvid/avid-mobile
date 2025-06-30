@@ -40,7 +40,7 @@ fun CircularProgressbar(
     shadowColor: Color = Color.Gray,
     indicatorThickness: Dp = 4.dp,
     dataUsage: Float = 60f,
-    animationDuration: Int = 12000,
+    animationDuration: Int = 25000,
     dataTextStyle: TextStyle = TextStyle(fontSize = 10.sp),
 ) {
     var dataUsageRemember by remember { mutableFloatStateOf(-1f) }
