@@ -137,6 +137,7 @@ fun VideoPlayer(
                             }
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
                             playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
+                            currentTitle = ""
                             onVideoEnd()
                         }
 
@@ -212,9 +213,10 @@ fun VideoPlayer(
 
     LaunchedEffect(exoPlayer.currentMediaItem) {
         val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
+        currentTitle = currentItem?.title ?: ""
         Log.e(
-            "CURRENT_MEDIA_ITEM",
-            "current media item changed called  with ${currentItem?.itemSlug}"
+            "EPISODE_NEXT_UI",
+            "current Media Item change with new item ${currentItem?.title}  and current position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
         )
         while (isActive) {
             val duration = exoPlayer.duration
@@ -326,6 +328,7 @@ fun VideoPlayer(
                                 )
                             }
                         }
+                        currentTitle = ""
                         exoPlayer.release()
                         onVideoEnd.invoke()
                     },
@@ -343,6 +346,12 @@ fun VideoPlayer(
                                 )
                             }
                         }
+                        exoPlayer.seekTo(0)
+                        currentTitle = ""
+                        Log.e(
+                            "EPISODE_NEXT_UI",
+                            "episode on PLayNowClick exoPlayer position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
+                        )
                         onEpisodePlayNowClick.invoke(videoPlayerItem, currentIndex + 1)
                     }
                 )
