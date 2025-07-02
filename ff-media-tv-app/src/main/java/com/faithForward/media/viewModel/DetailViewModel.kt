@@ -452,6 +452,32 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+    fun getAllNextEpisodeIfMoreSeason(
+        currentSeasonEpisodes: List<PosterCardDto>,
+    ): List<PosterCardDto>? {
+        val currentData = _relatedContentData.value
+
+        if (currentData is RelatedContentData.SeriesSeasons) {
+            val allSeasons = currentData.allSeasons
+            val currentSeasonNumber = currentSeasonEpisodes.firstOrNull()?.seasonNumber
+
+            val currentSeasonIndex = allSeasons.indexOfFirst { season ->
+                season.episodesContentDto.any { it.seasonNumber == currentSeasonNumber }
+            }
+
+            Log.e("CURRENT_SEASON_INDEX", "current season index $currentSeasonIndex")
+            Log.e("CURRENT_SEASON_INDEX", "current season episodes $currentSeasonEpisodes")
+            if (currentSeasonIndex == -1) return null
+
+            val remainingSeasons = allSeasons.subList(currentSeasonIndex, allSeasons.size)
+            return remainingSeasons.flatMap { it.episodesContentDto }
+        }
+
+        return null
+    }
+
+    
+
     private fun updateFocusState(hasFocus: Boolean) {
         _uiState.value = _uiState.value.copy(
             targetHeight = if (hasFocus) Int.MAX_VALUE else 280,

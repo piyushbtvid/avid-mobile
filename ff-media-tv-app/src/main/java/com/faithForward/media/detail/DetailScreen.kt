@@ -128,11 +128,17 @@ fun DetailScreen(
                                         ).progress
                                     }."
                                 )
-                                onWatchNowClick.invoke(
-                                    null,
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes,
-                                    0
-                                )
+                                val selectedSeasonList =
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes
+                                val finalList =
+                                    detailViewModel.getAllNextEpisodeIfMoreSeason(selectedSeasonList)
+                                finalList?.let {
+                                    onWatchNowClick.invoke(
+                                        null,
+                                        it,
+                                        0
+                                    )
+                                }
                             }
                         } else {
                             onWatchNowClick.invoke(
@@ -149,11 +155,19 @@ fun DetailScreen(
                                     "REMANING",
                                     "resume season episode on watchclick are ${(relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes}"
                                 )
-                                onResumeNowClick.invoke(
-                                    null,
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes,
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeIndex
-                                )
+                                val resumeSeasonEpisodeList =
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes
+                                val finalList =
+                                    detailViewModel.getAllNextEpisodeIfMoreSeason(
+                                        resumeSeasonEpisodeList
+                                    )
+                                finalList?.let {
+                                    onResumeNowClick.invoke(
+                                        null,
+                                        it,
+                                        (relatedContentData as RelatedContentData.SeriesSeasons).resumeIndex
+                                    )
+                                }
                             }
                         } else {
                             onResumeNowClick.invoke(
@@ -282,7 +296,11 @@ fun DetailScreen(
 //                                        "RELATED_SERIES",
 //                                        "on item list is ${newLs.get(0).relatedList}"
 //                                    )
-                                    onWatchNowClick.invoke(null, ls, index)
+                                    val finalList =
+                                        detailViewModel.getAllNextEpisodeIfMoreSeason(ls)
+                                    finalList?.let {
+                                        onWatchNowClick.invoke(null, it, index) // same index
+                                    }
                                 }
                             },
                             lastFocusedItemIndex = lastFocusedItem,
