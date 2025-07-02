@@ -11,6 +11,7 @@ sealed class Routes(val route: String) {
     data object Creator : Routes("CREATOR_SCREEN")
     data object Search : Routes("SEARCH_SCREEN")
     data object Login : Routes("LOGIN_SCREEN")
+    data object LoginQr : Routes("LOGIN_QR_SCREEN")
     object Movies {
         const val route = "movies/{contentType}"
         fun createRoute(contentType: String) = "movies/$contentType"

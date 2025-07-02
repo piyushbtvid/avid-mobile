@@ -78,6 +78,10 @@ fun HomePage(
 
     when (val state = carouselClickUiState) {
         is CarouselClickUiState.NavigateToPlayer -> {
+            Log.e(
+                "CONTINUE_WATCHING_CLICK",
+                "naviagte to player is called with ${state.posterCardDto} and ${state.isFromContinueWatching}"
+            )
             LaunchedEffect(state.posterCardDto) {
                 onCarouselItemClick.invoke(state.posterCardDto, state.isFromContinueWatching)
                 // Reset state to prevent repeated navigation

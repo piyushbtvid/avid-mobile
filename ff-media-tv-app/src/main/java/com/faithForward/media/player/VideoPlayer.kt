@@ -32,6 +32,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -104,6 +105,11 @@ fun VideoPlayer(
                     currentPlayingVideoPosition = newPosition.positionMs.toInt()
                 }
 
+                override fun onPlayerError(error: PlaybackException) {
+                    super.onPlayerError(error)
+                    Log.e("ExoPlayer_error", "Playback error: ${error.message}")
+                }
+
                 override fun onPlaybackStateChanged(state: Int) {
                     when (state) {
                         Player.STATE_BUFFERING -> {
@@ -111,6 +117,10 @@ fun VideoPlayer(
                         }
 
                         Player.STATE_READY -> {
+                            Log.e(
+                                "IS_CONTINUE_WATCHING_CLICK",
+                                "player state end called and State Redy Also with duration $duration and current Pos $currentPosition"
+                            )
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
                             playerViewModel.handleEvent(PlayerEvent.ShowControls)
                             playWhenReady = true
@@ -122,6 +132,10 @@ fun VideoPlayer(
                         }
 
                         Player.STATE_ENDED -> {
+                            Log.e(
+                                "IS_CONTINUE_WATCHING_CLICK",
+                                "player state end called and onVideoEnd Also with duration $duration and current Pos $currentPosition"
+                            )
                             if (!playerScreenState.hasVideoEnded) {
                                 val item = videoPlayerItem[currentMediaItemIndex]
                                 if (item.itemSlug != null) {
@@ -138,7 +152,8 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
                             playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
                             currentTitle = ""
-                            onVideoEnd()
+                            // by calling this error coming when it is called from continue watching for series in starting it is calling this State Ended method
+                            // onVideoEnd()
                         }
 
                         else -> {
@@ -194,6 +209,11 @@ fun VideoPlayer(
             exoPlayer.seekTo(seekTo.progress)
         }
 
+        Log.e(
+            "IS_CONTINUE_WATCHING_CLICK",
+            "current item in videoPlayerItem when setted is $seekTo"
+        )
+
         while (true) {
             val duration = exoPlayer.duration
             val currentPos = exoPlayer.currentPosition
@@ -214,6 +234,10 @@ fun VideoPlayer(
     LaunchedEffect(exoPlayer.currentMediaItem) {
         val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
         currentTitle = currentItem?.title ?: ""
+        Log.e(
+            "IS_CONTINUE_WATCHING_CLICK",
+            "current MEdiaItem launchEffect called with $currentItem"
+        )
         Log.e(
             "EPISODE_NEXT_UI",
             "current Media Item change with new item ${currentItem?.title}  and current position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
@@ -323,6 +347,10 @@ fun VideoPlayer(
                         seriesSlug = nextItem.seriesSlug
                     ),
                     onCancelClick = {
+                        Log.e(
+                            "VIDEO_END",
+                            "onCancel click of Episode Dialog called and onVideoEnd also"
+                        )
                         if (!playerScreenState.hasVideoEnded) {
                             val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
                             if (item.itemSlug != null) {

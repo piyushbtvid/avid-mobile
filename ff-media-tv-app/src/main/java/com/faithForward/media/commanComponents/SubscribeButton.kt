@@ -36,6 +36,7 @@ fun SubscribeButton(
     textFocusedColor: Color = textFocusedMainColor,
     textUnFocusedColor: Color = textUnFocusColor,
     buttonText: String,
+    rounded :Int= 50,
     onCategoryItemClick: () -> Unit,
     focusState: FocusState,
     @DrawableRes icon: Int? = null,
@@ -88,7 +89,7 @@ fun SubscribeButton(
             onCategoryItemClick.invoke()
         },
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(rounded),
         modifier = buttonModifier.height(38.dp)
     ) {
         Row(

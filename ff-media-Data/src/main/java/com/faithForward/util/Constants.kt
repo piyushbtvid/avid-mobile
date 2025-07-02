@@ -21,4 +21,6 @@ object Constants {
     const val DIS_lIKED_LIST_END_POINT = "client/v1/disliked"
     const val SAVE_CONTINUE_WATCHING_END_POINT = "client/v1/continue-watching"
     const val SEARCH_END_POINT = "client/v1/search"
+    const val GENERATE_ACTIVATION_CODE_END_POINT = "client/v1/activation-code/generate"
+    const val LOGIN_STATUS_CHECK_END_POINT = "client/v1/activation-code/status"
 }

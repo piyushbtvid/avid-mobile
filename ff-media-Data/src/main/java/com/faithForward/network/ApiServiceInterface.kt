@@ -9,9 +9,11 @@ import com.faithForward.network.dto.creator.CreatorResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
+import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
+import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.network.dto.search.SearchResponse
@@ -140,5 +142,18 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
         @Query("query") query: String,
     ): Response<SearchResponse>
+
+    @POST(Constants.GENERATE_ACTIVATION_CODE_END_POINT)
+    suspend fun generateLoginQrCode(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+    ): Response<ActivationCodeResponse>
+
+    @POST(Constants.LOGIN_STATUS_CHECK_END_POINT)
+    suspend fun checkLoginStatus(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Body request: DeviceIdRequest,
+    ): Response<LoginResponse>
 
 }

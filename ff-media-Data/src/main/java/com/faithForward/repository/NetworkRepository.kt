@@ -5,12 +5,11 @@ import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
+import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
@@ -187,6 +186,27 @@ class NetworkRepository @Inject constructor(
         val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         apiServiceInterface.searchContent(
             token = token, query = query
+        )
+    }
+
+    suspend fun generateLoginQrCode(
+        deviceId: String,
+        deviceType: String,
+    ) = apiServiceInterface.generateLoginQrCode(
+        deviceId = deviceId,
+        deviceType = deviceType
+    )
+
+
+    suspend fun checkLoginStatus(
+        deviceId: String,
+        deviceType: String,
+    ): Response<LoginResponse> {
+        val request = DeviceIdRequest(deviceId)
+        return apiServiceInterface.checkLoginStatus(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            request = request
         )
     }
 }
