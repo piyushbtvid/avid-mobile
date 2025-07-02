@@ -147,7 +147,7 @@ fun CarouselItem(
                 model = ImageRequest.Builder(LocalContext.current).data(imgSrc) // fallback if blank
                     .placeholder(placeholderRes).error(placeholderRes).crossfade(true).build(),
                 contentDescription = "banner Image",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .matchParentSize()
 //                    .offset(y = (-183).dp)

@@ -56,11 +56,13 @@ data class PosterCardDto(
     val releaseDate: String? = null,
     val videoHlsUrl: String? = null,
     val seriesSlug: String? = null,
-    val progress: Long? = null,
+    val progress: Long? = 0,
     val contentType: String? = null,
     val isRelatedSeries: Boolean? = false,
     val episodeNumber: Int? = null,
+    val seasonNumber: Int? = null,
     val uploadYear: String? = null,
+    val relatedList: List<PosterCardDto>? = null,
 )
 
 @Composable
@@ -120,7 +122,7 @@ fun PosterCard(
                     Log.e("CoilSuccess", "Image loaded successfully")
                 }).crossfade(true).build(),
             contentDescription = "Poster Image",
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(210.dp)

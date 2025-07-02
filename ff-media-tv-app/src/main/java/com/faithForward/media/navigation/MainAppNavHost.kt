@@ -3,6 +3,7 @@ package com.faithForward.media.navigation
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -34,6 +35,7 @@ import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -58,14 +60,11 @@ fun MainAppNavHost(
         navController = navController, startDestination = startRoute
     ) {
         composable(route = Routes.Login.route) {
-            LoginScreen(
-                loginViewModel = loginViewModel,
-                onLogin = {
-                    navController.navigate(Routes.Home.route) {
-                        popUpTo(Routes.Login.route) { inclusive = true }
-                    }
+            LoginScreen(loginViewModel = loginViewModel, onLogin = {
+                navController.navigate(Routes.Home.route) {
+                    popUpTo(Routes.Login.route) { inclusive = true }
                 }
-            )
+            })
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
@@ -96,6 +95,7 @@ fun MainAppNavHost(
                     }
                 },
                 onCarouselItemClick = { carouselItem, isFromContinueWatching ->
+                    Log.e("CAROUSEL_CLICK", "item in carousel is $carouselItem")
                     val route = Routes.PlayerScreen.createRoute(
                         listOf(carouselItem), isContinueWatching = isFromContinueWatching
                     )
@@ -224,31 +224,53 @@ fun MainAppNavHost(
 
             DetailScreen(detailViewModel = detailViewModel,
                 slug = slug,
-                onWatchNowClick = { item, posterItemList ->
+                onWatchNowClick = { item, posterItemList, index ->
+                    Log.e("SERIES_RELATED", "item is $item")
+                    Log.e(
+                        "SERIES_RELATED",
+                        "item List  Related list  when click in detail NavHost from series episode is ${
+                            posterItemList?.get(
+                                0
+                            )?.relatedList?.get(0)?.relatedList
+                        }"
+                    )
                     if (item != null) {
                         val itemWithProgressZero = item.copy(progress = 0)
                         val route =
                             Routes.PlayerScreen.createRoute(listOf(itemWithProgressZero)) // Wrap item in a list
                         navController.navigate(route)
                     } else {
+                        Log.e(
+                            "SERIES_CONTENT",
+                            "SERIES CONTENT type is in AppNav ${posterItemList?.get(0)?.contentType}"
+                        )
                         if (posterItemList != null) {
                             val route =
-                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                                Routes.PlayerScreen.createRoute(
+                                    posterItemList,
+                                    initialIndex = index
+                                ) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
                 },
-                onResumeNowClick = { item, posterItemList ->
+                onResumeNowClick = { item, posterItemList, index ->
                     if (item != null) {
                         val route =
-                            Routes.PlayerScreen.createRoute(listOf(item)) // Wrap item in a list
+                            Routes.PlayerScreen.createRoute(
+                                listOf(item),
+                                initialIndex = index
+                            ) // Wrap item in a list
                         if (item.progress != null && item.progress > 0) {
                             navController.navigate(route)
                         }
                     } else {
                         if (posterItemList != null) {
                             val route =
-                                Routes.PlayerScreen.createRoute(posterItemList) // Wrap item in a list
+                                Routes.PlayerScreen.createRoute(
+                                    posterItemList,
+                                    initialIndex = index
+                                ) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
@@ -264,32 +286,49 @@ fun MainAppNavHost(
 
         composable(
             route = Routes.PlayerScreen.route,
-            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
+            arguments = listOf(
+                navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
                     defaultValue = false
-                })
+                },
+                navArgument("initialIndex") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
         ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("playerDtoList")
+            val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
-            val playerDtoList =
-                json?.let { Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it)) }
+            // Fix: Use getInt instead of getString
+            val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
 
-            playerDtoList?.let {
-                playerViewModel.handleEvent(
-                    PlayerEvent.UpdateVideoPlayerDto(
-                        itemList = it // Pass the list directly
-                    )
-                )
+            val playerList = encodedJson?.let {
+                Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
+            } ?: emptyList()
+
+            playerList?.let {
+                LaunchedEffect(playerList) {
+                    playerList.let {
+                        playerViewModel.handleEvent(
+                            PlayerEvent.UpdateOrLoadPlayerData(
+                                itemList = it,
+                                isFromContinueWatching = isContinueWatching,
+                                index = initialIndex
+                            )
+                        )
+                    }
+                }
             }
 
-            PlayerScreen(playerViewModel = playerViewModel,
+            PlayerScreen(
+                playerViewModel = playerViewModel,
                 isFromContinueWatching = isContinueWatching,
                 onPlayerBackClick = {
                     if (isContinueWatching) {
                         // Get the current item's slug from playerDtoList
-                        val currentItem = playerDtoList?.getOrNull(0)
+                        val currentItem = playerList?.getOrNull(0)
                         if (currentItem?.slug != null) {
                             // Navigate to Detail screen
                             if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
@@ -311,7 +350,32 @@ fun MainAppNavHost(
                         // Default back navigation (to Detail or Home)
                         navController.popBackStack()
                     }
-                })
+                },
+                initialIndex = initialIndex,
+                onVideoEnded = {
+                    navController.popBackStack()
+                },
+                onEpisodePlayNowClick = { list, index ->
+                    val posterCardList =
+                        list.map { it.toPosterCardDto() }
+                    val route =
+                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
+                    navController.navigate(route) {
+                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onRelatedItemClick = { item, list, index ->
+                    val posterCardList =
+                        list?.map { it.toPosterCardDto() } ?: listOf(item!!.toPosterCardDto())
+                    val route =
+                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
+                    navController.navigate(route) {
+                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
 

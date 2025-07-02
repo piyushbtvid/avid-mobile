@@ -13,14 +13,21 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.util.Resource
 
 data class PlayerDto(
     val videoPlayerDtoList: List<VideoPlayerDto>,
+    val playerRelatedContentRowDto: PlayerRelatedContentRowDto,
 )
 
 @Composable
@@ -29,8 +36,24 @@ fun PlayerScreen(
     isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
     onPlayerBackClick: () -> Unit,
+    initialIndex: Int = 0,
+    onVideoEnded: () -> Unit,
+    onEpisodePlayNowClick: (List<VideoPlayerDto>, index: Int?) -> Unit,
+    onRelatedItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
 ) {
     val state by playerViewModel.state.collectAsState()
+
+    var videoIndex by remember { mutableStateOf(initialIndex) }
+
+    // Set videoIndex based on isFromContinueWatching
+    LaunchedEffect(state.videoPlayingIndex, isFromContinueWatching) {
+        Log.e("VIDEO_INDEX", "VIDEO INDEX IN PAYER IS $initialIndex and ${state.videoPlayingIndex}")
+        if (isFromContinueWatching && state.videoPlayingIndex != null) {
+            videoIndex = state.videoPlayingIndex ?: 0
+        } else {
+            videoIndex = initialIndex
+        }
+    }
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
@@ -48,6 +71,9 @@ fun PlayerScreen(
 
     BackHandler {
         Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
+        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+        playerViewModel.handleEvent(PlayerEvent.ShowControls)
         onPlayerBackClick.invoke()
     }
 
@@ -57,7 +83,10 @@ fun PlayerScreen(
             .background(color = Color.Black)
     ) {
         when (val resource = state.videoPlayerDto) {
-            is Resource.Unspecified, is Resource.Error -> {
+
+            is Resource.Unspecified,
+            is Resource.Error,
+                -> {
                 // Do nothing, just return empty Box
             }
 
@@ -71,12 +100,27 @@ fun PlayerScreen(
 
             is Resource.Success -> {
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
-                VideoPlayer(
-                    videoPlayerItem = playerDtoItems,
-                    initialIndex = 0,
+                val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
+                VideoPlayer(videoPlayerItem = playerDtoItems,
+                    initialIndex = videoIndex,
                     playerViewModel = playerViewModel,
-                    onVideoEnd = {}
-                )
+                    playerRelatedContentRowDto = relatedList,
+                    onVideoEnd = {
+                        onVideoEnded.invoke()
+                        Log.e("VIDEO_ENDED", "ON VIDEO ENDED IS CALLED")
+                    },
+                    onEpisodePlayNowClick = { list, index ->
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        onEpisodePlayNowClick.invoke(list, index)
+                    },
+                    onRelatedItemClick = { item, list, index ->
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        onRelatedItemClick.invoke(item, list, index)
+                    })
             }
         }
     }

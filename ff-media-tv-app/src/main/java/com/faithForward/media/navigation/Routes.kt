@@ -35,14 +35,17 @@ sealed class Routes(val route: String) {
     }
 
     data object PlayerScreen {
-        const val route = "playerScreen/{playerDtoList}?isContinueWatching={isContinueWatching}"
+        const val route = "playerScreen/{playerDtoList}?isContinueWatching={isContinueWatching}&initialIndex={initialIndex}"
         fun createRoute(
             playerDtoList: List<PosterCardDto>,
             isContinueWatching: Boolean = false,
+            initialIndex: Int = 0
         ): String {
             val json = Json.encodeToString(playerDtoList)
-            return "playerScreen/${Uri.encode(json)}?isContinueWatching=$isContinueWatching"
+            return "playerScreen/${Uri.encode(json)}" +
+                    "?isContinueWatching=$isContinueWatching&initialIndex=$initialIndex"
         }
-    }
+
+}
 
 }

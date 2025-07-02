@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,25 +38,30 @@ class SideBarViewModel : ViewModel() {
 
     fun onEvent(event: SideBarEvent) {
         viewModelScope.launch {
-            when (event) {
-                is SideBarEvent.ChangeFocusState -> {
-                    _sideBarState.value = _sideBarState.value.copy(
-                        isSideBarFocusable = event.isFocusable
-                    )
-                }
+            try {
+                when (event) {
+                    is SideBarEvent.ChangeFocusState -> {
+                        _sideBarState.value = _sideBarState.value.copy(
+                            isSideBarFocusable = event.isFocusable
+                        )
+                    }
 
-                is SideBarEvent.ChangeFocusedIndex -> {
-                    _sideBarState.value = _sideBarState.value.copy(
-                        sideBarFocusedIndex = event.index
-                    )
-                }
+                    is SideBarEvent.ChangeFocusedIndex -> {
+                        _sideBarState.value = _sideBarState.value.copy(
+                            sideBarFocusedIndex = event.index
+                        )
+                    }
 
-                is SideBarEvent.ChangeSelectedIndex -> {
-                    _sideBarState.value = _sideBarState.value.copy(
-                        sideBarSelectedPosition = event.index
-                    )
+                    is SideBarEvent.ChangeSelectedIndex -> {
+                        _sideBarState.value = _sideBarState.value.copy(
+                            sideBarSelectedPosition = event.index
+                        )
+                    }
                 }
+            }catch (ex:Exception){
+                Log.e("LOG","${ex.printStackTrace()}")
             }
+
         }
     }
 }

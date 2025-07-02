@@ -41,8 +41,8 @@ import com.faithForward.util.Resource
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
-    onResumeNowClick: (PosterCardDto?, List<PosterCardDto>?) -> Unit,
+    onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
+    onResumeNowClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
     onRelatedItemClick: (PosterCardDto) -> Unit,
     slug: String?,
     detailViewModel: DetailViewModel,
@@ -128,26 +128,50 @@ fun DetailScreen(
                                         ).progress
                                     }."
                                 )
-                                onWatchNowClick.invoke(
-                                    null,
+                                val selectedSeasonList =
                                     (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes
-                                )
+                                val finalList =
+                                    detailViewModel.getAllNextEpisodeIfMoreSeason(selectedSeasonList)
+                                finalList?.let {
+                                    onWatchNowClick.invoke(
+                                        null,
+                                        it,
+                                        0
+                                    )
+                                }
                             }
                         } else {
-                            onWatchNowClick.invoke(detailPageItem.detailDto.toPosterCardDto(), null)
+                            onWatchNowClick.invoke(
+                                detailPageItem.detailDto.toPosterCardDto(),
+                                null,
+                                0
+                            )
                         }
                     },
                     onResumeNowCLick = {
                         if (detailPageItem.detailDto.isSeries == true) {
                             if (relatedContentData is RelatedContentData.SeriesSeasons) {
-                                onResumeNowClick.invoke(
-                                    null,
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes
+                                Log.e(
+                                    "REMANING",
+                                    "resume season episode on watchclick are ${(relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes}"
                                 )
+                                val resumeSeasonEpisodeList =
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).resumeSeasonEpisodes
+                                val finalList =
+                                    detailViewModel.getAllNextEpisodeIfMoreSeason(
+                                        resumeSeasonEpisodeList
+                                    )
+                                finalList?.let {
+                                    onResumeNowClick.invoke(
+                                        null,
+                                        it,
+                                        (relatedContentData as RelatedContentData.SeriesSeasons).resumeIndex
+                                    )
+                                }
                             }
                         } else {
                             onResumeNowClick.invoke(
-                                detailPageItem.detailDto.toPosterCardDto(), null
+                                detailPageItem.detailDto.toPosterCardDto(), null, 0
                             )
                         }
                     },
@@ -264,11 +288,19 @@ fun DetailScreen(
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls, index ->
                                 Log.e("RELATED_SERIES", "on item is $item")
+                                Log.e("RELATED_SERIES", "on item list is ${ls.get(0).relatedList}")
                                 if (item.isRelatedSeries == true) {
                                     onRelatedItemClick.invoke(item)
                                 } else {
-                                    val newLs = ls.subList(index, ls.size)
-                                    onWatchNowClick.invoke(null, newLs)
+//                                    Log.e(
+//                                        "RELATED_SERIES",
+//                                        "on item list is ${newLs.get(0).relatedList}"
+//                                    )
+                                    val finalList =
+                                        detailViewModel.getAllNextEpisodeIfMoreSeason(ls)
+                                    finalList?.let {
+                                        onWatchNowClick.invoke(null, it, index) // same index
+                                    }
                                 }
                             },
                             lastFocusedItemIndex = lastFocusedItem,

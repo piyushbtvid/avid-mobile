@@ -24,6 +24,7 @@ sealed interface RelatedContentData {
         val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
         val relatedSeries: List<PosterCardDto>,
+        val resumeIndex: Int,
     ) : RelatedContentData
 
     data object None : RelatedContentData
@@ -49,14 +50,17 @@ fun CardDetail.toDetailDto(): DetailDto {
         else -> "" // seasons present but no valid episodes
     }
 
-    return DetailDto(
-        id = data.id.toString(),
+    val relatedList = data.relatedContent?.map {
+        it.toPosterCardDto()
+    }
+
+    return DetailDto(id = data.id.toString(),
         imgSrc = data.landscape,
         title = data.name,
         description = data.description,
         releaseDate = data.dateUploaded,
         genre = data.genres?.mapNotNull { it.name }?.joinToString(", "),
-        duration = data.duration?.let { formatDuration(it) } ?: "",
+        duration = data.duration?.let { formatDuration(it.toLong()) } ?: "",
         imdbRating = data.rating,
         videoLink = resolvedVideoLink,
         slug = data.slug,
@@ -65,8 +69,8 @@ fun CardDetail.toDetailDto(): DetailDto {
         isDisliked = data.likeDislike == "dislike",
         isSeries = data.content_type == "Series" || data.content_type == "Episode",
         contentType = data.content_type,
-        progress = data.progressSeconds
-    )
+        progress = data.progressSeconds,
+        relatedList = relatedList)
 }
 
 
@@ -84,18 +88,19 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         videoHlsUrl = videoLink,
         slug = slug,
         contentType = contentType,
-        progress = progress
+        progress = progress,
+        relatedList = relatedList,
     )
 }
 
 fun Season.toSeasonDto(): SeasonDto {
     return SeasonDto(
-        episodesContentDto = episodes.map {
-            it.toPosterDto()
-        },
-        seasonNumber = season_number
+        episodesContentDto = episodes.map { currentEpisode ->
+            currentEpisode.toPosterDto()
+        }, seasonNumber = season_number
     )
 }
+
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
     return SeasonsNumberDto(
@@ -110,12 +115,14 @@ fun Episode.toPosterDto(): PosterCardDto {
         description = description,
         genre = genres.mapNotNull { it.name }  // safely extract non-null names
             .joinToString(", "),
-        duration = duration?.let { formatDuration(it) } ?: "",
+        duration = duration?.let { formatDuration(it.toLong()) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
         episodeNumber = episode_number,
+        seasonNumber = season_number,
         videoHlsUrl = video_link,
-        slug = slug)
+        slug = slug,
+        contentType = content_type)
 }
 
 
