@@ -221,7 +221,7 @@ fun VideoPlayer(
         while (isActive) {
             val duration = exoPlayer.duration
             val currentPos = exoPlayer.currentPosition
-            if (currentItem?.contentType == "Episode" && duration > 0 && duration - currentPos <= 20_000 && !playerScreenState.isNextEpisodeDialogVisible) {
+            if (currentItem?.contentType == "Episode" && duration > 0 && duration - currentPos <= 20_000 && !playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isControlsVisible) {
                 Log.e(
                     "CURRENT_MEDIA_ITEM",
                     "show next episode is called with ${currentItem.contentType}  $duration and $currentPos  and ${playerScreenState.isNextEpisodeDialogVisible}"
@@ -229,6 +229,14 @@ fun VideoPlayer(
                 playerViewModel.handleEvent(PlayerEvent.HideRelated)
                 playerViewModel.handleEvent(PlayerEvent.HideControls)
                 playerViewModel.handleEvent(PlayerEvent.ShowNextEpisodeDialog)
+            } else if (currentItem?.contentType == "Movie" && duration > 0 && duration - currentPos <= 20_000 && !playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isControlsVisible) {
+                Log.e(
+                    "RELATED_MOVIE_DIALOG",
+                    "show related movie dialog is called with Content Type ${currentItem.contentType}  $duration and $currentPos"
+                )
+                playerViewModel.handleEvent(PlayerEvent.HideControls)
+                playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                playerViewModel.handleEvent(PlayerEvent.ShowRelated)
             }
             delay(400)
         }
