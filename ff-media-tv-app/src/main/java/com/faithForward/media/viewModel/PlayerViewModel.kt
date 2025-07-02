@@ -342,30 +342,42 @@ class PlayerViewModel @Inject constructor(
                         val seasons = cardDetail.data.seasons
                         val continueWatchingEpisodeSlug = firstItem.slug
 
-                        // Find the season that contains the episode
-                        val matchedSeason = seasons?.firstOrNull { season ->
+                        // Find allSeasons
+                        val allSeasons = seasons ?: return@launch
+
+                        // Found matchedSeasonIndex of continue watching in all seasons
+                        val matchedSeasonIndex = allSeasons.indexOfFirst { season ->
                             season.episodes.any { it.slug == continueWatchingEpisodeSlug }
                         }
 
-                        val episodes = matchedSeason?.episodes ?: return@launch
+                        if (matchedSeasonIndex == -1) return@launch
 
-                        // Create a new list with updated progress episode in its original position
-                        val updatedEpisodes = episodes.map { episode ->
+                        // Built a combined list from matched season to last
+                        val remainingSeasons =
+                            allSeasons.subList(matchedSeasonIndex, allSeasons.size)
+                        //all following or remaining seasons episode in one list
+                        val combinedEpisodes = remainingSeasons.flatMap { it.episodes }
+
+                        // Updated the episode list while preserving progress to PosterCardDto
+                        val updatedEpisodes = combinedEpisodes.map { episode ->
                             if (episode.slug == continueWatchingEpisodeSlug) {
-                                episode.toPosterDto().copy(
-                                    progress = firstItem.progress
-                                )
+                                episode.toPosterDto().copy(progress = firstItem.progress)
                             } else {
                                 episode.toPosterDto()
                             }
                         }
 
+
+                        // Finding Resumed Index of continue watching item from all episodes
                         val resumeIndex =
                             updatedEpisodes.indexOfFirst { it.slug == continueWatchingEpisodeSlug }
+
+                        // converting all Episodes in VideoPlayerDto for Player
                         val videoPlayList = updatedEpisodes.map {
                             it.toVideoPlayerDto()
                         }
 
+                        // converting all Episodes in RelatedItemDto for showing them in Related List
                         val relatedList = updatedEpisodes.map {
                             it.toRelatedItemDto()
                         }
