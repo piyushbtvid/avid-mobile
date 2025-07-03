@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
                                 loginViewModel = loginViewModel,
                                 playerViewModel = playerViewModel,
                                 navController = navController,
-                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.Login.route
+                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.LoginQr.route
                             )
                         }
                     }

@@ -299,9 +299,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.faithForward.media.R
-import com.faithForward.media.navigation.Routes
 import com.faithForward.media.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.theme.sideBarFocusedTextColor
 import com.faithForward.media.viewModel.LoginViewModel

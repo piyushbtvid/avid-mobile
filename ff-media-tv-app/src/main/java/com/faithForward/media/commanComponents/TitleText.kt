@@ -8,9 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.rowTitleColor
@@ -20,9 +22,11 @@ fun TitleText(
     modifier: Modifier = Modifier,
     text: String,
     textSize: Int = 15,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
     fontWeight: FontWeight = FontWeight.Normal,
     lineHeight: Int = 15,
-    maxLine : Int = 1,
+    maxLine: Int = 1,
     color: Color = rowTitleColor,
 ) {
     Text(
@@ -30,7 +34,9 @@ fun TitleText(
         modifier = modifier,
         fontWeight = fontWeight,
         color = color,
+        fontFamily = fontFamily,
         maxLines = maxLine,
+        letterSpacing = letterSpacing,
         lineHeight = lineHeight.sp,
         overflow = TextOverflow.Ellipsis,
         fontSize = textSize.sp

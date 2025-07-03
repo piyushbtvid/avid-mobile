@@ -22,7 +22,6 @@ import com.faithForward.media.home.myList.MyListPage
 import com.faithForward.media.home.series.SeriesPage
 import com.faithForward.media.login.LoginScreen
 import com.faithForward.media.login.qr.LoginQrScreen
-import com.faithForward.media.login.qr.LoginQrScreenDto
 import com.faithForward.media.player.PlayerScreen
 import com.faithForward.media.search.SearchScreen
 import com.faithForward.media.viewModel.ContentViewModel
@@ -75,7 +74,13 @@ fun MainAppNavHost(
             LoginQrScreen(
                 loginQrLoginViewModel = qrLoginViewModel,
                 onLoggedIn = {
-                    Log.e("ON_lOGIN", "onlogin called ")
+                    Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                },
+                onLoginPageOpenClick = {
+                    navController.navigate(Routes.Login.route)
                 }
             )
         }

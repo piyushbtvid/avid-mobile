@@ -1,5 +1,6 @@
 package com.faithForward.media.login.qr
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,9 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +39,7 @@ fun LoginQrScreen(
     modifier: Modifier = Modifier,
     loginQrLoginViewModel: QrLoginViewModel,
     onLoggedIn: () -> Unit, // <- callback
+    onLoginPageOpenClick: () -> Unit,
 ) {
     val state by loginQrLoginViewModel.state.collectAsState()
     val context = LocalContext.current
@@ -47,7 +47,9 @@ fun LoginQrScreen(
 
     // Trigger callback when user logs in
     LaunchedEffect(state.isLoggedIn) {
+        Log.e("IS_lOGIN_QR", "is login is called with ${state.isLoggedIn}")
         if (state.isLoggedIn) {
+            Log.e("IS_lOGIN_QR", "is login is called")
             onLoggedIn()
         }
     }
@@ -65,11 +67,10 @@ fun LoginQrScreen(
             //Android will come once api will add it can
             "fire_tv"
         }
-
+        Log.e("CHECK_LOGIN", "onStart Login called in Unit of LoginQr")
         loginQrLoginViewModel.onEvent(
             QrLoginEvent.StartLogin(
-                deviceType = platform,
-                deviceId = deviceId
+                deviceType = platform, deviceId = deviceId
             )
         )
     }
@@ -93,9 +94,7 @@ fun LoginQrScreen(
 
                 Image(
                     painter = painterResource(R.drawable.app_logo),
-                    modifier = Modifier
-                        .width(80.5.dp)
-                        .height(51.dp),
+                    modifier = Modifier,
                     contentDescription = "App Logo"
                 )
 
@@ -108,16 +107,14 @@ fun LoginQrScreen(
                         LoginSteps(url = url)
                     }
 
-                    if (
-                        dto.url != null &&
-                        dto.code != null &&
-                        state.timeLeftSeconds > 0
-                    ) {
-                        ActivationCode(
-                            url = dto.url,
+                    if (dto.url != null && dto.code != null && state.timeLeftSeconds > 0) {
+                        ActivationCode(url = dto.url,
                             code = dto.code,
-                            expireTime = formatTimeLeft(state.timeLeftSeconds)
-                        )
+                            expireTime = formatTimeLeft(state.timeLeftSeconds),
+                            onLoginPageOpenClick = {
+                                loginQrLoginViewModel.onEvent(QrLoginEvent.StopPolling)
+                                onLoginPageOpenClick.invoke()
+                            })
                     }
 
                 }
@@ -132,10 +129,7 @@ fun LoginQrScreen(
 
 
 @Preview(
-    name = "Login QR Screen - 1920x1080",
-    widthDp = 1920,
-    heightDp = 1080,
-    showBackground = true
+    name = "Login QR Screen - 1920x1080", widthDp = 1920, heightDp = 1080, showBackground = true
 )
 @Composable
 private fun LoginQrScreenPreview() {

@@ -2,6 +2,7 @@ package com.faithForward.repository
 
 import android.util.Log
 import com.faithForward.network.ApiServiceInterface
+import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginData
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
@@ -192,16 +193,20 @@ class NetworkRepository @Inject constructor(
     suspend fun generateLoginQrCode(
         deviceId: String,
         deviceType: String,
-    ) = apiServiceInterface.generateLoginQrCode(
-        deviceId = deviceId,
-        deviceType = deviceType
-    )
+    ): Response<ActivationCodeResponse> {
+        Log.e("CHECK_LOGIN", "Genrate QR called in repo")
+        return apiServiceInterface.generateLoginQrCode(
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
+    }
 
 
     suspend fun checkLoginStatus(
         deviceId: String,
         deviceType: String,
     ): Response<LoginResponse> {
+        Log.e("CHECK_LOGIN", "check login called in repo")
         val request = DeviceIdRequest(deviceId)
         return apiServiceInterface.checkLoginStatus(
             deviceId = deviceId,

@@ -23,7 +23,7 @@ fun NumberCircle(
 
     Box(
         modifier = modifier
-            .size(20.dp)
+            .size(15.dp)
             .clip(
                 shape = RoundedCornerShape(50.dp)
             )

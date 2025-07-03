@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.login.qr.LoginQrScreenDto
@@ -31,17 +32,24 @@ class QrLoginViewModel @Inject constructor(
 
     private var storedDeviceId: String? = null
     private var storedDeviceType: String? = null
+    private var lastActivationStatus: String? = null
 
     fun onEvent(event: QrLoginEvent) {
         when (event) {
             is QrLoginEvent.StartLogin -> {
-                storedDeviceId = event.deviceId
+                Log.e("CHECK_LOGIN", "Start Login called in QR Login ViewModel")
+                storedDeviceId = "123456abcdef"
                 storedDeviceType = event.deviceType
-                generateLoginQrCode(event.deviceId, event.deviceType)
+                generateLoginQrCode("123456abcdef", event.deviceType)
             }
 
-            QrLoginEvent.RetryQrCode -> retryQrCode()
-            QrLoginEvent.StopPolling -> stopPolling()
+            is QrLoginEvent.RetryQrCode -> {
+                retryQrCode()
+            }
+
+            is QrLoginEvent.StopPolling -> {
+                stopPolling()
+            }
         }
     }
 
@@ -49,12 +57,15 @@ class QrLoginViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
             try {
+                Log.e("CHECK_LOGIN", "generate QR called in viewModel")
                 val response = networkRepository.generateLoginQrCode(deviceId, deviceType)
                 if (response.isSuccessful) {
                     val data = response.body()
-
                     expireTimestamp = data?.data?.expires_in
+
                     if (data?.data?.expires_in != null) {
+                        lastActivationStatus = data.data.activation_status
+
                         _state.update {
                             it.copy(
                                 isLoading = false,
@@ -67,9 +78,17 @@ class QrLoginViewModel @Inject constructor(
                                 timeLeftSeconds = data.data.expires_in - (System.currentTimeMillis() / 1000)
                             )
                         }
+
+                        startCountdown()
+                        startPolling(deviceId, deviceType)
                     }
-                    startCountdown()
-                    startPolling(deviceId, deviceType)
+                } else {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Failed to generate QR code: ${response.code()}"
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _state.update {
@@ -91,6 +110,7 @@ class QrLoginViewModel @Inject constructor(
                 _state.update { it.copy(timeLeftSeconds = newTime) }
 
                 if (newTime <= 0) {
+                    Log.e("CHECK_LOGIN", "Countdown expired, triggering QR code regeneration")
                     onEvent(QrLoginEvent.RetryQrCode)
                     break
                 }
@@ -103,26 +123,30 @@ class QrLoginViewModel @Inject constructor(
         statusPollingJob = viewModelScope.launch {
             while (isActive) {
                 delay(4000)
-                checkLoginStatus(deviceId, deviceType)
-            }
-        }
-    }
-
-    private suspend fun checkLoginStatus(deviceId: String, deviceType: String) {
-        try {
-            val response = networkRepository.checkLoginStatus(deviceId, deviceType)
-            if (response.isSuccessful) {
-                val loginData = response.body()
-                if (!loginData?.data?.token.isNullOrEmpty() &&
-                    !loginData?.data?.refreshToken.isNullOrEmpty() &&
-                    !loginData?.data?.tokenType.isNullOrEmpty()
-                ) {
-                    _state.update { it.copy(isLoggedIn = true) }
-                    stopPolling()
+                try {
+                    Log.e("CHECK_LOGIN", "Checking login status for deviceId: $deviceId")
+                    val response = networkRepository.checkLoginStatus(deviceId, deviceType)
+                    if (response.isSuccessful) {
+                        val loginData = response.body()
+                        Log.e("CHECK_LOGIN", "Login data is not empty with $loginData")
+                        if (!loginData?.data?.token.isNullOrEmpty() &&
+                            !loginData?.data?.refreshToken.isNullOrEmpty() &&
+                            !loginData?.data?.tokenType.isNullOrEmpty()
+                        ) {
+                            Log.e("CHECK_LOGIN", "Login data is not empty in checkLogin")
+                            networkRepository.saveUserSession(loginData!!.data)
+                            stopPolling()
+                            _state.update { it.copy(isLoggedIn = true) }
+                        }
+                    } else {
+                        Log.e("CHECK_LOGIN", "Status check failed with code: ${response.code()}")
+                        // Optionally handle specific status codes
+                    }
+                } catch (e: Exception) {
+                    Log.e("CHECK_LOGIN", "Error checking login status: ${e.message}")
+                    // Continue polling despite errors
                 }
             }
-        } catch (e: Exception) {
-            // Silent fail
         }
     }
 
@@ -130,7 +154,6 @@ class QrLoginViewModel @Inject constructor(
         expireTimestamp = null
         _state.update {
             it.copy(
-                qrScreenDto = null,
                 timeLeftSeconds = 0L,
                 isLoggedIn = false,
                 errorMessage = null
@@ -140,15 +163,22 @@ class QrLoginViewModel @Inject constructor(
         val id = storedDeviceId ?: return
         val type = storedDeviceType ?: return
 
-        onEvent(
-            QrLoginEvent.StartLogin(
-                deviceId = id,
-                deviceType = type
+        if (lastActivationStatus == "activated") {
+            Log.e(
+                "CHECK_LOGIN",
+                "QR already activated, skipping regeneration. Polling status instead."
             )
-        )
+            startPolling(id, type)
+        } else {
+            Log.e("CHECK_LOGIN", "Retrying QR generation...")
+            generateLoginQrCode(id, type)
+        }
     }
 
     private fun stopPolling() {
+        lastActivationStatus = null
+        storedDeviceId = null
+        storedDeviceType = null
         countdownJob?.cancel()
         statusPollingJob?.cancel()
     }

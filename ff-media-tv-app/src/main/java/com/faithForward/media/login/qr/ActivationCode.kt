@@ -1,5 +1,6 @@
 package com.faithForward.media.login.qr
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,15 +8,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.faithForward.media.R
 import com.faithForward.media.commanComponents.SubscribeButton
 import com.faithForward.media.commanComponents.TitleText
+import com.faithForward.media.theme.Montserrat
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.util.FocusState
@@ -26,8 +39,11 @@ fun ActivationCode(
     code: String,
     url: String,
     expireTime: String,
+    onLoginPageOpenClick: () -> Unit,
 ) {
 
+    var isButtonFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
     Column(
         modifier = modifier.wrapContentSize(),
@@ -46,6 +62,7 @@ fun ActivationCode(
             text = code,
             textSize = 24,
             lineHeight = 24,
+            letterSpacing = 3.sp,
             fontWeight = FontWeight.ExtraBold,
             color = focusedMainColor
         )
@@ -56,11 +73,17 @@ fun ActivationCode(
 
 
         SubscribeButton(
-            focusState = FocusState.FOCUSED,
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    isButtonFocused = it.hasFocus
+                }
+                .focusable(),
+            focusState = if (isButtonFocused) FocusState.FOCUSED else FocusState.UNFOCUSED,
             rounded = 8,
             buttonText = "Sign in directly on this device",
             onCategoryItemClick = {
-
+                onLoginPageOpenClick.invoke()
             },
             icon = R.drawable.baseline_exit_to_app_24
         )
@@ -93,6 +116,14 @@ fun ActivationCode(
 //                lineHeight = 9,
 //                color = whiteMain.copy(.8f)
 //            )
+
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        try {
+            focusRequester.requestFocus()
+        } catch (_: Exception) {
 
         }
     }
@@ -152,5 +183,8 @@ private fun ActivationCodePreview() {
         code = "8VR7H",
         url = "http://107.180.208.127:3000/activate",
         expireTime = "15:30",
+        onLoginPageOpenClick = {
+
+        }
     )
 }

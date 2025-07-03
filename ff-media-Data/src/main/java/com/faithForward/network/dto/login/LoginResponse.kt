@@ -12,7 +12,7 @@ data class LoginData(
     @SerializedName("user") val user: User?,
     @SerializedName("token") val token: String?,
     @SerializedName("refresh_token") val refreshToken: String?,
-    @SerializedName("token-type") val tokenType: String?,
+    @SerializedName("token_type") val tokenType: String?,
     val expire_date: Long,
     val activation_status: String?,
 )
