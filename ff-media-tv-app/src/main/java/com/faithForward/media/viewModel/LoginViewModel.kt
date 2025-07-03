@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.faithForward.media.login.LoginEvent
 import com.faithForward.media.login.LoginState
 import com.faithForward.network.dto.login.ErrorResponse
+import com.faithForward.preferences.UserPrefData
 import com.faithForward.repository.NetworkRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +46,7 @@ class LoginViewModel @Inject constructor(
                         "USER_PREF",
                         "Initial session check in checkLoginStatus is called: $session"
                     )
-                    _isLoggedIn.value = session?.token != null
+                    _isLoggedIn.value = session?.season?.token != null
                     Log.e(
                         "IS_LOGIN",
                         "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
@@ -70,12 +71,18 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginEvent.SubmitLogin -> {
-                loginUser()
+                loginUser(
+                    deviceType = event.deviceType,
+                    deviceId = event.deviceId
+                )
             }
         }
     }
 
-    private fun loginUser() {
+    private fun loginUser(
+        deviceId: String,
+        deviceType: String,
+    ) {
         val state = _loginState.value
 
         if (state.email.isBlank() || state.password.isBlank()) {
@@ -89,7 +96,11 @@ class LoginViewModel @Inject constructor(
             _loginState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
-                val response = networkRepository.loginUser(state.email, state.password)
+                val response = networkRepository.loginUser(
+                    state.email, state.password,
+                    deviceType = deviceType,
+                    deviceId = deviceId
+                )
 
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -97,7 +108,13 @@ class LoginViewModel @Inject constructor(
 
                     if (body != null) {
                         withContext(Dispatchers.IO) {
-                            networkRepository.saveUserSession(body.data)
+                            networkRepository.saveUserSession(
+                                UserPrefData(
+                                    season = body.data,
+                                    deviceID = deviceId,
+                                    deviceType = deviceType
+                                )
+                            )
                         }
                         _loginState.update {
                             it.copy(isLoading = false, isLoggedIn = true)

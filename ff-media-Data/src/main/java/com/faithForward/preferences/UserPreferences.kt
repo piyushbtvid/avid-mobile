@@ -29,24 +29,28 @@ class UserPreferences @Inject constructor(
         const val TOKEN_TYPE = "token_type"
         const val EXPIRE_DATE = "expire_date"
         const val ACTIVATION_STATUS = "activation_status"
+        const val DEVICE_ID = "device_id"
+        const val DEVICE_TYPE = "device_type"
     }
 
-    suspend fun saveUserSession(session: LoginData) = withContext(Dispatchers.IO) {
+    suspend fun saveUserSession(prefData: UserPrefData) = withContext(Dispatchers.IO) {
         with(sharedPreferences.edit()) {
-            putString(USER_NAME, session.user?.name)
-            putString(USER_EMAIL, session.user?.email)
-            putString(USER_ROLE, session.user?.role)
-            putString(USER_TYPE, session.user?.user_type)
-            putString(TOKEN, session.token)
-            putString(TOKEN_TYPE, session.tokenType)
-            putString(REFRESH_TOKEN, session.refreshToken)
-            putLong(EXPIRE_DATE, session.expire_date)
-            putString(ACTIVATION_STATUS, session.activation_status)
+            putString(USER_NAME, prefData.season.user?.name)
+            putString(USER_EMAIL, prefData.season.user?.email)
+            putString(USER_ROLE, prefData.season.user?.role)
+            putString(USER_TYPE, prefData.season.user?.user_type)
+            putString(TOKEN, prefData.season.token)
+            putString(TOKEN_TYPE, prefData.season.tokenType)
+            putString(REFRESH_TOKEN, prefData.season.refreshToken)
+            putLong(EXPIRE_DATE, prefData.season.expire_date)
+            putString(ACTIVATION_STATUS, prefData.season.activation_status)
+            putString(DEVICE_TYPE, prefData.deviceType)
+            putString(DEVICE_ID, prefData.deviceID)
             commit() // Use commit() for synchronous save to ensure data is written
         }
     }
 
-    fun getUserSession(): LoginData? {
+    fun getUserSession(): UserPrefData? {
         Log.e("USER_PREF", "get Current Season called in UserPref")
         val name = sharedPreferences.getString(USER_NAME, null)
         val email = sharedPreferences.getString(USER_EMAIL, null)
@@ -57,16 +61,22 @@ class UserPreferences @Inject constructor(
         val refreshToken = sharedPreferences.getString(REFRESH_TOKEN, null)
         val activationStatus = sharedPreferences.getString(ACTIVATION_STATUS, null)
         val expireDate = sharedPreferences.getLong(EXPIRE_DATE, 0)
+        val deviceType = sharedPreferences.getString(DEVICE_TYPE, null)
+        val deviceId = sharedPreferences.getString(DEVICE_ID, null)
 
         Log.e("USER_PREF", "token is $token after getUserSeason")
 
-        return LoginData(
-            user = User(name, email, role, userType),
-            token = token,
-            tokenType = tokenType,
-            refreshToken = refreshToken,
-            expire_date = expireDate,
-            activation_status = activationStatus
+        return UserPrefData(
+            season = LoginData(
+                user = User(name, email, role, userType),
+                token = token,
+                tokenType = tokenType,
+                refreshToken = refreshToken,
+                expire_date = expireDate,
+                activation_status = activationStatus
+            ),
+            deviceType = deviceType,
+            deviceID = deviceId
         )
     }
 

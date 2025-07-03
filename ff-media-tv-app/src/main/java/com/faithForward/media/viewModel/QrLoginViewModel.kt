@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.faithForward.media.login.qr.LoginQrScreenDto
 import com.faithForward.media.viewModel.uiModels.QrLoginEvent
 import com.faithForward.media.viewModel.uiModels.QrLoginState
+import com.faithForward.preferences.UserPrefData
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -38,9 +39,9 @@ class QrLoginViewModel @Inject constructor(
         when (event) {
             is QrLoginEvent.StartLogin -> {
                 Log.e("CHECK_LOGIN", "Start Login called in QR Login ViewModel")
-                storedDeviceId = "123456abcdef"
+                storedDeviceId = event.deviceId
                 storedDeviceType = event.deviceType
-                generateLoginQrCode("123456abcdef", event.deviceType)
+                generateLoginQrCode(event.deviceId, event.deviceType)
             }
 
             is QrLoginEvent.RetryQrCode -> {
@@ -134,7 +135,13 @@ class QrLoginViewModel @Inject constructor(
                             !loginData?.data?.tokenType.isNullOrEmpty()
                         ) {
                             Log.e("CHECK_LOGIN", "Login data is not empty in checkLogin")
-                            networkRepository.saveUserSession(loginData!!.data)
+                            networkRepository.saveUserSession(
+                                UserPrefData(
+                                    season = loginData!!.data,
+                                    deviceID = deviceId,
+                                    deviceType = deviceType
+                                )
+                            )
                             stopPolling()
                             _state.update { it.copy(isLoggedIn = true) }
                         }

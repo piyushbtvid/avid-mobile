@@ -288,6 +288,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -302,6 +303,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.R
 import com.faithForward.media.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.theme.sideBarFocusedTextColor
+import com.faithForward.media.util.Util
 import com.faithForward.media.viewModel.LoginViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -323,6 +325,7 @@ fun LoginScreen(
     var isEmailFocused by rememberSaveable { mutableStateOf(false) }
     var isPasswordFocused by rememberSaveable { mutableStateOf(false) }
     var isButtonFocused by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(loginState) {
         Log.e("LOGIN_STATE", "login state effect called with ${loginState.isLoggedIn}")
@@ -439,7 +442,26 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    loginViewModel.onEvent(LoginEvent.SubmitLogin)
+                    scope.launch {
+                        val deviceId = if (Util.isFireTv(context)) ({
+                            Util.getFireTvId(context)
+                        }).toString() else {
+                            Util.getId(context)
+                        }
+
+                        val platform = if (Util.isFireTv(context)) {
+                            "fire_tv"
+                        } else {
+                            //Android will come once api will add it can
+                            "fire_tv"
+                        }
+                        loginViewModel.onEvent(
+                            LoginEvent.SubmitLogin(
+                                deviceType = platform,
+                                deviceId = deviceId
+                            )
+                        )
+                    }
                 },
                 modifier = Modifier
                     .width(178.5.dp)
