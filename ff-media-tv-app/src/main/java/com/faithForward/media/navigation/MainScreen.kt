@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,8 @@ import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
@@ -48,6 +51,8 @@ fun MainScreen(
 
     var showExitDialog by remember { mutableStateOf(false) }
     val activity = (LocalActivity.current)
+
+    val scope = rememberCoroutineScope()
 
 
     LaunchedEffect(startRoute) {
@@ -151,6 +156,17 @@ fun MainScreen(
                             navController.navigate(Routes.Search.route) {
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
+                            }
+                        }
+
+                        "log_out" -> {
+                            scope.launch {
+                                sideBarViewModel.onEvent(SideBarEvent.LogoutClick)
+                                delay(200)
+                                navController.navigate(Routes.LoginQr.route) {
+                                    popUpTo(0) { inclusive = true }
+                                    launchSingleTop = true
+                                }
                             }
                         }
                     }

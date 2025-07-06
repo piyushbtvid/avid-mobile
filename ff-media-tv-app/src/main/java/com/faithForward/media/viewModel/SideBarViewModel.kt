@@ -69,7 +69,7 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
                     }
 
                     is SideBarEvent.LogoutClick -> {
-
+                        logout()
                     }
                 }
             } catch (ex: Exception) {
@@ -79,14 +79,14 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
         }
     }
 
-    fun logout() {
+    private fun logout() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                networkRepository.clearSession()
                 try {
                     val response = networkRepository.logoutUser()
                     if (response.isSuccessful) {
-
+                        Log.e("Logout", "logout is success with ${response.message()}")
+                        networkRepository.clearSession()
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
