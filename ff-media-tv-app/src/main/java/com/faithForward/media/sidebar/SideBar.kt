@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -122,7 +123,7 @@ fun SideBar(
                 focusedIndex = sideBarFocusedIndex,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 39.dp, end = if (sideBarFocusedIndex == -1) 0.dp else 10.dp),
+                    .padding(top = 35.dp, end = if (sideBarFocusedIndex == -1) 0.dp else 10.dp),
                 selectedPosition = sideBarSelectedPosition,
                 onSelectedPositionChange = { index ->
                     onSideBarSelectedPositionChange.invoke(index)
@@ -161,6 +162,17 @@ fun SideBarPreview() {
             img = R.drawable.group_person_ic,
             tag = "creators",
         ), SideBarItem(
+            name = "Home",
+            img = R.drawable.home_ic,
+            tag = "home",
+        )
+        ,
+        SideBarItem(
+            name = "Home",
+            img = R.drawable.home_ic,
+            tag = "home",
+        ),
+        SideBarItem(
             name = "Home",
             img = R.drawable.home_ic,
             tag = "home",

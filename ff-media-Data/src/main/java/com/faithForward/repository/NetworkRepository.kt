@@ -2,6 +2,7 @@ package com.faithForward.repository
 
 import android.util.Log
 import com.faithForward.network.ApiServiceInterface
+import com.faithForward.network.dto.common.ApiMessageResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
@@ -334,5 +335,19 @@ class NetworkRepository @Inject constructor(
             deviceType = deviceType,
             request = request
         )
+    }
+
+    suspend fun logoutUser(): Response<ApiMessageResponse> {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        return apiServiceInterface.logoutUser(
+            token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
+
     }
 }

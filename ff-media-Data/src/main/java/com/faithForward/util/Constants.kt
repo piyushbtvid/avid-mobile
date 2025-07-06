@@ -23,4 +23,5 @@ object Constants {
     const val SEARCH_END_POINT = "client/v1/search"
     const val GENERATE_ACTIVATION_CODE_END_POINT = "client/v1/activation-code/generate"
     const val LOGIN_STATUS_CHECK_END_POINT = "client/v1/activation-code/status"
+    const val LOGOUT_END_POINT = "client/v1/subscribers/logout"
 }

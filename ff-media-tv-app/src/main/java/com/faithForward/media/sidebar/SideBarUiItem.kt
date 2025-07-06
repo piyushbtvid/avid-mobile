@@ -33,9 +33,8 @@ fun SideBarUiItem(
     focusedBackGroundColor: Color = sideBarItemSelectedHighlightedColor,
     focusState: FocusState,
     focusedSideBarItem: Int,
-    img: Int,
+    img: Int?,
 ) {
-
     ConstraintLayout(
         modifier = Modifier
             .background(
@@ -53,43 +52,37 @@ fun SideBarUiItem(
         val (iconRef, textRef) = createRefs()
 
         // Icon (left of text)
-        Image(
-            painter = painterResource(id = img),
-            contentDescription = null,
-            modifier = modifier
-                .size(18.dp)
-                .constrainAs(iconRef) {
-                    if (focusedSideBarItem == -1) {
-                        centerTo(parent)
-                    } else {
-                        start.linkTo(parent.start, margin = 8.dp)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
-                },
-            colorFilter = ColorFilter.tint(
-                if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor
+        if (img != null) {
+            Image(
+                painter = painterResource(id = img),
+                contentDescription = null,
+                modifier = modifier
+                    .size(if (txt == "My Account") 1.dp else if (txt == "Log Out") 8.dp else 18.dp)
+                    .constrainAs(iconRef) {
+                        if (focusedSideBarItem == -1) {
+                            centerTo(parent)
+                        } else {
+                            start.linkTo(parent.start, margin = 8.dp)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                    },
+                colorFilter = ColorFilter.tint(
+                    if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor
+                )
             )
-        )
+        }
 
-//        androidx.compose.animation.AnimatedVisibility(visible = focusedSideBarItem != -1,
-//            enter = slideInHorizontally(animationSpec = tween(
-//                600, easing = LinearOutSlowInEasing
-//            ), initialOffsetX = { -it / 4 }),
-//            exit = slideOutHorizontally(animationSpec = tween(
-//                100, easing = FastOutLinearInEasing
-//            ), targetOffsetX = { -it / 4 }),
-//            modifier = Modifier.constrainAs(textRef) {
-//                start.linkTo(iconRef.end, margin = 8.dp)
-//                top.linkTo(parent.top)
-//                bottom.linkTo(parent.bottom)
-//            }) {
         if (focusedSideBarItem != -1) {
             Text(
                 modifier = Modifier.constrainAs(textRef) {
-                    start.linkTo(iconRef.end, margin = 8.dp)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
+                    if (img == null) {
+                        centerTo(parent)
+                    } else {
+                        start.linkTo(iconRef.end, margin = 8.dp)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
                 },
                 text = txt,
                 color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor,
@@ -98,8 +91,6 @@ fun SideBarUiItem(
                 textAlign = TextAlign.Center
             )
         }
-
-//        }
     }
 }
 

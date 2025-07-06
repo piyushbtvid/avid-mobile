@@ -77,7 +77,7 @@ interface ApiServiceInterface {
     @POST(Constants.LOGIN_END_POINT)
     suspend fun loginUser(
         @Body loginRequest: LoginRequest,
-        @Header("X-Device-Id") deviceId: String ,
+        @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
     ): Response<LoginResponse>
 
@@ -191,5 +191,14 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Body request: DeviceIdRequest,
     ): Response<LoginResponse>
+
+
+    @POST(Constants.LOGOUT_END_POINT)
+    suspend fun logoutUser(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+    ): Response<ApiMessageResponse>
+
 
 }
