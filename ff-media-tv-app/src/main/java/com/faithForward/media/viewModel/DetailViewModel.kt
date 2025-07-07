@@ -467,16 +467,25 @@ class DetailViewModel @Inject constructor(
 
             Log.e("CURRENT_SEASON_INDEX", "current season index $currentSeasonIndex")
             Log.e("CURRENT_SEASON_INDEX", "current season episodes $currentSeasonEpisodes")
+
             if (currentSeasonIndex == -1) return null
 
-            val remainingSeasons = allSeasons.subList(currentSeasonIndex, allSeasons.size)
-            return remainingSeasons.flatMap { it.episodesContentDto }
+            val result = mutableListOf<PosterCardDto>()
+            result.addAll(currentSeasonEpisodes)
+
+            // Add episodes from next seasons only
+            for (i in (currentSeasonIndex + 1) until allSeasons.size) {
+                result.addAll(allSeasons[i].episodesContentDto)
+            }
+
+            return result
         }
 
         return null
     }
 
-    
+
+
 
     private fun updateFocusState(hasFocus: Boolean) {
         _uiState.value = _uiState.value.copy(
