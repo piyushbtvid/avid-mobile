@@ -21,6 +21,9 @@ data class SearchItemDto(
     val contentSlug: String? = null,
     val image: String? = null,
     val title: String? = null,
+    val genre: String? = null,
+    val imdb: String? = null,
+    val duration: String? = null,
 )
 
 @Composable
@@ -56,6 +59,16 @@ fun SearchItem(
         }
     }
 
+}
+
+
+@Composable
+fun SearchUiItem(
+    modifier: Modifier = Modifier,
+    searchItemDto: SearchItemDto,
+    onItemClick: () -> Unit,
+    focusState: FocusState,
+) {
 
 }
 
