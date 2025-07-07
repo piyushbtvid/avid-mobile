@@ -452,6 +452,8 @@ class DetailViewModel @Inject constructor(
         }
     }
 
+
+    // getting all episodes from all seasons from currentSeasonEpisodes
     fun getAllNextEpisodeIfMoreSeason(
         currentSeasonEpisodes: List<PosterCardDto>,
     ): List<PosterCardDto>? {
@@ -483,8 +485,6 @@ class DetailViewModel @Inject constructor(
 
         return null
     }
-
-
 
 
     private fun updateFocusState(hasFocus: Boolean) {

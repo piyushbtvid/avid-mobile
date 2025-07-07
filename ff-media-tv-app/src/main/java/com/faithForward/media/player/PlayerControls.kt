@@ -63,6 +63,7 @@ fun PlayerControls(
     pauseIc: Int = R.drawable.baseline_pause_24,
     onNext: () -> Unit,
     isPlaying: Boolean = false,
+    shouldShowNextAndPrevVideo: Boolean = false,
     inControllerUp: () -> Boolean = {
         false
     },
@@ -102,14 +103,16 @@ fun PlayerControls(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FocusableIconButton(
-                    onClick = onPrev,
-                    imageResId = prevVideoIc,
-                    description = "Previous",
-                    focusedColor = focusedColor,
-                    focusRequester = null,
-                    overrideDpadLeft = true
-                )
+                if (shouldShowNextAndPrevVideo) {
+                    FocusableIconButton(
+                        onClick = onPrev,
+                        imageResId = prevVideoIc,
+                        description = "Previous",
+                        focusedColor = focusedColor,
+                        focusRequester = null,
+                        overrideDpadLeft = true
+                    )
+                }
                 FocusableIconButton(
                     onClick = onRewind,
                     imageResId = rewindIc,
@@ -131,14 +134,16 @@ fun PlayerControls(
                     focusedColor = focusedColor,
                     description = "Forward"
                 )
-                FocusableIconButton(
-                    onClick = onNext,
-                    imageResId = nextVideoIc,
-                    focusRequester = null,
-                    focusedColor = focusedColor,
-                    description = "Next",
-                    overrideDpadRight = true
-                )
+                if (shouldShowNextAndPrevVideo) {
+                    FocusableIconButton(
+                        onClick = onNext,
+                        imageResId = nextVideoIc,
+                        focusRequester = null,
+                        focusedColor = focusedColor,
+                        description = "Next",
+                        overrideDpadRight = true
+                    )
+                }
             }
             //Row with icons of player
             Row(

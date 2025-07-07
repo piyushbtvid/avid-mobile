@@ -123,6 +123,12 @@ class PlayerViewModel @Inject constructor(
                 )
             }
 
+            is PlayerEvent.UpdateIsEpisodePlayingOrNot -> {
+                _state.value = _state.value.copy(
+                   isEpisodePlaying = event.isEpisode
+                )
+            }
+
         }
     }
 

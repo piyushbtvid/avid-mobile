@@ -95,6 +95,7 @@ data class PlayerState(
     val isLoading: Boolean = false,
     val isPlayerBuffering: Boolean = false,
     val hasVideoEnded: Boolean = false,
+    val isEpisodePlaying: Boolean = false,
     val videoPlayingIndex: Int? = 0,
 )
 
@@ -107,6 +108,7 @@ sealed class PlayerEvent {
     data object HideNextEpisodeDialog : PlayerEvent()
     data object ShowRelated : PlayerEvent()
     data object HideRelated : PlayerEvent()
+    data class UpdateIsEpisodePlayingOrNot(val isEpisode: Boolean) : PlayerEvent()
     data class UpdateIsPlaying(val isPlaying: Boolean) : PlayerEvent()
     data class UpdateVideoPlayingIndex(val value: Int) : PlayerEvent()
     data class UpdateOrLoadPlayerData(

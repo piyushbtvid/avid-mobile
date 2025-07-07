@@ -262,6 +262,13 @@ fun VideoPlayer(
             "EPISODE_NEXT_UI",
             "current Media Item change with new item ${currentItem?.title}  and current position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
         )
+
+        if (currentItem?.contentType == "Episode") {
+            playerViewModel.handleEvent(PlayerEvent.UpdateIsEpisodePlayingOrNot(true))
+        } else {
+            playerViewModel.handleEvent(PlayerEvent.UpdateIsEpisodePlayingOrNot(false))
+        }
+
         while (isActive) {
             val duration = exoPlayer.duration
             val currentPos = exoPlayer.currentPosition
@@ -506,6 +513,7 @@ fun VideoPlayer(
                     },
                     isPlaying = playerScreenState.isPlaying,
                     focusRequester = focusRequester,
+                    shouldShowNextAndPrevVideo = playerScreenState.isEpisodePlaying,
                     onBackClick = {})
             }
         }
