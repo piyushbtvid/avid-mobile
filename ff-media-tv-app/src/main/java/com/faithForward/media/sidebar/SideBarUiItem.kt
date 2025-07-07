@@ -1,8 +1,6 @@
 package com.faithForward.media.sidebar
 
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
@@ -21,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.faithForward.media.R
+import com.faithForward.media.theme.blackColor
+import com.faithForward.media.theme.focusedTextColor
 import com.faithForward.media.theme.sideBarItemDefaultColor
 import com.faithForward.media.theme.sideBarItemSelectedHighlightedColor
 import com.faithForward.media.theme.whiteMain
@@ -38,7 +38,7 @@ fun SideBarUiItem(
     ConstraintLayout(
         modifier = Modifier
             .background(
-                color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedBackGroundColor else Color.Transparent,
+                color = if (focusState == FocusState.FOCUSED) focusedBackGroundColor else if (focusState == FocusState.SELECTED) blackColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
             .width(
@@ -68,7 +68,7 @@ fun SideBarUiItem(
                         }
                     },
                 colorFilter = ColorFilter.tint(
-                    if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor
+                    if (focusState == FocusState.FOCUSED) whiteMain else if (focusState == FocusState.SELECTED) focusedTextColor else sideBarItemDefaultColor
                 )
             )
         }
@@ -85,7 +85,7 @@ fun SideBarUiItem(
                     }
                 },
                 text = txt,
-                color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor,
+                color = if (focusState == FocusState.FOCUSED) whiteMain else if (focusState == FocusState.SELECTED) focusedTextColor else sideBarItemDefaultColor,
                 maxLines = 1,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
