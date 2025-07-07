@@ -21,6 +21,7 @@ import com.faithForward.media.home.movies.MoviesPage
 import com.faithForward.media.home.myList.MyListPage
 import com.faithForward.media.home.series.SeriesPage
 import com.faithForward.media.login.LoginScreen
+import com.faithForward.media.login.qr.LoginQrScreen
 import com.faithForward.media.player.PlayerScreen
 import com.faithForward.media.search.SearchScreen
 import com.faithForward.media.viewModel.ContentViewModel
@@ -32,6 +33,7 @@ import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
@@ -67,6 +69,22 @@ fun MainAppNavHost(
             })
         }
 
+        composable(route = Routes.LoginQr.route) { backStack ->
+            val qrLoginViewModel: QrLoginViewModel = hiltViewModel(backStack)
+            LoginQrScreen(
+                loginQrLoginViewModel = qrLoginViewModel,
+                onLoggedIn = {
+                    Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                },
+                onLoginPageOpenClick = {
+                    navController.navigate(Routes.Login.route)
+                }
+            )
+        }
+
         composable(route = Routes.Home.route) { navBackStackEntry ->
             // Scope the ViewModel to the navigation destination
             val homeViewModel: HomeViewModel = hiltViewModel(navBackStackEntry)
@@ -95,9 +113,14 @@ fun MainAppNavHost(
                     }
                 },
                 onCarouselItemClick = { carouselItem, isFromContinueWatching ->
-                    Log.e("CAROUSEL_CLICK", "item in carousel is $carouselItem")
+                    Log.e(
+                        "CONTINUE_WATCHING_CLICK",
+                        "item in continue watching when cliked  is $carouselItem and $isFromContinueWatching"
+                    )
                     val route = Routes.PlayerScreen.createRoute(
-                        listOf(carouselItem), isContinueWatching = isFromContinueWatching
+                        listOf(carouselItem),
+                        isContinueWatching = isFromContinueWatching,
+                        initialIndex = 0
                     )
                     navController.navigate(route)
                 },
@@ -307,6 +330,11 @@ fun MainAppNavHost(
             val playerList = encodedJson?.let {
                 Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
             } ?: emptyList()
+
+            Log.e(
+                "CONTINUE_WATCHING_CLICK",
+                "item in plahyer  is $playerList and $isContinueWatching"
+            )
 
             playerList?.let {
                 LaunchedEffect(playerList) {

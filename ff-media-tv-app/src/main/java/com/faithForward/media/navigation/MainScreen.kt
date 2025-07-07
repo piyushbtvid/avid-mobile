@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,19 +48,22 @@ fun MainScreen(
     val showSidebar = currentRoute in sidebarVisibleRoutes
 
     var showExitDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
     val activity = (LocalActivity.current)
 
+    val scope = rememberCoroutineScope()
 
-    LaunchedEffect(startRoute) {
-        Log.e("IS_LOGIN", "start route in mainScreen is $startRoute")
-    }
 
-    LaunchedEffect(currentRoute) {
-        Log.e("CURRENT_ROUTE", "CURRENT ROUTE in mainScreen is $currentRoute")
-    }
-
-    LaunchedEffect(showSidebar) {
-        Log.e("CURRENT_ROUTE", "Show Side Bar  in mainScreen is $showSidebar")
+    // Collect one-time event safely for logout success
+    LaunchedEffect(Unit) {
+        sideBarViewModel.logoutEvent.collect {
+            Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
+            showLogoutDialog = false
+            navController.navigate(Routes.LoginQr.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
     }
 
     Box(
@@ -153,6 +157,10 @@ fun MainScreen(
                                 launchSingleTop = true
                             }
                         }
+
+                        "log_out" -> {
+                            showLogoutDialog = true
+                        }
                     }
                 },
                 onSideBarSelectedPositionChange = { index ->
@@ -172,6 +180,16 @@ fun MainScreen(
                 showExitDialog = false
                 activity?.finish()
             },
+        )
+
+        LogoutDialog(
+            showDialog = showLogoutDialog,
+            onDismiss = {
+                showLogoutDialog = false
+            },
+            onLogoutConfirm = {
+                sideBarViewModel.onEvent(SideBarEvent.LogoutClick)
+            }
         )
     }
 }

@@ -63,6 +63,7 @@ fun PlayerControls(
     pauseIc: Int = R.drawable.baseline_pause_24,
     onNext: () -> Unit,
     isPlaying: Boolean = false,
+    shouldShowNextAndPrevVideo: Boolean = false,
     inControllerUp: () -> Boolean = {
         false
     },
@@ -102,13 +103,16 @@ fun PlayerControls(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FocusableIconButton(
-                    onClick = onPrev,
-                    imageResId = prevVideoIc,
-                    description = "Previous",
-                    focusedColor = focusedColor,
-                    focusRequester = null
-                )
+                if (shouldShowNextAndPrevVideo) {
+                    FocusableIconButton(
+                        onClick = onPrev,
+                        imageResId = prevVideoIc,
+                        description = "Previous",
+                        focusedColor = focusedColor,
+                        focusRequester = null,
+                        overrideDpadLeft = true
+                    )
+                }
                 FocusableIconButton(
                     onClick = onRewind,
                     imageResId = rewindIc,
@@ -130,13 +134,16 @@ fun PlayerControls(
                     focusedColor = focusedColor,
                     description = "Forward"
                 )
-                FocusableIconButton(
-                    onClick = onNext,
-                    imageResId = nextVideoIc,
-                    focusRequester = null,
-                    focusedColor = focusedColor,
-                    description = "Next"
-                )
+                if (shouldShowNextAndPrevVideo) {
+                    FocusableIconButton(
+                        onClick = onNext,
+                        imageResId = nextVideoIc,
+                        focusRequester = null,
+                        focusedColor = focusedColor,
+                        description = "Next",
+                        overrideDpadRight = true
+                    )
+                }
             }
             //Row with icons of player
             Row(
@@ -185,21 +192,43 @@ fun FocusableIconButton(
     focusedColor: Color,
     focusRequester: FocusRequester?,
     colorFilter: ColorFilter? = ColorFilter.tint(color = Color.White),
+    overrideDpadRight: Boolean = false, // NEW PARAMETER
+    overrideDpadLeft: Boolean = false,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val isInteractionSource = remember { MutableInteractionSource() }
-    val isFocused by isInteractionSource.collectIsFocusedAsState()
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(30.dp))
             .focusRequester(focusRequester ?: FocusRequester())
-            .focusable(interactionSource = isInteractionSource)
+            .focusable(interactionSource = interactionSource)
+            .onKeyEvent { event ->
+                if (isFocused && event.type == KeyEventType.KeyDown) {
+                    when (event.key) {
+                        Key.DirectionRight, Key.Forward -> {
+                            if (overrideDpadRight) {
+                                return@onKeyEvent true // Override handled
+                            }
+                        }
+
+                        Key.DirectionLeft, Key.MediaRewind -> {
+                            if (overrideDpadLeft) {
+                                return@onKeyEvent true // Override handled
+                            }
+                        }
+                    }
+                }
+                false // Let system handle others
+            }
             .wrapContentSize()
             .background(if (isFocused) focusedColor else Color.Transparent)
             .padding(8.dp)
-            .clickable(interactionSource = isInteractionSource, indication = null, onClick = {
-                onClick()
-            }),
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            )
     ) {
         LoadImage(
             imageResId = imageResId,
@@ -208,6 +237,7 @@ fun FocusableIconButton(
         )
     }
 }
+
 
 @Composable
 internal fun LoadImage(

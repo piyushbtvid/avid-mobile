@@ -1,8 +1,6 @@
 package com.faithForward.media.sidebar
 
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
@@ -21,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.faithForward.media.R
+import com.faithForward.media.theme.blackColor
+import com.faithForward.media.theme.focusedTextColor
 import com.faithForward.media.theme.sideBarItemDefaultColor
 import com.faithForward.media.theme.sideBarItemSelectedHighlightedColor
 import com.faithForward.media.theme.whiteMain
@@ -33,13 +33,12 @@ fun SideBarUiItem(
     focusedBackGroundColor: Color = sideBarItemSelectedHighlightedColor,
     focusState: FocusState,
     focusedSideBarItem: Int,
-    img: Int,
+    img: Int?,
 ) {
-
     ConstraintLayout(
         modifier = Modifier
             .background(
-                color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) focusedBackGroundColor else Color.Transparent,
+                color = if (focusState == FocusState.FOCUSED) focusedBackGroundColor else if (focusState == FocusState.SELECTED) blackColor else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
             .width(
@@ -53,53 +52,45 @@ fun SideBarUiItem(
         val (iconRef, textRef) = createRefs()
 
         // Icon (left of text)
-        Image(
-            painter = painterResource(id = img),
-            contentDescription = null,
-            modifier = modifier
-                .size(18.dp)
-                .constrainAs(iconRef) {
-                    if (focusedSideBarItem == -1) {
+        if (img != null) {
+            Image(
+                painter = painterResource(id = img),
+                contentDescription = null,
+                modifier = modifier
+                    .size(if (txt == "My Account") 1.dp else if (txt == "Log Out") 8.dp else 18.dp)
+                    .constrainAs(iconRef) {
+                        if (focusedSideBarItem == -1) {
+                            centerTo(parent)
+                        } else {
+                            start.linkTo(parent.start, margin = 8.dp)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                    },
+                colorFilter = ColorFilter.tint(
+                    if (focusState == FocusState.FOCUSED) whiteMain else if (focusState == FocusState.SELECTED) focusedTextColor else sideBarItemDefaultColor
+                )
+            )
+        }
+
+        if (focusedSideBarItem != -1) {
+            Text(
+                modifier = Modifier.constrainAs(textRef) {
+                    if (img == null) {
                         centerTo(parent)
                     } else {
-                        start.linkTo(parent.start, margin = 8.dp)
+                        start.linkTo(iconRef.end, margin = 8.dp)
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                     }
                 },
-            colorFilter = ColorFilter.tint(
-                if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor
-            )
-        )
-
-//        androidx.compose.animation.AnimatedVisibility(visible = focusedSideBarItem != -1,
-//            enter = slideInHorizontally(animationSpec = tween(
-//                600, easing = LinearOutSlowInEasing
-//            ), initialOffsetX = { -it / 4 }),
-//            exit = slideOutHorizontally(animationSpec = tween(
-//                100, easing = FastOutLinearInEasing
-//            ), targetOffsetX = { -it / 4 }),
-//            modifier = Modifier.constrainAs(textRef) {
-//                start.linkTo(iconRef.end, margin = 8.dp)
-//                top.linkTo(parent.top)
-//                bottom.linkTo(parent.bottom)
-//            }) {
-        if (focusedSideBarItem != -1) {
-            Text(
-                modifier = Modifier.constrainAs(textRef) {
-                    start.linkTo(iconRef.end, margin = 8.dp)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                },
                 text = txt,
-                color = if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) whiteMain else sideBarItemDefaultColor,
+                color = if (focusState == FocusState.FOCUSED) whiteMain else if (focusState == FocusState.SELECTED) focusedTextColor else sideBarItemDefaultColor,
                 maxLines = 1,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )
         }
-
-//        }
     }
 }
 

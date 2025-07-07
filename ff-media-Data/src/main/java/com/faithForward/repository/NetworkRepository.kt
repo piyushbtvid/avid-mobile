@@ -2,15 +2,17 @@ package com.faithForward.repository
 
 import android.util.Log
 import com.faithForward.network.ApiServiceInterface
-import com.faithForward.network.dto.login.LoginData
+import com.faithForward.network.dto.common.ApiMessageResponse
+import com.faithForward.network.dto.genre.GenreResponse
+import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
+import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.preferences.UserPrefData
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
@@ -22,41 +24,68 @@ class NetworkRepository @Inject constructor(
 
     suspend fun getHomeSectionData() = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getHomeSectionData(token)
+        apiServiceInterface.getHomeSectionData(
+            token = token,
+            deviceType = deviceType,
+            deviceId = deviceId
+        )
     }
 
     suspend fun getCategories() = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getCategories(token)
+        apiServiceInterface.getCategories(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token
+        )
     }
 
     suspend fun getCreatorsList() = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getCreatorsList(token)
+        apiServiceInterface.getCreatorsList(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token
+        )
     }
 
     suspend fun loginUser(
         email: String,
         password: String,
+        deviceType: String,
+        deviceId: String,
     ): Response<LoginResponse> {
         val loginRequest = LoginRequest(
             password = password, email = email
         )
-        return apiServiceInterface.loginUser(loginRequest)
+        return apiServiceInterface.loginUser(
+            loginRequest = loginRequest,
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
     }
 
-    suspend fun saveUserSession(session: LoginData) {
-        Log.e("USER_SESSION", "Saving user session in repo with $session")
-        userPreferences.saveUserSession(session)
+    suspend fun saveUserSession(prefData: UserPrefData) {
+        Log.e("USER_SESSION", "Saving user session in repo with $prefData")
+        userPreferences.saveUserSession(prefData)
     }
 
-    fun getCurrentSession(): LoginData? {
+    fun getCurrentSession(): UserPrefData? {
         Log.e("USER_PREF", "get Current Season called in Repo")
         val session = userPreferences.getUserSession()
         Log.e("USER_PREF", "Current session in repo called: $session")
@@ -72,56 +101,110 @@ class NetworkRepository @Inject constructor(
         sectionName: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getGivenSectionData(sectionName, token)
+        apiServiceInterface.getGivenSectionData(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            id = sectionName,
+            token = token
+        )
     }
 
     suspend fun getMyListSectionData(
         sectionName: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getMyListSectionData(sectionName, token)
+        apiServiceInterface.getMyListSectionData(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            id = sectionName,
+            token = token
+        )
     }
 
     suspend fun getGivenGenreData(
         itemId: String,
-    ) = apiServiceInterface.getGivenGenreData(itemId)
+    ): Response<GenreResponse> {
+        val userSession = userPreferences.getUserSession()
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        return apiServiceInterface.getGivenGenreData(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            id = itemId
+        )
+    }
 
     suspend fun getGivenCardDetail(
         slug: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getGivenCardDetail(slug, token)
+        apiServiceInterface.getGivenCardDetail(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            slug = slug,
+            token = token
+        )
     }
 
     suspend fun getSingleSeriesDetail(
         itemId: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getSingleSeriesDetail(itemId)
+        apiServiceInterface.getSingleSeriesDetail(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            id = itemId
+        )
     }
 
     suspend fun addToMyWatchList(
         slug: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        apiServiceInterface.addToMyList(slug = slug, token = token)
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        apiServiceInterface.addToMyList(
+            slug = slug, token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
     }
 
     suspend fun removeFromMyWatchList(
         slug: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        apiServiceInterface.removeFromMyList(slug = slug, token = token)
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        apiServiceInterface.removeFromMyList(
+            slug = slug, token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
     }
 
     suspend fun likeDisLikeContent(
@@ -129,34 +212,58 @@ class NetworkRepository @Inject constructor(
         type: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         val body = LikeRequest(type = type)
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         apiServiceInterface.likeOrDisLikeContent(
-            slug = slug, token = token, body = body
+            slug = slug, token = token, body = body,
+            deviceId = deviceId,
+            deviceType = deviceType
         )
     }
 
     suspend fun getLikedList(
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        apiServiceInterface.getLikedList(token)
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        apiServiceInterface.getLikedList(
+            deviceType = deviceType,
+            token = token,
+            deviceId = deviceId
+        )
     }
 
     suspend fun getDisLikedList(
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        apiServiceInterface.getDisLikedList(token)
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        apiServiceInterface.getDisLikedList(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token
+        )
     }
 
     suspend fun getCreatorDetail(
         id: Int,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         apiServiceInterface.getCreatorDetail(
-            id = id, token = token
+            id = id, token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
         )
     }
 
@@ -164,9 +271,14 @@ class NetworkRepository @Inject constructor(
         id: Int,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         apiServiceInterface.getCreatorContentList(
-            id = id, token = token
+            id = id, token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
         )
     }
 
@@ -174,9 +286,14 @@ class NetworkRepository @Inject constructor(
         request: ContinueWatchingRequest,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         apiServiceInterface.saveContinueWatching(
-            token = token, request = request
+            token = token, request = request,
+            deviceId = deviceId,
+            deviceType = deviceType
         )
     }
 
@@ -184,9 +301,53 @@ class NetworkRepository @Inject constructor(
         query: String,
     ) = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
-        val token = userSession?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
         apiServiceInterface.searchContent(
-            token = token, query = query
+            token = token, query = query,
+            deviceId = deviceId,
+            deviceType = deviceType
         )
+    }
+
+    suspend fun generateLoginQrCode(
+        deviceId: String,
+        deviceType: String,
+    ): Response<ActivationCodeResponse> {
+        Log.e("CHECK_LOGIN", "Genrate QR called in repo")
+        return apiServiceInterface.generateLoginQrCode(
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
+    }
+
+
+    suspend fun checkLoginStatus(
+        deviceId: String,
+        deviceType: String,
+    ): Response<LoginResponse> {
+        Log.e("CHECK_LOGIN", "check login called in repo")
+        val request = DeviceIdRequest(deviceId)
+        return apiServiceInterface.checkLoginStatus(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            request = request
+        )
+    }
+
+    suspend fun logoutUser(): Response<ApiMessageResponse> {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        return apiServiceInterface.logoutUser(
+            token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
+
     }
 }

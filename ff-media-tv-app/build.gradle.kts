@@ -79,6 +79,7 @@ dependencies {
     // Dependency injection
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.graphics.android)
+    implementation(libs.play.services.ads.identifier)
     kapt(libs.hilt.compiler)
 
     //navigation for compose

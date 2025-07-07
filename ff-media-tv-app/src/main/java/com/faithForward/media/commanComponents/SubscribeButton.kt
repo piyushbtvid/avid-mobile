@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +35,7 @@ fun SubscribeButton(
     textFocusedColor: Color = textFocusedMainColor,
     textUnFocusedColor: Color = textUnFocusColor,
     buttonText: String,
+    rounded: Int = 50,
     onCategoryItemClick: () -> Unit,
     focusState: FocusState,
     @DrawableRes icon: Int? = null,
@@ -63,10 +63,8 @@ fun SubscribeButton(
                     offsetX = 0.dp,
                     spread = 4.dp
                 )
-                .focusable(false)
-                .focusProperties {
-                    canFocus = false
-                }
+                .focusable()
+
         } else {
             modifier
                 .shadow(
@@ -77,10 +75,8 @@ fun SubscribeButton(
                     offsetX = 0.dp,
                     spread = 1.dp
                 )
-                .focusable(false)
-                .focusProperties {
-                    canFocus = false
-                }
+                .focusable()
+
         }
 
     Button(
@@ -88,7 +84,7 @@ fun SubscribeButton(
             onCategoryItemClick.invoke()
         },
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(rounded),
         modifier = buttonModifier.height(38.dp)
     ) {
         Row(

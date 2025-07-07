@@ -119,6 +119,10 @@ class HomeViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
+                Log.e(
+                    "CONTINUE_WATCHING_CLICK",
+                    "load Detail for Url called in homeViewModel with $slug $progress $isFromContinueWatching"
+                )
                 val response = networkRepository.getGivenCardDetail(slug)
                 if (response.isSuccessful) {
                     val cardDetail = response.body()
@@ -134,6 +138,10 @@ class HomeViewModel @Inject constructor(
                                 progress = progress,
                                 seriesSlug = cardDetail.data.seriesSlug
 
+                            )
+                            Log.e(
+                                "CONTINUE_WATCHING_CLICK",
+                                "load Detail response for continue watching response is $detailPosterCardDto"
                             )
                         }
                         _carouselClickUiState.emit(
