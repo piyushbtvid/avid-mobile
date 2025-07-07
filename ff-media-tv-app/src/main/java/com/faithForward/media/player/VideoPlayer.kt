@@ -33,6 +33,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -147,10 +148,14 @@ fun VideoPlayer(
                                 "IS_CONTINUE_WATCHING_CLICK",
                                 "player state end called and onVideoEnd Also with duration $duration and current Pos $currentPosition"
                             )
-                            if (!playerScreenState.hasVideoEnded) {
-                                val item = videoPlayerItem[currentMediaItemIndex]
-                                if (item.itemSlug != null) {
-                                    val safeProgressMillis = (duration - 60_000L)
+
+                            val isValidEndState =
+                                duration != C.TIME_UNSET && duration > 0 && currentPosition > 0
+
+                            if (isValidEndState) {
+                                val item = videoPlayerItem.getOrNull(currentMediaItemIndex)
+                                if (item?.itemSlug != null) {
+                                    val safeProgressMillis = (duration - 60_000L).coerceAtLeast(0L)
                                     playerViewModel.handleEvent(
                                         PlayerEvent.SaveToContinueWatching(
                                             itemSlug = item.itemSlug,
@@ -160,12 +165,22 @@ fun VideoPlayer(
                                     )
                                 }
                             }
+
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
                             playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
                             currentTitle = ""
-                            // by calling this error coming when it is called from continue watching for series in starting it is calling this State Ended method
-                            // onVideoEnd()
+
+                            Log.e(
+                                "VIDEO_ENDED",
+                                "on Video State Ended called with isValideEndSate $isValidEndState state  $duration and playerState HasVideoEnded is ${playerScreenState.hasVideoEnded}"
+                            )
+
+                            // Avoid calling onVideoEnd() unless duration is valid
+                            if (isValidEndState) {
+                                onVideoEnd()
+                            }
                         }
+
 
                         else -> {
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
@@ -199,6 +214,11 @@ fun VideoPlayer(
     }
 
     LaunchedEffect(Unit) {
+        try {
+            focusRequester.requestFocus()
+        } catch (_: Exception) {
+        }
+
         playerViewModel.interactionFlow.collect {
             Log.e("ON_USER_INTERCATION", "om user instercation collected in videoPlayer ")
             if (!playerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible) {
@@ -293,12 +313,6 @@ fun VideoPlayer(
         }
     }
 
-//    LaunchedEffect(playerScreenState.isControlsVisible) {
-//        try {
-//            focusRequester.requestFocus()
-//        } catch (_: Exception) {
-//        }
-//    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
