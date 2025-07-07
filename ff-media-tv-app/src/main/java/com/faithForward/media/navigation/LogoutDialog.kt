@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.sp
 import com.faithForward.media.theme.pageBlackBackgroundColor
 
 @Composable
-fun ExitDialog(
+fun LogoutDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onExitConfirm: () -> Unit,
+    onLogoutConfirm: () -> Unit,
 ) {
     if (showDialog) {
         val noButtonFocusRequester = remember { FocusRequester() }
@@ -31,14 +31,14 @@ fun ExitDialog(
         AlertDialog(
             onDismissRequest = onDismiss,
             title = {
-                Text("Exit App", fontSize = 20.sp, color = Color.White)
+                Text("Log Out?", fontSize = 20.sp, color = Color.White)
             },
             text = {
-                Text("Are you sure you want to exit?", color = Color.LightGray)
+                Text("Are you sure you want to LogOut?", color = Color.LightGray)
             },
             confirmButton = {
                 FocusableButton(
-                    text = "Yes", onClick = onExitConfirm
+                    text = "Yes", onClick = onLogoutConfirm
                 )
             },
             dismissButton = {

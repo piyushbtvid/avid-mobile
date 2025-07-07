@@ -50,6 +50,7 @@ fun MainScreen(
     val showSidebar = currentRoute in sidebarVisibleRoutes
 
     var showExitDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
     val activity = (LocalActivity.current)
 
     val scope = rememberCoroutineScope()
@@ -160,14 +161,7 @@ fun MainScreen(
                         }
 
                         "log_out" -> {
-                            scope.launch {
-                                sideBarViewModel.onEvent(SideBarEvent.LogoutClick)
-                                delay(200)
-                                navController.navigate(Routes.LoginQr.route) {
-                                    popUpTo(0) { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                            }
+                            showLogoutDialog = true
                         }
                     }
                 },
@@ -188,6 +182,24 @@ fun MainScreen(
                 showExitDialog = false
                 activity?.finish()
             },
+        )
+
+        LogoutDialog(
+            showDialog = showLogoutDialog,
+            onDismiss = {
+                showLogoutDialog = false
+            },
+            onLogoutConfirm = {
+                scope.launch {
+                    sideBarViewModel.onEvent(SideBarEvent.LogoutClick)
+                    delay(200)
+                    showLogoutDialog = false
+                    navController.navigate(Routes.LoginQr.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
         )
     }
 }

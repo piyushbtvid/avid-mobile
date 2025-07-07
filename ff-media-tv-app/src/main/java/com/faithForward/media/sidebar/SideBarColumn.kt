@@ -33,6 +33,7 @@ fun SideBarColumn(
     selectedPosition: Int,
     isSideBarFocusable: Boolean,
     onSelectedPositionChange: (Int) -> Unit,
+    onItemClick: (SideBarItem) -> Unit,
     onFocusChange: (Int) -> Unit,
 ) {
     val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
@@ -108,8 +109,11 @@ fun SideBarColumn(
                         canFocus = isSideBarFocusable
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
-                        onSelectedPositionChange.invoke(index)
-                        onFocusChange.invoke(-1)
+                        if (index != columnItems.size - 1) {
+                            onSelectedPositionChange.invoke(index)
+                            onFocusChange.invoke(-1)
+                        }
+                        onItemClick.invoke(item)
                     }),
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,

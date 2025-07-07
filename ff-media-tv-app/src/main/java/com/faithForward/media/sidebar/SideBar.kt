@@ -127,8 +127,9 @@ fun SideBar(
                 selectedPosition = sideBarSelectedPosition,
                 onSelectedPositionChange = { index ->
                     onSideBarSelectedPositionChange.invoke(index)
-                    val sideBarItem = columnList.get(index)
-                    onSideBarItemClick.invoke(sideBarItem)
+                },
+                onItemClick = { item ->
+                    onSideBarItemClick.invoke(item)
                 },
                 isSideBarFocusable = isSideBarFocusable,
                 onFocusChange = { num ->
@@ -165,8 +166,7 @@ fun SideBarPreview() {
             name = "Home",
             img = R.drawable.home_ic,
             tag = "home",
-        )
-        ,
+        ),
         SideBarItem(
             name = "Home",
             img = R.drawable.home_ic,
