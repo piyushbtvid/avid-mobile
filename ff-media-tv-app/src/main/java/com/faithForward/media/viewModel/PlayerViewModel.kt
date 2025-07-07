@@ -46,7 +46,7 @@ class PlayerViewModel @Inject constructor(
 
     private var lastPlaybackState: PlayerPlayingState = PlayerPlayingState.PLAYING
 
-    private val _interactionFlow = MutableSharedFlow<Unit>()
+    private val _interactionFlow = MutableSharedFlow<Unit>(replay = 0)
     val interactionFlow = _interactionFlow.asSharedFlow()
 
     fun handleEvent(event: PlayerEvent) {
