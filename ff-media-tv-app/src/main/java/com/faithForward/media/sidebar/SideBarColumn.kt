@@ -84,7 +84,7 @@ fun SideBarColumn(
 
             // Add top space before second-last item
             if (index == columnItems.size - 2 && focusedIndex != -1) {
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(75.dp))
             }
 
             val uiState = when (index) {
