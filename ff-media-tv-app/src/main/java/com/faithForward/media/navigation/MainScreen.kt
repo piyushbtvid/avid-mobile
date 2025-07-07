@@ -29,8 +29,6 @@ import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
@@ -56,16 +54,16 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
 
-    LaunchedEffect(startRoute) {
-        Log.e("IS_LOGIN", "start route in mainScreen is $startRoute")
-    }
-
-    LaunchedEffect(currentRoute) {
-        Log.e("CURRENT_ROUTE", "CURRENT ROUTE in mainScreen is $currentRoute")
-    }
-
-    LaunchedEffect(showSidebar) {
-        Log.e("CURRENT_ROUTE", "Show Side Bar  in mainScreen is $showSidebar")
+    // Collect one-time event safely for logout success
+    LaunchedEffect(Unit) {
+        sideBarViewModel.logoutEvent.collect {
+            Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
+            showLogoutDialog = false
+            navController.navigate(Routes.LoginQr.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
     }
 
     Box(
@@ -190,15 +188,7 @@ fun MainScreen(
                 showLogoutDialog = false
             },
             onLogoutConfirm = {
-                scope.launch {
-                    sideBarViewModel.onEvent(SideBarEvent.LogoutClick)
-                    delay(200)
-                    showLogoutDialog = false
-                    navController.navigate(Routes.LoginQr.route) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
+                sideBarViewModel.onEvent(SideBarEvent.LogoutClick)
             }
         )
     }

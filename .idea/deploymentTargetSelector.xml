@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="ff-media-tv-app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-03T13:39:34.333166900Z">
+        <DropdownSelection timestamp="2025-07-07T07:40:22.033845600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.168.1.56:5555;connection=6740cb8b" />
+              <DeviceId pluginId="Default" identifier="serial=192.168.1.36:5555;connection=98395b1a" />
             </handle>
           </Target>
         </DropdownSelection>

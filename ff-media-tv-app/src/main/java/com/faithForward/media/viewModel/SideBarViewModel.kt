@@ -14,6 +14,8 @@ import com.faithForward.media.sidebar.SideBarState
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,6 +30,9 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
     private
     val _sideBarState = mutableStateOf(SideBarState())
     val sideBarState: State<SideBarState> = _sideBarState
+
+    private val _logoutEvent = MutableSharedFlow<Unit>(replay = 0)
+    val logoutEvent = _logoutEvent.asSharedFlow()
 
 
     init {
@@ -85,12 +90,13 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
                 try {
                     val response = networkRepository.logoutUser()
                     if (response.isSuccessful) {
-                        Log.e("Logout", "logout is success with ${response.message()}")
+                        Log.e("LOGOUT_COLLECT", "logout is success with ${response.message()}")
                         networkRepository.clearSession()
+                        _logoutEvent.emit(Unit)
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
-                    Log.e("Logout", "logout exception is ${ex.message}")
+                    Log.e("LOGOUT_COLLECT", "logout exception is ${ex.message}")
                 }
             }
         }
