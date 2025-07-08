@@ -321,9 +321,24 @@ fun VideoPlayer(
             when (event) {
                 Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
                 Lifecycle.Event.ON_STOP -> {
+                    Log.e("STOP_TRACK", "on Stop is called with ${playerScreenState.hasVideoEnded}")
                     if (!playerScreenState.hasVideoEnded) {
                         val currentIndex = exoPlayer.currentMediaItemIndex
                         val item = videoPlayerItem.getOrNull(currentIndex)
+                        Log.e(
+                            "STOP_TRACK",
+                            "on Stop is called after with ${playerScreenState.hasVideoEnded} and Current Item index and item List size   is $currentIndex ${videoPlayerItem.size}"
+                        )
+
+                        Log.e(
+                            "STOP_TRACK",
+                            "on Stop is called after ${videoPlayerItem.get(0)}"
+                        )
+
+                        Log.e(
+                            "STOP_TRACK",
+                            "on Stop is called after ${videoPlayerItem.get(1)}"
+                        )
                         if (item?.itemSlug != null) {
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
