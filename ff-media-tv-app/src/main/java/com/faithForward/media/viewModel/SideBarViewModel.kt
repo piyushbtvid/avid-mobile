@@ -44,7 +44,7 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
                 SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),
                 SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route),
                 SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
-                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
+//                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
                 SideBarItem("My Account", R.drawable.baseline_expand_less_24, "my_account"),
                 SideBarItem("Log Out", R.drawable.baseline_expand_less_24, "log_out"),
             )
