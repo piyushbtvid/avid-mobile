@@ -43,7 +43,7 @@ fun RelatedContentInfoBlock(
                 buttonModifier = modifier,
                 releaseDate = this?.releaseDate,
                 imdbRating = this?.imdbRating,
-                duration = this?.duration,
+                duration = null, // sending null in duration for not showing it in related item content block
                 genre = this?.genre,
                 seasons = this?.seasons
             )
