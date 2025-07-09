@@ -194,7 +194,8 @@ fun CarouselItem(
                 dislikeUiState = dislikeUiState,
                 isLiked = isLiked ?: false,
                 isUnLiked = isDisliked ?: false,
-                isFavourite = isFavourite ?: false
+                isFavourite = isFavourite ?: false,
+                isCreator = isCreator
             )
 
             title?.let {
@@ -236,8 +237,7 @@ fun CarouselItem(
                         backgroundColor = Color.White.copy(alpha = .75f)
                     )
                     RoundedIconButton(
-                        modifier = searchButtonModifier
-                        ,
+                        modifier = searchButtonModifier,
                         imageId = R.drawable.search_ic,
                         iconHeight = 15,
                         boxSize = 43,

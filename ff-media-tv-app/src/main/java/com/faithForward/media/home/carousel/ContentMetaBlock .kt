@@ -45,6 +45,7 @@ fun ContentMetaBlock(
     isFavourite: Boolean = false,
     isLiked: Boolean = false,
     isUnLiked: Boolean = false,
+    isCreator: Boolean = false,
     textColor: Color = Color.White,
     addToWatchListModifier: Modifier = Modifier,
     likeModifier: Modifier = Modifier,
@@ -119,7 +120,7 @@ fun ContentMetaBlock(
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-            if (addToWatchListUiState != FocusState.UNDEFINED && likeUiState != FocusState.UNDEFINED && dislikeUiState != FocusState.UNDEFINED) {
+            if (addToWatchListUiState != FocusState.UNDEFINED && likeUiState != FocusState.UNDEFINED && dislikeUiState != FocusState.UNDEFINED && !isCreator) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
