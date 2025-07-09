@@ -243,6 +243,7 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
     return CarouselItemDto(
+        id = id.toString(),
         imgSrc = creatorImageUrl,
         description = channelDescription,
         subscribers = creatorSubscriberText,

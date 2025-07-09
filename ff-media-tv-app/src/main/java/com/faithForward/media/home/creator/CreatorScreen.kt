@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.home.HomeContentSections
+import com.faithForward.media.home.carousel.CarouselItemDto
 import com.faithForward.media.home.creator.card.CreatorCardDto
 import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.theme.pageBlackBackgroundColor
@@ -24,6 +25,7 @@ fun CreatorScreen(
     sideBarViewModel: SideBarViewModel,
     onBackClick: () -> Unit,
     onCreatorItemClick: (CreatorCardDto) -> Unit,
+    onCarouselClick: (CarouselItemDto) -> Unit,
     onSearchClick: () -> Unit,
 ) {
 
@@ -83,8 +85,9 @@ fun CreatorScreen(
             onToggleDisLike = {
 
             },
-            onCarouselItemClick = {
-
+            onCarouselItemClick = { item ->
+                Log.e("CARSOUEL_CLICK", "on carouselClick called with ${item.id}")
+                onCarouselClick.invoke(item)
             },
             onCreatorItemClick = onCreatorItemClick,
             onSearchClick = {

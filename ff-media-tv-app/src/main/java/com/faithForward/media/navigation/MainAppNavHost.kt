@@ -154,6 +154,11 @@ fun MainAppNavHost(
                 onCreatorItemClick = { item ->
                     navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
                 },
+                onCarouselClick = { item ->
+                    if (item.id != null) {
+                        navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id.toInt()))
+                    }
+                },
                 onSearchClick = {
                     changeSideBarSelectedPosition.invoke(0)
                     navController.navigate(Routes.Search.route) {
