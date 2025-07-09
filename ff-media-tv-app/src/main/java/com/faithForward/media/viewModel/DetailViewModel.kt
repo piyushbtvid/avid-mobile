@@ -463,11 +463,13 @@ class DetailViewModel @Inject constructor(
             val allSeasons = currentData.allSeasons
             val currentSeasonNumber = currentSeasonEpisodes.firstOrNull()?.seasonNumber
 
+
+
             val currentSeasonIndex = allSeasons.indexOfFirst { season ->
                 season.episodesContentDto.any { it.seasonNumber == currentSeasonNumber }
             }
 
-            Log.e("CURRENT_SEASON_INDEX", "current season index $currentSeasonIndex")
+            Log.e("CURRENT_SEASON_INDEX", "current season index $currentSeasonIndex and ")
             Log.e("CURRENT_SEASON_INDEX", "current season episodes $currentSeasonEpisodes")
 
             if (currentSeasonIndex == -1) return null

@@ -95,11 +95,15 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
 
 fun Season.toSeasonDto(): SeasonDto {
     return SeasonDto(
-        episodesContentDto = episodes.map { currentEpisode ->
-            currentEpisode.toPosterDto()
-        }, seasonNumber = season_number
+        episodesContentDto = episodes
+            .sortedBy { it.episode_number } // sort episodes in ascending order
+            .map { currentEpisode ->
+                currentEpisode.toPosterDto()
+            },
+        seasonNumber = season_number
     )
 }
+
 
 
 fun Season.toSeasonNumberDto(): SeasonsNumberDto {
