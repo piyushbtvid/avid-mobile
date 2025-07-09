@@ -442,7 +442,7 @@ fun LoginScreen(
                 scope.launch {
                     val deviceId = withContext(Dispatchers.IO) {
                         if (Util.isFireTv(context)) {
-                            Util.getFireTvId(context)
+                            Util.getFireTvId(context).toString()
                         } else {
                             Util.getId(context) // should also use withContext(IO) inside
                         }
@@ -454,13 +454,11 @@ fun LoginScreen(
                         "fire_tv" // or update this later
                     }
 
-                    if (deviceId != null) {
-                        loginViewModel.onEvent(
-                            LoginEvent.SubmitLogin(
-                                deviceType = platform, deviceId = deviceId
-                            )
+                    loginViewModel.onEvent(
+                        LoginEvent.SubmitLogin(
+                            deviceType = platform, deviceId = deviceId
                         )
-                    }
+                    )
                 }
             },
                 modifier = Modifier

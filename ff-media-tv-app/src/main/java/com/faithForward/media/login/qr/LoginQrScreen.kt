@@ -60,7 +60,7 @@ fun LoginQrScreen(
     LaunchedEffect(Unit) {
         val deviceId = withContext(Dispatchers.IO) {
             if (Util.isFireTv(context)) {
-                Util.getFireTvId(context)
+                Util.getFireTvId(context).toString()
             } else {
                 Util.getId(context)
             }
@@ -74,14 +74,12 @@ fun LoginQrScreen(
         }
 
         Log.e("CHECK_LOGIN", "onStart Login called in Unit of LoginQr")
-        if (deviceId != null) {
-            loginQrLoginViewModel.onEvent(
-                QrLoginEvent.StartLogin(
-                    deviceType = platform,
-                    deviceId = deviceId
-                )
+        loginQrLoginViewModel.onEvent(
+            QrLoginEvent.StartLogin(
+                deviceType = platform,
+                deviceId = deviceId
             )
-        }
+        )
     }
 
 
