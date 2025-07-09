@@ -38,7 +38,8 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
             creatorImageUrl = user.profileImg.orEmpty(), // fallback to empty string if null
             creatorName = user.name,
             creatorSubscriberText = "${user.channelSubscribers} Subscribers",
-            channelDescription = user.channelDescription ?: "",
+            channelDescription = user.bio
+                ?: "", // using bio instead of channel_description as it is coming null
             id = user.id
         )
     }
@@ -208,6 +209,8 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
         releaseDate = uploadedYear,
         title = name,
         slug = slug,
+        genre = genres?.mapNotNull { it.name }  // safely extract non-null names
+            ?.joinToString(", "),
         isLiked = isLiked,
         isDisliked = isDisliked,
         isFavourite = isFavourite,

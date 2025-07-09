@@ -38,7 +38,7 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isDebuggable = false
+            isDebuggable = true
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -73,7 +73,7 @@ dependencies {
     //coil
     implementation(libs.coil.compose)
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
-   //constraintlayout
+    //constraintlayout
     implementation(libs.androidx.constraintlayout.compose)
 
     // Dependency injection
@@ -96,7 +96,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer-dash:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
 
-   // implementation(libs.kotlinx.coroutines.android)
+    // implementation(libs.kotlinx.coroutines.android)
 
     //kotlin ktx viewmodel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

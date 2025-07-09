@@ -123,7 +123,7 @@ fun SideBar(
                 focusedIndex = sideBarFocusedIndex,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 35.dp, end = if (sideBarFocusedIndex == -1) 0.dp else 10.dp),
+                    .padding(top = 38.dp, end = if (sideBarFocusedIndex == -1) 0.dp else 10.dp),
                 selectedPosition = sideBarSelectedPosition,
                 onSelectedPositionChange = { index ->
                     onSideBarSelectedPositionChange.invoke(index)

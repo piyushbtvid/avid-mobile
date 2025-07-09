@@ -144,13 +144,14 @@ fun VideoPlayer(
                         }
 
                         Player.STATE_ENDED -> {
-                            Log.e(
-                                "IS_CONTINUE_WATCHING_CLICK",
-                                "player state end called and onVideoEnd Also with duration $duration and current Pos $currentPosition"
-                            )
 
                             val isValidEndState =
-                                duration != C.TIME_UNSET && duration > 0 && currentPosition > 0
+                                duration != C.TIME_UNSET && duration > 0
+
+                            Log.e(
+                                "CONTINUE_WATCHING",
+                                "player state end called and onVideoEnd Also with duration $duration and current Pos $currentPosition and isValidEndState is $isValidEndState"
+                            )
 
                             if (isValidEndState) {
                                 val item = videoPlayerItem.getOrNull(currentMediaItemIndex)
@@ -239,36 +240,36 @@ fun VideoPlayer(
     })
 
     LaunchedEffect(videoPlayerItem) {
-        val mediaItems = videoPlayerItem.map { item ->
-            MediaItem.Builder().setUri(item.url).build()
-        }
-        exoPlayer.setMediaItems(mediaItems, initialIndex, 0L)
-        exoPlayer.prepare()
+        if (videoPlayerItem.isNotEmpty()) {
+            val mediaItems = videoPlayerItem.map { item ->
+                MediaItem.Builder().setUri(item.url).build()
+            }
 
-        //seeking video if already progressed
-        val seekTo = videoPlayerItem[exoPlayer.currentMediaItemIndex]
-        if (seekTo.progress > 0) {
-            exoPlayer.seekTo(seekTo.progress)
-        }
+            val safeIndex = initialIndex.coerceIn(0, mediaItems.lastIndex)
+            exoPlayer.setMediaItems(mediaItems, safeIndex, 0L)
+            exoPlayer.prepare()
 
-        Log.e(
-            "IS_CONTINUE_WATCHING_CLICK", "current item in videoPlayerItem when setted is $seekTo"
-        )
+            val seekTo = videoPlayerItem[safeIndex]
+            if (seekTo.progress > 0) {
+                exoPlayer.seekTo(seekTo.progress)
+            }
 
-        while (true) {
-            val duration = exoPlayer.duration
-            val currentPos = exoPlayer.currentPosition
 
-            //updating duration and position
-            playerViewModel.handleEvent(PlayerEvent.UpdateCurrentPosition(currentPos))
-            playerViewModel.handleEvent(PlayerEvent.UpdateDuration(duration.coerceAtLeast(1L)))
-            currentPlayingVideoPosition = currentPos.toInt()
+            while (true) {
+                val duration = exoPlayer.duration
+                val currentPos = exoPlayer.currentPosition
 
-            val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
-            Log.e("CURRENT_MEDIA_INDEX", "current Item is ")
-            Log.e("CURRENT_EPISODE", "item slug is ${currentItem?.contentType}")
-            //checking condition for showing episodeNextDialog if episode
-            delay(500)
+                //updating duration and position
+                playerViewModel.handleEvent(PlayerEvent.UpdateCurrentPosition(currentPos))
+                playerViewModel.handleEvent(PlayerEvent.UpdateDuration(duration.coerceAtLeast(1L)))
+                currentPlayingVideoPosition = currentPos.toInt()
+
+                val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
+                Log.e("CURRENT_MEDIA_INDEX", "current Item is ")
+                Log.e("CURRENT_EPISODE", "item slug is ${currentItem?.contentType}")
+                //checking condition for showing episodeNextDialog if episode
+                delay(500)
+            }
         }
     }
 
@@ -276,7 +277,8 @@ fun VideoPlayer(
         val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
         currentTitle = currentItem?.title ?: ""
         Log.e(
-            "IS_CONTINUE_WATCHING_CLICK", "current MEdiaItem launchEffect called with $currentItem"
+            "IS_CONTINUE_WATCHING_CLICK",
+            "current MEdiaItem launchEffect called with $currentItem"
         )
         Log.e(
             "EPISODE_NEXT_UI",
@@ -319,9 +321,24 @@ fun VideoPlayer(
             when (event) {
                 Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
                 Lifecycle.Event.ON_STOP -> {
+                    Log.e("STOP_TRACK", "on Stop is called with ${playerScreenState.hasVideoEnded}")
                     if (!playerScreenState.hasVideoEnded) {
                         val currentIndex = exoPlayer.currentMediaItemIndex
                         val item = videoPlayerItem.getOrNull(currentIndex)
+//                        Log.e(
+//                            "STOP_TRACK",
+//                            "on Stop is called after with ${playerScreenState.hasVideoEnded} and Current Item index and item List size   is $currentIndex ${videoPlayerItem.size}"
+//                        )
+//
+//                        Log.e(
+//                            "STOP_TRACK",
+//                            "on Stop is called after ${videoPlayerItem.get(0)}"
+//                        )
+//
+//                        Log.e(
+//                            "STOP_TRACK",
+//                            "on Stop is called after ${videoPlayerItem.get(1)}"
+//                        )
                         if (item?.itemSlug != null) {
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(

@@ -125,7 +125,7 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.UpdateIsEpisodePlayingOrNot -> {
                 _state.value = _state.value.copy(
-                   isEpisodePlaying = event.isEpisode
+                    isEpisodePlaying = event.isEpisode
                 )
             }
 
@@ -437,6 +437,10 @@ class PlayerViewModel @Inject constructor(
         videoDuration: String,
     ) {
         Log.e(
+            "STOP_TRACK",
+            "Save to continue watching is called in ViewModel with progress $progress_seconds"
+        )
+        Log.e(
             "CONTINUE_WATCHING",
             "save to continue watching called with $itemSlug  $progress_seconds  $videoDuration"
         )
@@ -448,6 +452,10 @@ class PlayerViewModel @Inject constructor(
                 val response = networkRepository.saveContinueWatching(request)
                 if (response.isSuccessful) {
                     Log.e("CONTINUE_WATCHING", "response success with ${response.body()}")
+                    Log.e(
+                        "STOP_TRACK",
+                        "Save to continue watching is called in ViewModel after success with ${response.body()}"
+                    )
                 } else {
                     Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
                 }

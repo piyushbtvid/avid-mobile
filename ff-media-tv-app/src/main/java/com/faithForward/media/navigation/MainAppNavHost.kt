@@ -331,10 +331,6 @@ fun MainAppNavHost(
                 Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
             } ?: emptyList()
 
-            Log.e(
-                "CONTINUE_WATCHING_CLICK",
-                "item in plahyer  is $playerList and $isContinueWatching"
-            )
 
             playerList?.let {
                 LaunchedEffect(playerList) {

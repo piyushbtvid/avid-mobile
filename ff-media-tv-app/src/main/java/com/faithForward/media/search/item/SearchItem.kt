@@ -2,7 +2,10 @@ package com.faithForward.media.search.item
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +27,11 @@ data class SearchItemDto(
     val genre: String? = null,
     val imdb: String? = null,
     val duration: String? = null,
+    val creatorName: String? = null,
+    val creatorViews: String? = null,
+    val creatorUploadDate: String? = null,
+    val creatorVideoNumber: String? = null,
+    val seasonNumber: String? = null,
 )
 
 @Composable
@@ -70,21 +78,99 @@ fun SearchUiItem(
     focusState: FocusState,
 ) {
 
+
+    with(searchItemDto) {
+
+        Row(
+            modifier = modifier
+                .wrapContentSize()
+            ,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            SearchImage(
+                imageSrc = image
+            )
+
+            SearchUiItemMetaContent(
+                imdb = imdb,
+                title = title,
+                duration = duration,
+                creatorUploadDate = creatorUploadDate,
+                creatorName = creatorName,
+                creatorViews = creatorViews,
+                creatorVideoNumber = creatorVideoNumber,
+                seasonNumber = seasonNumber,
+                genre = genre,
+            )
+        }
+    }
+
 }
 
 
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//private fun SearchItemPreview() {
+//
+//    SearchItem(
+//        searchItemDto = SearchItemDto(
+//            title = "The Saga of water lbsdlibsd lbaslbclblbs ljbslbf   ,bdclibsaf   aslbavslb"
+//        ),
+//        focusState = FocusState.UNFOCUSED,
+//        onItemClick = {
+//
+//        }
+//    )
+//
+//}
+
+@Preview
 @Composable
-private fun SearchItemPreview() {
+private fun SearchUiItemPreview() {
 
-    SearchItem(
-        searchItemDto = SearchItemDto(
-            title = "The Saga of water lbsdlibsd lbaslbclblbs ljbslbf   ,bdclibsaf   aslbavslb"
-        ),
-        focusState = FocusState.UNFOCUSED,
-        onItemClick = {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(30.dp)
+    ) {
+        SearchUiItem(
+            searchItemDto = SearchItemDto(
+                title = "The Saga of water lbsdlibsd lbaslbclblbs ljbslbf   ,bdclibsaf   aslbavslb",
+                imdb = "PG",
+                duration = "1h 48m",
+                genre = "Drama,Comedy,Thriler"
+            ),
+            focusState = FocusState.UNFOCUSED,
+            onItemClick = {
 
-        }
-    )
+            }
+        )
 
+        SearchUiItem(
+            searchItemDto = SearchItemDto(
+                imdb = "Tv-14",
+                title = "The Last Ride",
+                creatorViews = "300k Views",
+                creatorName = "Terrel Jones",
+                creatorUploadDate = "5 month ago",
+                creatorVideoNumber = "16 Videos"
+            ),
+            focusState = FocusState.UNFOCUSED,
+            onItemClick = {
+
+            }
+        )
+
+
+        SearchUiItem(
+            searchItemDto = SearchItemDto(
+                imdb = "PG",
+                seasonNumber = "6 Seasons",
+                title = "The Last Ride",
+                genre = "Drama,Comedy,Thriler"
+            ),
+            focusState = FocusState.UNFOCUSED,
+            onItemClick = {
+
+            }
+        )
+    }
 }
