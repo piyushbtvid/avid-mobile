@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +20,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,6 +70,20 @@ fun CreatorDetailPage(
             )
     } else {
         Modifier
+    }
+
+    var isSubscriberFocused by remember { mutableStateOf(false) }
+    var isAccessPremiumFocused by remember { mutableStateOf(false) }
+
+    val subscriberButtonFocusRequester = remember { FocusRequester() }
+
+
+    LaunchedEffect(Unit) {
+        try {
+            subscriberButtonFocusRequester.requestFocus()
+        } catch (_: Exception) {
+
+        }
     }
 
     Row(modifier = modifier) {
@@ -184,13 +201,24 @@ fun CreatorDetailPage(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 SubscribeButton(
-                    focusState = FocusState.UNFOCUSED,
+                    modifier = Modifier
+                        .focusRequester(subscriberButtonFocusRequester)
+                        .onFocusChanged {
+                            isSubscriberFocused = it.hasFocus
+                        }
+                        .focusable(),
+                    focusState = if (isSubscriberFocused) FocusState.FOCUSED else FocusState.UNFOCUSED,
                     buttonText = "Subscribe",
                     onCategoryItemClick = {
 
                     })
                 SubscribeButton(
-                    focusState = FocusState.UNFOCUSED,
+                    modifier = Modifier
+                        .onFocusChanged {
+                            isAccessPremiumFocused = it.hasFocus
+                        }
+                        .focusable(),
+                    focusState = if (isAccessPremiumFocused) FocusState.FOCUSED else FocusState.UNFOCUSED,
                     buttonText = "Access Premium",
                     icon = R.drawable.lock,
                     onCategoryItemClick = {
@@ -207,7 +235,6 @@ fun CreatorDetailPage(
             contentDtoList = contentDtoList,
             onCreatorContentClick = onCreatorContentClick
         )
-
     }
 }
 
