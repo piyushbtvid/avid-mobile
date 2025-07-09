@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +26,9 @@ import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.util.Util
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.uiModels.QrLoginEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 data class LoginQrScreenDto(
@@ -44,7 +48,6 @@ fun LoginQrScreen(
     val state by loginQrLoginViewModel.state.collectAsState()
     val context = LocalContext.current
 
-
     // Trigger callback when user logs in
     LaunchedEffect(state.isLoggedIn) {
         Log.e("IS_lOGIN_QR", "is login is called with ${state.isLoggedIn}")
@@ -55,25 +58,32 @@ fun LoginQrScreen(
     }
 
     LaunchedEffect(Unit) {
-        val deviceId = if (Util.isFireTv(context)) ({
-            Util.getFireTvId(context)
-        }).toString() else {
-            Util.getId(context)
+        val deviceId = withContext(Dispatchers.IO) {
+            if (Util.isFireTv(context)) {
+                Util.getFireTvId(context)
+            } else {
+                Util.getId(context)
+            }
         }
 
         val platform = if (Util.isFireTv(context)) {
             "fire_tv"
         } else {
-            //Android will come once api will add it can
+            // Change to "android" if needed when API supports it
             "fire_tv"
         }
+
         Log.e("CHECK_LOGIN", "onStart Login called in Unit of LoginQr")
-        loginQrLoginViewModel.onEvent(
-            QrLoginEvent.StartLogin(
-                deviceType = platform, deviceId = deviceId
+        if (deviceId != null) {
+            loginQrLoginViewModel.onEvent(
+                QrLoginEvent.StartLogin(
+                    deviceType = platform,
+                    deviceId = deviceId
+                )
             )
-        )
+        }
     }
+
 
     state.qrScreenDto?.let { dto ->
         Row(
