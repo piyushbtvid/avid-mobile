@@ -6,6 +6,8 @@ import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
@@ -449,18 +451,25 @@ fun VideoPlayer(
         }
 
 
-        if (currentTitle != null) {
-            TitleText(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 20.dp),
-                text = currentTitle!!,
-                textSize = 28,
-                color = whiteMain,
-                lineHeight = 28,
-                fontWeight = FontWeight.Bold
-            )
+        Box(modifier = Modifier.fillMaxSize()) {
+            AnimatedVisibility(
+                visible = isVisible && currentTitle != null,
+                enter = fadeIn(animationSpec = tween(durationMillis = 300)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 500))
+            ) {
+                TitleText(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(start = 20.dp, top = 16.dp),
+                    text = currentTitle!!,
+                    textSize = 28,
+                    color = whiteMain,
+                    lineHeight = 28,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
+
 
         if (playerScreenState.isLoading || playerScreenState.isPlayerBuffering) {
             Box(
