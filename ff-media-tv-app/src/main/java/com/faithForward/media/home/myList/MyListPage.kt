@@ -32,6 +32,7 @@ fun MyListPage(
     onCarouselItemClick: (PosterCardDto) -> Unit,
     sideBarViewModel: SideBarViewModel,
     onBackClick: () -> Unit,
+    onSearchClick: () -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
@@ -126,6 +127,9 @@ fun MyListPage(
             },
             onCreatorItemClick = {
 
+            },
+            onSearchClick = {
+                onSearchClick.invoke()
             }
         )
     }

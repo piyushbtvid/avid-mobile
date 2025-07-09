@@ -15,6 +15,7 @@ import com.faithForward.util.Resource
 fun GenreDataScreen(
     modifier: Modifier = Modifier,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    onSearchClick: () -> Unit,
     viewModel: GenreViewModel,
 ) {
 
@@ -38,7 +39,8 @@ fun GenreDataScreen(
                     it.toPosterCardDto()
                 }
                 onItemClick.invoke(item, newPosterCardDtoList)
-            }
+            },
+            onSearchClick = onSearchClick
         )
     }
 

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -235,7 +236,8 @@ fun CarouselItem(
                         backgroundColor = Color.White.copy(alpha = .75f)
                     )
                     RoundedIconButton(
-                        modifier = searchButtonModifier,
+                        modifier = searchButtonModifier
+                        ,
                         imageId = R.drawable.search_ic,
                         iconHeight = 15,
                         boxSize = 43,

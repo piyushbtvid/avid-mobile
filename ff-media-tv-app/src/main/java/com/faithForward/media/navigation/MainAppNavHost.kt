@@ -131,7 +131,16 @@ fun MainAppNavHost(
                             launchSingleTop = true
                         }
                     }
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+
+            )
         }
 
         composable(route = Routes.Creator.route) {
@@ -144,7 +153,15 @@ fun MainAppNavHost(
                 },
                 onCreatorItemClick = { item ->
                     navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         composable(
@@ -169,7 +186,15 @@ fun MainAppNavHost(
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         composable(
@@ -194,7 +219,15 @@ fun MainAppNavHost(
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
@@ -215,6 +248,13 @@ fun MainAppNavHost(
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
 
             )
@@ -234,7 +274,16 @@ fun MainAppNavHost(
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
-            })
+            },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+
+            )
         }
 
         composable(

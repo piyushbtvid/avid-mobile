@@ -24,6 +24,7 @@ fun CreatorScreen(
     sideBarViewModel: SideBarViewModel,
     onBackClick: () -> Unit,
     onCreatorItemClick: (CreatorCardDto) -> Unit,
+    onSearchClick: () -> Unit,
 ) {
 
 
@@ -85,7 +86,10 @@ fun CreatorScreen(
             onCarouselItemClick = {
 
             },
-            onCreatorItemClick = onCreatorItemClick
+            onCreatorItemClick = onCreatorItemClick,
+            onSearchClick = {
+                onSearchClick.invoke()
+            }
         )
     }
 }

@@ -45,6 +45,7 @@ fun HomeContentSections(
     onToggleFavorite: (String?) -> Unit,
     onCarouselItemClick: (CarouselItemDto) -> Unit,
     onCreatorItemClick: (CreatorCardDto) -> Unit,
+    onSearchClick: () -> Unit,
     sideBarViewModel: SideBarViewModel,
     showContentOfCard: Boolean = true,
     onToggleLike: (String?) -> Unit,
@@ -92,7 +93,8 @@ fun HomeContentSections(
                         onToggleFavorite = onToggleFavorite,
                         onToggleLike = onToggleLike,
                         onToggleDisLike = onToggleDisLike,
-                        onCarouselItemClick = onCarouselItemClick
+                        onCarouselItemClick = onCarouselItemClick,
+                        onSearchClick = onSearchClick
                     )
 
                     is HomePageItem.CategoryRow -> CategoryRow(
