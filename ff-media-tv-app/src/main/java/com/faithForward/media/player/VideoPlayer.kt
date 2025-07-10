@@ -345,7 +345,7 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
                                     itemSlug = item.itemSlug,
-                                    progressSeconds = exoPlayer.currentPosition.toString(),
+                                    progressSeconds =(exoPlayer.currentPosition / 1000).toString(),
                                     videoDuration = exoPlayer.duration.toString()
                                 )
                             )
@@ -433,7 +433,7 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
                                     itemSlug = item.itemSlug,
-                                    progressSeconds = exoPlayer.currentPosition.toString(),
+                                    progressSeconds =(exoPlayer.currentPosition / 1000).toString(),
                                     videoDuration = exoPlayer.duration.toString()
                                 )
                             )
@@ -498,7 +498,7 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
                                     itemSlug = item.itemSlug,
-                                    progressSeconds = exoPlayer.currentPosition.toString(),
+                                    progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
                                     videoDuration = exoPlayer.duration.toString()
                                 )
                             )
