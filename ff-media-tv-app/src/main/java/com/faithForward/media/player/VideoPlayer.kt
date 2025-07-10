@@ -253,7 +253,7 @@ fun VideoPlayer(
 
             val seekTo = videoPlayerItem[safeIndex]
             if (seekTo.progress > 0) {
-                exoPlayer.seekTo(seekTo.progress)
+                exoPlayer.seekTo(seekTo.progress * 1000L) // converting seconds to milli seconds
             }
 
 
@@ -267,8 +267,8 @@ fun VideoPlayer(
                 currentPlayingVideoPosition = currentPos.toInt()
 
                 val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
-                Log.e("CURRENT_MEDIA_INDEX", "current Item is ")
-                Log.e("CURRENT_EPISODE", "item slug is ${currentItem?.contentType}")
+//                Log.e("CURRENT_MEDIA_INDEX", "current Item is ")
+//                Log.e("CURRENT_EPISODE", "item slug is ${currentItem?.contentType}")
                 //checking condition for showing episodeNextDialog if episode
                 delay(500)
             }
