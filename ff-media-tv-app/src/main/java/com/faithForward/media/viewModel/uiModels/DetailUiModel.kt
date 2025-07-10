@@ -20,6 +20,7 @@ sealed interface RelatedContentData {
     data class RelatedMovies(val movies: List<PosterCardDto>) : RelatedContentData
     data class SeriesSeasons(
         val seasonNumberList: List<SeasonsNumberDto>,
+        val firstSeasonEpisodes: List<PosterCardDto>,
         val selectedSeasonEpisodes: List<PosterCardDto>,
         val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,

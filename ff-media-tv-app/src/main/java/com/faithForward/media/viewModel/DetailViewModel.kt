@@ -131,7 +131,8 @@ class DetailViewModel @Inject constructor(
                             allSeasons = seasonList,
                             relatedSeries = relatedMovieList,
                             resumeSeasonEpisodes = resumeSeasonEpisodes.first,
-                            resumeIndex = resumeSeasonEpisodes.second ?: 0
+                            resumeIndex = resumeSeasonEpisodes.second ?: 0,
+                            firstSeasonEpisodes = selectedSeasonEpisodes
                         )
                         if (_relatedContentData.value != newRelatedContentData)
                             _relatedContentData.emit(newRelatedContentData)
@@ -462,7 +463,6 @@ class DetailViewModel @Inject constructor(
         if (currentData is RelatedContentData.SeriesSeasons) {
             val allSeasons = currentData.allSeasons
             val currentSeasonNumber = currentSeasonEpisodes.firstOrNull()?.seasonNumber
-
 
 
             val currentSeasonIndex = allSeasons.indexOfFirst { season ->
