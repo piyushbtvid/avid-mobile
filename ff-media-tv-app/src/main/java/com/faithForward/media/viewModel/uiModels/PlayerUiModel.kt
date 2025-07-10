@@ -129,6 +129,6 @@ sealed class PlayerEvent {
 
 
 enum class PlayerPlayingState {
-    PLAYING, PAUSED, REWINDING, FORWARDING, IDLE
+    PLAYING, PAUSED, REWINDING, FORWARDING,  MUTE_UN_MUTE  , IDLE
 }
 

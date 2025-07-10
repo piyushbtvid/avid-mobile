@@ -170,6 +170,7 @@ class PlayerViewModel @Inject constructor(
             }
 
             PlayerPlayingState.IDLE -> Unit // No action needed
+            PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
     }
 

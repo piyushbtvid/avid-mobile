@@ -25,6 +25,7 @@ data class CreatorContentDto(
     val about: String?,
     val subscribersText: String?,
     val genre: String?,
+    val channelName : String?,
     val creatorChannelCategory: String?,
 )
 
@@ -75,6 +76,16 @@ fun CreatorDetail(
                     )
                 }
             }
+
+            if(channelName!=null){
+                Text(
+                    modifier = Modifier,
+                    text = "Channel Name: $channelName",
+                    maxLines = 1,
+                    style = tv_02
+                )
+            }
+
             if (about != null) {
                 Text(
                     modifier = Modifier,
@@ -96,7 +107,8 @@ private fun CreatorDetailPreview() {
             about = "About the Creator: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.",
             genre = "Comedy",
             subscribersText = "130K Subscribers",
-            creatorChannelCategory = "Reality"
+            creatorChannelCategory = "Reality",
+            channelName = "Beauty and Beast"
         )
     )
 }

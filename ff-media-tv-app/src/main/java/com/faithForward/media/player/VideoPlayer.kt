@@ -212,6 +212,7 @@ fun VideoPlayer(
             PlayerPlayingState.REWINDING -> exoPlayer.seekBack()
             PlayerPlayingState.FORWARDING -> exoPlayer.seekForward()
             PlayerPlayingState.IDLE -> {}
+            PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
         playerViewModel.handleEvent(PlayerEvent.ShowControls)
     }

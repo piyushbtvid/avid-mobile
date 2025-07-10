@@ -169,8 +169,6 @@ class MainActivity : ComponentActivity() {
 
                 return true
             }
-
-
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 Log.e("DPAD", "on dpad down called in main")
                 if (!isControlsVisible) {
