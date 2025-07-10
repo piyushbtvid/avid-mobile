@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,7 @@ import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 data class VideoPlayerDto(
     val contentType: String,
@@ -94,6 +96,8 @@ fun VideoPlayer(
 
 
     val isVisible = playerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible
+
+    val scope = rememberCoroutineScope()
 
 // Animate alpha for player controlers hide show
     val alpha by animateFloatAsState(
@@ -147,54 +151,68 @@ fun VideoPlayer(
 
                         Player.STATE_ENDED -> {
 
-                            val isValidEndState =
-                                duration != C.TIME_UNSET && duration > 0
+                            scope.launch {
 
-                            Log.e(
-                                "CONTINUE_WATCHING",
-                                "player state end called and onVideoEnd Also with duration $duration and current Pos $currentPosition and isValidEndState is $isValidEndState"
-                            )
-
-                            if (isValidEndState) {
-                                val item = videoPlayerItem.getOrNull(currentMediaItemIndex)
-                                Log.e(
-                                    "TEST_WATCH",
-                                    "onVideo Ended called with isValidEndState as $isValidEndState"
-                                )
-                                Log.e(
-                                    "TEST_WATCH",
-                                    "onVideo Ended called with currentMediaItem Index Item is $item"
-                                )
+                                val isValidEndState = duration != C.TIME_UNSET && duration > 0
 
                                 Log.e(
-                                    "TEST_WATCH",
-                                    "onVideo Ended called with vidPlayerItemList Size  is ${videoPlayerItem.size}  and List is $videoPlayerItem "
+                                    "CONTINUE_WATCHING",
+                                    "player state end called and onVideoEnd Also with duration $duration and current Pos $currentPosition and isValidEndState is $isValidEndState"
                                 )
 
-                                if (item?.itemSlug != null) {
-                                    val safeProgressMillis = (duration - 60_000L).coerceAtLeast(0L)
+                                if (isValidEndState) {
+                                    val item = videoPlayerItem.getOrNull(currentMediaItemIndex)
+                                    Log.e(
+                                        "TEST_WATCH",
+                                        "onVideo Ended called with isValidEndState as $isValidEndState"
+                                    )
+                                    Log.e(
+                                        "TEST_WATCH",
+                                        "onVideo Ended called with currentMediaItem Index Item is $item"
+                                    )
+
+                                    Log.e(
+                                        "TEST_WATCH",
+                                        "onVideo Ended called with vidPlayerItemList Size  is ${videoPlayerItem.size}  and List is $videoPlayerItem "
+                                    )
+
+
+                                    val safeProgressMillis =
+                                        (duration - 60_000L).coerceAtLeast(0L)
+
+                                    Log.e(
+                                        "TEST_WATCH",
+                                        "onVideo Ended called with safe progress as $safeProgressMillis and itemMedia Index as $currentMediaItemIndex"
+                                    )
+
+
                                     playerViewModel.handleEvent(
                                         PlayerEvent.SaveToContinueWatching(
                                             itemIndex = currentMediaItemIndex,
-                                            progressSeconds = safeProgressMillis.toString(),
+                                            progressSeconds = (safeProgressMillis / 1000).toString(),
                                             videoDuration = duration
                                         )
                                     )
                                 }
-                            }
 
-                            playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
-                            playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
-                            currentTitle = ""
+                                playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
+                                playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
+                                currentTitle = ""
 
-                            Log.e(
-                                "VIDEO_ENDED",
-                                "on Video State Ended called with isValideEndSate $isValidEndState state  $duration and playerState HasVideoEnded is ${playerScreenState.hasVideoEnded}"
-                            )
+                                Log.e(
+                                    "VIDEO_ENDED",
+                                    "on Video State Ended called with isValideEndSate $isValidEndState state  $duration and playerState HasVideoEnded is ${playerScreenState.hasVideoEnded}"
+                                )
 
-                            // Avoid calling onVideoEnd() unless duration is valid
-                            if (isValidEndState) {
-                                onVideoEnd()
+                                // Avoid calling onVideoEnd() unless duration is valid
+                                if (isValidEndState) {
+                                    currentTitle = ""
+                                    seekTo(0)
+                                    release()
+                                    delay(300)
+                                    onVideoEnd()
+                                }
+
                             }
                         }
 
@@ -294,8 +312,7 @@ fun VideoPlayer(
         val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
         currentTitle = currentItem?.title ?: ""
         Log.e(
-            "IS_CONTINUE_WATCHING_CLICK",
-            "current MEdiaItem launchEffect called with $currentItem"
+            "IS_CONTINUE_WATCHING_CLICK", "current MEdiaItem launchEffect called with $currentItem"
         )
         Log.e(
             "EPISODE_NEXT_UI",
@@ -389,6 +406,9 @@ fun VideoPlayer(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+            Log.e("EXO_PLAYER_LIFE_CYCL", "on dispose called ")
+            currentTitle = ""
+            exoPlayer.seekTo(0)
             exoPlayer.release()
         }
     }
@@ -433,22 +453,26 @@ fun VideoPlayer(
                         "VIDEO_END",
                         "onCancel click of Episode Dialog called and onVideoEnd also"
                     )
-                    if (!playerScreenState.hasVideoEnded) {
-                        val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
-                        if (item.itemSlug != null) {
-                            val safeProgressMillis = (exoPlayer.duration - 60_000L)
-                            playerViewModel.handleEvent(
-                                PlayerEvent.SaveToContinueWatching(
-                                  itemIndex = currentIndex,
-                                    progressSeconds = safeProgressMillis.toString(),
-                                    videoDuration = exoPlayer.duration
+                    scope.launch {
+                        if (!playerScreenState.hasVideoEnded) {
+                            val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
+                            if (item.itemSlug != null) {
+                                val safeProgressMillis = (exoPlayer.duration - 60_000L)
+                                playerViewModel.handleEvent(
+                                    PlayerEvent.SaveToContinueWatching(
+                                        itemIndex = currentIndex,
+                                        progressSeconds = (safeProgressMillis / 1000).toString(),
+                                        videoDuration = exoPlayer.duration
+                                    )
                                 )
-                            )
+                            }
                         }
+                        currentTitle = ""
+                        exoPlayer.seekTo(0)
+                        exoPlayer.release()
+                        delay(200)
+                        onVideoEnd.invoke()
                     }
-                    currentTitle = ""
-                    exoPlayer.release()
-                    onVideoEnd.invoke()
                 }, onPlayNowClick = {
                     Log.e("PLAY_CLICK", "onPlay click with current Index $currentIndex")
                     if (!playerScreenState.hasVideoEnded) {
@@ -521,7 +545,7 @@ fun VideoPlayer(
                         if (item.itemSlug != null) {
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
-                                   itemIndex = exoPlayer.currentMediaItemIndex,
+                                    itemIndex = exoPlayer.currentMediaItemIndex,
                                     progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
                                     videoDuration = exoPlayer.duration
                                 )
