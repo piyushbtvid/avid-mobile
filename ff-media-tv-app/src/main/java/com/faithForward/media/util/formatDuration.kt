@@ -12,3 +12,18 @@ fun formatDuration(durationMillis: Long): String {
         else -> String.format("%d sec", seconds)
     }
 }
+
+
+fun formatDurationInReadableFormat(seconds: Int?): String {
+    if (seconds == null || seconds <= 0) return ""
+
+    val h = seconds / 3600
+    val m = (seconds % 3600) / 60
+    val s = seconds % 60
+
+    return buildString {
+        if (h > 0) append("${h}h ")
+        if (m > 0) append("${m}m ")
+        if (s > 0 || (h == 0 && m == 0)) append("${s}s")
+    }.trim()
+}

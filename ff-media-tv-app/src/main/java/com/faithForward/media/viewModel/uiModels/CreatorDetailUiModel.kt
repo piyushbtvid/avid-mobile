@@ -3,6 +3,7 @@ package com.faithForward.media.viewModel.uiModels
 import com.faithForward.media.home.creator.detail.CreatorContentDto
 import com.faithForward.media.home.creator.detail.CreatorDetailDto
 import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.media.util.formatDurationInReadableFormat
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.creator.CreatorResponse
 
@@ -34,8 +35,8 @@ fun ContentItem.toContentDto(): ContentDto {
     return ContentDto(
         image = portrait ?: "",
         title = name ?: "",
-        views = views.toString(),
-        duration = "$duration m",
+        views = "$views Views",
+        duration = formatDurationInReadableFormat(duration),
         description = description ?: "",
         time = dateUploaded ?: "",
         slug = slug
