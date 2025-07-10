@@ -157,11 +157,25 @@ fun VideoPlayer(
 
                             if (isValidEndState) {
                                 val item = videoPlayerItem.getOrNull(currentMediaItemIndex)
+                                Log.e(
+                                    "TEST_WATCH",
+                                    "onVideo Ended called with isValidEndState as $isValidEndState"
+                                )
+                                Log.e(
+                                    "TEST_WATCH",
+                                    "onVideo Ended called with currentMediaItem Index Item is $item"
+                                )
+
+                                Log.e(
+                                    "TEST_WATCH",
+                                    "onVideo Ended called with vidPlayerItemList Size  is ${videoPlayerItem.size}  and List is $videoPlayerItem "
+                                )
+
                                 if (item?.itemSlug != null) {
                                     val safeProgressMillis = (duration - 60_000L).coerceAtLeast(0L)
                                     playerViewModel.handleEvent(
                                         PlayerEvent.SaveToContinueWatching(
-                                            itemSlug = item.itemSlug,
+                                            itemIndex = currentMediaItemIndex,
                                             progressSeconds = safeProgressMillis.toString(),
                                             videoDuration = duration
                                         )
@@ -342,15 +356,23 @@ fun VideoPlayer(
 //                            "STOP_TRACK",
 //                            "on Stop is called after ${videoPlayerItem.get(1)}"
 //                        )
-                        if (item?.itemSlug != null) {
-                            playerViewModel.handleEvent(
-                                PlayerEvent.SaveToContinueWatching(
-                                    itemSlug = item.itemSlug,
-                                    progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
-                                    videoDuration = exoPlayer.duration
-                                )
+                        Log.e(
+                            "TEST_WATCH",
+                            "onVideo Ended called with currentMediaItem Index Item is $item"
+                        )
+
+                        Log.e(
+                            "TEST_WATCH",
+                            "onVideo Ended called with item index is $currentIndex vidPlayerItemList Size  is ${videoPlayerItem.size}  and List is $videoPlayerItem "
+                        )
+
+                        playerViewModel.handleEvent(
+                            PlayerEvent.SaveToContinueWatching(
+                                itemIndex = currentIndex,
+                                progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
+                                videoDuration = exoPlayer.duration
                             )
-                        }
+                        )
                     }
                     exoPlayer.pause()
                 }
@@ -417,7 +439,7 @@ fun VideoPlayer(
                             val safeProgressMillis = (exoPlayer.duration - 60_000L)
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
-                                    itemSlug = item.itemSlug,
+                                  itemIndex = currentIndex,
                                     progressSeconds = safeProgressMillis.toString(),
                                     videoDuration = exoPlayer.duration
                                 )
@@ -434,7 +456,7 @@ fun VideoPlayer(
                         if (item.itemSlug != null) {
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
-                                    itemSlug = item.itemSlug,
+                                    itemIndex = currentIndex,
                                     progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
                                     videoDuration = exoPlayer.duration
                                 )
@@ -499,7 +521,7 @@ fun VideoPlayer(
                         if (item.itemSlug != null) {
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
-                                    itemSlug = item.itemSlug,
+                                   itemIndex = exoPlayer.currentMediaItemIndex,
                                     progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
                                     videoDuration = exoPlayer.duration
                                 )

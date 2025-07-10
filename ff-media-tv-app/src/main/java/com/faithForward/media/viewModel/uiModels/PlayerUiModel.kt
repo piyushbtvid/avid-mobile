@@ -121,7 +121,7 @@ sealed class PlayerEvent {
     data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
     data class UpdateVideoEndedState(val isEnded: Boolean) : PlayerEvent()
     data class SaveToContinueWatching(
-        val itemSlug: String,
+        val itemIndex: Int?,
         val progressSeconds: String,
         val videoDuration: Long,
     ) : PlayerEvent()

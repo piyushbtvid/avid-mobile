@@ -104,11 +104,13 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.SaveToContinueWatching -> {
-                saveContinueWatching(
-                    itemSlug = event.itemSlug,
-                    progress_seconds = event.progressSeconds,
-                    videoDuration = event.videoDuration
-                )
+                if(event.itemIndex!=null){
+                    saveContinueWatching(
+                        itemIndex = event.itemIndex,
+                        progress_seconds = event.progressSeconds,
+                        videoDuration = event.videoDuration
+                    )
+                }
             }
 
             is PlayerEvent.UpdateVideoEndedState -> {
@@ -231,7 +233,11 @@ class PlayerViewModel @Inject constructor(
         index: Int?,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.value = _state.value.copy(isLoading = true)
+            _state.value = _state.value.copy(
+                videoPlayerDto = Resource.Unspecified(),
+                videoPlayingIndex = null,
+                isLoading = true
+            )
 
             val firstItem = itemList.firstOrNull()
             val hasUrl = firstItem?.videoHlsUrl?.isNotEmpty() == true
@@ -433,37 +439,50 @@ class PlayerViewModel @Inject constructor(
 
 
     private fun saveContinueWatching(
-        itemSlug: String,
+        itemIndex: Int,
         progress_seconds: String,
         videoDuration: Long,
     ) {
+
+        val currentVideoList = state.value.videoPlayerDto
+
+        val itemSlug = currentVideoList.data?.videoPlayerDtoList?.getOrNull(itemIndex)?.itemSlug
+
+        Log.e(
+            "TEST_WATCH",
+            "current Video List size is ${currentVideoList.data?.videoPlayerDtoList?.size}"
+        )
+
         Log.e(
             "STOP_TRACK",
             "Save to continue watching is called in ViewModel with progress $progress_seconds and duartion is ${videoDuration / 1000}"
         )
         Log.e(
             "CONTINUE_WATCHING",
-            "save to continue watching called with $itemSlug  $progress_seconds  $videoDuration"
+            "save to continue watching called with $itemIndex  $progress_seconds  $videoDuration"
         )
-        viewModelScope.launch {
-            try {
-                val request = ContinueWatchingRequest(
-                    slug = itemSlug,
-                    progress_seconds = progress_seconds,
-                    duration = (videoDuration / 1000).toString()
-                )
-                val response = networkRepository.saveContinueWatching(request)
-                if (response.isSuccessful) {
-                    Log.e("CONTINUE_WATCHING", "response success with ${response.body()}")
-                    Log.e(
-                        "STOP_TRACK",
-                        "Save to continue watching is called in ViewModel after success with ${response.body()}"
+
+        if (itemSlug != null) {
+            viewModelScope.launch {
+                try {
+                    val request = ContinueWatchingRequest(
+                        slug = itemSlug,
+                        progress_seconds = progress_seconds,
+                        duration = (videoDuration / 1000).toString()
                     )
-                } else {
-                    Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
+                    val response = networkRepository.saveContinueWatching(request)
+                    if (response.isSuccessful) {
+                        Log.e("TEST_WATCH", "response success with ${response.body()}")
+                        Log.e(
+                            "STOP_TRACK",
+                            "Save to continue watching is called in ViewModel after success with ${response.body()}"
+                        )
+                    } else {
+                        Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
+                    }
+                } catch (ex: Exception) {
+                    Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
                 }
-            } catch (ex: Exception) {
-                Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
             }
         }
     }
