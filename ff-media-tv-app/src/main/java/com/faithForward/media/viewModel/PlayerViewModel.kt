@@ -434,11 +434,11 @@ class PlayerViewModel @Inject constructor(
     private fun saveContinueWatching(
         itemSlug: String,
         progress_seconds: String,
-        videoDuration: String,
+        videoDuration: Long,
     ) {
         Log.e(
             "STOP_TRACK",
-            "Save to continue watching is called in ViewModel with progress $progress_seconds"
+            "Save to continue watching is called in ViewModel with progress $progress_seconds and duartion is ${videoDuration / 1000}"
         )
         Log.e(
             "CONTINUE_WATCHING",
@@ -447,7 +447,9 @@ class PlayerViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val request = ContinueWatchingRequest(
-                    slug = itemSlug, progress_seconds = progress_seconds, duration = videoDuration
+                    slug = itemSlug,
+                    progress_seconds = progress_seconds,
+                    duration = (videoDuration / 1000).toString()
                 )
                 val response = networkRepository.saveContinueWatching(request)
                 if (response.isSuccessful) {

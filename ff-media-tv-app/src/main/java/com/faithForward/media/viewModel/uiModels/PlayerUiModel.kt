@@ -123,7 +123,7 @@ sealed class PlayerEvent {
     data class SaveToContinueWatching(
         val itemSlug: String,
         val progressSeconds: String,
-        val videoDuration: String,
+        val videoDuration: Long,
     ) : PlayerEvent()
 }
 
