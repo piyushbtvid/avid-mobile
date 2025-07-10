@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -78,13 +79,28 @@ fun CreatorDetailPage(
     val subscriberButtonFocusRequester = remember { FocusRequester() }
 
 
-    LaunchedEffect(Unit) {
-        try {
-            subscriberButtonFocusRequester.requestFocus()
-        } catch (_: Exception) {
+    var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var lastRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
+    val contentFocusRequesters = remember(contentDtoList.size) {
+        List(contentDtoList.size) { FocusRequester() }
+    }
+
+
+    LaunchedEffect(Unit) {
+        if (lastRowFocusedIndex > -1 && lastRowFocusedIndex < contentFocusRequesters.size) {
+            try {
+                contentFocusRequesters[lastRowFocusedIndex].requestFocus()
+            } catch (_: Exception) {
+            }
+        } else {
+            try {
+                subscriberButtonFocusRequester.requestFocus()
+            } catch (_: Exception) {
+            }
         }
     }
+
 
     Row(modifier = modifier) {
         Column(modifier = Modifier.weight(1.2f)) {
@@ -231,9 +247,15 @@ fun CreatorDetailPage(
         ContentPage(
             modifier = Modifier
                 .weight(1f)
-                .padding(top = 67.dp), // Take up right half roughly
+                .padding(top = 67.dp),
             contentDtoList = contentDtoList,
-            onCreatorContentClick = onCreatorContentClick
+            onCreatorContentClick = onCreatorContentClick,
+            contentRowFocusedIndex = contentRowFocusedIndex,
+            onContentRowFocusChange = { index -> contentRowFocusedIndex = index },
+            onLastRowFocusedIndexChange = { index ->
+                lastRowFocusedIndex = index
+            },
+            focusRequesters = contentFocusRequesters
         )
     }
 }

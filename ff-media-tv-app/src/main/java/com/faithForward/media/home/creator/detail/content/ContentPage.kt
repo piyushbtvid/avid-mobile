@@ -47,14 +47,16 @@ fun ContentPage(
     modifier: Modifier = Modifier,
     contentDtoList: List<ContentDto>,
     onCreatorContentClick: (ContentDto) -> Unit,
+    contentRowFocusedIndex: Int,
+    onLastRowFocusedIndexChange: (Int) -> Unit,
+    onContentRowFocusChange: (Int) -> Unit,
+    focusRequesters: List<FocusRequester>,
 ) {
-    var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-
-    val focusRequester = remember { FocusRequester() }
-
     LazyColumn(
         modifier = modifier
-            .focusRestorer()
+            .focusRestorer {
+                focusRequesters[0]
+            }
             .fillMaxHeight()
             .padding(start = 40.dp, top = 20.dp)
             .width(350.dp),
@@ -70,17 +72,26 @@ fun ContentPage(
         }
 
         itemsIndexed(contentDtoList) { index, item ->
+            val focusRequester = focusRequesters.getOrNull(index) ?: FocusRequester()
+
             ContentCard(
                 contentDto = item,
                 modifier = Modifier
-                    .focusRequester(if (index == 0) focusRequester else FocusRequester())
+                    .focusRequester(focusRequester)
                     .onFocusChanged { focusState ->
-                        contentRowFocusedIndex = if (focusState.isFocused) index else -1
+                        if (focusState.isFocused) {
+                            onContentRowFocusChange(index)
+                            onLastRowFocusedIndexChange(index)
+                        } else {
+                            onContentRowFocusChange(-1)
+                        }
                     }
-                    .clickable(interactionSource = null, indication = null, onClick = {
+                    .clickable(
+                        interactionSource = null,
+                        indication = null
+                    ) {
                         onCreatorContentClick.invoke(item)
                     }
-                    )
                     .focusable()
                     .border(
                         width = if (contentRowFocusedIndex == index) 2.dp else 0.dp,
@@ -91,12 +102,4 @@ fun ContentPage(
             )
         }
     }
-
-//    LaunchedEffect(Unit) {
-//        try {
-//            focusRequester.requestFocus()
-//        } catch (_: Exception) {
-//
-//        }
-//    }
 }
