@@ -378,6 +378,7 @@ fun VideoPlayer(
                 PlayerView(ctx).apply {
                     player = exoPlayer
                     useController = false
+                    keepScreenOn = true
                 }
             }, modifier = Modifier.fillMaxSize()
         )
