@@ -207,6 +207,7 @@ fun VideoPlayer(
                                 // Avoid calling onVideoEnd() unless duration is valid
                                 if (isValidEndState) {
                                   //  currentTitle = ""
+                                    playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
                                     seekTo(0)
                                     release()
                                     delay(300)
@@ -245,7 +246,10 @@ fun VideoPlayer(
             PlayerPlayingState.IDLE -> {}
             PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
-        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+        if (!playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible) {
+            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+        }
+
     }
 
     LaunchedEffect(Unit) {
@@ -341,8 +345,7 @@ fun VideoPlayer(
             if (!hasShownDialog &&
                 duration - currentPos <= dialogThresholdMs &&
                 !playerScreenState.isNextEpisodeDialogVisible &&
-                !playerScreenState.isRelatedVisible &&
-                !playerScreenState.isControlsVisible
+                !playerScreenState.isRelatedVisible
             ) {
                 when (currentItem?.contentType) {
                     "Episode" -> {
@@ -495,6 +498,7 @@ fun VideoPlayer(
                             }
                         }
                         //currentTitle = ""
+                        playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
                         exoPlayer.seekTo(0)
                         exoPlayer.release()
                         delay(200)
@@ -516,6 +520,7 @@ fun VideoPlayer(
                     }
                     exoPlayer.seekTo(0)
                     //currentTitle = ""
+                    playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
                     Log.e(
                         "EPISODE_NEXT_UI",
                         "episode on PLayNowClick exoPlayer position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
