@@ -92,12 +92,13 @@ fun VideoPlayer(
     var currentPosition by remember { mutableIntStateOf(initialIndex) }
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
-    var currentTitle by remember { mutableStateOf(videoPlayerItem.firstOrNull()?.title) }
+
 
 
     val isVisible = playerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible
 
     val scope = rememberCoroutineScope()
+    val dialogThresholdMs = 20_000L
 
 // Animate alpha for player controlers hide show
     val alpha by animateFloatAsState(
@@ -197,7 +198,6 @@ fun VideoPlayer(
 
                                 playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
                                 playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
-                                currentTitle = ""
 
                                 Log.e(
                                     "VIDEO_ENDED",
@@ -206,7 +206,7 @@ fun VideoPlayer(
 
                                 // Avoid calling onVideoEnd() unless duration is valid
                                 if (isValidEndState) {
-                                    currentTitle = ""
+                                  //  currentTitle = ""
                                     seekTo(0)
                                     release()
                                     delay(300)
@@ -225,7 +225,6 @@ fun VideoPlayer(
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     val index = currentMediaItemIndex
-                    currentTitle = videoPlayerItem.getOrNull(index)?.title ?: ""
                     playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(false))
                     currentPosition = currentMediaItemIndex
                     currentVideoDuration = duration.toInt()
@@ -310,42 +309,72 @@ fun VideoPlayer(
 
     LaunchedEffect(exoPlayer.currentMediaItem) {
         val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
-        currentTitle = currentItem?.title ?: ""
+        val currentTitle = currentItem?.title ?: ""
         Log.e(
-            "IS_CONTINUE_WATCHING_CLICK", "current MEdiaItem launchEffect called with $currentItem"
+            "Player",
+            "Current MediaItem changed: $currentItem"
         )
         Log.e(
-            "EPISODE_NEXT_UI",
-            "current Media Item change with new item ${currentItem?.title}  and current position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
+            "Player",
+            "Current Media Item: ${currentItem?.title}, position: ${exoPlayer.currentPosition}, duration: ${exoPlayer.duration}"
         )
 
-        if (currentItem?.contentType == "Episode") {
-            playerViewModel.handleEvent(PlayerEvent.UpdateIsEpisodePlayingOrNot(true))
-        } else {
-            playerViewModel.handleEvent(PlayerEvent.UpdateIsEpisodePlayingOrNot(false))
-        }
+        // Update episode playing state
+        playerViewModel.handleEvent(
+            PlayerEvent.UpdateIsEpisodePlayingOrNot(currentItem?.contentType == "Episode")
+        )
+
+        // Track whether dialog has been shown to prevent repeated triggers
+        var hasShownDialog = false
 
         while (isActive) {
             val duration = exoPlayer.duration
             val currentPos = exoPlayer.currentPosition
-            if (currentItem?.contentType == "Episode" && duration > 0 && duration - currentPos <= 20_000 && !playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isControlsVisible) {
-                Log.e(
-                    "CURRENT_MEDIA_ITEM",
-                    "show next episode is called with ${currentItem.contentType}  $duration and $currentPos  and ${playerScreenState.isNextEpisodeDialogVisible}"
-                )
-                playerViewModel.handleEvent(PlayerEvent.HideRelated)
-                playerViewModel.handleEvent(PlayerEvent.HideControls)
-                playerViewModel.handleEvent(PlayerEvent.ShowNextEpisodeDialog)
-            } else if (currentItem?.contentType == "Movie" && duration > 0 && duration - currentPos <= 20_000 && !playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isControlsVisible) {
-                Log.e(
-                    "RELATED_MOVIE_DIALOG",
-                    "show related movie dialog is called with Content Type ${currentItem.contentType}  $duration and $currentPos"
-                )
-                playerViewModel.handleEvent(PlayerEvent.HideControls)
-                playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+
+            // Skip if duration is unset or invalid
+            if (duration == C.TIME_UNSET || duration <= 0 || currentPos < 0) {
+                delay(1000) // Increased polling interval
+                continue
             }
-            delay(400)
+
+            // Check if within threshold and no user interaction
+            if (!hasShownDialog &&
+                duration - currentPos <= dialogThresholdMs &&
+                !playerScreenState.isNextEpisodeDialogVisible &&
+                !playerScreenState.isRelatedVisible &&
+                !playerScreenState.isControlsVisible
+            ) {
+                when (currentItem?.contentType) {
+                    "Episode" -> {
+                        Log.e(
+                            "Player",
+                            "Showing next episode dialog: ${currentItem.contentType}, duration: $duration, position: $currentPos"
+                        )
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideControls)
+                        playerViewModel.handleEvent(PlayerEvent.ShowNextEpisodeDialog)
+                        hasShownDialog = true // Prevent re-triggering
+                    }
+
+                    "Movie" -> {
+                        Log.e(
+                            "Player",
+                            "Showing related movie dialog: ${currentItem.contentType}, duration: $duration, position: $currentPos"
+                        )
+                        playerViewModel.handleEvent(PlayerEvent.HideControls)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+                        hasShownDialog = true // Prevent re-triggering
+                    }
+                }
+            }
+
+            // Reset dialog flag if video moves out of threshold (e.g., user seeks backward)
+            if (hasShownDialog && duration - currentPos > dialogThresholdMs) {
+                hasShownDialog = false
+            }
+
+            delay(1000) // Poll every 1 second instead of 300ms
         }
     }
 
@@ -407,8 +436,6 @@ fun VideoPlayer(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             Log.e("EXO_PLAYER_LIFE_CYCL", "on dispose called ")
-            currentTitle = ""
-            exoPlayer.seekTo(0)
             exoPlayer.release()
         }
     }
@@ -467,7 +494,7 @@ fun VideoPlayer(
                                 )
                             }
                         }
-                        currentTitle = ""
+                        //currentTitle = ""
                         exoPlayer.seekTo(0)
                         exoPlayer.release()
                         delay(200)
@@ -488,7 +515,7 @@ fun VideoPlayer(
                         }
                     }
                     exoPlayer.seekTo(0)
-                    currentTitle = ""
+                    //currentTitle = ""
                     Log.e(
                         "EPISODE_NEXT_UI",
                         "episode on PLayNowClick exoPlayer position is ${exoPlayer.currentPosition} and duration is ${exoPlayer.duration}"
@@ -501,7 +528,7 @@ fun VideoPlayer(
 
         Box(modifier = Modifier.fillMaxSize()) {
             AnimatedVisibility(
-                visible = isVisible && currentTitle != null,
+                visible = isVisible && playerScreenState.currentTitle != null,
                 enter = fadeIn(animationSpec = tween(durationMillis = 300)),
                 exit = fadeOut(animationSpec = tween(durationMillis = 500))
             ) {
@@ -509,7 +536,7 @@ fun VideoPlayer(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(start = 20.dp, top = 16.dp),
-                    text = currentTitle!!,
+                    text = playerScreenState.currentTitle!!,
                     textSize = 28,
                     color = whiteMain,
                     lineHeight = 28,

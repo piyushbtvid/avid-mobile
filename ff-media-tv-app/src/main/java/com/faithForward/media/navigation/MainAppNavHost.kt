@@ -63,6 +63,7 @@ fun MainAppNavHost(
     ) {
         composable(route = Routes.Login.route) {
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
+                Log.e("GOING_TO_HOME", "going to home from Login screen ")
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -74,6 +75,7 @@ fun MainAppNavHost(
             LoginQrScreen(
                 loginQrLoginViewModel = qrLoginViewModel,
                 onLoggedIn = {
+                    Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                     Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
                     navController.navigate(Routes.Home.route) {
                         popUpTo(Routes.Login.route) { inclusive = true }

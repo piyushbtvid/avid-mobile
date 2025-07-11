@@ -97,6 +97,7 @@ data class PlayerState(
     val hasVideoEnded: Boolean = false,
     val isEpisodePlaying: Boolean = false,
     val videoPlayingIndex: Int? = 0,
+    val currentTitle: String? = null,
 )
 
 sealed class PlayerEvent {
@@ -120,6 +121,7 @@ sealed class PlayerEvent {
 
     data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
     data class UpdateVideoEndedState(val isEnded: Boolean) : PlayerEvent()
+    data class UpdateTitleText(val text: String) : PlayerEvent()
     data class SaveToContinueWatching(
         val itemIndex: Int?,
         val progressSeconds: String,
@@ -129,6 +131,6 @@ sealed class PlayerEvent {
 
 
 enum class PlayerPlayingState {
-    PLAYING, PAUSED, REWINDING, FORWARDING,  MUTE_UN_MUTE  , IDLE
+    PLAYING, PAUSED, REWINDING, FORWARDING, MUTE_UN_MUTE, IDLE
 }
 

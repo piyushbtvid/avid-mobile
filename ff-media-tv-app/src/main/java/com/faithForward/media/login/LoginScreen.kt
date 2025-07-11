@@ -330,9 +330,10 @@ fun LoginScreen(
     val context = LocalContext.current
 
     LaunchedEffect(loginState) {
-        Log.e("LOGIN_STATE", "login state effect called with ${loginState.isLoggedIn}")
+        Log.e("GOING_TO_HOME", "login state effect called with ${loginState.isLoggedIn}")
         if (loginState.isLoggedIn) {
-            Log.e("LOGIN_STATE", "Is Loged in  ${loginState.isLoggedIn}")
+            Log.e("GOING_TO_HOME", "Is Loged in  ${loginState.isLoggedIn}")
+            loginViewModel.onEvent(LoginEvent.ResetIsLogin(false))
             onLogin.invoke()
 //            navController.navigate(Routes.Home.route) {
 //                popUpTo(Routes.Login.route) { inclusive = true }
@@ -453,6 +454,8 @@ fun LoginScreen(
                     } else {
                         "fire_tv" // or update this later
                     }
+
+                    Log.e("GOING_TO_HOME", "on Next Click is called in LoginScreen")
 
                     loginViewModel.onEvent(
                         LoginEvent.SubmitLogin(

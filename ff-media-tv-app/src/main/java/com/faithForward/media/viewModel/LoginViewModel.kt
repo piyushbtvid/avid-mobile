@@ -32,7 +32,7 @@ class LoginViewModel @Inject constructor(
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
     init {
-        Log.e("USER_PREF", "login viewModel init called")
+        Log.e("CHECK_LOGIN", "login viewModel init called")
         checkLoginStatus()
     }
 
@@ -40,21 +40,22 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    Log.e("USER_PREF", "check login status in viewModel called")
+                    Log.e("GOING_TO_HOME", "checkLogin status called in Login VieWModel")
+                    Log.e("CHECK_LOGIN", "check login status in viewModel called")
                     val session = networkRepository.getCurrentSession()
                     Log.e(
-                        "USER_PREF",
+                        "CHECK_LOGIN",
                         "Initial session check in checkLoginStatus is called: $session"
                     )
                     _isLoggedIn.value = session?.season?.token != null
                     Log.e(
-                        "IS_LOGIN",
+                        "GOING_TO_HOME",
                         "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
                     )
                     delay(200)
                     _loginState.update { it.copy(isCheckingLoginStatus = false) } // Mark check as complete
                 } catch (ex: Exception) {
-                    Log.e("LOG", "exception is ${ex.printStackTrace()}")
+                    Log.e("CHECK_LOGIN", "exception is ${ex.printStackTrace()}")
                 }
             }
         }
@@ -74,6 +75,12 @@ class LoginViewModel @Inject constructor(
                 loginUser(
                     deviceType = event.deviceType,
                     deviceId = event.deviceId
+                )
+            }
+
+            is LoginEvent.ResetIsLogin -> {
+                _loginState.value = _loginState.value.copy(
+                    isLoggedIn = event.boolean
                 )
             }
         }
@@ -103,21 +110,34 @@ class LoginViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-                    val body = response.body()
-                    Log.d("Login", "Success: ${body?.message}")
+                    val loginData = response.body()
+                    Log.e("GOING_TO_HOME", "Success: ${loginData?.message}")
 
-                    if (body != null) {
-                        withContext(Dispatchers.IO) {
-                            networkRepository.saveUserSession(
-                                UserPrefData(
-                                    season = body.data,
-                                    deviceID = deviceId,
-                                    deviceType = deviceType
+                    if (loginData != null) {
+                        Log.e("GOING_TO_HOME", "Login data is not empty with $loginData")
+                        if (!loginData.data.token.isNullOrEmpty() &&
+                            !loginData.data.refreshToken.isNullOrEmpty() &&
+                            !loginData.data.tokenType.isNullOrEmpty()
+                        ) {
+                            Log.e("GOING_TO_HOME", "Login data is not empty in checkLogin")
+                            withContext(Dispatchers.IO) {
+                                networkRepository.saveUserSession(
+                                    UserPrefData(
+                                        season = loginData.data,
+                                        deviceID = deviceId,
+                                        deviceType = deviceType
+                                    )
                                 )
-                            )
-                        }
-                        _loginState.update {
-                            it.copy(isLoading = false, isLoggedIn = true)
+                            }
+                            _loginState.update {
+                                it.copy(isLoading = false, isLoggedIn = true)
+                            }
+                            _loginState.update {
+                                it.copy(
+                                    email = "",
+                                    password = ""
+                                )
+                            }
                         }
                         // _isLoggedIn.value = true
                     }
@@ -136,7 +156,7 @@ class LoginViewModel @Inject constructor(
                         }
                     }
 
-                    Log.e("Login", "Error: $combinedErrorMessage")
+                    Log.e("CHECK_LOGIN", "Error: $combinedErrorMessage")
 
                     _loginState.update {
                         it.copy(
@@ -146,7 +166,7 @@ class LoginViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                Log.e("Login", "Exception: ${e.message}")
+                Log.e("CHECK_LOGIN", "Exception: ${e.message}")
                 _loginState.update {
                     it.copy(
                         isLoading = false,

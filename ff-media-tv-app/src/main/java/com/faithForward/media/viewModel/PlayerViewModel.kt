@@ -91,6 +91,10 @@ class PlayerViewModel @Inject constructor(
                 _state.value = _state.value.copy(isPlaying = event.isPlaying)
             }
 
+            is PlayerEvent.UpdateTitleText -> {
+                _state.value = _state.value.copy(currentTitle = event.text)
+            }
+
             is PlayerEvent.UpdateOrLoadPlayerData -> {
                 updateOrLoadVideoPlayerData(
                     event.itemList,
@@ -104,7 +108,7 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.SaveToContinueWatching -> {
-                if(event.itemIndex!=null){
+                if (event.itemIndex != null) {
                     saveContinueWatching(
                         itemIndex = event.itemIndex,
                         progress_seconds = event.progressSeconds,
@@ -236,7 +240,8 @@ class PlayerViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 videoPlayerDto = Resource.Unspecified(),
                 videoPlayingIndex = null,
-                isLoading = true
+                isLoading = true,
+                currentTitle = null
             )
 
             val firstItem = itemList.firstOrNull()
@@ -279,6 +284,8 @@ class PlayerViewModel @Inject constructor(
                         firstItem!!.relatedList!!.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
 
+                    val title = videoPlayerDtoList.getOrNull(index ?: 0)?.title
+
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
                             PlayerDto(
@@ -287,7 +294,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentItemDtoList
                                 ),
                             )
-                        ), isLoading = false, videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
 
                 }
@@ -301,6 +308,8 @@ class PlayerViewModel @Inject constructor(
                     val relatedContentItemDtoList = itemList.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
 
+                    val title = videoPlayerDtoList.getOrNull(index ?: 0)?.title
+
                     Log.e("PLAY_CLICK", "has Url and $videoPlayerDtoList ")
 
                     _state.value = _state.value.copy(
@@ -312,7 +321,7 @@ class PlayerViewModel @Inject constructor(
                                     rowList = relatedContentItemDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 }
                 // For movies from related Movie
@@ -336,6 +345,8 @@ class PlayerViewModel @Inject constructor(
                     val currentPlayingItem =
                         cardDetail.data.toPosterCardDto().toVideoPlayerDto().copy(progress = 0)
 
+                    val title = currentPlayingItem.title
+
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
                             PlayerDto(
@@ -344,7 +355,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentRowDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 }
                 //is from continue watching and is a Series episode
@@ -415,6 +426,9 @@ class PlayerViewModel @Inject constructor(
                             "IS_CONTINUE_WATCHING_CLICK",
                             "is from continue watching in player viewModel with finial result of RelatedList $relatedList  "
                         )
+
+                        val title = videoPlayList.getOrNull(index ?: 0)?.title
+
                         _state.value = _state.value.copy(
                             videoPlayerDto = Resource.Success(
                                 PlayerDto(
@@ -423,7 +437,10 @@ class PlayerViewModel @Inject constructor(
                                         title = "Next Up...", rowList = relatedList
                                     )
                                 )
-                            ), isLoading = false, videoPlayingIndex = resumeIndex
+                            ),
+                            isLoading = false,
+                            videoPlayingIndex = resumeIndex,
+                            currentTitle = title
                         )
                     }
                 }
