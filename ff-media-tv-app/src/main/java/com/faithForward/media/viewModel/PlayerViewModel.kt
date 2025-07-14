@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.player.PlayerDto
-import com.faithForward.media.player.VideoPlayerDto
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
@@ -22,12 +21,8 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,15 +34,6 @@ class PlayerViewModel @Inject constructor(
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state.asStateFlow()
 
-    private var autoHideJob: Job? = null
-
-    var playerState by mutableStateOf(PlayerPlayingState.IDLE)
-        private set
-
-    private var lastPlaybackState: PlayerPlayingState = PlayerPlayingState.PLAYING
-
-    private val _interactionFlow = MutableSharedFlow<Unit>(replay = 0)
-    val interactionFlow = _interactionFlow.asSharedFlow()
 
     fun handleEvent(event: PlayerEvent) {
         when (event) {
@@ -57,18 +43,6 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.UpdateCurrentPosition -> {
                 _state.value = _state.value.copy(currentPosition = event.value)
-            }
-
-            is PlayerEvent.ShowControls -> {
-                Log.e("PLAYER", "Handling ShowControls event")
-                _state.value = _state.value.copy(isControlsVisible = true)
-                startAutoHideTimer()
-            }
-
-            is PlayerEvent.HideControls -> {
-                Log.e("PLAYER_UI", "Handling HideControls even")
-                Log.e("PLAYER", "Handling HideControls event")
-                _state.value = _state.value.copy(isControlsVisible = false)
             }
 
             is PlayerEvent.HideRelated -> {
@@ -135,55 +109,6 @@ class PlayerViewModel @Inject constructor(
                 )
             }
 
-        }
-    }
-
-    private fun startAutoHideTimer() {
-        autoHideJob?.cancel()
-        autoHideJob = viewModelScope.launch {
-            Log.e("PLAYER", "Starting auto-hide timer")
-            delay(10000)
-            Log.e("PLAYER", "Setting controls invisible after timer")
-            _state.value = _state.value.copy(isControlsVisible = false)
-        }
-    }
-
-    fun togglePlayPause() {
-        playerState = if (lastPlaybackState == PlayerPlayingState.PLAYING) {
-            lastPlaybackState = PlayerPlayingState.PAUSED
-            PlayerPlayingState.PAUSED
-        } else {
-            lastPlaybackState = PlayerPlayingState.PLAYING
-            PlayerPlayingState.PLAYING
-        }
-    }
-
-    fun handlePlayerAction(action: PlayerPlayingState) {
-        when (action) {
-            PlayerPlayingState.PLAYING, PlayerPlayingState.PAUSED -> {
-                lastPlaybackState = action  // Update last playback state
-                playerState = action
-            }
-
-            PlayerPlayingState.REWINDING, PlayerPlayingState.FORWARDING -> {
-                playerState = action
-
-                // Reset to IDLE after a short delay
-                viewModelScope.launch {
-                    delay(200) // Adjust delay as needed
-                    playerState = PlayerPlayingState.IDLE
-                }
-            }
-
-            PlayerPlayingState.IDLE -> Unit // No action needed
-            PlayerPlayingState.MUTE_UN_MUTE -> {}
-        }
-    }
-
-    fun onUserInteraction(from: String) {
-        viewModelScope.launch {
-            Log.e("PLAYER_UI", "on use interction is called  in viewModel from $from")
-            _interactionFlow.emit(Unit)
         }
     }
 

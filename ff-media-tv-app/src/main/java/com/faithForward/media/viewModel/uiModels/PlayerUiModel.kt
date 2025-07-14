@@ -88,7 +88,6 @@ data class PlayerState(
     val duration: Long = 1L,
     val videoPlayerDto: Resource<PlayerDto> = Resource.Unspecified(),
     val playerRelatedContentRowDto: PlayerRelatedContentRowDto? = null,
-    val isControlsVisible: Boolean = true,
     val isRelatedVisible: Boolean = false,
     val isNextEpisodeDialogVisible: Boolean = false,
     val isPlaying: Boolean = false,
@@ -100,11 +99,13 @@ data class PlayerState(
     val currentTitle: String? = null,
 )
 
+data class SharedPlayerViewModelState(
+    val isControlsVisible: Boolean = true,
+)
+
 sealed class PlayerEvent {
     data class UpdateDuration(val value: Long) : PlayerEvent()
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
-    data object ShowControls : PlayerEvent()
-    data object HideControls : PlayerEvent()
     data object ShowNextEpisodeDialog : PlayerEvent()
     data object HideNextEpisodeDialog : PlayerEvent()
     data object ShowRelated : PlayerEvent()
@@ -127,6 +128,12 @@ sealed class PlayerEvent {
         val progressSeconds: String,
         val videoDuration: Long,
     ) : PlayerEvent()
+}
+
+
+sealed class SharedPlayerEvent {
+    data object ShowControls : SharedPlayerEvent()
+    data object HideControls : SharedPlayerEvent()
 }
 
 

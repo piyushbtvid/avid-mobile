@@ -28,13 +28,14 @@ import com.faithForward.media.sidebar.SideBarEvent
 import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     sideBarViewModel: SideBarViewModel,
-    playerViewModel: PlayerViewModel,
+    playerViewModel: SharedPlayerViewModel,
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
@@ -86,7 +87,7 @@ fun MainScreen(
             },
             startRoute = startRoute,
             sideBarViewModel = sideBarViewModel,
-            playerViewModel = playerViewModel,
+            sharedPlayerViewModel = playerViewModel,
             loginViewModel = loginViewModel,
             onBackClickForExit = {
                 showExitDialog = true

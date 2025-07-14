@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
@@ -47,15 +48,15 @@ import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.pageBlackBackgroundColor
 import com.faithForward.media.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
-import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
-import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
+import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var playerViewModel: PlayerViewModel
+    private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
     private var isControlsVisible: Boolean = true
     private var currentRoute: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,12 +67,12 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
-                    playerViewModel = hiltViewModel()
+                    sharedPlayerViewModel = viewModel()
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
-                        playerViewModel.state.collectAsState().value.isControlsVisible
+                        sharedPlayerViewModel.state.collectAsState().value.isControlsVisible
                     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
@@ -101,7 +102,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize(),
                                 sideBarViewModel = sideBarViewModel,
                                 loginViewModel = loginViewModel,
-                                playerViewModel = playerViewModel,
+                                playerViewModel = sharedPlayerViewModel,
                                 navController = navController,
                                 startRoute = if (isLoggedIn) Routes.Home.route else Routes.LoginQr.route
                             )
@@ -119,7 +120,7 @@ class MainActivity : ComponentActivity() {
                 "ON_USER_INTERCATION",
                 "on user intercation is called if current route is player with $isControlsVisible"
             )
-            playerViewModel.onUserInteraction("onUSerInterction")
+            sharedPlayerViewModel.onUserInteraction("onUSerInterction")
         }
     }
 
@@ -129,12 +130,12 @@ class MainActivity : ComponentActivity() {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     if (isControlsVisible) {
-                        playerViewModel.togglePlayPause()
+                        sharedPlayerViewModel.togglePlayPause()
                     } else {
                         //   playerViewModel.onUserInteraction("center and PlayPause")
-                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+//                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideRelated)
+//                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideNextEpisodeDialog)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
                 return true
@@ -143,12 +144,12 @@ class MainActivity : ComponentActivity() {
             KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     if (isControlsVisible) {
-                        playerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
+                        sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
                     } else {
                         // playerViewModel.onUserInteraction("Rewind and Left")
-                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideRelated)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
 
@@ -158,25 +159,26 @@ class MainActivity : ComponentActivity() {
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     if (isControlsVisible) {
-                        playerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
+                        sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
                     } else {
                         //  playerViewModel.onUserInteraction("forward and right")
-                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideRelated)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
 
                 return true
             }
+
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 Log.e("DPAD", "on dpad down called in main")
                 if (!isControlsVisible) {
                     if (currentRoute == Routes.PlayerScreen.route) {
                         //playerViewModel.onUserInteraction("down")
-                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideRelated)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
                 return true
@@ -186,9 +188,9 @@ class MainActivity : ComponentActivity() {
                 Log.e("DPAD", "on dpad up called in main")
                 if (!isControlsVisible) {
                     if (currentRoute == Routes.PlayerScreen.route) {
-                        playerViewModel.handleEvent(PlayerEvent.HideControls)
-                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+//                        sharedPlayerViewModel.handleEvent(PlayerEvent.ShowRelated)
                     }
                 }
                 return true

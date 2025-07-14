@@ -22,7 +22,9 @@ import androidx.compose.ui.platform.LocalContext
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
+import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import com.faithForward.util.Resource
 
 data class PlayerDto(
@@ -35,6 +37,7 @@ fun PlayerScreen(
     modifier: Modifier = Modifier,
     isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
+    sharedPlayerViewModel: SharedPlayerViewModel,
     onPlayerBackClick: () -> Unit,
     initialIndex: Int = 0,
     onVideoEnded: () -> Unit,
@@ -73,7 +76,7 @@ fun PlayerScreen(
         Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
         playerViewModel.handleEvent(PlayerEvent.HideRelated)
         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         onPlayerBackClick.invoke()
     }
 
@@ -104,6 +107,7 @@ fun PlayerScreen(
                 VideoPlayer(videoPlayerItem = playerDtoItems,
                     initialIndex = videoIndex,
                     playerViewModel = playerViewModel,
+                    sharedPlayerViewModel = sharedPlayerViewModel,
                     playerRelatedContentRowDto = relatedList,
                     onVideoEnd = {
                         onVideoEnded.invoke()
@@ -112,13 +116,13 @@ fun PlayerScreen(
                     onEpisodePlayNowClick = { list, index ->
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
                         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         onEpisodePlayNowClick.invoke(list, index)
                     },
                     onRelatedItemClick = { item, list, index ->
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
                         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         onRelatedItemClick.invoke(item, list, index)
                     })
             }

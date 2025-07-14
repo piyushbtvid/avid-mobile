@@ -35,6 +35,7 @@ import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
@@ -49,7 +50,7 @@ fun MainAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    playerViewModel: PlayerViewModel,
+    sharedPlayerViewModel: SharedPlayerViewModel,
     sideBarViewModel: SideBarViewModel,
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
@@ -377,6 +378,9 @@ fun MainAppNavHost(
                 }
             )
         ) { backStackEntry ->
+
+            val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
+
             val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
@@ -404,6 +408,7 @@ fun MainAppNavHost(
 
             PlayerScreen(
                 playerViewModel = playerViewModel,
+                sharedPlayerViewModel = sharedPlayerViewModel,
                 isFromContinueWatching = isContinueWatching,
                 onPlayerBackClick = {
                     if (isContinueWatching) {

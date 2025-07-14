@@ -51,8 +51,10 @@ import com.faithForward.media.player.seriesNextUi.EpisodeNextUpItemDto
 import com.faithForward.media.theme.focusedMainColor
 import com.faithForward.media.theme.whiteMain
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
+import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -80,22 +82,23 @@ fun VideoPlayer(
     playerRelatedContentRowDto: PlayerRelatedContentRowDto,
     initialIndex: Int,
     playerViewModel: PlayerViewModel,
+    sharedPlayerViewModel: SharedPlayerViewModel,
     onRelatedItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
     onEpisodePlayNowClick: (List<VideoPlayerDto>, index: Int?) -> Unit,
     onVideoEnd: () -> Unit,
 ) {
-    val playerState = playerViewModel.playerState
+    val playerState = sharedPlayerViewModel.playerState
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val playerScreenState by playerViewModel.state.collectAsState()
+    val sharedPlayerScreenState by sharedPlayerViewModel.state.collectAsState()
     val focusRequester = remember { FocusRequester() }
     var currentPosition by remember { mutableIntStateOf(initialIndex) }
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
 
 
-
-    val isVisible = playerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible
+    val isVisible = sharedPlayerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible
 
     val scope = rememberCoroutineScope()
     val dialogThresholdMs = 20_000L
@@ -141,7 +144,7 @@ fun VideoPlayer(
                                 "player state end called and State Redy Also with duration $duration and current Pos $currentPosition"
                             )
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
-                            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                             playWhenReady = true
                             val currentTime = System.currentTimeMillis()
                             if (currentTime - lastUpdateTime >= 10000) {
@@ -206,7 +209,7 @@ fun VideoPlayer(
 
                                 // Avoid calling onVideoEnd() unless duration is valid
                                 if (isValidEndState) {
-                                  //  currentTitle = ""
+                                    //  currentTitle = ""
                                     playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
                                     seekTo(0)
                                     release()
@@ -231,7 +234,7 @@ fun VideoPlayer(
                     currentVideoDuration = duration.toInt()
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                    playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 }
             })
         }
@@ -247,7 +250,7 @@ fun VideoPlayer(
             PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
         if (!playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible) {
-            playerViewModel.handleEvent(PlayerEvent.ShowControls)
+            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
 
     }
@@ -258,10 +261,10 @@ fun VideoPlayer(
         } catch (_: Exception) {
         }
 
-        playerViewModel.interactionFlow.collect {
+        sharedPlayerViewModel.interactionFlow.collect {
             Log.e("ON_USER_INTERCATION", "om user instercation collected in videoPlayer ")
-            if (!playerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible) {
-                playerViewModel.handleEvent(PlayerEvent.ShowControls)
+            if (!sharedPlayerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible) {
+                sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 playerViewModel.handleEvent(PlayerEvent.HideRelated)
                 playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
             }
@@ -272,7 +275,7 @@ fun VideoPlayer(
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             playerViewModel.handleEvent(PlayerEvent.UpdateIsPlaying(isPlaying))
             if (isPlaying) {
-                playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
             }
         }
     })
@@ -354,7 +357,7 @@ fun VideoPlayer(
                             "Showing next episode dialog: ${currentItem.contentType}, duration: $duration, position: $currentPos"
                         )
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
-                        playerViewModel.handleEvent(PlayerEvent.HideControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                         playerViewModel.handleEvent(PlayerEvent.ShowNextEpisodeDialog)
                         hasShownDialog = true // Prevent re-triggering
                     }
@@ -364,7 +367,7 @@ fun VideoPlayer(
                             "Player",
                             "Showing related movie dialog: ${currentItem.contentType}, duration: $duration, position: $currentPos"
                         )
-                        playerViewModel.handleEvent(PlayerEvent.HideControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         playerViewModel.handleEvent(PlayerEvent.ShowRelated)
                         hasShownDialog = true // Prevent re-triggering
@@ -429,7 +432,7 @@ fun VideoPlayer(
                 Lifecycle.Event.ON_RESUME -> {
                     exoPlayer.playWhenReady = true
                     exoPlayer.prepare()
-                    playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 }
 
                 else -> {}
@@ -568,7 +571,7 @@ fun VideoPlayer(
                 onUp = {
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                    playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     true
                 },
                 onItemClick = { relatedItem, relatedItemList, index ->
@@ -606,26 +609,26 @@ fun VideoPlayer(
                     onSeekTo = { exoPlayer.seekTo(it) },
                     onPlayPause = {
                         exoPlayer.playWhenReady = !exoPlayer.isPlaying
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onRewind = {
                         val rewindMillis = 15_000L
                         val newPosition =
                             (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
                         exoPlayer.seekTo(newPosition)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onForward = {
                         exoPlayer.seekForward()
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onPrev = {
                         exoPlayer.seekToPreviousMediaItem()
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onNext = {
                         exoPlayer.seekToNextMediaItem()
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     inControllerUp = {
                         playerViewModel.handleEvent(PlayerEvent.ShowRelated)
