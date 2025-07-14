@@ -21,8 +21,10 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,6 +35,9 @@ class PlayerViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state.asStateFlow()
+
+    private val _onContinueWatchingUpdateFlow = MutableSharedFlow<Unit>(replay = 0)
+    val continueWatchingUpdateFlow = _onContinueWatchingUpdateFlow.asSharedFlow()
 
 
     fun handleEvent(event: PlayerEvent) {
@@ -86,7 +91,8 @@ class PlayerViewModel @Inject constructor(
                     saveContinueWatching(
                         itemIndex = event.itemIndex,
                         progress_seconds = event.progressSeconds,
-                        videoDuration = event.videoDuration
+                        videoDuration = event.videoDuration,
+                        shouldNaviagte = event.shouldNavigateFromContinueWatching
                     )
                 }
             }
@@ -107,6 +113,13 @@ class PlayerViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     isEpisodePlaying = event.isEpisode
                 )
+            }
+
+            is PlayerEvent.OnContinueWatchingUpdate -> {
+                viewModelScope.launch {
+                    Log.e("ON_CONTINUE_WATCHING", "on continue watching update called")
+                    _onContinueWatchingUpdateFlow.emit(Unit)
+                }
             }
 
         }
@@ -341,8 +354,8 @@ class PlayerViewModel @Inject constructor(
                         val relatedList = updatedEpisodes.map {
                             it.toRelatedItemDto()
                         }
-                        Log.d("ResumeList", "Updated episodes: $updatedEpisodes")
-                        Log.d("ResumeList", "Resume episode index: $resumeIndex")
+                        Log.e("ResumeList", "Updated episodes: $updatedEpisodes")
+                        Log.e("ResumeList", "Resume episode index: $resumeIndex")
                         Log.e(
                             "IS_CONTINUE_WATCHING_CLICK",
                             "is from continue watching in player viewModel with finial result of VideoList $videoPlayList  "
@@ -384,6 +397,7 @@ class PlayerViewModel @Inject constructor(
         itemIndex: Int,
         progress_seconds: String,
         videoDuration: Long,
+        shouldNaviagte: Boolean,
     ) {
 
         val currentVideoList = state.value.videoPlayerDto
@@ -422,7 +436,13 @@ class PlayerViewModel @Inject constructor(
                     } else {
                         Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
                     }
+                    if (shouldNaviagte) {
+                        handleEvent(PlayerEvent.OnContinueWatchingUpdate)
+                    }
                 } catch (ex: Exception) {
+                    if (shouldNaviagte) {
+                        handleEvent(PlayerEvent.OnContinueWatchingUpdate)
+                    }
                     Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
                 }
             }

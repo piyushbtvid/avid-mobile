@@ -1,7 +1,9 @@
 package com.faithForward.media.player
 
+import android.annotation.SuppressLint
 import android.media.MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -98,7 +100,8 @@ fun VideoPlayer(
     var currentVideoDuration by remember { mutableStateOf(0) }
 
 
-    val isVisible = sharedPlayerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible
+    val isVisible =
+        sharedPlayerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible
 
     val scope = rememberCoroutineScope()
     val dialogThresholdMs = 20_000L
@@ -109,6 +112,7 @@ fun VideoPlayer(
         animationSpec = tween(durationMillis = if (isVisible) 300 else 500),
         label = "controlsAlpha"
     )
+
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
@@ -181,8 +185,7 @@ fun VideoPlayer(
                                     )
 
 
-                                    val safeProgressMillis =
-                                        (duration - 60_000L).coerceAtLeast(0L)
+                                    val safeProgressMillis = (duration - 60_000L).coerceAtLeast(0L)
 
                                     Log.e(
                                         "TEST_WATCH",
@@ -197,26 +200,9 @@ fun VideoPlayer(
                                             videoDuration = duration
                                         )
                                     )
+                                    playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
+                                    playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
                                 }
-
-                                playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
-                                playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
-
-                                Log.e(
-                                    "VIDEO_ENDED",
-                                    "on Video State Ended called with isValideEndSate $isValidEndState state  $duration and playerState HasVideoEnded is ${playerScreenState.hasVideoEnded}"
-                                )
-
-                                // Avoid calling onVideoEnd() unless duration is valid
-                                if (isValidEndState) {
-                                    //  currentTitle = ""
-                                    playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
-                                    seekTo(0)
-                                    release()
-                                    delay(300)
-                                    onVideoEnd()
-                                }
-
                             }
                         }
 
@@ -227,8 +213,46 @@ fun VideoPlayer(
                     }
                 }
 
+                @SuppressLint("SwitchIntDef")
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                    val index = currentMediaItemIndex
+                    Log.e(
+                        "MEDIA_ITEM_TRANSITION",
+                        "on media item transition called with ${playerScreenState.currentPosition} and $currentPosition and duartion ${playerScreenState.duration} and $duration  and reason $reason"
+                    )
+
+                    val previousIndex = currentMediaItemIndex - 1
+
+                    when (reason) {
+                        Player.MEDIA_ITEM_TRANSITION_REASON_AUTO -> {
+                            Log.e("Transition", "Auto: video finished, next started")
+                            if (previousIndex >= 0 && previousIndex < videoPlayerItem.size) {
+                                val isValidEndState =
+                                    playerScreenState.duration != C.TIME_UNSET && playerScreenState.duration > 0
+
+                                if (isValidEndState) {
+                                    PlayerEvent.SaveToContinueWatching(
+                                        itemIndex = previousIndex,
+                                        progressSeconds = (playerScreenState.currentPosition / 1000).toString(),
+                                        videoDuration = playerScreenState.duration
+                                    )
+                                }
+
+                            }
+                        }
+
+                        Player.MEDIA_ITEM_TRANSITION_REASON_SEEK -> {
+                            Log.e("Transition", "User seeked to another item")
+                            if (previousIndex >= 0 && previousIndex < videoPlayerItem.size) {
+                                PlayerEvent.SaveToContinueWatching(
+                                    itemIndex = previousIndex,
+                                    progressSeconds = (playerScreenState.currentPosition / 1000).toString(),
+                                    videoDuration = playerScreenState.duration
+                                )
+                            }
+                        }
+                    }
+                    val currentTitle = videoPlayerItem[currentMediaItemIndex].title
+                    playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(currentTitle ?: ""))
                     playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(false))
                     currentPosition = currentMediaItemIndex
                     currentVideoDuration = duration.toInt()
@@ -238,6 +262,43 @@ fun VideoPlayer(
                 }
             })
         }
+    }
+
+    BackHandler {
+        val isValidEndState = exoPlayer.duration != C.TIME_UNSET && exoPlayer.duration > 0
+
+        Log.e(
+            "ON_CONTINUE_WATCHING",
+            "on back called from video Player compose  with positon as ${exoPlayer.currentPosition}"
+        )
+
+        if (isValidEndState) {
+            val item = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
+            Log.e(
+                "TEST_WATCH", "onVideo Ended called with isValidEndState as $isValidEndState"
+            )
+            Log.e(
+                "TEST_WATCH", "onVideo Ended called with currentMediaItem Index Item is $item"
+            )
+
+            Log.e(
+                "TEST_WATCH",
+                "onVideo Ended called with vidPlayerItemList Size  is ${videoPlayerItem.size}  and List is $videoPlayerItem "
+            )
+
+
+//            val safeProgressMillis =
+//                (exoPlayer.duration - 60_000L).coerceAtLeast(0L)
+
+            playerViewModel.handleEvent(
+                PlayerEvent.SaveToContinueWatching(
+                    itemIndex = exoPlayer.currentMediaItemIndex,
+                    progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
+                    videoDuration = exoPlayer.duration
+                )
+            )
+        }
+
     }
 
     LaunchedEffect(playerState) {
@@ -268,6 +329,19 @@ fun VideoPlayer(
                 playerViewModel.handleEvent(PlayerEvent.HideRelated)
                 playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        playerViewModel.continueWatchingUpdateFlow.collect {
+            Log.e(
+                "ON_CONTINUE_WATCHING",
+                "on continue watching update called in player so navigating back"
+            )
+            playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
+            exoPlayer.seekTo(0)
+            exoPlayer.release()
+            onVideoEnd()
         }
     }
 
@@ -318,8 +392,7 @@ fun VideoPlayer(
         val currentItem = videoPlayerItem.getOrNull(exoPlayer.currentMediaItemIndex)
         val currentTitle = currentItem?.title ?: ""
         Log.e(
-            "Player",
-            "Current MediaItem changed: $currentItem"
+            "Player", "Current MediaItem changed: $currentItem"
         )
         Log.e(
             "Player",
@@ -345,11 +418,7 @@ fun VideoPlayer(
             }
 
             // Check if within threshold and no user interaction
-            if (!hasShownDialog &&
-                duration - currentPos <= dialogThresholdMs &&
-                !playerScreenState.isNextEpisodeDialogVisible &&
-                !playerScreenState.isRelatedVisible
-            ) {
+            if (!hasShownDialog && duration - currentPos <= dialogThresholdMs && !playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible) {
                 when (currentItem?.contentType) {
                     "Episode" -> {
                         Log.e(
@@ -391,41 +460,6 @@ fun VideoPlayer(
                 Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
                 Lifecycle.Event.ON_STOP -> {
                     Log.e("STOP_TRACK", "on Stop is called with ${playerScreenState.hasVideoEnded}")
-                    if (!playerScreenState.hasVideoEnded) {
-                        val currentIndex = exoPlayer.currentMediaItemIndex
-                        val item = videoPlayerItem.getOrNull(currentIndex)
-//                        Log.e(
-//                            "STOP_TRACK",
-//                            "on Stop is called after with ${playerScreenState.hasVideoEnded} and Current Item index and item List size   is $currentIndex ${videoPlayerItem.size}"
-//                        )
-//
-//                        Log.e(
-//                            "STOP_TRACK",
-//                            "on Stop is called after ${videoPlayerItem.get(0)}"
-//                        )
-//
-//                        Log.e(
-//                            "STOP_TRACK",
-//                            "on Stop is called after ${videoPlayerItem.get(1)}"
-//                        )
-                        Log.e(
-                            "TEST_WATCH",
-                            "onVideo Ended called with currentMediaItem Index Item is $item"
-                        )
-
-                        Log.e(
-                            "TEST_WATCH",
-                            "onVideo Ended called with item index is $currentIndex vidPlayerItemList Size  is ${videoPlayerItem.size}  and List is $videoPlayerItem "
-                        )
-
-                        playerViewModel.handleEvent(
-                            PlayerEvent.SaveToContinueWatching(
-                                itemIndex = currentIndex,
-                                progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
-                                videoDuration = exoPlayer.duration
-                            )
-                        )
-                    }
                     exoPlayer.pause()
                 }
 
@@ -484,28 +518,22 @@ fun VideoPlayer(
                 ), onCancelClick = {
                     Log.e(
                         "VIDEO_END",
-                        "onCancel click of Episode Dialog called and onVideoEnd also"
+                        "onCancel click of Episode Dialog called and onVideoEnd also with ${playerScreenState.hasVideoEnded}"
                     )
                     scope.launch {
                         if (!playerScreenState.hasVideoEnded) {
                             val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
                             if (item.itemSlug != null) {
-                                val safeProgressMillis = (exoPlayer.duration - 60_000L)
                                 playerViewModel.handleEvent(
                                     PlayerEvent.SaveToContinueWatching(
                                         itemIndex = currentIndex,
-                                        progressSeconds = (safeProgressMillis / 1000).toString(),
+                                        progressSeconds = (exoPlayer.duration / 1000).toString(),
                                         videoDuration = exoPlayer.duration
                                     )
                                 )
                             }
                         }
                         //currentTitle = ""
-                        playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
-                        exoPlayer.seekTo(0)
-                        exoPlayer.release()
-                        delay(200)
-                        onVideoEnd.invoke()
                     }
                 }, onPlayNowClick = {
                     Log.e("PLAY_CLICK", "onPlay click with current Index $currentIndex")
@@ -515,8 +543,9 @@ fun VideoPlayer(
                             playerViewModel.handleEvent(
                                 PlayerEvent.SaveToContinueWatching(
                                     itemIndex = currentIndex,
-                                    progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
-                                    videoDuration = exoPlayer.duration
+                                    progressSeconds = (exoPlayer.duration / 1000).toString(),
+                                    videoDuration = exoPlayer.duration,
+                                    shouldNavigateFromContinueWatching = false
                                 )
                             )
                         }
@@ -582,7 +611,8 @@ fun VideoPlayer(
                                 PlayerEvent.SaveToContinueWatching(
                                     itemIndex = exoPlayer.currentMediaItemIndex,
                                     progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
-                                    videoDuration = exoPlayer.duration
+                                    videoDuration = exoPlayer.duration,
+                                    shouldNavigateFromContinueWatching = false
                                 )
                             )
                         }

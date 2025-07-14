@@ -106,6 +106,7 @@ data class SharedPlayerViewModelState(
 sealed class PlayerEvent {
     data class UpdateDuration(val value: Long) : PlayerEvent()
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
+    data object OnContinueWatchingUpdate : PlayerEvent()
     data object ShowNextEpisodeDialog : PlayerEvent()
     data object HideNextEpisodeDialog : PlayerEvent()
     data object ShowRelated : PlayerEvent()
@@ -127,6 +128,7 @@ sealed class PlayerEvent {
         val itemIndex: Int?,
         val progressSeconds: String,
         val videoDuration: Long,
+        val shouldNavigateFromContinueWatching: Boolean = true,
     ) : PlayerEvent()
 }
 

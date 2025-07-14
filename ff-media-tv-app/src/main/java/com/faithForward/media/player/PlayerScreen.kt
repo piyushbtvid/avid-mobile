@@ -38,7 +38,6 @@ fun PlayerScreen(
     isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
     sharedPlayerViewModel: SharedPlayerViewModel,
-    onPlayerBackClick: () -> Unit,
     initialIndex: Int = 0,
     onVideoEnded: () -> Unit,
     onEpisodePlayNowClick: (List<VideoPlayerDto>, index: Int?) -> Unit,
@@ -46,17 +45,17 @@ fun PlayerScreen(
 ) {
     val state by playerViewModel.state.collectAsState()
 
-    var videoIndex by remember { mutableStateOf(initialIndex) }
-
-    // Set videoIndex based on isFromContinueWatching
-    LaunchedEffect(state.videoPlayingIndex, isFromContinueWatching) {
-        Log.e("VIDEO_INDEX", "VIDEO INDEX IN PAYER IS $initialIndex and ${state.videoPlayingIndex}")
-        if (isFromContinueWatching && state.videoPlayingIndex != null) {
-            videoIndex = state.videoPlayingIndex ?: 0
-        } else {
-            videoIndex = initialIndex
-        }
-    }
+//    var videoIndex by remember { mutableStateOf(initialIndex) }
+//
+//    // Set videoIndex based on isFromContinueWatching
+//    LaunchedEffect(state.videoPlayingIndex, isFromContinueWatching) {
+//        Log.e("VIDEO_INDEX", "VIDEO INDEX IN PAYER IS $initialIndex and ${state.videoPlayingIndex}")
+//        if (isFromContinueWatching && state.videoPlayingIndex != null) {
+//            videoIndex = state.videoPlayingIndex ?: 0
+//        } else {
+//            videoIndex = initialIndex
+//        }
+//    }
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
@@ -70,16 +69,6 @@ fun PlayerScreen(
         Log.d("FOCUS", "Current Focus: ${(context as? Activity)?.currentFocus}")
         onDispose { }
     }
-
-
-    BackHandler {
-        Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
-        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-        onPlayerBackClick.invoke()
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -105,7 +94,7 @@ fun PlayerScreen(
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
                 val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
                 VideoPlayer(videoPlayerItem = playerDtoItems,
-                    initialIndex = videoIndex,
+                    initialIndex = state.videoPlayingIndex ?: 0,
                     playerViewModel = playerViewModel,
                     sharedPlayerViewModel = sharedPlayerViewModel,
                     playerRelatedContentRowDto = relatedList,

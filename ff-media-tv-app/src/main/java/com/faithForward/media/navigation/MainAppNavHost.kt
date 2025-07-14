@@ -410,7 +410,8 @@ fun MainAppNavHost(
                 playerViewModel = playerViewModel,
                 sharedPlayerViewModel = sharedPlayerViewModel,
                 isFromContinueWatching = isContinueWatching,
-                onPlayerBackClick = {
+                initialIndex = initialIndex,
+                onVideoEnded = {
                     if (isContinueWatching) {
                         // Get the current item's slug from playerDtoList
                         val currentItem = playerList?.getOrNull(0)
@@ -435,10 +436,6 @@ fun MainAppNavHost(
                         // Default back navigation (to Detail or Home)
                         navController.popBackStack()
                     }
-                },
-                initialIndex = initialIndex,
-                onVideoEnded = {
-                    navController.popBackStack()
                 },
                 onEpisodePlayNowClick = { list, index ->
                     val posterCardList =
