@@ -20,6 +20,7 @@ sealed interface RelatedContentData {
     data class RelatedMovies(val movies: List<PosterCardDto>) : RelatedContentData
     data class SeriesSeasons(
         val seasonNumberList: List<SeasonsNumberDto>,
+        val firstSeasonEpisodes: List<PosterCardDto>,
         val selectedSeasonEpisodes: List<PosterCardDto>,
         val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
@@ -95,9 +96,12 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
 
 fun Season.toSeasonDto(): SeasonDto {
     return SeasonDto(
-        episodesContentDto = episodes.map { currentEpisode ->
-            currentEpisode.toPosterDto()
-        }, seasonNumber = season_number
+        episodesContentDto = episodes
+//            .sortedBy { it.episode_number } // sort episodes in ascending order
+            .map { currentEpisode ->
+                currentEpisode.toPosterDto()
+            },
+        seasonNumber = season_number
     )
 }
 

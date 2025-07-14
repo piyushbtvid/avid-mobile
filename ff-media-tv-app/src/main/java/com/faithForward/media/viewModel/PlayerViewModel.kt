@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.commanComponents.PosterCardDto
 import com.faithForward.media.player.PlayerDto
-import com.faithForward.media.player.VideoPlayerDto
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
@@ -22,8 +21,6 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,15 +36,9 @@ class PlayerViewModel @Inject constructor(
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state.asStateFlow()
 
-    private var autoHideJob: Job? = null
+    private val _onContinueWatchingUpdateFlow = MutableSharedFlow<Unit>(replay = 0)
+    val continueWatchingUpdateFlow = _onContinueWatchingUpdateFlow.asSharedFlow()
 
-    var playerState by mutableStateOf(PlayerPlayingState.IDLE)
-        private set
-
-    private var lastPlaybackState: PlayerPlayingState = PlayerPlayingState.PLAYING
-
-    private val _interactionFlow = MutableSharedFlow<Unit>(replay = 0)
-    val interactionFlow = _interactionFlow.asSharedFlow()
 
     fun handleEvent(event: PlayerEvent) {
         when (event) {
@@ -57,18 +48,6 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.UpdateCurrentPosition -> {
                 _state.value = _state.value.copy(currentPosition = event.value)
-            }
-
-            is PlayerEvent.ShowControls -> {
-                Log.e("PLAYER", "Handling ShowControls event")
-                _state.value = _state.value.copy(isControlsVisible = true)
-                startAutoHideTimer()
-            }
-
-            is PlayerEvent.HideControls -> {
-                Log.e("PLAYER_UI", "Handling HideControls even")
-                Log.e("PLAYER", "Handling HideControls event")
-                _state.value = _state.value.copy(isControlsVisible = false)
             }
 
             is PlayerEvent.HideRelated -> {
@@ -91,6 +70,10 @@ class PlayerViewModel @Inject constructor(
                 _state.value = _state.value.copy(isPlaying = event.isPlaying)
             }
 
+            is PlayerEvent.UpdateTitleText -> {
+                _state.value = _state.value.copy(currentTitle = event.text)
+            }
+
             is PlayerEvent.UpdateOrLoadPlayerData -> {
                 updateOrLoadVideoPlayerData(
                     event.itemList,
@@ -104,11 +87,14 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.SaveToContinueWatching -> {
-                saveContinueWatching(
-                    itemSlug = event.itemSlug,
-                    progress_seconds = event.progressSeconds,
-                    videoDuration = event.videoDuration
-                )
+                if (event.itemIndex != null) {
+                    saveContinueWatching(
+                        itemIndex = event.itemIndex,
+                        progress_seconds = event.progressSeconds,
+                        videoDuration = event.videoDuration,
+                        shouldNaviagte = event.shouldNavigateFromContinueWatching
+                    )
+                }
             }
 
             is PlayerEvent.UpdateVideoEndedState -> {
@@ -129,54 +115,13 @@ class PlayerViewModel @Inject constructor(
                 )
             }
 
-        }
-    }
-
-    private fun startAutoHideTimer() {
-        autoHideJob?.cancel()
-        autoHideJob = viewModelScope.launch {
-            Log.e("PLAYER", "Starting auto-hide timer")
-            delay(10000)
-            Log.e("PLAYER", "Setting controls invisible after timer")
-            _state.value = _state.value.copy(isControlsVisible = false)
-        }
-    }
-
-    fun togglePlayPause() {
-        playerState = if (lastPlaybackState == PlayerPlayingState.PLAYING) {
-            lastPlaybackState = PlayerPlayingState.PAUSED
-            PlayerPlayingState.PAUSED
-        } else {
-            lastPlaybackState = PlayerPlayingState.PLAYING
-            PlayerPlayingState.PLAYING
-        }
-    }
-
-    fun handlePlayerAction(action: PlayerPlayingState) {
-        when (action) {
-            PlayerPlayingState.PLAYING, PlayerPlayingState.PAUSED -> {
-                lastPlaybackState = action  // Update last playback state
-                playerState = action
-            }
-
-            PlayerPlayingState.REWINDING, PlayerPlayingState.FORWARDING -> {
-                playerState = action
-
-                // Reset to IDLE after a short delay
+            is PlayerEvent.OnContinueWatchingUpdate -> {
                 viewModelScope.launch {
-                    delay(200) // Adjust delay as needed
-                    playerState = PlayerPlayingState.IDLE
+                    Log.e("ON_CONTINUE_WATCHING", "on continue watching update called")
+                    _onContinueWatchingUpdateFlow.emit(Unit)
                 }
             }
 
-            PlayerPlayingState.IDLE -> Unit // No action needed
-        }
-    }
-
-    fun onUserInteraction(from: String) {
-        viewModelScope.launch {
-            Log.e("PLAYER_UI", "on use interction is called  in viewModel from $from")
-            _interactionFlow.emit(Unit)
         }
     }
 
@@ -230,7 +175,12 @@ class PlayerViewModel @Inject constructor(
         index: Int?,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.value = _state.value.copy(isLoading = true)
+            _state.value = _state.value.copy(
+                videoPlayerDto = Resource.Unspecified(),
+                videoPlayingIndex = null,
+                isLoading = true,
+                currentTitle = null
+            )
 
             val firstItem = itemList.firstOrNull()
             val hasUrl = firstItem?.videoHlsUrl?.isNotEmpty() == true
@@ -272,6 +222,8 @@ class PlayerViewModel @Inject constructor(
                         firstItem!!.relatedList!!.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
 
+                    val title = videoPlayerDtoList.getOrNull(index ?: 0)?.title
+
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
                             PlayerDto(
@@ -280,7 +232,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentItemDtoList
                                 ),
                             )
-                        ), isLoading = false, videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
 
                 }
@@ -294,6 +246,8 @@ class PlayerViewModel @Inject constructor(
                     val relatedContentItemDtoList = itemList.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
 
+                    val title = videoPlayerDtoList.getOrNull(index ?: 0)?.title
+
                     Log.e("PLAY_CLICK", "has Url and $videoPlayerDtoList ")
 
                     _state.value = _state.value.copy(
@@ -305,7 +259,7 @@ class PlayerViewModel @Inject constructor(
                                     rowList = relatedContentItemDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 }
                 // For movies from related Movie
@@ -329,6 +283,8 @@ class PlayerViewModel @Inject constructor(
                     val currentPlayingItem =
                         cardDetail.data.toPosterCardDto().toVideoPlayerDto().copy(progress = 0)
 
+                    val title = currentPlayingItem.title
+
                     _state.value = _state.value.copy(
                         videoPlayerDto = Resource.Success(
                             PlayerDto(
@@ -337,7 +293,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentRowDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 }
                 //is from continue watching and is a Series episode
@@ -398,8 +354,8 @@ class PlayerViewModel @Inject constructor(
                         val relatedList = updatedEpisodes.map {
                             it.toRelatedItemDto()
                         }
-                        Log.d("ResumeList", "Updated episodes: $updatedEpisodes")
-                        Log.d("ResumeList", "Resume episode index: $resumeIndex")
+                        Log.e("ResumeList", "Updated episodes: $updatedEpisodes")
+                        Log.e("ResumeList", "Resume episode index: $resumeIndex")
                         Log.e(
                             "IS_CONTINUE_WATCHING_CLICK",
                             "is from continue watching in player viewModel with finial result of VideoList $videoPlayList  "
@@ -408,6 +364,9 @@ class PlayerViewModel @Inject constructor(
                             "IS_CONTINUE_WATCHING_CLICK",
                             "is from continue watching in player viewModel with finial result of RelatedList $relatedList  "
                         )
+
+                        val title = videoPlayList.getOrNull(index ?: 0)?.title
+
                         _state.value = _state.value.copy(
                             videoPlayerDto = Resource.Success(
                                 PlayerDto(
@@ -416,7 +375,10 @@ class PlayerViewModel @Inject constructor(
                                         title = "Next Up...", rowList = relatedList
                                     )
                                 )
-                            ), isLoading = false, videoPlayingIndex = resumeIndex
+                            ),
+                            isLoading = false,
+                            videoPlayingIndex = resumeIndex,
+                            currentTitle = title
                         )
                     }
                 }
@@ -432,35 +394,57 @@ class PlayerViewModel @Inject constructor(
 
 
     private fun saveContinueWatching(
-        itemSlug: String,
+        itemIndex: Int,
         progress_seconds: String,
-        videoDuration: String,
+        videoDuration: Long,
+        shouldNaviagte: Boolean,
     ) {
+
+        val currentVideoList = state.value.videoPlayerDto
+
+        val itemSlug = currentVideoList.data?.videoPlayerDtoList?.getOrNull(itemIndex)?.itemSlug
+
+        Log.e(
+            "TEST_WATCH",
+            "current Video List size is ${currentVideoList.data?.videoPlayerDtoList?.size}"
+        )
+
         Log.e(
             "STOP_TRACK",
-            "Save to continue watching is called in ViewModel with progress $progress_seconds"
+            "Save to continue watching is called in ViewModel with progress $progress_seconds and duartion is ${videoDuration / 1000}"
         )
         Log.e(
             "CONTINUE_WATCHING",
-            "save to continue watching called with $itemSlug  $progress_seconds  $videoDuration"
+            "save to continue watching called with $itemIndex  $progress_seconds  $videoDuration"
         )
-        viewModelScope.launch {
-            try {
-                val request = ContinueWatchingRequest(
-                    slug = itemSlug, progress_seconds = progress_seconds, duration = videoDuration
-                )
-                val response = networkRepository.saveContinueWatching(request)
-                if (response.isSuccessful) {
-                    Log.e("CONTINUE_WATCHING", "response success with ${response.body()}")
-                    Log.e(
-                        "STOP_TRACK",
-                        "Save to continue watching is called in ViewModel after success with ${response.body()}"
+
+        if (itemSlug != null) {
+            viewModelScope.launch {
+                try {
+                    val request = ContinueWatchingRequest(
+                        slug = itemSlug,
+                        progress_seconds = progress_seconds,
+                        duration = (videoDuration / 1000).toString()
                     )
-                } else {
-                    Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
+                    val response = networkRepository.saveContinueWatching(request)
+                    if (response.isSuccessful) {
+                        Log.e("TEST_WATCH", "response success with ${response.body()}")
+                        Log.e(
+                            "STOP_TRACK",
+                            "Save to continue watching is called in ViewModel after success with ${response.body()}"
+                        )
+                    } else {
+                        Log.e("CONTINUE_WATCHING", "response error with ${response.message()}")
+                    }
+                    if (shouldNaviagte) {
+                        handleEvent(PlayerEvent.OnContinueWatchingUpdate)
+                    }
+                } catch (ex: Exception) {
+                    if (shouldNaviagte) {
+                        handleEvent(PlayerEvent.OnContinueWatchingUpdate)
+                    }
+                    Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
                 }
-            } catch (ex: Exception) {
-                Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
             }
         }
     }

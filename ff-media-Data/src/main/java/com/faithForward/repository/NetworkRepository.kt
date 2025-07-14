@@ -10,6 +10,7 @@ import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.preferences.UserPrefData
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -299,17 +300,20 @@ class NetworkRepository @Inject constructor(
 
     suspend fun searchContent(
         query: String,
-    ) = withContext(Dispatchers.IO) {
+    ): Response<SearchResponse> {
         val userSession = userPreferences.getUserSession()
         val token =
             userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
         val deviceId = userSession?.deviceID ?: ""
         val deviceType = userSession?.deviceType ?: ""
-        apiServiceInterface.searchContent(
+        val result = apiServiceInterface.searchContent(
             token = token, query = query,
             deviceId = deviceId,
             deviceType = deviceType
         )
+
+        Log.e("SEARCH_RESULT", "search response in repo is $result")
+        return result
     }
 
     suspend fun generateLoginQrCode(

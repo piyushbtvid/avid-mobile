@@ -35,6 +35,7 @@ import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
@@ -49,7 +50,7 @@ fun MainAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    playerViewModel: PlayerViewModel,
+    sharedPlayerViewModel: SharedPlayerViewModel,
     sideBarViewModel: SideBarViewModel,
     startRoute: String = Routes.Home.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
@@ -63,6 +64,7 @@ fun MainAppNavHost(
     ) {
         composable(route = Routes.Login.route) {
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
+                Log.e("GOING_TO_HOME", "going to home from Login screen ")
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -74,6 +76,7 @@ fun MainAppNavHost(
             LoginQrScreen(
                 loginQrLoginViewModel = qrLoginViewModel,
                 onLoggedIn = {
+                    Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                     Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
                     navController.navigate(Routes.Home.route) {
                         popUpTo(Routes.Login.route) { inclusive = true }
@@ -131,7 +134,16 @@ fun MainAppNavHost(
                             launchSingleTop = true
                         }
                     }
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+
+            )
         }
 
         composable(route = Routes.Creator.route) {
@@ -144,7 +156,20 @@ fun MainAppNavHost(
                 },
                 onCreatorItemClick = { item ->
                     navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id))
-                })
+                },
+                onCarouselClick = { item ->
+                    if (item.id != null) {
+                        navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.id.toInt()))
+                    }
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         composable(
@@ -169,7 +194,15 @@ fun MainAppNavHost(
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         composable(
@@ -194,7 +227,15 @@ fun MainAppNavHost(
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
-                })
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
@@ -215,6 +256,13 @@ fun MainAppNavHost(
                 onCarouselItemClick = { carouselItem ->
                     val route = Routes.PlayerScreen.createRoute(listOf(carouselItem))
                     navController.navigate(route)
+                },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
 
             )
@@ -234,7 +282,16 @@ fun MainAppNavHost(
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
-            })
+            },
+                onSearchClick = {
+                    changeSideBarSelectedPosition.invoke(0)
+                    navController.navigate(Routes.Search.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+
+            )
         }
 
         composable(
@@ -321,6 +378,9 @@ fun MainAppNavHost(
                 }
             )
         ) { backStackEntry ->
+
+            val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
+
             val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
@@ -348,8 +408,10 @@ fun MainAppNavHost(
 
             PlayerScreen(
                 playerViewModel = playerViewModel,
+                sharedPlayerViewModel = sharedPlayerViewModel,
                 isFromContinueWatching = isContinueWatching,
-                onPlayerBackClick = {
+                initialIndex = initialIndex,
+                onVideoEnded = {
                     if (isContinueWatching) {
                         // Get the current item's slug from playerDtoList
                         val currentItem = playerList?.getOrNull(0)
@@ -374,10 +436,6 @@ fun MainAppNavHost(
                         // Default back navigation (to Detail or Home)
                         navController.popBackStack()
                     }
-                },
-                initialIndex = initialIndex,
-                onVideoEnded = {
-                    navController.popBackStack()
                 },
                 onEpisodePlayNowClick = { list, index ->
                     val posterCardList =

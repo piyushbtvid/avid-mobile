@@ -123,13 +123,13 @@ fun DetailScreen(
                                 Log.e(
                                     "RESUME_INFO",
                                     "on watch Now click in deatil for series with selected series episode progress is ${
-                                        (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes.get(
+                                        (relatedContentData as RelatedContentData.SeriesSeasons).firstSeasonEpisodes.get(
                                             0
                                         ).progress
                                     }."
                                 )
                                 val selectedSeasonList =
-                                    (relatedContentData as RelatedContentData.SeriesSeasons).selectedSeasonEpisodes
+                                    (relatedContentData as RelatedContentData.SeriesSeasons).firstSeasonEpisodes
                                 val finalList =
                                     detailViewModel.getAllNextEpisodeIfMoreSeason(selectedSeasonList)
                                 finalList?.let {

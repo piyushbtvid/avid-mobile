@@ -9,6 +9,7 @@ import com.faithForward.media.viewModel.uiModels.toSearchContentDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,10 +32,11 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun searchGivenQuery(query: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 _uiState.update { it.copy(query = query, searchResults = Resource.Loading()) }
                 val response = networkRepository.searchContent(query)
+                Log.e("SEARCH_RESULT", "search response in viewModel is $response")
                 if (response.isSuccessful) {
                     val body = response.body()
                     Log.e("SEARCH_RESULT", "search result in viewModel is ${body?.data}")
@@ -47,11 +49,14 @@ class SearchViewModel @Inject constructor(
                         )
                     }
                 } else {
+                    Log.e("SEARCH_RESULT", "search error in viewModel is ${response.message()}")
                     _uiState.update {
                         it.copy(searchResults = Resource.Error("Error: ${response.code()}"))
                     }
                 }
             } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("SEARCH_RESULT", "search exception in viewModel is ${ex.message}")
                 _uiState.update {
                     it.copy(searchResults = Resource.Error(ex.message ?: "Unknown error"))
                 }

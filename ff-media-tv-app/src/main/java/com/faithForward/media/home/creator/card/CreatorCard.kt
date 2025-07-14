@@ -37,6 +37,7 @@ import com.faithForward.media.theme.whiteMain
 data class CreatorCardDto(
     val id: Int,
     val creatorImageUrl: String,
+    val channelBannerImage: String? = null,
     val creatorName: String,
     val channelDescription: String,
     val creatorSubscriberText: String,

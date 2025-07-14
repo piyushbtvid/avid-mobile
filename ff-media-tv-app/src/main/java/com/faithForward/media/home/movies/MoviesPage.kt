@@ -27,6 +27,7 @@ fun MoviesPage(
     onCarouselItemClick: (PosterCardDto) -> Unit,
     sideBarViewModel: SideBarViewModel,
     onBackClick: () -> Unit,
+    onSearchClick: () -> Unit,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
 ) {
 
@@ -116,6 +117,9 @@ fun MoviesPage(
             },
             onCreatorItemClick = {
 
+            },
+            onSearchClick = {
+                onSearchClick.invoke()
             }
         )
     }

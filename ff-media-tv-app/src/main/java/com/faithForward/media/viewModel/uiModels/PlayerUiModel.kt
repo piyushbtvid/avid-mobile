@@ -88,7 +88,6 @@ data class PlayerState(
     val duration: Long = 1L,
     val videoPlayerDto: Resource<PlayerDto> = Resource.Unspecified(),
     val playerRelatedContentRowDto: PlayerRelatedContentRowDto? = null,
-    val isControlsVisible: Boolean = true,
     val isRelatedVisible: Boolean = false,
     val isNextEpisodeDialogVisible: Boolean = false,
     val isPlaying: Boolean = false,
@@ -97,13 +96,17 @@ data class PlayerState(
     val hasVideoEnded: Boolean = false,
     val isEpisodePlaying: Boolean = false,
     val videoPlayingIndex: Int? = 0,
+    val currentTitle: String? = null,
+)
+
+data class SharedPlayerViewModelState(
+    val isControlsVisible: Boolean = true,
 )
 
 sealed class PlayerEvent {
     data class UpdateDuration(val value: Long) : PlayerEvent()
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
-    data object ShowControls : PlayerEvent()
-    data object HideControls : PlayerEvent()
+    data object OnContinueWatchingUpdate : PlayerEvent()
     data object ShowNextEpisodeDialog : PlayerEvent()
     data object HideNextEpisodeDialog : PlayerEvent()
     data object ShowRelated : PlayerEvent()
@@ -120,15 +123,23 @@ sealed class PlayerEvent {
 
     data class UpdatePlayerBuffering(val isBuffering: Boolean) : PlayerEvent()
     data class UpdateVideoEndedState(val isEnded: Boolean) : PlayerEvent()
+    data class UpdateTitleText(val text: String) : PlayerEvent()
     data class SaveToContinueWatching(
-        val itemSlug: String,
+        val itemIndex: Int?,
         val progressSeconds: String,
-        val videoDuration: String,
+        val videoDuration: Long,
+        val shouldNavigateFromContinueWatching: Boolean = true,
     ) : PlayerEvent()
 }
 
 
+sealed class SharedPlayerEvent {
+    data object ShowControls : SharedPlayerEvent()
+    data object HideControls : SharedPlayerEvent()
+}
+
+
 enum class PlayerPlayingState {
-    PLAYING, PAUSED, REWINDING, FORWARDING, IDLE
+    PLAYING, PAUSED, REWINDING, FORWARDING, MUTE_UN_MUTE, IDLE
 }
 

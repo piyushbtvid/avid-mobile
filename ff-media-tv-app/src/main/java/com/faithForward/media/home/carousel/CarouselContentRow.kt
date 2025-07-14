@@ -44,6 +44,7 @@ fun CarouselContentRow(
     onCarouselItemClick: (CarouselItemDto) -> Unit,
     onToggleFavorite: (String?) -> Unit,
     onToggleLike: (String?) -> Unit,
+    onSearchClick: () -> Unit,
     onToggleDisLike: (String?) -> Unit,
 ) {
 
@@ -177,6 +178,11 @@ fun CarouselContentRow(
                         }
                     }
                 }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    Log.e("SEARCH_IC", "on search click")
+                    onSearchClick.invoke()
+                }
+                )
                 .focusable(),
             addToWatchListModifier = Modifier
                 .onFocusChanged {
@@ -225,7 +231,7 @@ fun CarouselContentRow(
                 .focusable(),
             addToWatchListUiState = addToWatchListUiState,
             likeUiState = likeUiState,
-            dislikeUiState = disLikeUiState
+            dislikeUiState = disLikeUiState,
         )
     }
 

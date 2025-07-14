@@ -34,6 +34,7 @@ fun HomePage(
     sideBarViewModel: SideBarViewModel,
     onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
     onDataLoadedSuccess: () -> Unit,
+    onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
 ) {
 
@@ -197,7 +198,12 @@ fun HomePage(
             },
             onCreatorItemClick = {
 
-            })
+            },
+            onSearchClick = {
+                onSearchClick.invoke()
+            }
+
+        )
     }
 
 }

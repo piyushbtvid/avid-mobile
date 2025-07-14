@@ -3,6 +3,7 @@ package com.faithForward.media.home.genre
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,6 +62,7 @@ data class GenreGridDto(
 fun GenreCardGrid(
     modifier: Modifier = Modifier,
     onItemClick: (PosterCardDto) -> Unit,
+    onSearchClick: () -> Unit,
     genreGridDto: GenreGridDto,
 ) {
     // Create a list of FocusRequesters, one for each grid item
@@ -126,6 +128,11 @@ fun GenreCardGrid(
                             isSearchFocused = it.hasFocus
                             if (it.hasFocus) lastFocusedIndex = -1
                         }
+                        .clickable(interactionSource = null, indication = null, onClick = {
+                            Log.e("SEARCH_IC", "on search click")
+                            onSearchClick.invoke()
+                        }
+                        )
                         .focusable()
                         .then(
                             if (isSearchFocused) {
@@ -311,6 +318,9 @@ private fun GenreGridPreview() {
             ),
         ),
         onItemClick = {
+
+        },
+        onSearchClick = {
 
         }
     )

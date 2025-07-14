@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -193,7 +194,8 @@ fun CarouselItem(
                 dislikeUiState = dislikeUiState,
                 isLiked = isLiked ?: false,
                 isUnLiked = isDisliked ?: false,
-                isFavourite = isFavourite ?: false
+                isFavourite = isFavourite ?: false,
+                isCreator = isCreator
             )
 
             title?.let {

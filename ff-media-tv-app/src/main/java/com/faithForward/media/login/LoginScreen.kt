@@ -305,8 +305,10 @@ import com.faithForward.media.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.theme.sideBarFocusedTextColor
 import com.faithForward.media.util.Util
 import com.faithForward.media.viewModel.LoginViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginScreen(
@@ -328,9 +330,10 @@ fun LoginScreen(
     val context = LocalContext.current
 
     LaunchedEffect(loginState) {
-        Log.e("LOGIN_STATE", "login state effect called with ${loginState.isLoggedIn}")
+        Log.e("GOING_TO_HOME", "login state effect called with ${loginState.isLoggedIn}")
         if (loginState.isLoggedIn) {
-            Log.e("LOGIN_STATE", "Is Loged in  ${loginState.isLoggedIn}")
+            Log.e("GOING_TO_HOME", "Is Loged in  ${loginState.isLoggedIn}")
+            loginViewModel.onEvent(LoginEvent.ResetIsLogin(false))
             onLogin.invoke()
 //            navController.navigate(Routes.Home.route) {
 //                popUpTo(Routes.Login.route) { inclusive = true }
@@ -384,8 +387,7 @@ fun LoginScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            CustomTextField(
-                value = loginState.email,
+            CustomTextField(value = loginState.email,
                 onValueChange = {
                     loginViewModel.onEvent(LoginEvent.EmailChanged(it))
                 },
@@ -407,13 +409,11 @@ fun LoginScreen(
                     .focusRequester(emailFocusRequester)
                     .onFocusChanged {
                         isEmailFocused = it.hasFocus
-                    }
-            )
+                    })
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            CustomTextField(
-                value = loginState.password,
+            CustomTextField(value = loginState.password,
                 keyboardController = keyboardController,
                 onValueChange = {
                     loginViewModel.onEvent(LoginEvent.PasswordChanged(it))
@@ -435,34 +435,35 @@ fun LoginScreen(
                     .focusRequester(passwordFocusRequester)
                     .onFocusChanged {
                         isPasswordFocused = it.hasFocus
-                    }
-            )
+                    })
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    scope.launch {
-                        val deviceId = if (Util.isFireTv(context)) ({
-                            Util.getFireTvId(context)
-                        }).toString() else {
-                            Util.getId(context)
-                        }
-
-                        val platform = if (Util.isFireTv(context)) {
-                            "fire_tv"
+            Button(onClick = {
+                scope.launch {
+                    val deviceId = withContext(Dispatchers.IO) {
+                        if (Util.isFireTv(context)) {
+                            Util.getFireTvId(context).toString()
                         } else {
-                            //Android will come once api will add it can
-                            "fire_tv"
+                            Util.getId(context) // should also use withContext(IO) inside
                         }
-                        loginViewModel.onEvent(
-                            LoginEvent.SubmitLogin(
-                                deviceType = platform,
-                                deviceId = deviceId
-                            )
-                        )
                     }
-                },
+
+                    val platform = if (Util.isFireTv(context)) {
+                        "fire_tv"
+                    } else {
+                        "fire_tv" // or update this later
+                    }
+
+                    Log.e("GOING_TO_HOME", "on Next Click is called in LoginScreen")
+
+                    loginViewModel.onEvent(
+                        LoginEvent.SubmitLogin(
+                            deviceType = platform, deviceId = deviceId
+                        )
+                    )
+                }
+            },
                 modifier = Modifier
                     .width(178.5.dp)
                     .height(48.dp)
@@ -475,8 +476,7 @@ fun LoginScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isButtonFocused) sideBarFocusedBackgroundColor
                     else Color.White.copy(alpha = 0.33f)
-                )
-            ) {
+                )) {
                 Text(
                     text = "Next",
                     color = sideBarFocusedTextColor,

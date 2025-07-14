@@ -22,7 +22,9 @@ import androidx.compose.ui.platform.LocalContext
 import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
+import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import com.faithForward.util.Resource
 
 data class PlayerDto(
@@ -35,7 +37,7 @@ fun PlayerScreen(
     modifier: Modifier = Modifier,
     isFromContinueWatching: Boolean = false,
     playerViewModel: PlayerViewModel,
-    onPlayerBackClick: () -> Unit,
+    sharedPlayerViewModel: SharedPlayerViewModel,
     initialIndex: Int = 0,
     onVideoEnded: () -> Unit,
     onEpisodePlayNowClick: (List<VideoPlayerDto>, index: Int?) -> Unit,
@@ -43,17 +45,17 @@ fun PlayerScreen(
 ) {
     val state by playerViewModel.state.collectAsState()
 
-    var videoIndex by remember { mutableStateOf(initialIndex) }
-
-    // Set videoIndex based on isFromContinueWatching
-    LaunchedEffect(state.videoPlayingIndex, isFromContinueWatching) {
-        Log.e("VIDEO_INDEX", "VIDEO INDEX IN PAYER IS $initialIndex and ${state.videoPlayingIndex}")
-        if (isFromContinueWatching && state.videoPlayingIndex != null) {
-            videoIndex = state.videoPlayingIndex ?: 0
-        } else {
-            videoIndex = initialIndex
-        }
-    }
+//    var videoIndex by remember { mutableStateOf(initialIndex) }
+//
+//    // Set videoIndex based on isFromContinueWatching
+//    LaunchedEffect(state.videoPlayingIndex, isFromContinueWatching) {
+//        Log.e("VIDEO_INDEX", "VIDEO INDEX IN PAYER IS $initialIndex and ${state.videoPlayingIndex}")
+//        if (isFromContinueWatching && state.videoPlayingIndex != null) {
+//            videoIndex = state.videoPlayingIndex ?: 0
+//        } else {
+//            videoIndex = initialIndex
+//        }
+//    }
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
@@ -67,16 +69,6 @@ fun PlayerScreen(
         Log.d("FOCUS", "Current Focus: ${(context as? Activity)?.currentFocus}")
         onDispose { }
     }
-
-
-    BackHandler {
-        Log.e("CONTINUE", "onBack clicked of player with $isFromContinueWatching")
-        playerViewModel.handleEvent(PlayerEvent.HideRelated)
-        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-        playerViewModel.handleEvent(PlayerEvent.ShowControls)
-        onPlayerBackClick.invoke()
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -102,8 +94,9 @@ fun PlayerScreen(
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
                 val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
                 VideoPlayer(videoPlayerItem = playerDtoItems,
-                    initialIndex = videoIndex,
+                    initialIndex = state.videoPlayingIndex ?: 0,
                     playerViewModel = playerViewModel,
+                    sharedPlayerViewModel = sharedPlayerViewModel,
                     playerRelatedContentRowDto = relatedList,
                     onVideoEnd = {
                         onVideoEnded.invoke()
@@ -112,13 +105,13 @@ fun PlayerScreen(
                     onEpisodePlayNowClick = { list, index ->
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
                         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         onEpisodePlayNowClick.invoke(list, index)
                     },
                     onRelatedItemClick = { item, list, index ->
                         playerViewModel.handleEvent(PlayerEvent.HideRelated)
                         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        playerViewModel.handleEvent(PlayerEvent.ShowControls)
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         onRelatedItemClick.invoke(item, list, index)
                     })
             }
