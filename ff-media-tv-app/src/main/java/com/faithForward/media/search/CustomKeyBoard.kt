@@ -1,5 +1,7 @@
 package com.faithForward.media.search
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -42,6 +44,17 @@ fun CustomKeyBoard(
 
     val numberList = remember { mutableListOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0") }
 
+
+    Row(
+        modifier = modifier.fillMaxWidth()
+    ){
+
+
+
+
+
+
+    }
 
 
 }

@@ -338,7 +338,7 @@ fun VideoPlayer(
                 "ON_CONTINUE_WATCHING",
                 "on continue watching update called in player so navigating back"
             )
-            playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
+          //  playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
             exoPlayer.seekTo(0)
             exoPlayer.release()
             onVideoEnd()
