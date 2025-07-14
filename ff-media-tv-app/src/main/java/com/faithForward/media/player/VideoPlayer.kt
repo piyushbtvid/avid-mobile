@@ -600,7 +600,7 @@ fun VideoPlayer(
                 onUp = {
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     true
                 },
                 onItemClick = { relatedItem, relatedItemList, index ->
@@ -639,18 +639,18 @@ fun VideoPlayer(
                     onSeekTo = { exoPlayer.seekTo(it) },
                     onPlayPause = {
                         exoPlayer.playWhenReady = !exoPlayer.isPlaying
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                     //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onRewind = {
                         val rewindMillis = 15_000L
                         val newPosition =
                             (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
                         exoPlayer.seekTo(newPosition)
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                     //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onForward = {
                         exoPlayer.seekForward()
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                   //     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onPrev = {
                         exoPlayer.seekToPreviousMediaItem()

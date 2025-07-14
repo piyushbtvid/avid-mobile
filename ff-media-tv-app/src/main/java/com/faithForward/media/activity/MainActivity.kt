@@ -126,16 +126,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         Log.e("Logging", "onKeyDown()")
+
+        // ✅ Show controls for ANY key press on PlayerScreen if they're not already visible
+        if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+        }
+
         when (keyCode) {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
+                    Log.e("CONTROLES", "isControlers visible is $isControlsVisible")
                     if (isControlsVisible) {
                         sharedPlayerViewModel.togglePlayPause()
-                    } else {
-                        //   playerViewModel.onUserInteraction("center and PlayPause")
-//                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideRelated)
-//                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideNextEpisodeDialog)
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
                 return true
@@ -145,14 +147,8 @@ class MainActivity : ComponentActivity() {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     if (isControlsVisible) {
                         sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
-                    } else {
-                        // playerViewModel.onUserInteraction("Rewind and Left")
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideRelated)
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
-
                 return true
             }
 
@@ -160,44 +156,28 @@ class MainActivity : ComponentActivity() {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     if (isControlsVisible) {
                         sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
-                    } else {
-                        //  playerViewModel.onUserInteraction("forward and right")
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideRelated)
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     }
                 }
-
                 return true
             }
 
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 Log.e("DPAD", "on dpad down called in main")
-                if (!isControlsVisible) {
-                    if (currentRoute == Routes.PlayerScreen.route) {
-                        //playerViewModel.onUserInteraction("down")
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideRelated)
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-                    }
-                }
                 return true
             }
 
             KeyEvent.KEYCODE_DPAD_UP -> {
                 Log.e("DPAD", "on dpad up called in main")
-                if (!isControlsVisible) {
-                    if (currentRoute == Routes.PlayerScreen.route) {
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-//                        sharedPlayerViewModel.handleEvent(PlayerEvent.ShowRelated)
-                    }
+                if (!isControlsVisible && currentRoute == Routes.PlayerScreen.route) {
+                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                 }
                 return true
             }
         }
+
         return super.onKeyDown(keyCode, event)
     }
+
 }
 
 
