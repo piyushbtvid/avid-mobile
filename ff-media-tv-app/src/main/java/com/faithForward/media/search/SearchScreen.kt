@@ -80,3 +80,12 @@ fun SearchScreen(
         }
     }
 }
+
+
+@Composable
+fun SearchScreenUi(modifier: Modifier = Modifier) {
+
+
+
+}
+

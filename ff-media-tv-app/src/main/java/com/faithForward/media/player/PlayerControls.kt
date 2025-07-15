@@ -22,13 +22,17 @@ import androidx.compose.material.Slider
 import androidx.compose.material.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.Key
@@ -123,7 +127,7 @@ fun PlayerControls(
                 FocusableIconButton(
                     onClick = onPlayPause,
                     imageResId = if (isPlaying) pauseIc else playIc,
-                    focusRequester = focusRequester,
+                    focusRequester = null,
                     focusedColor = focusedColor,
                     description = "Play/Pause"
                 )
@@ -274,12 +278,18 @@ fun TvSeekBar(
 ) {
     val focusRequester = remember { FocusRequester() }
     val seekBarInteractionSource = remember { MutableInteractionSource() }
-    val seekIsFocused by seekBarInteractionSource.collectIsFocusedAsState()
+    var seekIsFocused by remember { mutableStateOf(false) }
 
     Box(modifier = modifier
         .fillMaxWidth()
-        .focusable(interactionSource = seekBarInteractionSource)
         .focusRequester(focusRequester)
+        .onFocusChanged {
+            seekIsFocused = if (it.hasFocus) {
+                it.hasFocus
+            } else {
+                false
+            }
+        }
         .onKeyEvent { event ->
             if (event.type != KeyEventType.KeyDown) return@onKeyEvent false
 
@@ -301,6 +311,7 @@ fun TvSeekBar(
                 else -> false
             }
         }
+        .focusable()
         .border(
             width = if (seekIsFocused) 3.dp else 0.dp,
             color = Color.Transparent,

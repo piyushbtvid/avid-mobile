@@ -47,6 +47,7 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
 }
 
 fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
+    Log.e("HOME_DATA_LOAD", "to HomePageItems called in uiModel ")
     val sections = data
     val homePageItems = mutableListOf<HomePageItem>()
     var carouselAdded = false

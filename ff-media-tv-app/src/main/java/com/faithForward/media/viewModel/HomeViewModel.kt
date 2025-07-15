@@ -41,22 +41,22 @@ class HomeViewModel @Inject constructor(
     private val _carouselClickUiState = MutableSharedFlow<CarouselClickUiState>()
     val carouselClickUiState = _carouselClickUiState.asSharedFlow()
 
-
     var contentRowFocusedIndex by mutableStateOf(-1)
         private set
 
     init {
         Log.e("HOME_VIEWMODEL", "home viewModel init called")
-       // fetchHomePageData()
+        // fetchHomePageData()
     }
 
     fun onContentRowFocusedIndexChange(value: Int) {
         contentRowFocusedIndex = value
     }
 
-     fun fetchHomePageData() {
+    fun fetchHomePageData() {
+        Log.e("HOME_DATA_LOAD", "fetch home data called in home viewModel")
         viewModelScope.launch(Dispatchers.IO) {
-       //     _homepageData.emit(Resource.Loading())
+            //     _homepageData.emit(Resource.Loading())
             try {
                 // Fetch both APIs concurrently
                 val sectionDataDeferred = async { networkRepository.getHomeSectionData() }
