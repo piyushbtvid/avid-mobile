@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -101,8 +103,10 @@ fun LoginQrScreen(
             ) {
 
                 Image(
-                    painter = painterResource(R.drawable.app_logo),
-                    modifier = Modifier,
+                    painter = painterResource(R.drawable.logo),
+                    modifier = Modifier
+                        .width(80.5.dp)
+                        .height(51.dp),
                     contentDescription = "App Logo"
                 )
 
