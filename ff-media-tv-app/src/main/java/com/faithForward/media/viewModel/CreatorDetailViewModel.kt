@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.media.ui.detail.creator_detail.content.ContentDto
 import com.faithForward.media.viewModel.uiModels.CreatorDetailItem
 import com.faithForward.media.viewModel.uiModels.toContentDto
 import com.faithForward.media.viewModel.uiModels.toCreatorDetailDto

@@ -1,7 +1,7 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.search.SearchContentDto
-import com.faithForward.media.search.item.SearchItemDto
+import com.faithForward.media.ui.sections.search.SearchContentDto
+import com.faithForward.media.ui.sections.search.item.SearchItemDto
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.util.Resource

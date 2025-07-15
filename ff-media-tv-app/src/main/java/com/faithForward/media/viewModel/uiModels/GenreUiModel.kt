@@ -1,8 +1,8 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.home.genre.GenreCardDto
-import com.faithForward.media.home.genre.GenreGridDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.sections.genre.GenreCardDto
+import com.faithForward.media.ui.sections.genre.GenreGridDto
 import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.genre.GenreResponse

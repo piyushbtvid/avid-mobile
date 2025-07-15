@@ -1,10 +1,10 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.player.PlayerDto
-import com.faithForward.media.player.VideoPlayerDto
-import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
-import com.faithForward.media.player.relatedContent.RelatedContentItemDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.player.PlayerDto
+import com.faithForward.media.ui.player.VideoPlayerDto
+import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.ui.player.relatedContent.RelatedContentItemDto
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.util.Resource
 

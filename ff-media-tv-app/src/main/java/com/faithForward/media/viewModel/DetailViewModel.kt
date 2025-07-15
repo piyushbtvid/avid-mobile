@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.detail.SeasonDto
-import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.detail.SeasonDto
+import com.faithForward.media.ui.detail.SeasonsNumberDto
 import com.faithForward.media.viewModel.uiModels.DetailPageItem
 import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
 import com.faithForward.media.viewModel.uiModels.RelatedContentData

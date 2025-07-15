@@ -1,9 +1,9 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.detail.DetailDto
-import com.faithForward.media.detail.SeasonDto
-import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.detail.DetailDto
+import com.faithForward.media.ui.detail.SeasonDto
+import com.faithForward.media.ui.detail.SeasonsNumberDto
 import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.series.Episode

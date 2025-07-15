@@ -1,8 +1,8 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.home.creator.detail.CreatorContentDto
-import com.faithForward.media.home.creator.detail.CreatorDetailDto
-import com.faithForward.media.home.creator.detail.content.ContentDto
+import com.faithForward.media.ui.detail.creator_detail.CreatorContentDto
+import com.faithForward.media.ui.detail.creator_detail.CreatorDetailDto
+import com.faithForward.media.ui.detail.creator_detail.content.ContentDto
 import com.faithForward.media.util.formatDurationInReadableFormat
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.creator.CreatorResponse

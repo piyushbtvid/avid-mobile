@@ -1,13 +1,13 @@
 package com.faithForward.media.viewModel.uiModels
 
 import android.util.Log
-import com.faithForward.media.commanComponents.CategoryComposeDto
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.home.carousel.CarouselContentRowDto
-import com.faithForward.media.home.carousel.CarouselItemDto
-import com.faithForward.media.home.category.CategoryRowDto
-import com.faithForward.media.home.content.PosterRowDto
-import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.ui.commanComponents.CategoryComposeDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.sections.common_ui.carousel.CarouselContentRowDto
+import com.faithForward.media.ui.sections.common_ui.carousel.CarouselItemDto
+import com.faithForward.media.ui.sections.common_ui.category.CategoryRowDto
+import com.faithForward.media.ui.sections.common_ui.content.PosterRowDto
+import com.faithForward.media.ui.sections.creator.card.CreatorCardDto
 import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem

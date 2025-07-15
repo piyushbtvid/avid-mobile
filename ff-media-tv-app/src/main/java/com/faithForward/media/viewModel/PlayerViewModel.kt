@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.player.PlayerDto
-import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.player.PlayerDto
+import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
