@@ -240,7 +240,8 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         seriesSlug = seriesSlug,
         progress = progressSeconds,
         contentType = content_type,
-        uploadYear = uploadedYear
+        uploadYear = uploadedYear,
+        landScapeImg = landscape ?: ""
     )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
@@ -267,7 +268,8 @@ fun CarouselItemDto.toPosterCardDto(): PosterCardDto {
         imdbRating = imdbRating,
         releaseDate = releaseDate,
         contentType = contentType,
-        seriesSlug = seriesSlug
+        seriesSlug = seriesSlug,
+        landScapeImg = imgSrc ?: ""
     )
 }
 

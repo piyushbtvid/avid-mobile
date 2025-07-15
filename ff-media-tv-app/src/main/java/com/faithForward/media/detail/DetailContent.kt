@@ -47,6 +47,7 @@ data class DetailDto(
     val id: String? = null,
     val slug: String?,
     val imgSrc: String? = null,
+    val landScape: String? = null,
     val description: String? = null,
     val releaseDate: String? = null,
     val genre: String? = null,

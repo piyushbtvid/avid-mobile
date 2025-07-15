@@ -50,6 +50,7 @@ fun GenreCardDto.toPosterCardDto(): PosterCardDto {
         imdbRating = imdbRating?.takeIf { it.isNotBlank() },
         releaseDate = releaseDate?.takeIf { it.isNotBlank() },
         videoHlsUrl = videoUrl?.takeIf { it.isNotBlank() },
-        slug = slug?.takeIf { it.isNotBlank() }
+        slug = slug?.takeIf { it.isNotBlank() },
+        landScapeImg = image?.takeIf { it.isNotBlank() } ?: ""
     )
 }
