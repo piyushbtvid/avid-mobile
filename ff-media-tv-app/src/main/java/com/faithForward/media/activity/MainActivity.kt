@@ -58,7 +58,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
-    private var isControlsVisible: Boolean = true
+    private var isControlsVisible: Boolean = false
     private var currentRoute: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
-                        sharedPlayerViewModel.state.collectAsState().value.isControlsVisible
+                        sharedPlayerViewModel.state.collectAsStateWithLifecycle().value.isControlsVisible
                     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 

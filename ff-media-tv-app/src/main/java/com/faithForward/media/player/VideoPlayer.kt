@@ -200,8 +200,16 @@ fun VideoPlayer(
                                             videoDuration = duration
                                         )
                                     )
-                                    playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
-                                    playerViewModel.handleEvent(PlayerEvent.UpdateVideoEndedState(true))
+                                    playerViewModel.handleEvent(
+                                        PlayerEvent.UpdatePlayerBuffering(
+                                            false
+                                        )
+                                    )
+                                    playerViewModel.handleEvent(
+                                        PlayerEvent.UpdateVideoEndedState(
+                                            true
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -325,7 +333,7 @@ fun VideoPlayer(
         sharedPlayerViewModel.interactionFlow.collect {
             Log.e("ON_USER_INTERCATION", "om user instercation collected in videoPlayer ")
             if (!sharedPlayerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible) {
-                sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                //     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 playerViewModel.handleEvent(PlayerEvent.HideRelated)
                 playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
             }
@@ -338,7 +346,7 @@ fun VideoPlayer(
                 "ON_CONTINUE_WATCHING",
                 "on continue watching update called in player so navigating back"
             )
-          //  playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
+            //  playerViewModel.handleEvent(PlayerEvent.UpdateTitleText(""))
             exoPlayer.seekTo(0)
             exoPlayer.release()
             onVideoEnd()
@@ -637,31 +645,74 @@ fun VideoPlayer(
                 PlayerControls(currentPosition = playerScreenState.currentPosition,
                     duration = playerScreenState.duration,
                     onSeekTo = { exoPlayer.seekTo(it) },
+                    onPrevAndNext = {
+                        if (!sharedPlayerScreenState.isControlsVisible) {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
+                    },
+                    onKeyEvent = {
+                        if (!sharedPlayerScreenState.isControlsVisible) {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                            true
+                        } else {
+                            false
+                        }
+                    },
                     onPlayPause = {
-                        exoPlayer.playWhenReady = !exoPlayer.isPlaying
-                     //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        Log.e(
+                            "VIDEO_PLAYER",
+                            "on PlayPause called with ${sharedPlayerScreenState.isControlsVisible}"
+                        )
+                        if (sharedPlayerScreenState.isControlsVisible) {
+                            exoPlayer.playWhenReady = !exoPlayer.isPlaying
+                        } else {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
+                        //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onRewind = {
                         val rewindMillis = 15_000L
                         val newPosition =
                             (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
-                        exoPlayer.seekTo(newPosition)
-                     //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        if (sharedPlayerScreenState.isControlsVisible) {
+                            exoPlayer.seekTo(newPosition)
+                        } else {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
+                        //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onForward = {
-                        exoPlayer.seekForward()
-                   //     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        if (sharedPlayerScreenState.isControlsVisible) {
+                            exoPlayer.seekForward()
+                        } else {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
+
+                        //     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                     },
                     onPrev = {
-                        exoPlayer.seekToPreviousMediaItem()
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        if (sharedPlayerScreenState.isControlsVisible) {
+                            exoPlayer.seekToPreviousMediaItem()
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        } else {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
+
                     },
                     onNext = {
-                        exoPlayer.seekToNextMediaItem()
-                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        if (sharedPlayerScreenState.isControlsVisible) {
+                            exoPlayer.seekToNextMediaItem()
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
+                        } else {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
                     },
                     inControllerUp = {
-                        playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+                        if (sharedPlayerScreenState.isControlsVisible) {
+                            playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+                        } else {
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        }
                         true
                     },
                     isPlaying = playerScreenState.isPlaying,

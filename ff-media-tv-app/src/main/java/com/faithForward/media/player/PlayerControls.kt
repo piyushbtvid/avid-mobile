@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -67,6 +68,10 @@ fun PlayerControls(
     pauseIc: Int = R.drawable.baseline_pause_24,
     onNext: () -> Unit,
     isPlaying: Boolean = false,
+    onKeyEvent: () -> Boolean = {
+        false
+    },
+    onPrevAndNext: () -> Unit,
     shouldShowNextAndPrevVideo: Boolean = false,
     inControllerUp: () -> Boolean = {
         false
@@ -114,7 +119,35 @@ fun PlayerControls(
                         description = "Previous",
                         focusedColor = focusedColor,
                         focusRequester = null,
-                        overrideDpadLeft = true
+                        onKeyEvent = { event ->
+                            when (event.key) {
+                                Key.DirectionUp -> {
+                                    // consume or not
+                                    onKeyEvent.invoke()
+                                }
+
+                                Key.DirectionDown -> {
+                                    // consume or not
+                                    onKeyEvent.invoke()
+
+                                }
+
+                                Key.DirectionLeft -> {
+                                    // consume or not
+                                    // onKeyEvent.invoke()
+                                    onPrevAndNext.invoke()
+                                    true
+                                }
+
+                                Key.DirectionRight -> {
+                                    // consume or not
+                                    onKeyEvent.invoke()
+                                }
+
+                                else -> false
+                            }
+                        }
+
                     )
                 }
                 FocusableIconButton(
@@ -122,21 +155,99 @@ fun PlayerControls(
                     imageResId = rewindIc,
                     focusRequester = null,
                     focusedColor = focusedColor,
-                    description = "Rewind"
+                    description = "Rewind",
+                    onKeyEvent = { event ->
+                        when (event.key) {
+                            Key.DirectionUp -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionDown -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionLeft -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionRight -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            else -> false
+                        }
+                    }
+
                 )
                 FocusableIconButton(
                     onClick = onPlayPause,
                     imageResId = if (isPlaying) pauseIc else playIc,
                     focusRequester = null,
                     focusedColor = focusedColor,
-                    description = "Play/Pause"
+                    description = "Play/Pause",
+                    onKeyEvent = { event ->
+                        when (event.key) {
+                            Key.DirectionUp -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionDown -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionLeft -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionRight -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            else -> false
+                        }
+                    }
+
                 )
                 FocusableIconButton(
                     onClick = onForward,
                     imageResId = forwardIc,
                     focusRequester = null,
                     focusedColor = focusedColor,
-                    description = "Forward"
+                    description = "Forward",
+                    onKeyEvent = { event ->
+                        when (event.key) {
+                            Key.DirectionUp -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionDown -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionLeft -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            Key.DirectionRight -> {
+                                // consume or not
+                                onKeyEvent.invoke()
+                            }
+
+                            else -> false
+                        }
+                    }
+
                 )
                 if (shouldShowNextAndPrevVideo) {
                     FocusableIconButton(
@@ -145,7 +256,33 @@ fun PlayerControls(
                         focusRequester = null,
                         focusedColor = focusedColor,
                         description = "Next",
-                        overrideDpadRight = true
+                        onKeyEvent = { event ->
+                            when (event.key) {
+                                Key.DirectionUp -> {
+                                    // consume or not
+                                    onKeyEvent.invoke()
+                                }
+
+                                Key.DirectionDown -> {
+                                    // consume or not
+                                    onKeyEvent.invoke()
+                                }
+
+                                Key.DirectionLeft -> {
+                                    // consume or not
+                                    onKeyEvent.invoke()
+                                }
+
+                                Key.DirectionRight -> {
+                                    // consume or not
+                                    onPrevAndNext.invoke()
+                                    true
+                                }
+
+                                else -> false
+                            }
+                        }
+
                     )
                 }
             }
@@ -196,8 +333,7 @@ fun FocusableIconButton(
     focusedColor: Color,
     focusRequester: FocusRequester?,
     colorFilter: ColorFilter? = ColorFilter.tint(color = Color.White),
-    overrideDpadRight: Boolean = false, // NEW PARAMETER
-    overrideDpadLeft: Boolean = false,
+    onKeyEvent: ((KeyEvent) -> Boolean)? = null, // NEW: Let parent decide on key event handling
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -209,21 +345,12 @@ fun FocusableIconButton(
             .focusable(interactionSource = interactionSource)
             .onKeyEvent { event ->
                 if (isFocused && event.type == KeyEventType.KeyDown) {
-                    when (event.key) {
-                        Key.DirectionRight, Key.Forward -> {
-                            if (overrideDpadRight) {
-                                return@onKeyEvent true // Override handled
-                            }
-                        }
-
-                        Key.DirectionLeft, Key.MediaRewind -> {
-                            if (overrideDpadLeft) {
-                                return@onKeyEvent true // Override handled
-                            }
-                        }
+                    // Delegate key handling to the parent
+                    if (onKeyEvent?.invoke(event) == true) {
+                        return@onKeyEvent true
                     }
                 }
-                false // Let system handle others
+                false // Let system handle unhandled keys
             }
             .wrapContentSize()
             .background(if (isFocused) focusedColor else Color.Transparent)
@@ -311,12 +438,16 @@ fun TvSeekBar(
                 else -> false
             }
         }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onForward()
+        })
         .focusable()
         .border(
             width = if (seekIsFocused) 3.dp else 0.dp,
             color = Color.Transparent,
             shape = RoundedCornerShape(8.dp)
-        )) {
+        )
+    ) {
 
         val sliderColor = SliderDefaults.colors(
             thumbColor = if (seekIsFocused) focusedColor else Color.White, // Color of the thumb (circle)
@@ -334,6 +465,14 @@ fun TvSeekBar(
             modifier = Modifier.focusable(enabled = false),
 //        enabled = false
         )
+    }
+
+    LaunchedEffect(Unit) {
+        try {
+            focusRequester.requestFocus()
+        } catch (ex: Exception) {
+
+        }
     }
 
 }
