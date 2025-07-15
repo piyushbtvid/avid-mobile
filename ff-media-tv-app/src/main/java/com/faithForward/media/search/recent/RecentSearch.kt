@@ -4,6 +4,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -30,7 +31,7 @@ fun RecentSearch(
 
 
     Column(
-        modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)
+        modifier = modifier.wrapContentWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
 
@@ -44,7 +45,7 @@ fun RecentSearch(
 
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
+                .wrapContentWidth()
                 .focusRestorer(),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {

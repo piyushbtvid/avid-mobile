@@ -3,6 +3,7 @@ package com.faithForward.media.search.custom_keyboard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -18,6 +19,7 @@ import com.faithForward.media.R
 @Composable
 fun CustomKeyBoard(
     modifier: Modifier = Modifier,
+    onKeyClick: (String) -> Unit,
 ) {
 
     val alphabetList = remember {
@@ -56,13 +58,14 @@ fun CustomKeyBoard(
     var inputListFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.wrapContentWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(30.dp)
     ) {
 
 
         Row(
+            modifier = Modifier.wrapContentWidth(),
             horizontalArrangement = Arrangement.spacedBy(7.dp)
         ) {
 
@@ -86,15 +89,11 @@ fun CustomKeyBoard(
         }
 
 
-        InputKeyList(
-            focusedIndex = inputListFocusedIndex,
-            onFocusedIndexChanged = { int ->
-                inputListFocusedIndex = int
-            },
-            onItemClick = { value ->
-
-            },
-            list = alphabetList
+        InputKeyList(focusedIndex = inputListFocusedIndex, onFocusedIndexChanged = { int ->
+            inputListFocusedIndex = int
+        }, onItemClick = { value ->
+            onKeyClick.invoke(value)
+        }, list = alphabetList
         )
 
         KeyboardActionButton(
@@ -112,12 +111,13 @@ fun CustomKeyBoard(
 
 
 @Preview(
-    name = "Custom Keyboard - 1920x1080",
-    widthDp = 1920,
-    heightDp = 1080,
-    showBackground = true
+    name = "Custom Keyboard - 1920x1080", widthDp = 1920, heightDp = 1080, showBackground = true
 )
 @Composable
 private fun CustomKeyBoardPreview() {
-    CustomKeyBoard()
+    CustomKeyBoard(
+        onKeyClick = {
+
+        }
+    )
 }

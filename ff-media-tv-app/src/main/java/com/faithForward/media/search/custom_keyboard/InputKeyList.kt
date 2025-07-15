@@ -2,6 +2,7 @@ package com.faithForward.media.search.custom_keyboard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -19,7 +20,9 @@ fun InputKeyList(
 ) {
 
 
-    LazyRow {
+    LazyRow(
+        modifier = modifier.wrapContentWidth()
+    ) {
 
         itemsIndexed(list) { index, item ->
 

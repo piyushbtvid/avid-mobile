@@ -68,9 +68,11 @@ fun PlayerControls(
     pauseIc: Int = R.drawable.baseline_pause_24,
     onNext: () -> Unit,
     isPlaying: Boolean = false,
+    // for handling keyEvent for focusable button for showing hiding controler
     onKeyEvent: () -> Boolean = {
         false
     },
+    // only used for right and left for prev and next video focusable button for showing contoler
     onPrevAndNext: () -> Unit,
     shouldShowNextAndPrevVideo: Boolean = false,
     inControllerUp: () -> Boolean = {

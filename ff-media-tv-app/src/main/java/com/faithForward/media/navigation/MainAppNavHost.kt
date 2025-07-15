@@ -24,6 +24,7 @@ import com.faithForward.media.login.LoginScreen
 import com.faithForward.media.login.qr.LoginQrScreen
 import com.faithForward.media.player.PlayerScreen
 import com.faithForward.media.search.SearchScreen
+import com.faithForward.media.search.SearchScreenUi
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -494,6 +495,10 @@ fun MainAppNavHost(
                         navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
                 })
+
+
+         //   SearchScreenUi()
+
         }
 
     }

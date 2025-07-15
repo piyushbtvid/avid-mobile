@@ -6,6 +6,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +34,7 @@ fun SearchLazyList(
 
     LazyColumn(
         modifier = modifier
-            .fillMaxSize()
+            .wrapContentWidth()
             .focusRestorer(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
