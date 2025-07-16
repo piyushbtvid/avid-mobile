@@ -38,6 +38,8 @@ data class SearchContentDto(
 )
 
 
+
+
 @Composable
 fun SearchContent(
     modifier: Modifier = Modifier,

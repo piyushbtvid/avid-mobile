@@ -3,9 +3,12 @@ package com.faithForward.media.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.viewModel.uiModels.SearchEvent
+import com.faithForward.media.viewModel.uiModels.SearchScreenUiState
 import com.faithForward.media.viewModel.uiModels.SearchUiState
 import com.faithForward.media.viewModel.uiModels.toSearchContentDto
+import com.faithForward.media.viewModel.uiModels.toSearchUiDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +28,9 @@ class SearchViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    private val _searchUiState = MutableStateFlow(SearchScreenUiState())
+    val searchUiState = _searchUiState.asStateFlow()
+
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.SubmitQuery -> searchGivenQuery(event.query)
@@ -35,6 +41,9 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _uiState.update { it.copy(query = query, searchResults = Resource.Loading()) }
+                _searchUiState.update {
+                    it.copy(isLoading = true)
+                }
                 val response = networkRepository.searchContent(query)
                 Log.e("SEARCH_RESULT", "search response in viewModel is $response")
                 if (response.isSuccessful) {
@@ -48,6 +57,10 @@ class SearchViewModel @Inject constructor(
                             }
                         )
                     }
+                    _searchUiState.update {
+                        it.copy(isLoading = false, result = body?.toSearchUiDto())
+                    }
+
                 } else {
                     Log.e("SEARCH_RESULT", "search error in viewModel is ${response.message()}")
                     _uiState.update {

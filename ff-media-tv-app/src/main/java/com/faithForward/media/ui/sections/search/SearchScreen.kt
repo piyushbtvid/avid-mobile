@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,10 @@ import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.SearchEvent
+
+data class SearchUiScreenDto(
+    val searchItemDtoList: List<SearchItemDto>,
+)
 
 @Composable
 fun SearchScreen(
@@ -96,13 +101,18 @@ fun SearchScreen(
 
 
 @Composable
-fun SearchScreenUi(modifier: Modifier = Modifier) {
+fun SearchScreenUi(
+    modifier: Modifier = Modifier,
+    searchViewModel: SearchViewModel,
+) {
 
     var recentSearchFocusedIndex by remember { mutableStateOf(-1) }
     var searchResultFocusedIndex by remember { mutableStateOf(-1) }
 
     var searchInputText by remember { mutableStateOf("") }
     var currentKeyboardMode by remember { mutableStateOf(KeyboardMode.ALPHABET) }
+
+    val uiState by searchViewModel.searchUiState.collectAsState()
 
     val list = listOf(
         "Betty The Cry",
@@ -145,6 +155,14 @@ fun SearchScreenUi(modifier: Modifier = Modifier) {
 
 
         )
+
+
+    LaunchedEffect(searchInputText) {
+        Log.e("INPUT_TEXT", "on input text change called with $searchInputText")
+        if (searchInputText.length >= 3) {
+            searchViewModel.onEvent(SearchEvent.SubmitQuery(searchInputText))
+        }
+    }
 
     Column(
         modifier = modifier
@@ -199,13 +217,15 @@ fun SearchScreenUi(modifier: Modifier = Modifier) {
             )
 
 
-            SearchLazyList(
-                lastFocusedIndex = searchResultFocusedIndex,
-                searchResultList = resultList,
-                onSearchResultFocusedIndexChange = { int ->
-                    searchResultFocusedIndex = int
-                }
-            )
+            if (!uiState.result?.searchItemDtoList.isNullOrEmpty()) {
+                SearchLazyList(
+                    lastFocusedIndex = searchResultFocusedIndex,
+                    searchResultList = uiState.result!!.searchItemDtoList,
+                    onSearchResultFocusedIndexChange = { int ->
+                        searchResultFocusedIndex = int
+                    }
+                )
+            }
 
         }
 
@@ -221,5 +241,5 @@ fun SearchScreenUi(modifier: Modifier = Modifier) {
 )
 @Composable
 private fun SearchUiPreview() {
-    SearchScreenUi()
+    //SearchScreenUi()
 }
