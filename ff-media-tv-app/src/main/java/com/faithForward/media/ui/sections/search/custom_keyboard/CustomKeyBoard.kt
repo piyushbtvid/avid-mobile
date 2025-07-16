@@ -75,11 +75,11 @@ fun CustomKeyBoard(
         ) {
 
             KeyboardActionButton(
-                actionState = KeyboardActionState.number,
+                actionState = if (currentKeyboardMode == KeyboardMode.ALPHABET) KeyboardActionState.number else if (currentKeyboardMode == KeyboardMode.NUMBER) KeyboardActionState.alphabet else KeyboardActionState.alphabet,
                 onClick = { state ->
                     onKeyBoardActionButtonClick.invoke(state)
                 },
-                displayText = "123",
+                displayText = if (currentKeyboardMode == KeyboardMode.ALPHABET) "123" else if (currentKeyboardMode == KeyboardMode.NUMBER) "abc" else "abc",
             )
 
 
