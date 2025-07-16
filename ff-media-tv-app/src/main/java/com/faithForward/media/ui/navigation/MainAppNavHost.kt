@@ -73,19 +73,15 @@ fun MainAppNavHost(
 
         composable(route = Routes.LoginQr.route) { backStack ->
             val qrLoginViewModel: QrLoginViewModel = hiltViewModel(backStack)
-            LoginQrScreen(
-                loginQrLoginViewModel = qrLoginViewModel,
-                onLoggedIn = {
-                    Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
-                    Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
-                    navController.navigate(Routes.Home.route) {
-                        popUpTo(Routes.Login.route) { inclusive = true }
-                    }
-                },
-                onLoginPageOpenClick = {
-                    navController.navigate(Routes.Login.route)
+            LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
+                Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
+                Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
+                navController.navigate(Routes.Home.route) {
+                    popUpTo(Routes.Login.route) { inclusive = true }
                 }
-            )
+            }, onLoginPageOpenClick = {
+                navController.navigate(Routes.Login.route)
+            })
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
@@ -168,8 +164,7 @@ fun MainAppNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
-                }
-            )
+                })
         }
 
         composable(
@@ -201,8 +196,7 @@ fun MainAppNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
-                }
-            )
+                })
         }
 
         composable(
@@ -234,8 +228,7 @@ fun MainAppNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
-                }
-            )
+                })
         }
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
@@ -282,14 +275,13 @@ fun MainAppNavHost(
                     val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
-            },
-                onSearchClick = {
-                    changeSideBarSelectedPosition.invoke(0)
-                    navController.navigate(Routes.Search.route) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
+            }, onSearchClick = {
+                changeSideBarSelectedPosition.invoke(0)
+                navController.navigate(Routes.Search.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
                 }
+            }
 
             )
         }
@@ -325,32 +317,26 @@ fun MainAppNavHost(
                             "SERIES CONTENT type is in AppNav ${posterItemList?.get(0)?.contentType}"
                         )
                         if (posterItemList != null) {
-                            val route =
-                                Routes.PlayerScreen.createRoute(
-                                    posterItemList,
-                                    initialIndex = index
-                                ) // Wrap item in a list
+                            val route = Routes.PlayerScreen.createRoute(
+                                posterItemList, initialIndex = index
+                            ) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
                 },
                 onResumeNowClick = { item, posterItemList, index ->
                     if (item != null) {
-                        val route =
-                            Routes.PlayerScreen.createRoute(
-                                listOf(item),
-                                initialIndex = index
-                            ) // Wrap item in a list
+                        val route = Routes.PlayerScreen.createRoute(
+                            listOf(item), initialIndex = index
+                        ) // Wrap item in a list
                         if (item.progress != null && item.progress > 0) {
                             navController.navigate(route)
                         }
                     } else {
                         if (posterItemList != null) {
-                            val route =
-                                Routes.PlayerScreen.createRoute(
-                                    posterItemList,
-                                    initialIndex = index
-                                ) // Wrap item in a list
+                            val route = Routes.PlayerScreen.createRoute(
+                                posterItemList, initialIndex = index
+                            ) // Wrap item in a list
                             navController.navigate(route)
                         }
                     }
@@ -364,10 +350,8 @@ fun MainAppNavHost(
 
 
 
-        composable(
-            route = Routes.PlayerScreen.route,
-            arguments = listOf(
-                navArgument("playerDtoList") { type = NavType.StringType },
+        composable(route = Routes.PlayerScreen.route,
+            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
                     defaultValue = false
@@ -375,9 +359,7 @@ fun MainAppNavHost(
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
-                }
-            )
-        ) { backStackEntry ->
+                })) { backStackEntry ->
 
             val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
 
@@ -406,8 +388,7 @@ fun MainAppNavHost(
                 }
             }
 
-            PlayerScreen(
-                playerViewModel = playerViewModel,
+            PlayerScreen(playerViewModel = playerViewModel,
                 sharedPlayerViewModel = sharedPlayerViewModel,
                 isFromContinueWatching = isContinueWatching,
                 initialIndex = initialIndex,
@@ -438,8 +419,7 @@ fun MainAppNavHost(
                     }
                 },
                 onEpisodePlayNowClick = { list, index ->
-                    val posterCardList =
-                        list.map { it.toPosterCardDto() }
+                    val posterCardList = list.map { it.toPosterCardDto() }
                     val route =
                         Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
                     navController.navigate(route) {
@@ -456,8 +436,7 @@ fun MainAppNavHost(
                         popUpTo(Routes.PlayerScreen.route) { inclusive = true }
                         launchSingleTop = true
                     }
-                }
-            )
+                })
         }
 
 
@@ -468,8 +447,7 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -496,8 +474,11 @@ fun MainAppNavHost(
 //                })
 
 
-            SearchScreenUi(
-                searchViewModel = searchViewModel,
+            SearchScreenUi(searchViewModel = searchViewModel,
+                sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    onBackClickForExit.invoke()
+                },
                 onSearchItemClick = { item ->
                     if (item.contentType == "Creator" && item.itemId != null) {
                         navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.itemId.toInt()))
@@ -506,8 +487,7 @@ fun MainAppNavHost(
                             navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                         }
                     }
-                }
-            )
+                })
 
         }
 

@@ -104,6 +104,8 @@ fun SearchScreen(
 fun SearchScreenUi(
     modifier: Modifier = Modifier,
     searchViewModel: SearchViewModel,
+    sideBarViewModel: SideBarViewModel,
+    onBackClick: () -> Unit,
     onSearchItemClick: (SearchItemDto) -> Unit,
 ) {
 
@@ -114,49 +116,20 @@ fun SearchScreenUi(
     var currentKeyboardMode by remember { mutableStateOf(KeyboardMode.ALPHABET) }
 
     val uiState by searchViewModel.searchUiState.collectAsState()
+    val sideBarState by sideBarViewModel.sideBarState
 
-    val list = listOf(
-        "Betty The Cry",
-        "Betty The Cry",
-        "Betty The Cry",
-        "Betty The Cry",
-        "Betty The Cry",
-        "Betty The Cry",
-    )
-
-    val resultList = listOf(
-        SearchItemDto(
-            title = "The Saga of water lbsdlibsd lbaslbclblbs ljbslbf   ,bdclibsaf   aslbavslb",
-            imdb = "PG",
-            duration = "1h 48m",
-            genre = "Drama,Comedy,Thriler"
-        ),
-        SearchItemDto(
-            imdb = "Tv-14",
-            title = "The Last Ride",
-            creatorViews = "300k Views",
-            creatorName = "Terrel Jones",
-            creatorUploadDate = "5 month ago",
-            creatorVideoNumber = "16 Videos"
-        ),
-
-        SearchItemDto(
-            imdb = "PG",
-            seasonNumber = "6 Seasons",
-            title = "The Last Ride",
-            genre = "Drama,Comedy,Thriler"
-        ),
-
-        SearchItemDto(
-            imdb = "PG",
-            seasonNumber = "6 Seasons",
-            title = "The Last Ride",
-            genre = "Drama,Comedy,Thriler"
-        ),
-
-
-        )
-
+    BackHandler {
+        Log.e("ON_BACK", "on back in search called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
+            onBackClick.invoke()
+        } else {
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(0))
+        }
+    }
 
     LaunchedEffect(searchInputText) {
         Log.e("INPUT_TEXT", "on input text change called with $searchInputText")
@@ -251,5 +224,46 @@ fun SearchScreenUi(
 )
 @Composable
 private fun SearchUiPreview() {
+    val list = listOf(
+        "Betty The Cry",
+        "Betty The Cry",
+        "Betty The Cry",
+        "Betty The Cry",
+        "Betty The Cry",
+        "Betty The Cry",
+    )
+
+    val resultList = listOf(
+        SearchItemDto(
+            title = "The Saga of water lbsdlibsd lbaslbclblbs ljbslbf   ,bdclibsaf   aslbavslb",
+            imdb = "PG",
+            duration = "1h 48m",
+            genre = "Drama,Comedy,Thriler"
+        ),
+        SearchItemDto(
+            imdb = "Tv-14",
+            title = "The Last Ride",
+            creatorViews = "300k Views",
+            creatorName = "Terrel Jones",
+            creatorUploadDate = "5 month ago",
+            creatorVideoNumber = "16 Videos"
+        ),
+
+        SearchItemDto(
+            imdb = "PG",
+            seasonNumber = "6 Seasons",
+            title = "The Last Ride",
+            genre = "Drama,Comedy,Thriler"
+        ),
+
+        SearchItemDto(
+            imdb = "PG",
+            seasonNumber = "6 Seasons",
+            title = "The Last Ride",
+            genre = "Drama,Comedy,Thriler"
+        ),
+
+
+        )
     //SearchScreenUi()
 }
