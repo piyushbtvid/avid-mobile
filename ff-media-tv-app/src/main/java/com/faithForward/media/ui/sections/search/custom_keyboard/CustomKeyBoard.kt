@@ -65,7 +65,7 @@ fun CustomKeyBoard(
     Row(
         modifier = modifier.wrapContentWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(30.dp)
+        horizontalArrangement = Arrangement.spacedBy(7.dp)
     ) {
 
 

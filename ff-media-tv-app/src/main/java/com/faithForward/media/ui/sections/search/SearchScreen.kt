@@ -167,7 +167,7 @@ fun SearchScreenUi(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 73.dp, start = 113.dp, end = 110.dp),
+            .padding(top = 73.dp, start = 100.dp, end = 0.dp),
         verticalArrangement = Arrangement.spacedBy(23.5.dp)
     ) {
 
@@ -208,13 +208,18 @@ fun SearchScreenUi(
         Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
 
 
-            RecentSearch(
-                list = list,
-                lastFocusedIndex = recentSearchFocusedIndex,
-                onFocusedIndexChange = { int ->
-                    recentSearchFocusedIndex = int
-                }
-            )
+            if (uiState.recentSearch != null) {
+
+                RecentSearch(
+                    list = uiState.recentSearch!!,
+                    lastFocusedIndex = recentSearchFocusedIndex,
+                    onFocusedIndexChange = { int ->
+                        recentSearchFocusedIndex = int
+                    }
+                )
+
+            }
+
 
 
             if (!uiState.result?.searchItemDtoList.isNullOrEmpty()) {

@@ -3,6 +3,7 @@ package com.faithForward.media.viewModel.uiModels
 import com.faithForward.media.ui.sections.search.SearchContentDto
 import com.faithForward.media.ui.sections.search.SearchUiScreenDto
 import com.faithForward.media.ui.sections.search.item.SearchItemDto
+import com.faithForward.media.util.formatDurationInReadableFormat
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.util.Resource
@@ -15,6 +16,7 @@ data class SearchUiState(
 
 data class SearchScreenUiState(
     val result: SearchUiScreenDto? = SearchUiScreenDto(searchItemDtoList = emptyList()),
+    val recentSearch: List<String>? = emptyList(),
     val isLoading: Boolean = false,
 )
 
@@ -50,7 +52,10 @@ fun ContentItem.toSearchItemDto(): SearchItemDto {
         contentType = content_type,
         contentSlug = slug,
         image = portrait,
-        creatorName = name,
-
-        )
+        creatorName = if (!channelName.isNullOrEmpty()) name else "",
+        duration = formatDurationInReadableFormat(duration),
+        genre = genres?.mapNotNull { it.name }  // safely extract non-null names
+            ?.joinToString(", "),
+        imdb = rating
+    )
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
@@ -83,7 +84,8 @@ fun SearchUiItem(
 
         Row(
             modifier = modifier
-                .wrapContentSize()
+                .width(450.dp)
+                .wrapContentHeight()
             ,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

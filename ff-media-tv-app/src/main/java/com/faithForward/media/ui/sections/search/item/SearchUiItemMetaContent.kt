@@ -39,11 +39,11 @@ fun SearchUiItemMetaContent(
         ) {
 
 
-            if (imdb != null) {
+            if (!imdb.isNullOrEmpty()) {
                 ImdbBox(text = imdb)
             }
 
-            if (duration != null) {
+            if (!duration.isNullOrEmpty()) {
                 TitleText(
                     text = duration,
                     color = whiteMain,
@@ -53,7 +53,7 @@ fun SearchUiItemMetaContent(
                 )
             }
 
-            if (seasonNumber != null) {
+            if (!seasonNumber.isNullOrEmpty()) {
                 TitleText(
                     text = seasonNumber,
                     color = whiteMain,
@@ -63,7 +63,7 @@ fun SearchUiItemMetaContent(
                 )
             }
 
-            if (creatorVideoNumber != null) {
+            if (!creatorVideoNumber.isNullOrEmpty()) {
                 TitleText(
                     text = creatorVideoNumber,
                     color = whiteMain,
@@ -75,7 +75,7 @@ fun SearchUiItemMetaContent(
 
             }
 
-            if (title != null) {
+            if (!title.isNullOrEmpty()) {
                 TitleText(
                     text = title,
                     color = whiteMain,
@@ -88,7 +88,7 @@ fun SearchUiItemMetaContent(
         }
 
 
-        if (genre != null) {
+        if (!genre.isNullOrEmpty()) {
             TitleText(
                 text = "Genre:  $genre",
                 color = whiteMain,
@@ -99,7 +99,7 @@ fun SearchUiItemMetaContent(
         }
 
 
-        if (creatorName != null) {
+        if (!creatorName.isNullOrEmpty()) {
             TitleText(
                 text = "Creator:  $creatorName",
                 color = whiteMain,
@@ -113,7 +113,7 @@ fun SearchUiItemMetaContent(
             horizontalArrangement = Arrangement.spacedBy(9.dp)
         ) {
 
-            if (creatorViews != null) {
+            if (!creatorViews.isNullOrEmpty()) {
                 TitleText(
                     text = creatorViews,
                     color = whiteMain,
@@ -123,7 +123,7 @@ fun SearchUiItemMetaContent(
                 )
             }
 
-            if (creatorUploadDate != null) {
+            if (!creatorUploadDate.isNullOrEmpty()) {
                 TitleText(
                     text = creatorUploadDate,
                     color = whiteMain,

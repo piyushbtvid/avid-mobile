@@ -13,12 +13,14 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.ceil
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -44,10 +46,16 @@ class SearchViewModel @Inject constructor(
                 _searchUiState.update {
                     it.copy(isLoading = true)
                 }
-                val response = networkRepository.searchContent(query)
+                val response = async { networkRepository.searchContent(query) }
+                val recentResponse = async { networkRepository.getRecentSearchContent() }
+                val result = response.await()
+                val recentResult = recentResponse.await()
                 Log.e("SEARCH_RESULT", "search response in viewModel is $response")
-                if (response.isSuccessful) {
-                    val body = response.body()
+                if (result.isSuccessful && recentResult.isSuccessful) {
+                    val body = result.body()
+                    val recentSearchList = recentResult.body()?.data?.map {
+                        it.term
+                    }
                     Log.e("SEARCH_RESULT", "search result in viewModel is ${body?.data}")
                     _uiState.update {
                         it.copy(
@@ -58,13 +66,17 @@ class SearchViewModel @Inject constructor(
                         )
                     }
                     _searchUiState.update {
-                        it.copy(isLoading = false, result = body?.toSearchUiDto())
+                        it.copy(
+                            isLoading = false,
+                            result = body?.toSearchUiDto(),
+                            recentSearch = recentSearchList
+                        )
                     }
 
                 } else {
-                    Log.e("SEARCH_RESULT", "search error in viewModel is ${response.message()}")
+                    Log.e("SEARCH_RESULT", "search error in viewModel is ${result.message()}")
                     _uiState.update {
-                        it.copy(searchResults = Resource.Error("Error: ${response.code()}"))
+                        it.copy(searchResults = Resource.Error("Error: ${result.code()}"))
                     }
                 }
             } catch (ex: Exception) {

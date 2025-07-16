@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,7 +37,8 @@ fun SearchLazyList(
         modifier = modifier
             .wrapContentWidth()
             .focusRestorer(),
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+        contentPadding = PaddingValues(bottom = 20.dp)
     ) {
 
         itemsIndexed(searchResultList) { index, item ->
@@ -61,7 +63,7 @@ fun SearchLazyList(
                         color = if (uiState == FocusState.FOCUSED) focusedMainColor else Color.Transparent,
                         shape = RoundedCornerShape(5.dp)
                     )
-                    .padding(vertical = 4.dp, horizontal = 3.dp),
+                    .padding(vertical = 6.dp, horizontal = 5.dp),
                 searchItemDto = item,
                 onItemClick = {
                     Log.e("SEARCH_GRID", "Item $index clicked")
