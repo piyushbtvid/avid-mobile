@@ -2,6 +2,7 @@ package com.faithForward.media.ui.sections.search.recent
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ fun RecentSearch(
     list: List<String>,
     lastFocusedIndex: Int,
     onFocusedIndexChange: (Int) -> Unit,
+    onItemClick: (String) -> Unit,
 ) {
 
 
@@ -83,6 +85,9 @@ fun RecentSearch(
                             scaleX = scale
                             scaleY = scale
                         }
+                        .clickable(interactionSource = null, indication = null, onClick = {
+                            onItemClick.invoke(item)
+                        })
                         .focusable(),
                     text = item,
                     textSize = 10,
@@ -117,6 +122,9 @@ private fun RecentSearchPreview() {
         list = list,
         lastFocusedIndex = 3,
         onFocusedIndexChange = {
+
+        },
+        onItemClick = {
 
         }
     )

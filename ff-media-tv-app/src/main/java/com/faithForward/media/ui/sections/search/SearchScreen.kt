@@ -215,6 +215,9 @@ fun SearchScreenUi(
                     lastFocusedIndex = recentSearchFocusedIndex,
                     onFocusedIndexChange = { int ->
                         recentSearchFocusedIndex = int
+                    },
+                    onItemClick = { value ->
+                        searchInputText = value
                     }
                 )
 
