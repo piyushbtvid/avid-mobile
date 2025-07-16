@@ -13,8 +13,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
@@ -37,6 +40,7 @@ fun RecentSearch(
     onItemClick: (String) -> Unit,
 ) {
 
+    val focusRequester = remember { FocusRequester() }
 
     Column(
         modifier = modifier.wrapContentWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -54,7 +58,9 @@ fun RecentSearch(
         LazyColumn(
             modifier = Modifier
                 .wrapContentWidth()
-                .focusRestorer(),
+                .focusRestorer {
+                    focusRequester
+                },
             verticalArrangement = Arrangement.spacedBy(20.dp),
             contentPadding = PaddingValues(bottom = 20.dp)
         ) {
@@ -74,6 +80,7 @@ fun RecentSearch(
 
                 TitleText(
                     modifier = Modifier
+                        .focusRequester(if (index == 0) focusRequester else FocusRequester())
                         .onFocusChanged {
                             if (it.hasFocus) {
                                 onFocusedIndexChange.invoke(index)

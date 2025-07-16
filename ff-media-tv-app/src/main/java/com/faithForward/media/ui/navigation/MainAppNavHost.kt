@@ -22,7 +22,6 @@ import com.faithForward.media.ui.sections.genre.GenreDataScreen
 import com.faithForward.media.ui.sections.home.HomePage
 import com.faithForward.media.ui.sections.movies.MoviesPage
 import com.faithForward.media.ui.sections.myList.MyListPage
-import com.faithForward.media.ui.sections.search.SearchScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.viewModel.ContentViewModel
@@ -498,7 +497,16 @@ fun MainAppNavHost(
 
 
             SearchScreenUi(
-                searchViewModel = searchViewModel
+                searchViewModel = searchViewModel,
+                onSearchItemClick = { item ->
+                    if (item.contentType == "Creator" && item.itemId != null) {
+                        navController.navigate(Routes.CREATOR_DETAIL.createRoute(item.itemId.toInt()))
+                    } else {
+                        if (item.contentSlug != null) {
+                            navController.navigate(Routes.Detail.createRoute(item.contentSlug))
+                        }
+                    }
+                }
             )
 
         }

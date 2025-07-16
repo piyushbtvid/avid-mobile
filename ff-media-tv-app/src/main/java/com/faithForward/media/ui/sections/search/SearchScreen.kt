@@ -104,6 +104,7 @@ fun SearchScreen(
 fun SearchScreenUi(
     modifier: Modifier = Modifier,
     searchViewModel: SearchViewModel,
+    onSearchItemClick: (SearchItemDto) -> Unit,
 ) {
 
     var recentSearchFocusedIndex by remember { mutableStateOf(-1) }
@@ -231,7 +232,8 @@ fun SearchScreenUi(
                     searchResultList = uiState.result!!.searchItemDtoList,
                     onSearchResultFocusedIndexChange = { int ->
                         searchResultFocusedIndex = int
-                    }
+                    },
+                    onItemClick = onSearchItemClick
                 )
             }
 

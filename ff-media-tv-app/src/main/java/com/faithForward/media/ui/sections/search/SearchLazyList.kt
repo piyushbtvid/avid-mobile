@@ -2,6 +2,7 @@ package com.faithForward.media.ui.sections.search
 
 import android.util.Log
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,8 +12,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -29,14 +33,18 @@ fun SearchLazyList(
     modifier: Modifier = Modifier,
     lastFocusedIndex: Int,
     searchResultList: List<SearchItemDto>,
+    onItemClick: (SearchItemDto) -> Unit,
     onSearchResultFocusedIndexChange: (Int) -> Unit,
 ) {
 
+    val focusRequester = remember { FocusRequester() }
 
     LazyColumn(
         modifier = modifier
             .wrapContentWidth()
-            .focusRestorer(),
+            .focusRestorer {
+                focusRequester
+            },
         verticalArrangement = Arrangement.spacedBy(5.dp),
         contentPadding = PaddingValues(bottom = 20.dp)
     ) {
@@ -49,6 +57,7 @@ fun SearchLazyList(
             }
             SearchUiItem(
                 modifier = Modifier
+                    .focusRequester(if (index == 0) focusRequester else FocusRequester())
                     .onFocusChanged {
                         if (it.hasFocus) {
                             Log.e("SEARCH_GRID", "Item $index gained focus")
@@ -57,6 +66,9 @@ fun SearchLazyList(
                             onSearchResultFocusedIndexChange.invoke(-1)
                         }
                     }
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onItemClick.invoke(item)
+                    })
                     .focusable()
                     .border(
                         width = if (uiState == FocusState.FOCUSED) 2.dp else 0.dp,
@@ -119,6 +131,9 @@ private fun SearchListPreview() {
         lastFocusedIndex = 1,
         searchResultList = resultList,
         onSearchResultFocusedIndexChange = {
+
+        },
+        onItemClick = {
 
         }
     )
