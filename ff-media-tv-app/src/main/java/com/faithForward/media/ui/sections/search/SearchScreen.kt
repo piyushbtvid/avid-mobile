@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,8 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
@@ -34,7 +38,7 @@ import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.SearchEvent
 
 data class SearchUiScreenDto(
-    val searchItemDtoList: List<SearchItemDto>,
+    val searchItemDtoList: List<SearchItemDto>?,
 )
 
 @Composable
@@ -202,12 +206,24 @@ fun SearchScreenUi(
             if (!uiState.result?.searchItemDtoList.isNullOrEmpty()) {
                 SearchLazyList(
                     lastFocusedIndex = searchResultFocusedIndex,
-                    searchResultList = uiState.result!!.searchItemDtoList,
+                    searchResultList = uiState.result!!.searchItemDtoList!!,
                     onSearchResultFocusedIndexChange = { int ->
                         searchResultFocusedIndex = int
                     },
                     onItemClick = onSearchItemClick
                 )
+            } else if (uiState.result?.searchItemDtoList?.isEmpty() == true) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No results found",
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                    )
+                }
             }
 
         }

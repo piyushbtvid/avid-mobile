@@ -3,7 +3,6 @@ package com.faithForward.media.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.viewModel.uiModels.SearchEvent
 import com.faithForward.media.viewModel.uiModels.SearchScreenUiState
 import com.faithForward.media.viewModel.uiModels.SearchUiState
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.ceil
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -33,9 +31,15 @@ class SearchViewModel @Inject constructor(
     private val _searchUiState = MutableStateFlow(SearchScreenUiState())
     val searchUiState = _searchUiState.asStateFlow()
 
+    init {
+        Log.e("RECENT", "search viewModel init")
+        onEvent(SearchEvent.GetRecentSearch)
+    }
+
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.SubmitQuery -> searchGivenQuery(event.query)
+            is SearchEvent.GetRecentSearch -> getRecentSearch()
         }
     }
 
@@ -85,6 +89,31 @@ class SearchViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(searchResults = Resource.Error(ex.message ?: "Unknown error"))
                 }
+            }
+        }
+    }
+
+    private fun getRecentSearch() {
+        Log.e("RECENT", "get recent search called")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = networkRepository.getRecentSearchContent()
+                if (response.isSuccessful) {
+                    val recentSearchList = response.body()?.data?.map {
+                        it.term
+                    }
+                    _searchUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            recentSearch = recentSearchList
+                        )
+                    }
+                } else {
+                    Log.e("SEARCH_NEW", "recent search error is ${response.message()}")
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("SEARCH_NEW", "recent search exception is ${ex.message}")
             }
         }
     }

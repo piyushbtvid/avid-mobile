@@ -15,7 +15,7 @@ data class SearchUiState(
 )
 
 data class SearchScreenUiState(
-    val result: SearchUiScreenDto? = SearchUiScreenDto(searchItemDtoList = emptyList()),
+    val result: SearchUiScreenDto? = SearchUiScreenDto(searchItemDtoList = null),
     val recentSearch: List<String>? = emptyList(),
     val isLoading: Boolean = false,
 )
@@ -23,6 +23,7 @@ data class SearchScreenUiState(
 // Search Events
 sealed class SearchEvent {
     data class SubmitQuery(val query: String) : SearchEvent()
+    data object GetRecentSearch : SearchEvent()
 }
 
 
