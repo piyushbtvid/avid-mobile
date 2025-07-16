@@ -1,5 +1,7 @@
 package com.faithForward.media.ui.sections.search.recent
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,10 +10,12 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +31,7 @@ fun RecentSearch(
     modifier: Modifier = Modifier,
     list: List<String>,
     lastFocusedIndex: Int,
+    onFocusedIndexChange: (Int) -> Unit,
 ) {
 
 
@@ -57,20 +62,32 @@ fun RecentSearch(
                     else -> FocusState.UNFOCUSED
                 }
 
-                TitleText(modifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) {
+                val scale by animateFloatAsState(
+                    targetValue = if (uiState == FocusState.FOCUSED) 1.4f else 1f,
+                    animationSpec = tween(durationMillis = 200),
+                    label = "focus-scale"
+                )
 
-                        } else {
-
+                TitleText(
+                    modifier = Modifier
+                        .onFocusChanged {
+                            if (it.hasFocus) {
+                                onFocusedIndexChange.invoke(index)
+                            } else {
+                                onFocusedIndexChange.invoke(-1)
+                            }
                         }
-                    }
-                    .focusable(),
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .focusable(),
                     text = item,
-                    textSize = if (uiState == FocusState.FOCUSED) 18 else 10,
+                    textSize = 10,
                     lineHeight = 10,
                     color = if (uiState == FocusState.FOCUSED) focusedTextColor else whiteMain
                 )
+
 
             }
 
@@ -96,7 +113,10 @@ private fun RecentSearchPreview() {
 
     RecentSearch(
         list = list,
-        lastFocusedIndex = 3
+        lastFocusedIndex = 3,
+        onFocusedIndexChange = {
+
+        }
     )
 
 }

@@ -30,16 +30,16 @@ fun KeyBoardKeyItem(
     val modifiedModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier
-                .clip(
-                    shape = RoundedCornerShape(50.dp)
-                )
                 .shadow(
-                    color = whiteMain.copy(alpha = 0.50f),  //cardShadowColor
+                    color = whiteMain.copy(alpha = 0.25f),  //cardShadowColor
                     borderRadius = 23.dp,
-                    blurRadius = 4.7.dp,
+                    blurRadius = 2.35.dp,
                     offsetY = 0.dp,
                     offsetX = 0.dp,
-                    spread = 5.dp,
+                    spread = 2.5.dp,
+                )
+                .clip(
+                    shape = RoundedCornerShape(50.dp)
                 )
                 .background(pageBlackBackgroundColor)
         } else {

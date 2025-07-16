@@ -28,6 +28,7 @@ fun SearchLazyList(
     modifier: Modifier = Modifier,
     lastFocusedIndex: Int,
     searchResultList: List<SearchItemDto>,
+    onSearchResultFocusedIndexChange: (Int) -> Unit,
 ) {
 
 
@@ -47,13 +48,11 @@ fun SearchLazyList(
             SearchUiItem(
                 modifier = Modifier
                     .onFocusChanged {
-                        if (it.isFocused) {
+                        if (it.hasFocus) {
                             Log.e("SEARCH_GRID", "Item $index gained focus")
-                            //  onLastFocusIndexChange.invoke(index)
-                            // Ensure the item is visible
-//                            coroutineScope.launch {
-//                                scrollState.scrollToItem(index)
-//                            }
+                            onSearchResultFocusedIndexChange.invoke(index)
+                        } else {
+                            onSearchResultFocusedIndexChange.invoke(-1)
                         }
                     }
                     .focusable()
@@ -116,6 +115,9 @@ private fun SearchListPreview() {
 
     SearchLazyList(
         lastFocusedIndex = 1,
-        searchResultList = resultList
+        searchResultList = resultList,
+        onSearchResultFocusedIndexChange = {
+
+        }
     )
 }

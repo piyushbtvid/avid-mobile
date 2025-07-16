@@ -2,12 +2,14 @@ package com.faithForward.media.ui.sections.search.custom_keyboard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
 
 @Composable
@@ -21,7 +23,8 @@ fun InputKeyList(
 
 
     LazyRow(
-        modifier = modifier.wrapContentWidth()
+        modifier = modifier.wrapContentWidth(),
+        contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
     ) {
 
         itemsIndexed(list) { index, item ->

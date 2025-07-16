@@ -2,7 +2,6 @@ package com.faithForward.media.ui.sections.search.custom_keyboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,10 +15,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 
+enum class KeyboardMode {
+    ALPHABET, NUMBER
+}
+
 @Composable
 fun CustomKeyBoard(
     modifier: Modifier = Modifier,
     onKeyClick: (String) -> Unit,
+    currentKeyboardMode: KeyboardMode,
+    onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
 ) {
 
     val alphabetList = remember {
@@ -72,7 +77,7 @@ fun CustomKeyBoard(
             KeyboardActionButton(
                 actionState = KeyboardActionState.number,
                 onClick = { state ->
-
+                    onKeyBoardActionButtonClick.invoke(state)
                 },
                 displayText = "123",
             )
@@ -81,7 +86,7 @@ fun CustomKeyBoard(
             KeyboardActionButton(
                 actionState = KeyboardActionState.space,
                 onClick = { state ->
-
+                    onKeyBoardActionButtonClick.invoke(state)
                 },
                 displayText = "Space",
             )
@@ -89,17 +94,21 @@ fun CustomKeyBoard(
         }
 
 
-        InputKeyList(focusedIndex = inputListFocusedIndex, onFocusedIndexChanged = { int ->
-            inputListFocusedIndex = int
-        }, onItemClick = { value ->
-            onKeyClick.invoke(value)
-        }, list = alphabetList
+        InputKeyList(
+            focusedIndex = inputListFocusedIndex,
+            onFocusedIndexChanged = { int ->
+                inputListFocusedIndex = int
+            },
+            onItemClick = { value ->
+                onKeyClick.invoke(value)
+            },
+            list = if (currentKeyboardMode == KeyboardMode.ALPHABET) alphabetList else if (currentKeyboardMode == KeyboardMode.NUMBER) numberList else alphabetList
         )
 
         KeyboardActionButton(
             actionState = KeyboardActionState.clear,
             onClick = { state ->
-
+                onKeyBoardActionButtonClick.invoke(state)
             },
             iconId = R.drawable.outline_backspace_24,
         )
@@ -117,6 +126,10 @@ fun CustomKeyBoard(
 private fun CustomKeyBoardPreview() {
     CustomKeyBoard(
         onKeyClick = {
+
+        },
+        currentKeyboardMode = KeyboardMode.NUMBER,
+        onKeyBoardActionButtonClick = {
 
         }
     )

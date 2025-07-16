@@ -23,6 +23,7 @@ import com.faithForward.media.ui.sections.home.HomePage
 import com.faithForward.media.ui.sections.movies.MoviesPage
 import com.faithForward.media.ui.sections.myList.MyListPage
 import com.faithForward.media.ui.sections.search.SearchScreen
+import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
@@ -483,20 +484,20 @@ fun MainAppNavHost(
         ) { backStackEntry ->
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
 
-            SearchScreen(viewModel = searchViewModel,
-                sideBarViewModel = sideBarViewModel,
-                onBackClick = {
-                    onBackClickForExit.invoke()
-                    //activity?.finish()
-                },
-                onSearchItemClick = { item ->
-                    if (item.contentSlug != null) {
-                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
-                    }
-                })
+//            SearchScreen(viewModel = searchViewModel,
+//                sideBarViewModel = sideBarViewModel,
+//                onBackClick = {
+//                    onBackClickForExit.invoke()
+//                    //activity?.finish()
+//                },
+//                onSearchItemClick = { item ->
+//                    if (item.contentSlug != null) {
+//                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
+//                    }
+//                })
 
 
-         //   SearchScreenUi()
+            SearchScreenUi()
 
         }
 

@@ -51,7 +51,7 @@ fun KeyboardActionButton(
         modifier = modifier
             .wrapContentSize()
             .background(
-                color = if (isFocused) focusedTextColor else whiteMain,
+                color = if (isFocused) whiteMain else focusedTextColor,
                 shape = RoundedCornerShape(30.dp)
             )
             .padding(
@@ -72,7 +72,7 @@ fun KeyboardActionButton(
         if (displayText != null) {
             TitleText(
                 text = displayText,
-                color = if (isFocused) focusedTextColor else pageBlackBackgroundColor,
+                color = if (isFocused) pageBlackBackgroundColor else pageBlackBackgroundColor,
                 textSize = 10,
                 lineHeight = 10
             )
@@ -85,7 +85,7 @@ fun KeyboardActionButton(
                     .height(10.dp),
                 painter = painterResource(iconId),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(color = if (isFocused) focusedTextColor else pageBlackBackgroundColor)
+                colorFilter = ColorFilter.tint(color = if (isFocused) pageBlackBackgroundColor else pageBlackBackgroundColor)
             )
         }
     }

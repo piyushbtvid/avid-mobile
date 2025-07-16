@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyBoardUi
+import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardActionState
+import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardMode
 import com.faithForward.media.ui.sections.search.item.SearchItemDto
 import com.faithForward.media.ui.sections.search.recent.RecentSearch
 import com.faithForward.media.ui.theme.cardShadowColor
@@ -96,6 +98,12 @@ fun SearchScreen(
 @Composable
 fun SearchScreenUi(modifier: Modifier = Modifier) {
 
+    var recentSearchFocusedIndex by remember { mutableStateOf(-1) }
+    var searchResultFocusedIndex by remember { mutableStateOf(-1) }
+
+    var searchInputText by remember { mutableStateOf("") }
+    var currentKeyboardMode by remember { mutableStateOf(KeyboardMode.ALPHABET) }
+
     val list = listOf(
         "Betty The Cry",
         "Betty The Cry",
@@ -141,14 +149,40 @@ fun SearchScreenUi(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 73.dp, start = 113.dp, end = 120.dp),
+            .padding(top = 73.dp, start = 113.dp, end = 110.dp),
         verticalArrangement = Arrangement.spacedBy(23.5.dp)
     ) {
 
         KeyBoardUi(
-            searchInputText = "mmm",
+            searchInputText = searchInputText,
+            currentKeyboardMode = currentKeyboardMode,
             onInputTextChange = { string ->
+                searchInputText += string
+            },
+            onKeyBoardActionButtonClick = { state ->
 
+                when (state) {
+                    KeyboardActionState.space -> {
+                        searchInputText += " "
+                    }
+
+                    KeyboardActionState.clear -> {
+                        if (searchInputText.isNotEmpty()) {
+                            searchInputText = searchInputText.dropLast(1)
+                        }
+                    }
+
+                    KeyboardActionState.number -> {
+                        // switch to number keyboard layout
+                        currentKeyboardMode = KeyboardMode.NUMBER
+                    }
+
+                    KeyboardActionState.alphabet -> {
+                        // switch to alphabet keyboard layout
+                        currentKeyboardMode = KeyboardMode.ALPHABET
+                    }
+
+                }
             }
         )
 
@@ -158,13 +192,19 @@ fun SearchScreenUi(modifier: Modifier = Modifier) {
 
             RecentSearch(
                 list = list,
-                lastFocusedIndex = -1
+                lastFocusedIndex = recentSearchFocusedIndex,
+                onFocusedIndexChange = { int ->
+                    recentSearchFocusedIndex = int
+                }
             )
 
 
             SearchLazyList(
-                lastFocusedIndex = -1,
-                searchResultList = resultList
+                lastFocusedIndex = searchResultFocusedIndex,
+                searchResultList = resultList,
+                onSearchResultFocusedIndexChange = { int ->
+                    searchResultFocusedIndex = int
+                }
             )
 
         }

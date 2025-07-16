@@ -10,8 +10,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun KeyBoardUi(
     modifier: Modifier = Modifier,
-    searchInputText: String = "",
+    searchInputText: String,
     onInputTextChange: (String) -> Unit,
+    currentKeyboardMode: KeyboardMode,
+    onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
 ) {
 
 
@@ -27,7 +29,9 @@ fun KeyBoardUi(
         CustomKeyBoard(
             onKeyClick = { value ->
                 onInputTextChange.invoke(value)
-            }
+            },
+            currentKeyboardMode = currentKeyboardMode,
+            onKeyBoardActionButtonClick = onKeyBoardActionButtonClick
         )
 
     }
