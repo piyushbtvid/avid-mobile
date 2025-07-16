@@ -484,20 +484,20 @@ fun MainAppNavHost(
         ) { backStackEntry ->
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
 
-//            SearchScreen(viewModel = searchViewModel,
-//                sideBarViewModel = sideBarViewModel,
-//                onBackClick = {
-//                    onBackClickForExit.invoke()
-//                    //activity?.finish()
-//                },
-//                onSearchItemClick = { item ->
-//                    if (item.contentSlug != null) {
-//                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
-//                    }
-//                })
+            SearchScreen(viewModel = searchViewModel,
+                sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    onBackClickForExit.invoke()
+                    //activity?.finish()
+                },
+                onSearchItemClick = { item ->
+                    if (item.contentSlug != null) {
+                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
+                    }
+                })
 
 
-            SearchScreenUi()
+           // SearchScreenUi()
 
         }
 

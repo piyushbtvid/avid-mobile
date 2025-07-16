@@ -64,4 +64,12 @@ data class ContentItem(
     @SerializedName("related_content")
     val relatedContent: List<ContentItem>? = null,
     val resumeInfo: ResumeInfo? = null,
+    val email: String? = null,
+    val phone: String? = null,
+    @SerializedName("channel_name") val channelName: String? = null,
+    @SerializedName("channel_category") val channelCategory: String? = null,
+    @SerializedName("channel_banner") val channelBanner: String? = null,
+    @SerializedName("channel_description") val channelDescription: String? = null,
+    @SerializedName("channel_subscribers") val channelSubscribers: String? = null,
+    @SerializedName("profile_img") val creatorProfileImage: String? = null,
 )
