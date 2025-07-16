@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -26,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.focusedTextColor
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.whiteMain
@@ -46,18 +50,32 @@ fun KeyboardActionButton(
 
     var isFocused by remember { mutableStateOf(false) }
 
+    val focusRequester = remember { FocusRequester() }
+
+
+    LaunchedEffect(Unit) {
+        try {
+            if (actionState == KeyboardActionState.number || actionState == KeyboardActionState.alphabet) {
+                focusRequester.requestFocus()
+            }
+        } catch (_: Exception) {
+
+        }
+    }
+
 
     Box(
         modifier = modifier
             .wrapContentSize()
             .background(
-                color = if (isFocused) whiteMain else focusedTextColor,
+                color = if (isFocused) focusedMainColor else focusedTextColor,
                 shape = RoundedCornerShape(30.dp)
             )
             .padding(
                 horizontal = 10.dp,
                 vertical = 5.dp
             )
+            .focusRequester(focusRequester)
             .onFocusChanged {
                 isFocused = it.hasFocus
             }
@@ -72,7 +90,7 @@ fun KeyboardActionButton(
         if (displayText != null) {
             TitleText(
                 text = displayText,
-                color = if (isFocused) pageBlackBackgroundColor else pageBlackBackgroundColor,
+                color = if (isFocused) whiteMain else pageBlackBackgroundColor,
                 textSize = 10,
                 lineHeight = 10
             )
@@ -85,7 +103,7 @@ fun KeyboardActionButton(
                     .height(10.dp),
                 painter = painterResource(iconId),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(color = if (isFocused) pageBlackBackgroundColor else pageBlackBackgroundColor)
+                colorFilter = ColorFilter.tint(color = if (isFocused) whiteMain else pageBlackBackgroundColor)
             )
         }
     }
