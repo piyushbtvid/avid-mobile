@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -123,7 +124,7 @@ fun SearchScreenUi(
 ) {
 
     var recentSearchFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var searchResultFocusedIndex by rememberSaveable { mutableStateOf(-1) }
+    var searchResultFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var searchResultLastFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     var searchInputText by rememberSaveable { mutableStateOf("") }
@@ -178,7 +179,8 @@ fun SearchScreenUi(
                 .padding(
                     top = 34.dp,
                     end = 21.8.dp
-                ),
+                )
+                .size(15.dp),
             painter = painterResource(R.drawable.fi_sr_user),
             contentDescription = "profile image"
         )

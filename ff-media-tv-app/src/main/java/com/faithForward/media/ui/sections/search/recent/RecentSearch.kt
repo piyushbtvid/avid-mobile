@@ -5,9 +5,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -78,29 +80,31 @@ fun RecentSearch(
                     label = "focus-scale"
                 )
 
-                TitleText(
+
+                Box(
                     modifier = Modifier
-                        .focusRequester(if (index == 0) focusRequester else FocusRequester())
-                        .onFocusChanged {
-                            if (it.hasFocus) {
-                                onFocusedIndexChange.invoke(index)
-                            } else {
-                                onFocusedIndexChange.invoke(-1)
+                        .height(20.dp) // enough to accommodate the largest text size
+                ) {
+                    TitleText(
+                        modifier = Modifier
+                            .focusRequester(if (index == 0) focusRequester else FocusRequester())
+                            .onFocusChanged {
+                                if (it.hasFocus) {
+                                    onFocusedIndexChange.invoke(index)
+                                } else {
+                                    onFocusedIndexChange.invoke(-1)
+                                }
                             }
-                        }
-                        .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                        .clickable(interactionSource = null, indication = null, onClick = {
-                            onItemClick.invoke(item)
-                        })
-                        .focusable(),
-                    text = item,
-                    textSize = 10,
-                    lineHeight = 10,
-                    color = if (uiState == FocusState.FOCUSED) focusedTextColor else whiteMain
-                )
+                            .clickable(interactionSource = null, indication = null, onClick = {
+                                onItemClick.invoke(item)
+                            })
+                            .focusable(),
+                        text = item,
+                        textSize = if (uiState == FocusState.FOCUSED) 20 else 10,
+                        lineHeight = 10,
+                        color = if (uiState == FocusState.FOCUSED) focusedTextColor else whiteMain
+                    )
+                }
 
 
             }
