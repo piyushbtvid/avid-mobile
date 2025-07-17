@@ -441,7 +441,7 @@ fun TvSeekBar(
             }
         }
         .clickable(interactionSource = null, indication = null, onClick = {
-            onForward()
+           // onForward()
         })
         .focusable()
         .border(
