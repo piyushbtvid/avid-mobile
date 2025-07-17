@@ -12,6 +12,7 @@ fun KeyBoardUi(
     modifier: Modifier = Modifier,
     searchInputText: String,
     onInputTextChange: (String) -> Unit,
+    searchResultLastFocusedIndex: Int = -1,
     currentKeyboardMode: KeyboardMode,
     onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
 ) {
@@ -30,6 +31,7 @@ fun KeyBoardUi(
             onKeyClick = { value ->
                 onInputTextChange.invoke(value)
             },
+            searchResultLastFocusedIndex = searchResultLastFocusedIndex,
             currentKeyboardMode = currentKeyboardMode,
             onKeyBoardActionButtonClick = onKeyBoardActionButtonClick
         )

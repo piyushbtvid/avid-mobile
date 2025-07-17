@@ -23,6 +23,7 @@ enum class KeyboardMode {
 fun CustomKeyBoard(
     modifier: Modifier = Modifier,
     onKeyClick: (String) -> Unit,
+    searchResultLastFocusedIndex: Int ,
     currentKeyboardMode: KeyboardMode,
     onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
 ) {
@@ -79,6 +80,7 @@ fun CustomKeyBoard(
                 onClick = { state ->
                     onKeyBoardActionButtonClick.invoke(state)
                 },
+                searchResultLastFocusedIndex = searchResultLastFocusedIndex,
                 displayText = if (currentKeyboardMode == KeyboardMode.ALPHABET) "123" else if (currentKeyboardMode == KeyboardMode.NUMBER) "abc" else "abc",
             )
 
@@ -89,6 +91,7 @@ fun CustomKeyBoard(
                     onKeyBoardActionButtonClick.invoke(state)
                 },
                 displayText = "Space",
+                searchResultLastFocusedIndex = searchResultLastFocusedIndex,
             )
 
         }
@@ -111,6 +114,7 @@ fun CustomKeyBoard(
                 onKeyBoardActionButtonClick.invoke(state)
             },
             iconId = R.drawable.outline_backspace_24,
+            searchResultLastFocusedIndex = searchResultLastFocusedIndex,
         )
 
     }
@@ -131,6 +135,7 @@ private fun CustomKeyBoardPreview() {
         currentKeyboardMode = KeyboardMode.NUMBER,
         onKeyBoardActionButtonClick = {
 
-        }
+        },
+        searchResultLastFocusedIndex = 1
     )
 }

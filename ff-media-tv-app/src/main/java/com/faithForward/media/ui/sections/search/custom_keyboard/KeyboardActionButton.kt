@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.sections.search.custom_keyboard
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ fun KeyboardActionButton(
     modifier: Modifier = Modifier,
     actionState: KeyboardActionState,
     onClick: (KeyboardActionState) -> Unit,
+    searchResultLastFocusedIndex: Int,
     displayText: String? = null,
     iconId: Int? = null,
 ) {
@@ -55,7 +57,11 @@ fun KeyboardActionButton(
 
     LaunchedEffect(Unit) {
         try {
-            if (actionState == KeyboardActionState.number || actionState == KeyboardActionState.alphabet) {
+            if ((actionState == KeyboardActionState.number || actionState == KeyboardActionState.alphabet) && searchResultLastFocusedIndex == -1) {
+                Log.e(
+                    "SEARCH_RESULT",
+                    "KEYboard button request Focus called with $searchResultLastFocusedIndex"
+                )
                 focusRequester.requestFocus()
             }
         } catch (_: Exception) {
@@ -119,12 +125,14 @@ private fun ActionButtonPreview() {
         KeyboardActionButton(
             actionState = KeyboardActionState.number,
             displayText = "123",
+            searchResultLastFocusedIndex = 1,
             onClick = { },
         )
 
         KeyboardActionButton(
             actionState = KeyboardActionState.clear,
             iconId = R.drawable.outline_backspace_24,
+            searchResultLastFocusedIndex = 1,
             onClick = { },
         )
 
@@ -132,6 +140,7 @@ private fun ActionButtonPreview() {
         KeyboardActionButton(
             actionState = KeyboardActionState.space,
             displayText = "Space",
+            searchResultLastFocusedIndex = 1,
             onClick = { },
         )
 

@@ -14,11 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -113,14 +116,20 @@ fun SearchScreenUi(
     onSearchItemClick: (SearchItemDto) -> Unit,
 ) {
 
-    var recentSearchFocusedIndex by remember { mutableStateOf(-1) }
-    var searchResultFocusedIndex by remember { mutableStateOf(-1) }
+    var recentSearchFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var searchResultFocusedIndex by rememberSaveable { mutableStateOf(-1) }
+    var searchResultLastFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
-    var searchInputText by remember { mutableStateOf("") }
-    var currentKeyboardMode by remember { mutableStateOf(KeyboardMode.ALPHABET) }
+    var searchInputText by rememberSaveable { mutableStateOf("") }
+    var currentKeyboardMode by rememberSaveable { mutableStateOf(KeyboardMode.ALPHABET) }
 
     val uiState by searchViewModel.searchUiState.collectAsState()
     val sideBarState by sideBarViewModel.sideBarState
+
+    val searchResultFocusRequesterList =
+        remember(uiState.result?.searchItemDtoList?.size ?: 0) {
+            List(uiState.result?.searchItemDtoList?.size ?: 0) { FocusRequester() }
+        }
 
     BackHandler {
         Log.e("ON_BACK", "on back in search called")
@@ -142,6 +151,17 @@ fun SearchScreenUi(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (searchResultLastFocusedIndex > -1 && searchResultFocusRequesterList.isNotEmpty()) {
+            try {
+                Log.e("SEARCH_RESULT", "on Search Last Request Focus called")
+                searchResultFocusRequesterList[searchResultLastFocusedIndex].requestFocus()
+            } catch (_: Exception) {
+
+            }
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -150,6 +170,7 @@ fun SearchScreenUi(
     ) {
 
         KeyBoardUi(
+            searchResultLastFocusedIndex = searchResultLastFocusedIndex,
             searchInputText = searchInputText,
             currentKeyboardMode = currentKeyboardMode,
             onInputTextChange = { string ->
@@ -207,10 +228,14 @@ fun SearchScreenUi(
                 SearchLazyList(
                     lastFocusedIndex = searchResultFocusedIndex,
                     searchResultList = uiState.result!!.searchItemDtoList!!,
+                    searchResultFocusRequesterList = searchResultFocusRequesterList,
                     onSearchResultFocusedIndexChange = { int ->
                         searchResultFocusedIndex = int
                     },
-                    onItemClick = onSearchItemClick
+                    onItemClick = onSearchItemClick,
+                    onSearchLastFocusedIndexChange = { int ->
+                        searchResultLastFocusedIndex = int
+                    }
                 )
             } else if (uiState.result?.searchItemDtoList?.isEmpty() == true) {
                 Box(

@@ -34,16 +34,16 @@ fun SearchLazyList(
     lastFocusedIndex: Int,
     searchResultList: List<SearchItemDto>,
     onItemClick: (SearchItemDto) -> Unit,
+    searchResultFocusRequesterList: List<FocusRequester>,
+    onSearchLastFocusedIndexChange: (Int) -> Unit,
     onSearchResultFocusedIndexChange: (Int) -> Unit,
 ) {
-
-    val focusRequester = remember { FocusRequester() }
 
     LazyColumn(
         modifier = modifier
             .wrapContentWidth()
             .focusRestorer {
-                focusRequester
+                searchResultFocusRequesterList[0]
             },
         verticalArrangement = Arrangement.spacedBy(5.dp),
         contentPadding = PaddingValues(bottom = 20.dp)
@@ -57,11 +57,12 @@ fun SearchLazyList(
             }
             SearchUiItem(
                 modifier = Modifier
-                    .focusRequester(if (index == 0) focusRequester else FocusRequester())
+                    .focusRequester(searchResultFocusRequesterList[index])
                     .onFocusChanged {
                         if (it.hasFocus) {
                             Log.e("SEARCH_GRID", "Item $index gained focus")
                             onSearchResultFocusedIndexChange.invoke(index)
+                            onSearchLastFocusedIndexChange.invoke(index)
                         } else {
                             onSearchResultFocusedIndexChange.invoke(-1)
                         }
@@ -130,10 +131,14 @@ private fun SearchListPreview() {
     SearchLazyList(
         lastFocusedIndex = 1,
         searchResultList = resultList,
+        searchResultFocusRequesterList = emptyList(),
         onSearchResultFocusedIndexChange = {
 
         },
         onItemClick = {
+
+        },
+        onSearchLastFocusedIndexChange = {
 
         }
     )
