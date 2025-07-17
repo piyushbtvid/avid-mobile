@@ -3,10 +3,9 @@ package com.faithForward.media.ui.sections.search.custom_keyboard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +36,12 @@ fun SearchInputResultList(
 
 
         TitleText(
+            modifier = Modifier.height(30.dp),
             text = text,
             textSize = 30,
             lineHeight = 30,
-            color = whiteMain
-        )
+            color = whiteMain,
+            )
 
 
     }

@@ -39,7 +39,7 @@ fun TitleText(
         letterSpacing = letterSpacing,
         lineHeight = lineHeight.sp,
         overflow = TextOverflow.Ellipsis,
-        fontSize = textSize.sp
+        fontSize = textSize.sp,
     )
 }
 
