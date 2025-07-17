@@ -98,6 +98,10 @@ fun CustomTextField(
                 onNext()
             },
         ),
+        visualTransformation = if (keyboardType == KeyboardType.Password)
+            PasswordVisualTransformation()
+        else
+            VisualTransformation.None,
         colors = TextFieldDefaults.colors(
             cursorColor = sideBarFocusedBackgroundColor,
             focusedContainerColor = Color.Transparent,
