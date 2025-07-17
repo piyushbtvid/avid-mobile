@@ -3,6 +3,7 @@ package com.faithForward.media.ui.player
 import android.annotation.SuppressLint
 import android.media.MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
@@ -98,6 +99,9 @@ fun VideoPlayer(
     var currentPosition by remember { mutableIntStateOf(initialIndex) }
     var currentPlayingVideoPosition by remember { mutableStateOf(0) }
     var currentVideoDuration by remember { mutableStateOf(0) }
+
+    //temporary for error in live data
+    var hasPlaybackError by remember { mutableStateOf(false) }
 
 
     val isVisible =
@@ -305,8 +309,9 @@ fun VideoPlayer(
                     videoDuration = exoPlayer.duration
                 )
             )
+        } else if (hasPlaybackError) {
+            onVideoEnd()
         }
-
     }
 
     LaunchedEffect(playerState) {
@@ -368,6 +373,12 @@ fun VideoPlayer(
             if (isPlaying) {
                 sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
             }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            Log.e("PLAYER_ERROR", "on player error with ${error.message}")
+            hasPlaybackError = true
         }
     })
 
@@ -472,6 +483,7 @@ fun VideoPlayer(
 
 
     DisposableEffect(lifecycleOwner) {
+
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
