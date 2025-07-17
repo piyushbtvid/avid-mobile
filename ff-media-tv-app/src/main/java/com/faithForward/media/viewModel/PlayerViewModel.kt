@@ -332,13 +332,28 @@ class PlayerViewModel @Inject constructor(
                         if (matchedSeasonIndex == -1) return@launch
 
                         // Built a combined list from matched season to last
-                        val remainingSeasons =
-                            allSeasons.subList(matchedSeasonIndex, allSeasons.size)
+//                        val remainingSeasons =
+//                            allSeasons.subList(matchedSeasonIndex, allSeasons.size)
+
+                        //matched season all episodes
+                        val matchedSeasonEpisodes =
+                            allSeasons.getOrNull(matchedSeasonIndex)?.episodes
+
+
                         //all following or remaining seasons episode in one list
-                        val combinedEpisodes = remainingSeasons.flatMap { it.episodes }
+                        //  val combinedEpisodes = remainingSeasons.flatMap { it.episodes }
 
                         // Updated the episode list while preserving progress to PosterCardDto
-                        val updatedEpisodes = combinedEpisodes.map { episode ->
+//                        val updatedEpisodes = combinedEpisodes.map { episode ->
+//                            if (episode.slug == continueWatchingEpisodeSlug) {
+//                                episode.toPosterDto().copy(progress = firstItem.progress)
+//                            } else {
+//                                episode.toPosterDto()
+//                            }
+//                        }
+
+                        // updating matched season episode to PosterCardDto and preserving progress
+                        val matchedSeasonUpdatedEpisodes = matchedSeasonEpisodes?.map { episode ->
                             if (episode.slug == continueWatchingEpisodeSlug) {
                                 episode.toPosterDto().copy(progress = firstItem.progress)
                             } else {
@@ -346,21 +361,20 @@ class PlayerViewModel @Inject constructor(
                             }
                         }
 
-
                         // Finding Resumed Index of continue watching item from all episodes
                         val resumeIndex =
-                            updatedEpisodes.indexOfFirst { it.slug == continueWatchingEpisodeSlug }
+                            matchedSeasonUpdatedEpisodes?.indexOfFirst { it.slug == continueWatchingEpisodeSlug }
 
                         // converting all Episodes in VideoPlayerDto for Player
-                        val videoPlayList = updatedEpisodes.map {
+                        val videoPlayList = matchedSeasonUpdatedEpisodes?.map {
                             it.toVideoPlayerDto()
                         }
 
                         // converting all Episodes in RelatedItemDto for showing them in Related List
-                        val relatedList = updatedEpisodes.map {
+                        val relatedList = matchedSeasonUpdatedEpisodes?.map {
                             it.toRelatedItemDto()
                         }
-                        Log.e("ResumeList", "Updated episodes: $updatedEpisodes")
+                        Log.e("ResumeList", "Updated episodes: $matchedSeasonUpdatedEpisodes")
                         Log.e("ResumeList", "Resume episode index: $resumeIndex")
                         Log.e(
                             "IS_CONTINUE_WATCHING_CLICK",
@@ -371,21 +385,23 @@ class PlayerViewModel @Inject constructor(
                             "is from continue watching in player viewModel with finial result of RelatedList $relatedList  "
                         )
 
-                        val title = videoPlayList.getOrNull(index ?: 0)?.title
+                        val title = videoPlayList?.getOrNull(index ?: 0)?.title
 
-                        _state.value = _state.value.copy(
-                            videoPlayerDto = Resource.Success(
-                                PlayerDto(
-                                    videoPlayerDtoList = videoPlayList,
-                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                        title = "Next Up...", rowList = relatedList
+                        if (videoPlayList != null && relatedList != null) {
+                            _state.value = _state.value.copy(
+                                videoPlayerDto = Resource.Success(
+                                    PlayerDto(
+                                        videoPlayerDtoList = videoPlayList,
+                                        playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                            title = "Next Up...", rowList = relatedList
+                                        )
                                     )
-                                )
-                            ),
-                            isLoading = false,
-                            videoPlayingIndex = resumeIndex,
-                            currentTitle = title
-                        )
+                                ),
+                                isLoading = false,
+                                videoPlayingIndex = resumeIndex,
+                                currentTitle = title
+                            )
+                        }
                     }
                 }
 
