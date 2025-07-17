@@ -106,6 +106,7 @@ data class SharedPlayerViewModelState(
 )
 
 sealed class PlayerEvent {
+    data object StartRelatedDialogAutoHide : PlayerEvent()
     data class UpdateDuration(val value: Long) : PlayerEvent()
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
     data object OnContinueWatchingUpdate : PlayerEvent()

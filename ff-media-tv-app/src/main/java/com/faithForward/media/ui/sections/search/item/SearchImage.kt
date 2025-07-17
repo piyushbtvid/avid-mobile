@@ -29,7 +29,7 @@ fun SearchImage(
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageSrc) // fallback if blank
-            .error(placeholderRes)
+      //      .error(placeholderRes)
             .listener(
                 onError = { request, throwable ->
                     Log.e("CoilError", "Image load failed ${throwable.throwable}")

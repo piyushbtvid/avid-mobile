@@ -332,6 +332,9 @@ fun VideoPlayer(
 
         sharedPlayerViewModel.interactionFlow.collect {
             Log.e("ON_USER_INTERCATION", "om user instercation collected in videoPlayer ")
+            if (playerScreenState.isRelatedVisible) {
+                playerViewModel.handleEvent(PlayerEvent.StartRelatedDialogAutoHide)
+            }
             if (!sharedPlayerScreenState.isControlsVisible && !playerScreenState.isRelatedVisible && !playerScreenState.isNextEpisodeDialogVisible) {
                 //     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 playerViewModel.handleEvent(PlayerEvent.HideRelated)
@@ -350,6 +353,12 @@ fun VideoPlayer(
             exoPlayer.seekTo(0)
             exoPlayer.release()
             onVideoEnd()
+        }
+    }
+
+    LaunchedEffect(playerScreenState) {
+        if (!playerScreenState.isRelatedVisible) {
+            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
     }
 

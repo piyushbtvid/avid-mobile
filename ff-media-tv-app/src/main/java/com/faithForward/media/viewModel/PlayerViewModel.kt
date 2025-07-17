@@ -1,16 +1,12 @@
 package com.faithForward.media.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.player.PlayerDto
 import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
-import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.media.viewModel.uiModels.toPosterDto
@@ -21,11 +17,14 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +37,8 @@ class PlayerViewModel @Inject constructor(
 
     private val _onContinueWatchingUpdateFlow = MutableSharedFlow<Unit>(replay = 0)
     val continueWatchingUpdateFlow = _onContinueWatchingUpdateFlow.asSharedFlow()
+
+    private var relatedAutoDismissJob: Job? = null
 
 
     fun handleEvent(event: PlayerEvent) {
@@ -56,6 +57,7 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.ShowRelated -> {
                 _state.value = _state.value.copy(isRelatedVisible = true)
+                startAutoDismissTimerForRelated()
             }
 
             is PlayerEvent.ShowNextEpisodeDialog -> {
@@ -120,6 +122,10 @@ class PlayerViewModel @Inject constructor(
                     Log.e("ON_CONTINUE_WATCHING", "on continue watching update called")
                     _onContinueWatchingUpdateFlow.emit(Unit)
                 }
+            }
+
+            is PlayerEvent.StartRelatedDialogAutoHide -> {
+                startAutoDismissTimerForRelated()
             }
 
         }
@@ -447,5 +453,22 @@ class PlayerViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun startAutoDismissTimerForRelated() {
+        relatedAutoDismissJob?.cancel()
+        relatedAutoDismissJob = viewModelScope.launch {
+            delay(10_000) // 10 seconds
+            _state.update {
+                it.copy(
+                    isRelatedVisible = false,
+                )
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        relatedAutoDismissJob?.cancel()
     }
 }
