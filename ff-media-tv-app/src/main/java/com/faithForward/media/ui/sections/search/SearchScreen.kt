@@ -2,6 +2,7 @@ package com.faithForward.media.ui.sections.search
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,9 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.R
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyBoardUi
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardActionState
@@ -44,6 +47,7 @@ data class SearchUiScreenDto(
     val searchItemDtoList: List<SearchItemDto>?,
 )
 
+//Old Search Screen
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
@@ -107,6 +111,8 @@ fun SearchScreen(
 }
 
 
+// New Search Screen
+
 @Composable
 fun SearchScreenUi(
     modifier: Modifier = Modifier,
@@ -162,94 +168,112 @@ fun SearchScreenUi(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 73.dp, start = 100.dp, end = 0.dp),
-        verticalArrangement = Arrangement.spacedBy(23.5.dp)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        KeyBoardUi(
-            searchResultLastFocusedIndex = searchResultLastFocusedIndex,
-            searchInputText = searchInputText,
-            currentKeyboardMode = currentKeyboardMode,
-            onInputTextChange = { string ->
-                searchInputText += string
-            },
-            onKeyBoardActionButtonClick = { state ->
-
-                when (state) {
-                    KeyboardActionState.space -> {
-                        searchInputText += " "
-                    }
-
-                    KeyboardActionState.clear -> {
-                        if (searchInputText.isNotEmpty()) {
-                            searchInputText = searchInputText.dropLast(1)
-                        }
-                    }
-
-                    KeyboardActionState.number -> {
-                        // switch to number keyboard layout
-                        currentKeyboardMode = KeyboardMode.NUMBER
-                    }
-
-                    KeyboardActionState.alphabet -> {
-                        // switch to alphabet keyboard layout
-                        currentKeyboardMode = KeyboardMode.ALPHABET
-                    }
-
-                }
-            }
+        Image(
+            modifier = Modifier
+                .align(alignment = Alignment.TopEnd)
+                .padding(
+                    top = 34.dp,
+                    end = 21.8.dp
+                ),
+            painter = painterResource(R.drawable.fi_sr_user),
+            contentDescription = "profile image"
         )
 
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 73.dp, start = 100.dp, end = 0.dp),
+            verticalArrangement = Arrangement.spacedBy(23.5.dp)
+        ) {
 
-        Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+            KeyBoardUi(
+                searchResultLastFocusedIndex = searchResultLastFocusedIndex,
+                searchInputText = searchInputText,
+                currentKeyboardMode = currentKeyboardMode,
+                onInputTextChange = { string ->
+                    searchInputText += string
+                },
+                onKeyBoardActionButtonClick = { state ->
 
+                    when (state) {
+                        KeyboardActionState.space -> {
+                            searchInputText += " "
+                        }
 
-            if (uiState.recentSearch != null) {
+                        KeyboardActionState.clear -> {
+                            if (searchInputText.isNotEmpty()) {
+                                searchInputText = searchInputText.dropLast(1)
+                            }
+                        }
 
-                RecentSearch(
-                    list = uiState.recentSearch!!,
-                    lastFocusedIndex = recentSearchFocusedIndex,
-                    onFocusedIndexChange = { int ->
-                        recentSearchFocusedIndex = int
-                    },
-                    onItemClick = { value ->
-                        searchInputText = value
+                        KeyboardActionState.number -> {
+                            // switch to number keyboard layout
+                            currentKeyboardMode = KeyboardMode.NUMBER
+                        }
+
+                        KeyboardActionState.alphabet -> {
+                            // switch to alphabet keyboard layout
+                            currentKeyboardMode = KeyboardMode.ALPHABET
+                        }
+
                     }
-                )
-
-            }
-
-
-
-            if (!uiState.result?.searchItemDtoList.isNullOrEmpty()) {
-                SearchLazyList(
-                    lastFocusedIndex = searchResultFocusedIndex,
-                    searchResultList = uiState.result!!.searchItemDtoList!!,
-                    searchResultFocusRequesterList = searchResultFocusRequesterList,
-                    onSearchResultFocusedIndexChange = { int ->
-                        searchResultFocusedIndex = int
-                    },
-                    onItemClick = onSearchItemClick,
-                    onSearchLastFocusedIndexChange = { int ->
-                        searchResultLastFocusedIndex = int
-                    }
-                )
-            } else if (uiState.result?.searchItemDtoList?.isEmpty() == true) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No results found",
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                    )
                 }
+            )
+
+
+            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+
+
+                if (uiState.recentSearch != null) {
+
+                    RecentSearch(
+                        list = uiState.recentSearch!!,
+                        lastFocusedIndex = recentSearchFocusedIndex,
+                        onFocusedIndexChange = { int ->
+                            recentSearchFocusedIndex = int
+                        },
+                        onItemClick = { value ->
+                            searchInputText = value
+                        }
+                    )
+
+                }
+
+
+
+                if (!uiState.result?.searchItemDtoList.isNullOrEmpty()) {
+                    SearchLazyList(
+                        lastFocusedIndex = searchResultFocusedIndex,
+                        searchResultList = uiState.result!!.searchItemDtoList!!,
+                        searchResultFocusRequesterList = searchResultFocusRequesterList,
+                        onSearchResultFocusedIndexChange = { int ->
+                            searchResultFocusedIndex = int
+                        },
+                        onItemClick = onSearchItemClick,
+                        onSearchLastFocusedIndexChange = { int ->
+                            searchResultLastFocusedIndex = int
+                        }
+                    )
+                } else if (uiState.result?.searchItemDtoList?.isEmpty() == true) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No results found",
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                        )
+                    }
+                }
+
             }
+
 
         }
 
