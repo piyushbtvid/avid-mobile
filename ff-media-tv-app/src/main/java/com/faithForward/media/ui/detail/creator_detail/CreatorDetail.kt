@@ -22,9 +22,10 @@ import com.faithForward.media.ui.theme.whiteMain
 
 data class CreatorContentDto(
     val about: String?,
+    val description: String?,
     val subscribersText: String?,
     val genre: String?,
-    val channelName : String?,
+    val channelName: String?,
     val creatorChannelCategory: String?,
 )
 
@@ -76,7 +77,7 @@ fun CreatorDetail(
                 }
             }
 
-            if(channelName!=null){
+            if (channelName != null) {
                 Text(
                     modifier = Modifier,
                     text = "Channel Name: $channelName",
@@ -88,7 +89,16 @@ fun CreatorDetail(
             if (about != null) {
                 Text(
                     modifier = Modifier,
-                    text = about,
+                    text = "Bio: $about",
+                    style = tv_02,
+                    textAlign = TextAlign.Start
+                )
+            }
+
+            if(description != null){
+                Text(
+                    modifier = Modifier,
+                    text = description,
                     style = tv_02,
                     textAlign = TextAlign.Start
                 )
@@ -107,7 +117,8 @@ private fun CreatorDetailPreview() {
             genre = "Comedy",
             subscribersText = "130K Subscribers",
             creatorChannelCategory = "Reality",
-            channelName = "Beauty and Beast"
+            channelName = "Beauty and Beast",
+            description = "About the Creator: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor."
         )
     )
 }

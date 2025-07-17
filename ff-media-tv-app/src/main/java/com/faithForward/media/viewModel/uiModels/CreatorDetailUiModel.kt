@@ -21,7 +21,8 @@ fun CreatorResponse.toCreatorDetailDto(): CreatorDetailDto {
         subscribersText = "${data.channel_subscribers} Subscribers",
         genre = data.channel_category,
         creatorChannelCategory = data.channel_category,
-        channelName = data.channel_name
+        channelName = data.channel_name,
+        description = data.channel_description
     )
 
     return CreatorDetailDto(
