@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.home.carousel.CarouselContentRowDto
-import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.ui.sections.common_ui.carousel.CarouselContentRowDto
+import com.faithForward.media.ui.sections.creator.card.CreatorCardDto
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 import com.faithForward.media.viewModel.uiModels.toCarouselItemDto
 import com.faithForward.media.viewModel.uiModels.toCreatorCardDtoList

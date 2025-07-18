@@ -3,7 +3,7 @@ package com.faithForward.media.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.login.qr.LoginQrScreenDto
+import com.faithForward.media.ui.login.qr.LoginQrScreenDto
 import com.faithForward.media.viewModel.uiModels.QrLoginEvent
 import com.faithForward.media.viewModel.uiModels.QrLoginState
 import com.faithForward.preferences.UserPrefData

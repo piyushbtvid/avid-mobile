@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.detail.SeasonDto
-import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.detail.SeasonDto
+import com.faithForward.media.ui.detail.SeasonsNumberDto
 import com.faithForward.media.viewModel.uiModels.DetailPageItem
 import com.faithForward.media.viewModel.uiModels.DetailScreenEvent
 import com.faithForward.media.viewModel.uiModels.RelatedContentData
@@ -461,28 +461,29 @@ class DetailViewModel @Inject constructor(
         val currentData = _relatedContentData.value
 
         if (currentData is RelatedContentData.SeriesSeasons) {
-            val allSeasons = currentData.allSeasons
-            val currentSeasonNumber = currentSeasonEpisodes.firstOrNull()?.seasonNumber
-
-
-            val currentSeasonIndex = allSeasons.indexOfFirst { season ->
-                season.episodesContentDto.any { it.seasonNumber == currentSeasonNumber }
-            }
-
-            Log.e("CURRENT_SEASON_INDEX", "current season index $currentSeasonIndex and ")
-            Log.e("CURRENT_SEASON_INDEX", "current season episodes $currentSeasonEpisodes")
-
-            if (currentSeasonIndex == -1) return null
-
-            val result = mutableListOf<PosterCardDto>()
-            result.addAll(currentSeasonEpisodes)
-
-            // Add episodes from next seasons only
-            for (i in (currentSeasonIndex + 1) until allSeasons.size) {
-                result.addAll(allSeasons[i].episodesContentDto)
-            }
-
-            return result
+//            val allSeasons = currentData.allSeasons
+//            val currentSeasonNumber = currentSeasonEpisodes.firstOrNull()?.seasonNumber
+//
+//
+//            val currentSeasonIndex = allSeasons.indexOfFirst { season ->
+//                season.episodesContentDto.any { it.seasonNumber == currentSeasonNumber }
+//            }
+//
+//            Log.e("CURRENT_SEASON_INDEX", "current season index $currentSeasonIndex and ")
+//            Log.e("CURRENT_SEASON_INDEX", "current season episodes $currentSeasonEpisodes")
+//
+//            if (currentSeasonIndex == -1) return null
+//
+//            val result = mutableListOf<PosterCardDto>()
+//            result.addAll(currentSeasonEpisodes)
+//
+//            // Add episodes from next seasons only
+//            for (i in (currentSeasonIndex + 1) until allSeasons.size) {
+//                result.addAll(allSeasons[i].episodesContentDto)
+//            }
+//
+//            return result
+            return currentSeasonEpisodes
         }
 
         return null

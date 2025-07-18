@@ -40,14 +40,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
-import com.faithForward.media.navigation.MainScreen
-import com.faithForward.media.navigation.Routes
-import com.faithForward.media.sidebar.SideBar
-import com.faithForward.media.sidebar.SideBarItem
-import com.faithForward.media.theme.FfmediaTheme
-import com.faithForward.media.theme.focusedMainColor
-import com.faithForward.media.theme.pageBlackBackgroundColor
-import com.faithForward.media.theme.unFocusMainColor
+import com.faithForward.media.ui.navigation.MainScreen
+import com.faithForward.media.ui.navigation.Routes
+import com.faithForward.media.ui.navigation.sidebar.SideBar
+import com.faithForward.media.ui.navigation.sidebar.SideBarItem
+import com.faithForward.media.ui.theme.FfmediaTheme
+import com.faithForward.media.ui.theme.focusedMainColor
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
+import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
@@ -58,7 +58,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
-    private var isControlsVisible: Boolean = true
+    private var isControlsVisible: Boolean = false
     private var currentRoute: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
-                        sharedPlayerViewModel.state.collectAsState().value.isControlsVisible
+                        sharedPlayerViewModel.state.collectAsStateWithLifecycle().value.isControlsVisible
                     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
@@ -128,7 +128,7 @@ class MainActivity : ComponentActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         Log.e("Logging", "onKeyDown()")
 
-        // ✅ Show controls for ANY key press on PlayerScreen if they're not already visible
+        //  Show controls for ANY key press on PlayerScreen if they're not already visible
         if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }

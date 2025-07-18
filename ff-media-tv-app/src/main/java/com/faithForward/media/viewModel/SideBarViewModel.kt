@@ -7,10 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.R
-import com.faithForward.media.navigation.Routes
-import com.faithForward.media.sidebar.SideBarEvent
-import com.faithForward.media.sidebar.SideBarItem
-import com.faithForward.media.sidebar.SideBarState
+import com.faithForward.media.ui.navigation.Routes
+import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
+import com.faithForward.media.ui.navigation.sidebar.SideBarItem
+import com.faithForward.media.ui.navigation.sidebar.SideBarState
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.home.genre.GenreGridDto
+import com.faithForward.media.ui.sections.genre.GenreGridDto
 import com.faithForward.media.viewModel.uiModels.toGenreCardGridDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource

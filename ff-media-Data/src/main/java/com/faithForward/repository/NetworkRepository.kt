@@ -11,6 +11,7 @@ import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.network.dto.search.SearchResponse
+import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.preferences.UserPrefData
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -313,6 +314,23 @@ class NetworkRepository @Inject constructor(
         )
 
         Log.e("SEARCH_RESULT", "search response in repo is $result")
+        return result
+    }
+
+    suspend fun getRecentSearchContent(): Response<RecentSearchResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        val result = apiServiceInterface.getRecentSearch(
+            token = token,
+            deviceId = deviceId,
+            deviceType = deviceType
+        )
+
         return result
     }
 

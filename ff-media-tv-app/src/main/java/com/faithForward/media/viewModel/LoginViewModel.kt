@@ -3,8 +3,8 @@ package com.faithForward.media.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.login.LoginEvent
-import com.faithForward.media.login.LoginState
+import com.faithForward.media.ui.login.LoginEvent
+import com.faithForward.media.ui.login.LoginState
 import com.faithForward.network.dto.login.ErrorResponse
 import com.faithForward.preferences.UserPrefData
 import com.faithForward.repository.NetworkRepository

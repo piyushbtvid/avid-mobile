@@ -17,6 +17,7 @@ import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.network.dto.search.SearchResponse
+import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
 import com.faithForward.util.Constants
 import retrofit2.Response
@@ -200,5 +201,11 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<ApiMessageResponse>
 
+    @GET(Constants.RECENT_SEARCH_END_POINT)
+    suspend fun getRecentSearch(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+    ): Response<RecentSearchResponse>
 
 }

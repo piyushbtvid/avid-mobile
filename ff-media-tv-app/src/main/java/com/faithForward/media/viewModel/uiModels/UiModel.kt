@@ -1,13 +1,13 @@
 package com.faithForward.media.viewModel.uiModels
 
 import android.util.Log
-import com.faithForward.media.commanComponents.CategoryComposeDto
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.home.carousel.CarouselContentRowDto
-import com.faithForward.media.home.carousel.CarouselItemDto
-import com.faithForward.media.home.category.CategoryRowDto
-import com.faithForward.media.home.content.PosterRowDto
-import com.faithForward.media.home.creator.card.CreatorCardDto
+import com.faithForward.media.ui.commanComponents.CategoryComposeDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.sections.common_ui.carousel.CarouselContentRowDto
+import com.faithForward.media.ui.sections.common_ui.carousel.CarouselItemDto
+import com.faithForward.media.ui.sections.common_ui.category.CategoryRowDto
+import com.faithForward.media.ui.sections.common_ui.content.PosterRowDto
+import com.faithForward.media.ui.sections.creator.card.CreatorCardDto
 import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
@@ -47,6 +47,7 @@ fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
 }
 
 fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
+    Log.e("HOME_DATA_LOAD", "to HomePageItems called in uiModel ")
     val sections = data
     val homePageItems = mutableListOf<HomePageItem>()
     var carouselAdded = false
@@ -239,7 +240,8 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         seriesSlug = seriesSlug,
         progress = progressSeconds,
         contentType = content_type,
-        uploadYear = uploadedYear
+        uploadYear = uploadedYear,
+        landScapeImg = landscape ?: ""
     )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {
@@ -266,7 +268,8 @@ fun CarouselItemDto.toPosterCardDto(): PosterCardDto {
         imdbRating = imdbRating,
         releaseDate = releaseDate,
         contentType = contentType,
-        seriesSlug = seriesSlug
+        seriesSlug = seriesSlug,
+        landScapeImg = imgSrc ?: ""
     )
 }
 

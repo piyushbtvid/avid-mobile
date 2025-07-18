@@ -1,9 +1,9 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.detail.DetailDto
-import com.faithForward.media.detail.SeasonDto
-import com.faithForward.media.detail.SeasonsNumberDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.detail.DetailDto
+import com.faithForward.media.ui.detail.SeasonDto
+import com.faithForward.media.ui.detail.SeasonsNumberDto
 import com.faithForward.media.util.formatDuration
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.series.Episode
@@ -57,6 +57,7 @@ fun CardDetail.toDetailDto(): DetailDto {
 
     return DetailDto(id = data.id.toString(),
         imgSrc = data.landscape,
+        landScape = data.landscape,
         title = data.name,
         description = data.description,
         releaseDate = data.dateUploaded,
@@ -91,6 +92,7 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         contentType = contentType,
         progress = progress,
         relatedList = relatedList,
+        landScapeImg = landScape ?: ""
     )
 }
 
@@ -126,7 +128,9 @@ fun Episode.toPosterDto(): PosterCardDto {
         seasonNumber = season_number,
         videoHlsUrl = video_link,
         slug = slug,
-        contentType = content_type)
+        contentType = content_type,
+        landScapeImg = landscape
+    )
 }
 
 

@@ -1,10 +1,10 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.player.PlayerDto
-import com.faithForward.media.player.VideoPlayerDto
-import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
-import com.faithForward.media.player.relatedContent.RelatedContentItemDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.player.PlayerDto
+import com.faithForward.media.ui.player.VideoPlayerDto
+import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.ui.player.relatedContent.RelatedContentItemDto
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.util.Resource
 
@@ -20,7 +20,7 @@ fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
         seriesSlug = seriesSlug ?: "",
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
-        image = posterImageSrc
+        image = landScapeImg
     )
 }
 
@@ -36,13 +36,14 @@ fun VideoPlayerDto.toPosterCardDto(): PosterCardDto {
         seriesSlug = seriesSlug ?: "",
         posterImageSrc = image,
         seasonNumber = seasonNumber,
-        episodeNumber = episodeNumber
+        episodeNumber = episodeNumber,
+        landScapeImg = image
     )
 }
 
 fun PosterCardDto.toRelatedItemDto(): RelatedContentItemDto {
     return RelatedContentItemDto(
-        image = posterImageSrc,
+        image = landScapeImg,
         id = id ?: "",
         slug = slug ?: "",
         title = title,
@@ -65,14 +66,15 @@ fun RelatedContentItemDto.toPosterCardDto(): PosterCardDto {
         description = description,
         contentType = contentType,
         seasonNumber = seasonNumber,
-        episodeNumber = episodeNumber
+        episodeNumber = episodeNumber,
+        landScapeImg = image
     )
 }
 
 fun ContentItem.toRelatedItemDto(): RelatedContentItemDto {
     //video Url coming from detail api while converting related list
     return RelatedContentItemDto(
-        image = portrait ?: landscape ?: "",
+        image = landscape ?: portrait ?: "",
         id = id?.toString() ?: "",
         slug = slug ?: "",
         title = name ?: "",
@@ -104,6 +106,7 @@ data class SharedPlayerViewModelState(
 )
 
 sealed class PlayerEvent {
+    data object StartRelatedDialogAutoHide : PlayerEvent()
     data class UpdateDuration(val value: Long) : PlayerEvent()
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
     data object OnContinueWatchingUpdate : PlayerEvent()

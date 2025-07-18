@@ -1,6 +1,6 @@
 package com.faithForward.media.viewModel.uiModels
 
-import com.faithForward.media.login.qr.LoginQrScreenDto
+import com.faithForward.media.ui.login.qr.LoginQrScreenDto
 
 sealed class QrLoginEvent {
     data class StartLogin(val deviceId: String, val deviceType: String) : QrLoginEvent()

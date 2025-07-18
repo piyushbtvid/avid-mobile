@@ -1,16 +1,12 @@
 package com.faithForward.media.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.commanComponents.PosterCardDto
-import com.faithForward.media.player.PlayerDto
-import com.faithForward.media.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.player.PlayerDto
+import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRowDto
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
-import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.PlayerState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.media.viewModel.uiModels.toPosterDto
@@ -21,11 +17,14 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +37,8 @@ class PlayerViewModel @Inject constructor(
 
     private val _onContinueWatchingUpdateFlow = MutableSharedFlow<Unit>(replay = 0)
     val continueWatchingUpdateFlow = _onContinueWatchingUpdateFlow.asSharedFlow()
+
+    private var relatedAutoDismissJob: Job? = null
 
 
     fun handleEvent(event: PlayerEvent) {
@@ -56,6 +57,7 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.ShowRelated -> {
                 _state.value = _state.value.copy(isRelatedVisible = true)
+                startAutoDismissTimerForRelated()
             }
 
             is PlayerEvent.ShowNextEpisodeDialog -> {
@@ -120,6 +122,10 @@ class PlayerViewModel @Inject constructor(
                     Log.e("ON_CONTINUE_WATCHING", "on continue watching update called")
                     _onContinueWatchingUpdateFlow.emit(Unit)
                 }
+            }
+
+            is PlayerEvent.StartRelatedDialogAutoHide -> {
+                startAutoDismissTimerForRelated()
             }
 
         }
@@ -326,13 +332,28 @@ class PlayerViewModel @Inject constructor(
                         if (matchedSeasonIndex == -1) return@launch
 
                         // Built a combined list from matched season to last
-                        val remainingSeasons =
-                            allSeasons.subList(matchedSeasonIndex, allSeasons.size)
+//                        val remainingSeasons =
+//                            allSeasons.subList(matchedSeasonIndex, allSeasons.size)
+
+                        //matched season all episodes
+                        val matchedSeasonEpisodes =
+                            allSeasons.getOrNull(matchedSeasonIndex)?.episodes
+
+
                         //all following or remaining seasons episode in one list
-                        val combinedEpisodes = remainingSeasons.flatMap { it.episodes }
+                        //  val combinedEpisodes = remainingSeasons.flatMap { it.episodes }
 
                         // Updated the episode list while preserving progress to PosterCardDto
-                        val updatedEpisodes = combinedEpisodes.map { episode ->
+//                        val updatedEpisodes = combinedEpisodes.map { episode ->
+//                            if (episode.slug == continueWatchingEpisodeSlug) {
+//                                episode.toPosterDto().copy(progress = firstItem.progress)
+//                            } else {
+//                                episode.toPosterDto()
+//                            }
+//                        }
+
+                        // updating matched season episode to PosterCardDto and preserving progress
+                        val matchedSeasonUpdatedEpisodes = matchedSeasonEpisodes?.map { episode ->
                             if (episode.slug == continueWatchingEpisodeSlug) {
                                 episode.toPosterDto().copy(progress = firstItem.progress)
                             } else {
@@ -340,21 +361,20 @@ class PlayerViewModel @Inject constructor(
                             }
                         }
 
-
                         // Finding Resumed Index of continue watching item from all episodes
                         val resumeIndex =
-                            updatedEpisodes.indexOfFirst { it.slug == continueWatchingEpisodeSlug }
+                            matchedSeasonUpdatedEpisodes?.indexOfFirst { it.slug == continueWatchingEpisodeSlug }
 
                         // converting all Episodes in VideoPlayerDto for Player
-                        val videoPlayList = updatedEpisodes.map {
+                        val videoPlayList = matchedSeasonUpdatedEpisodes?.map {
                             it.toVideoPlayerDto()
                         }
 
                         // converting all Episodes in RelatedItemDto for showing them in Related List
-                        val relatedList = updatedEpisodes.map {
+                        val relatedList = matchedSeasonUpdatedEpisodes?.map {
                             it.toRelatedItemDto()
                         }
-                        Log.e("ResumeList", "Updated episodes: $updatedEpisodes")
+                        Log.e("ResumeList", "Updated episodes: $matchedSeasonUpdatedEpisodes")
                         Log.e("ResumeList", "Resume episode index: $resumeIndex")
                         Log.e(
                             "IS_CONTINUE_WATCHING_CLICK",
@@ -365,21 +385,23 @@ class PlayerViewModel @Inject constructor(
                             "is from continue watching in player viewModel with finial result of RelatedList $relatedList  "
                         )
 
-                        val title = videoPlayList.getOrNull(index ?: 0)?.title
+                        val title = videoPlayList?.getOrNull(index ?: 0)?.title
 
-                        _state.value = _state.value.copy(
-                            videoPlayerDto = Resource.Success(
-                                PlayerDto(
-                                    videoPlayerDtoList = videoPlayList,
-                                    playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                        title = "Next Up...", rowList = relatedList
+                        if (videoPlayList != null && relatedList != null) {
+                            _state.value = _state.value.copy(
+                                videoPlayerDto = Resource.Success(
+                                    PlayerDto(
+                                        videoPlayerDtoList = videoPlayList,
+                                        playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                            title = "Next Up...", rowList = relatedList
+                                        )
                                     )
-                                )
-                            ),
-                            isLoading = false,
-                            videoPlayingIndex = resumeIndex,
-                            currentTitle = title
-                        )
+                                ),
+                                isLoading = false,
+                                videoPlayingIndex = resumeIndex,
+                                currentTitle = title
+                            )
+                        }
                     }
                 }
 
@@ -447,5 +469,22 @@ class PlayerViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun startAutoDismissTimerForRelated() {
+        relatedAutoDismissJob?.cancel()
+        relatedAutoDismissJob = viewModelScope.launch {
+            delay(10_000) // 10 seconds
+            _state.update {
+                it.copy(
+                    isRelatedVisible = false,
+                )
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        relatedAutoDismissJob?.cancel()
     }
 }
