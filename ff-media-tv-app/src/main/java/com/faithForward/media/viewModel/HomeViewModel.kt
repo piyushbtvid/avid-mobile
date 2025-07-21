@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchHomePageData() {
-        Log.e("HOME_DATA_LOAD", "fetch home data called in home viewModel")
+        Log.e("REFRESH_TOKEN", "fetch home data called in home viewModel")
         viewModelScope.launch(Dispatchers.IO) {
             //     _homepageData.emit(Resource.Loading())
             try {

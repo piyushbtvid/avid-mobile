@@ -177,22 +177,5 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun logout() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                networkRepository.clearSession()
-            }
-            _isLoggedIn.value = false
-            _loginState.update {
-                it.copy(
-                    isLoggedIn = false,
-                    email = "",
-                    password = "",
-                    errorMessage = null
-                )
-            }
-        }
-    }
-
 
 }

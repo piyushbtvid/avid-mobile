@@ -34,6 +34,7 @@ import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
+import com.faithForward.media.viewModel.RefreshViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
@@ -50,6 +51,7 @@ fun MainAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    refreshViewModel: RefreshViewModel,
     sharedPlayerViewModel: SharedPlayerViewModel,
     sideBarViewModel: SideBarViewModel,
     startRoute: String = Routes.Home.route,
@@ -58,6 +60,18 @@ fun MainAppNavHost(
     onBackClickForExit: () -> Unit,
 ) {
 
+    LaunchedEffect(Unit) {
+        refreshViewModel.logoutEvent.collect {
+            Log.e(
+                "REFRESH_TOKEN", "on logout  collected in main activity"
+            )
+            refreshViewModel.cancelRefreshJob()
+            navController.navigate(Routes.LoginQr.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
 
     NavHost(
         navController = navController, startDestination = startRoute
@@ -65,6 +79,7 @@ fun MainAppNavHost(
         composable(route = Routes.Login.route) {
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
                 Log.e("GOING_TO_HOME", "going to home from Login screen ")
+                refreshViewModel.checkRefreshToken()
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -76,6 +91,7 @@ fun MainAppNavHost(
             LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
+                refreshViewModel.checkRefreshToken()
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -350,7 +366,8 @@ fun MainAppNavHost(
 
 
 
-        composable(route = Routes.PlayerScreen.route,
+        composable(
+            route = Routes.PlayerScreen.route,
             arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
@@ -359,7 +376,8 @@ fun MainAppNavHost(
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
-                })) { backStackEntry ->
+                })
+        ) { backStackEntry ->
 
             val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
 

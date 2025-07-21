@@ -23,10 +23,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +49,7 @@ import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.RefreshViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
@@ -58,6 +59,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
+    private lateinit var refreshViewModel: RefreshViewModel
     private var isControlsVisible: Boolean = false
     private var currentRoute: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +68,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    var isRefreshTokenSaved by rememberSaveable { mutableStateOf(false) }
+                    refreshViewModel = hiltViewModel()
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
                     sharedPlayerViewModel = viewModel()
@@ -77,37 +81,57 @@ class MainActivity : ComponentActivity() {
                     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-                    LaunchedEffect(loginState.isCheckingLoginStatus, isLoggedIn) {
-                        Log.e("IS_LOGIN", "is login status in mainActivity is $isLoggedIn")
+                    LaunchedEffect(Unit) {
+                        refreshViewModel.isRefreshDataSaved.collect {
+                            Log.e(
+                                "REFRESH_TOKEN", "IS refreshData saved collected in main activity"
+                            )
+                            isRefreshTokenSaved = true
+                        }
                     }
-
                     // Use Crossfade to animate between loading and MainScreen
                     Crossfade(
                         targetState = loginState.isCheckingLoginStatus,
                         modifier = Modifier.padding(innerPadding),
                         animationSpec = tween(durationMillis = 100) // Adjust duration as needed
                     ) { isChecking ->
-                        if (isChecking) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(pageBlackBackgroundColor),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    color = focusedMainColor
+                        when {
+                            isChecking -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(pageBlackBackgroundColor),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(color = focusedMainColor)
+                                }
+                            }
+
+                            isLoggedIn && !isRefreshTokenSaved -> {
+                                // Optional: Loading screen while refresh happens
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(pageBlackBackgroundColor),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(color = focusedMainColor)
+                                }
+                            }
+
+                            else -> {
+                                MainScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    sideBarViewModel = sideBarViewModel,
+                                    loginViewModel = loginViewModel,
+                                    refreshViewModel = refreshViewModel,
+                                    playerViewModel = sharedPlayerViewModel,
+                                    navController = navController,
+                                    startRoute = if (isLoggedIn && isRefreshTokenSaved) Routes.Home.route else Routes.LoginQr.route
                                 )
                             }
-                        } else {
-                            MainScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                sideBarViewModel = sideBarViewModel,
-                                loginViewModel = loginViewModel,
-                                playerViewModel = sharedPlayerViewModel,
-                                navController = navController,
-                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.LoginQr.route
-                            )
                         }
+
                     }
                 }
             }
@@ -183,6 +207,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
+
 
     override fun onStop() {
         super.onStop()
