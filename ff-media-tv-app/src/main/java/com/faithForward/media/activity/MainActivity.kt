@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             isLoggedIn && !isRefreshTokenSaved -> {
-                                // Optional: Loading screen while refresh happens
+                                //  Loading screen while refresh happens
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()

@@ -62,7 +62,7 @@ class RefreshViewModel @Inject constructor(
                         break
                     }
 
-                    if (timeLeft <= 120) {
+                    if (timeLeft <= 3600) {
                         // Immediate refresh
                         refreshToken.let {
                             Log.e("REFRESH_TOKEN", "Refreshing now — time left: $timeLeft sec")
@@ -70,12 +70,12 @@ class RefreshViewModel @Inject constructor(
                             if (success) {
                                 if (isInitialRefresh) {
                                     _isRefreshDataSaved.emit(Unit)
-                                    isInitialRefresh = false // So we don’t emit again
+                                    isInitialRefresh = false
                                 }
                             } else {
                                 if (isInitialRefresh) {
                                     _isRefreshDataSaved.emit(Unit)
-                                    isInitialRefresh = false // So we don’t emit again
+                                    isInitialRefresh = false
                                 }
                                 return@launch
                             }
@@ -84,9 +84,9 @@ class RefreshViewModel @Inject constructor(
                         if (isInitialRefresh) {
                             Log.e("REFRESH_TOKEN", "is refresh data saved emit called in else ")
                             _isRefreshDataSaved.emit(Unit)
-                            isInitialRefresh = false // So we don’t emit again
+                            isInitialRefresh = false
                         }
-                        val delayTime = (timeLeft - 120) * 1000L // milliseconds
+                        val delayTime = (timeLeft - 3600) * 1000L // milliseconds
                         Log.e("REFRESH_TOKEN", "Delaying refresh for $delayTime ms")
                         delay(delayTime)
 
@@ -106,7 +106,7 @@ class RefreshViewModel @Inject constructor(
                     ex.printStackTrace()
                     if (isInitialRefresh) {
                         _isRefreshDataSaved.emit(Unit)
-                        isInitialRefresh = false // So we don’t emit again
+                        isInitialRefresh = false
                     }
                     break // break the loop to avoid infinite failures
                 }
