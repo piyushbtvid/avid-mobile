@@ -56,6 +56,10 @@ import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import dagger.hilt.android.AndroidEntryPoint
 
+enum class LogoutEnum {
+    OPEN_QR, OPEN_HOME, IDLE
+}
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
@@ -69,6 +73,11 @@ class MainActivity : ComponentActivity() {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     var isRefreshTokenSaved by rememberSaveable { mutableStateOf(false) }
+                    var explicitlyChangeHomeRouteToLogin by rememberSaveable {
+                        mutableStateOf(
+                            LogoutEnum.IDLE
+                        )
+                    }
                     refreshViewModel = hiltViewModel()
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
@@ -81,14 +90,27 @@ class MainActivity : ComponentActivity() {
                     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
+
                     LaunchedEffect(Unit) {
                         refreshViewModel.isRefreshDataSaved.collect {
                             Log.e(
                                 "REFRESH_TOKEN", "IS refreshData saved collected in main activity"
                             )
                             isRefreshTokenSaved = true
+                            explicitlyChangeHomeRouteToLogin = LogoutEnum.OPEN_HOME
                         }
                     }
+
+                    LaunchedEffect(Unit) {
+                        refreshViewModel.logoutEvent.collect {
+                            Log.e(
+                                "REFRESH_TOKEN", "on logout  collected in main activity"
+                            )
+                            explicitlyChangeHomeRouteToLogin = LogoutEnum.OPEN_QR
+                            //  refreshViewModel.changeIsLoginValue(true)
+                        }
+                    }
+
                     // Use Crossfade to animate between loading and MainScreen
                     Crossfade(
                         targetState = loginState.isCheckingLoginStatus,
@@ -107,7 +129,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
-                            isLoggedIn && !isRefreshTokenSaved -> {
+                            isLoggedIn && !isRefreshTokenSaved && explicitlyChangeHomeRouteToLogin == LogoutEnum.IDLE -> {
                                 //  Loading screen while refresh happens
                                 Box(
                                     modifier = Modifier
@@ -127,7 +149,7 @@ class MainActivity : ComponentActivity() {
                                     refreshViewModel = refreshViewModel,
                                     playerViewModel = sharedPlayerViewModel,
                                     navController = navController,
-                                    startRoute = if (isLoggedIn && isRefreshTokenSaved) Routes.Home.route else Routes.LoginQr.route
+                                    startRoute = if (isLoggedIn && isRefreshTokenSaved && explicitlyChangeHomeRouteToLogin == LogoutEnum.OPEN_HOME) Routes.Home.route else if (explicitlyChangeHomeRouteToLogin == LogoutEnum.OPEN_QR) Routes.LoginQr.route else Routes.LoginQr.route
                                 )
                             }
                         }

@@ -30,6 +30,7 @@ class RefreshViewModel @Inject constructor(
 
     private var isInitialRefresh = true
 
+
     init {
         Log.e(
             "REFRESH_TOKEN", "check refresh token called in INIT block in refresh ViewModel "
@@ -41,6 +42,7 @@ class RefreshViewModel @Inject constructor(
         refreshJob?.cancel()
         refreshJob = null
     }
+
 
     fun checkRefreshToken() {
         // Cancel any existing job

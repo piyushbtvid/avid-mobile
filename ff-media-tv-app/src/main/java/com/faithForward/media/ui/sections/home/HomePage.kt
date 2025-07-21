@@ -36,8 +36,6 @@ fun HomePage(
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
     sideBarViewModel: SideBarViewModel,
-    refreshViewModel: RefreshViewModel,
-    navController: NavController,
     onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
     onDataLoadedSuccess: () -> Unit,
     onSearchClick: () -> Unit,
@@ -55,20 +53,6 @@ fun HomePage(
     LaunchedEffect(Unit) {
         homeViewModel.fetchHomePageData()
     }
-
-    LaunchedEffect(Unit) {
-        refreshViewModel.logoutEvent.collect {
-            Log.e(
-                "REFRESH_TOKEN", "on logout  collected in main activity"
-            )
-            refreshViewModel.cancelRefreshJob()
-            navController.navigate(Routes.LoginQr.route) {
-                popUpTo(0) { inclusive = true }
-                launchSingleTop = true
-            }
-        }
-    }
-
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->

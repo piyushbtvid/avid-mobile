@@ -95,8 +95,6 @@ fun MainAppNavHost(
                 homeViewModel = homeViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onDataLoadedSuccess = onDataLoadedSuccess,
-                refreshViewModel = refreshViewModel,
-                navController = navController,
                 changeSideBarSelectedPosition = { value ->
                     changeSideBarSelectedPosition.invoke(value)
                 },

@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +28,6 @@ import com.faithForward.media.util.Util
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.uiModels.QrLoginEvent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -103,7 +101,7 @@ fun LoginQrScreen(
             ) {
 
                 Image(
-                    painter = painterResource(R.drawable.logo),
+                    painter = painterResource(R.drawable.logo_new),
                     modifier = Modifier
                         .width(80.5.dp)
                         .height(51.dp),
