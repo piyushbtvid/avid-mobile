@@ -16,10 +16,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.common_ui.HomeContentSections
 import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.media.viewModel.RefreshViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
@@ -33,6 +36,8 @@ fun HomePage(
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onCategoryClick: (String) -> Unit,
     sideBarViewModel: SideBarViewModel,
+    refreshViewModel: RefreshViewModel,
+    navController: NavController,
     onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
     onDataLoadedSuccess: () -> Unit,
     onSearchClick: () -> Unit,
@@ -49,6 +54,19 @@ fun HomePage(
 
     LaunchedEffect(Unit) {
         homeViewModel.fetchHomePageData()
+    }
+
+    LaunchedEffect(Unit) {
+        refreshViewModel.logoutEvent.collect {
+            Log.e(
+                "REFRESH_TOKEN", "on logout  collected in main activity"
+            )
+            refreshViewModel.cancelRefreshJob()
+            navController.navigate(Routes.LoginQr.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
     }
 
 

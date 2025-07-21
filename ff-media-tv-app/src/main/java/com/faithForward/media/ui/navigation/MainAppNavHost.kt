@@ -60,18 +60,6 @@ fun MainAppNavHost(
     onBackClickForExit: () -> Unit,
 ) {
 
-    LaunchedEffect(Unit) {
-        refreshViewModel.logoutEvent.collect {
-            Log.e(
-                "REFRESH_TOKEN", "on logout  collected in main activity"
-            )
-            refreshViewModel.cancelRefreshJob()
-            navController.navigate(Routes.LoginQr.route) {
-                popUpTo(0) { inclusive = true }
-                launchSingleTop = true
-            }
-        }
-    }
 
     NavHost(
         navController = navController, startDestination = startRoute
@@ -107,6 +95,8 @@ fun MainAppNavHost(
                 homeViewModel = homeViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onDataLoadedSuccess = onDataLoadedSuccess,
+                refreshViewModel = refreshViewModel,
+                navController = navController,
                 changeSideBarSelectedPosition = { value ->
                     changeSideBarSelectedPosition.invoke(value)
                 },

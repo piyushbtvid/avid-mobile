@@ -62,7 +62,9 @@ fun GenreCard(
             genreCardDto.description?.let {
                 TitleText(
                     text = it,
-                    color = whiteMain,
+                    color = whiteMain.copy(
+                        alpha = 0.7f
+                    ),
                     fontWeight = FontWeight.W600,
                     textSize = 10
                 )
@@ -78,7 +80,9 @@ fun GenreCard(
                     genreCardDto.name?.let {
                         TitleText(
                             text = it,
-                            color = whiteMain,
+                            color = whiteMain.copy(
+                                alpha = 0.7f
+                            ),
                             fontWeight = FontWeight.W400,
                             textSize = 7
                         )
@@ -86,7 +90,9 @@ fun GenreCard(
                     genreCardDto.views?.let {
                         TitleText(
                             text = it,
-                            color = whiteMain,
+                            color = whiteMain.copy(
+                                alpha = 0.7f
+                            ),
                             fontWeight = FontWeight.W400,
                             textSize = 7
                         )
