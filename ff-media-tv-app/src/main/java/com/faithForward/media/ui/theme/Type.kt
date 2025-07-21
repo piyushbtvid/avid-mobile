@@ -53,6 +53,12 @@ val tv_02 = baseTextStyle.copy(
     color = whiteMain
 )
 
+val programTitleStyle = baseTextStyle.copy(
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 10.sp,
+    color = pillButtonTextUnFocusColor
+)
+
 val metaDataTextStyle = TextStyle(
     fontSize = 10.sp,
     lineHeight = 10.sp,

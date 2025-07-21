@@ -23,7 +23,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
-import com.faithForward.media.util.FocusState
+import com.faithForward.media.ui.epg.util.FocusState
 
 @Composable
 fun SideBarColumn(

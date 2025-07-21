@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.commanComponents.SubscribeButton
-import com.faithForward.media.util.extensions.shadow
+import com.faithForward.media.ui.epg.util.extensions.shadow
 import com.faithForward.media.ui.detail.creator_detail.content.ContentDto
 import com.faithForward.media.ui.detail.creator_detail.content.ContentPage
 import com.faithForward.media.ui.theme.textFocusedMainColor
-import com.faithForward.media.util.FocusState
+import com.faithForward.media.ui.epg.util.FocusState
 
 data class CreatorDetailDto(
     val creatorName: String? = null,

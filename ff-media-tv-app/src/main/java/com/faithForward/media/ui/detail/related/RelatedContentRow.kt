@@ -22,7 +22,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.PosterCardDto
-import com.faithForward.media.util.FocusState
+import com.faithForward.media.ui.epg.util.FocusState
 
 
 @OptIn(ExperimentalComposeUiApi::class)

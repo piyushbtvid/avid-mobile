@@ -31,7 +31,7 @@ import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.Montserrat
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
-import com.faithForward.media.util.FocusState
+import com.faithForward.media.ui.epg.util.FocusState
 
 @Composable
 fun ActivationCode(

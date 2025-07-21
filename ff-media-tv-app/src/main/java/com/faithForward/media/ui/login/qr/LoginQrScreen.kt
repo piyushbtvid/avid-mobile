@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
-import com.faithForward.media.util.Util
+import com.faithForward.media.ui.epg.util.Util
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.uiModels.QrLoginEvent
 import kotlinx.coroutines.Dispatchers

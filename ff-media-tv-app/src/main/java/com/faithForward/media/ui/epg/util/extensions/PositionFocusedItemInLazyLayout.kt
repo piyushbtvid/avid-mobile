@@ -1,4 +1,4 @@
-package com.faithForward.media.util.extensions
+package com.faithForward.media.ui.epg.util.extensions
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
