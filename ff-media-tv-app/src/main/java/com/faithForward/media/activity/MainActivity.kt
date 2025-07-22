@@ -132,11 +132,6 @@ class MainActivity : ComponentActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         Log.e("Logging", "onKeyDown()")
 
-        //  Show controls for ANY key press on PlayerScreen if they're not already visible
-        if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
-            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-        }
-
         when (keyCode) {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
