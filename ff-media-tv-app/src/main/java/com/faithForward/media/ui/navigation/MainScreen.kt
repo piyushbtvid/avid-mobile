@@ -27,7 +27,6 @@ import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.LoginViewModel
-import com.faithForward.media.viewModel.RefreshViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 
@@ -39,8 +38,8 @@ fun MainScreen(
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    refreshViewModel: RefreshViewModel,
-) {
+
+    ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
 
@@ -61,7 +60,7 @@ fun MainScreen(
         sideBarViewModel.logoutEvent.collect {
             Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
             showLogoutDialog = false
-            refreshViewModel.cancelRefreshJob()
+            loginViewModel.cancelRefreshJob()
             navController.navigate(Routes.LoginQr.route) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
@@ -91,7 +90,6 @@ fun MainScreen(
             sideBarViewModel = sideBarViewModel,
             sharedPlayerViewModel = playerViewModel,
             loginViewModel = loginViewModel,
-            refreshViewModel = refreshViewModel,
             onBackClickForExit = {
                 showExitDialog = true
             }

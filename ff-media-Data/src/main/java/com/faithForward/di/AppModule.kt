@@ -5,6 +5,8 @@ import com.faithForward.network.ApiServiceInterface
 import com.faithForward.preferences.UserPreferences
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Constants
+import com.faithForward.util.LenientGsonTypeAdapterFactory
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,9 +45,14 @@ class AppModule {
     fun providesRetrofitInstance(
         okHttpClient: OkHttpClient,
     ): Retrofit {
+
+        val gson = GsonBuilder()
+            .registerTypeAdapterFactory(LenientGsonTypeAdapterFactory())
+            .create()
+
         return Retrofit.Builder().baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 

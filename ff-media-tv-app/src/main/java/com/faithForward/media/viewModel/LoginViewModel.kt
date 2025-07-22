@@ -11,11 +11,13 @@ import com.faithForward.repository.NetworkRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -31,9 +33,15 @@ class LoginViewModel @Inject constructor(
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
+    private val _isBuffer = MutableStateFlow(true)
+    val isBuffer = _isBuffer.asStateFlow()
+
+    private var refreshJob: Job? = null
+
+
     init {
         Log.e("CHECK_LOGIN", "login viewModel init called")
-        checkLoginStatus()
+        startRefreshTokenImplementation()
     }
 
     private fun checkLoginStatus() {
@@ -177,5 +185,125 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+
+    fun cancelRefreshJob() {
+        refreshJob?.cancel()
+        refreshJob = null
+    }
+
+
+    private fun startRefreshTokenImplementation() {
+        viewModelScope.launch {
+            // user saved season for checking isLoggedIn or Not
+            val userSeason = networkRepository.getCurrentSession()
+            if (userSeason?.season?.refreshToken != null) {
+                val refreshToken = userSeason.season.refreshToken
+                val expireTime = userSeason.season.expire_date
+                val currentTime = System.currentTimeMillis() / 1000 // in seconds
+                val timeLeft = expireTime - currentTime
+                // refreshing token for one time only for first time (if refresh not get success then will send isLogged as false)
+                if (timeLeft <= 120) {
+                    val handleRefresh = handleRefresh(refreshToken!!)
+                    if (!handleRefresh) {
+                        networkRepository.clearSession()
+                        _isBuffer.emit(false)
+                        _isLoggedIn.value = false
+                    } else {
+                        _isBuffer.emit(false)
+                        _isLoggedIn.value = true
+                    }
+                } else {
+                    _isBuffer.emit(false)
+                    _isLoggedIn.value = true
+                    checkRefreshToken()
+                }
+            } else {
+                _isBuffer.emit(false)
+                _isLoggedIn.value = false
+            }
+        }
+    }
+
+    fun checkRefreshToken() {
+        // Cancel any existing job
+        cancelRefreshJob()
+
+        refreshJob = viewModelScope.launch(Dispatchers.IO) {
+            Log.e("REFRESH_TOKEN", "checkRefreshToken started")
+
+            while (isActive) {
+                try {
+                    val session = networkRepository.getCurrentSession()
+                    val season = session?.season
+                    val refreshToken = season?.refreshToken
+                    val expireTime = season?.expire_date ?: break
+                    val currentTime = System.currentTimeMillis() / 1000 // in seconds
+                    val timeLeft = expireTime - currentTime
+
+                    if (timeLeft <= 120) {
+                        // Immediate refresh
+                        refreshToken?.let {
+                            Log.e("REFRESH_TOKEN", "Refreshing now — time left: $timeLeft sec")
+                            handleRefresh(it)
+                        }
+                    } else {
+                        val delayTime = (timeLeft - 120) * 1000L // milliseconds
+                        Log.e("REFRESH_TOKEN", "Delaying refresh for $delayTime ms")
+                        delay(delayTime)
+
+                        refreshToken?.let {
+                            Log.e("REFRESH_TOKEN", "Refreshing after delay")
+                            handleRefresh(it)
+                        }
+                    }
+                } catch (ex: Exception) {
+                    Log.e("REFRESH_TOKEN", "Exception in checkRefreshToken: ${ex.message}")
+                    ex.printStackTrace()
+                    break // break the loop to avoid infinite failures
+                }
+            }
+
+            Log.e("REFRESH_TOKEN", "Refresh Job ended or canceled")
+        }
+    }
+
+    //function to handle refresh logic
+    private suspend fun handleRefresh(refreshToken: String): Boolean {
+        return try {
+            val refreshResponse = networkRepository.refreshToken(refreshToken)
+            if (refreshResponse.isSuccessful) {
+                val newUserData = refreshResponse.body()?.data
+                if (newUserData != null) {
+                    val update = networkRepository.updateTokenSeason(
+                        newToken = newUserData.token,
+                        newRefreshToken = newUserData.refresh_token,
+                        newExpireTime = newUserData.expire_date,
+                        newTokenType = newUserData.token_type
+                    )
+                    Log.e("REFRESH_TOKEN", "updateTokenSeason result: $update")
+                    return update
+                }
+            } else {
+                //  Tracking 401 here
+                if (refreshResponse.code() == 401) {
+                    Log.e("REFRESH_TOKEN", "401 Unauthorized detected during token refresh")
+//                    networkRepository.clearSession()
+//                    _logoutEvent.emit(Unit)
+                } else {
+                    Log.e("REFRESH_TOKEN", "Refresh API failed: ${refreshResponse.code()}")
+                }
+            }
+            false
+        } catch (e: Exception) {
+            Log.e("REFRESH_TOKEN", "Exception in handleRefresh: ${e.message}")
+            false
+        }
+    }
+
+
+    override fun onCleared() {
+        super.onCleared()
+        cancelRefreshJob()
+    }
 
 }

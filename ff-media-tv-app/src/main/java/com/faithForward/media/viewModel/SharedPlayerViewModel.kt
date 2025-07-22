@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SharedPlayerViewModel () : ViewModel() {
+class SharedPlayerViewModel() : ViewModel() {
 
     private val _state = MutableStateFlow(SharedPlayerViewModelState())
     val state: StateFlow<SharedPlayerViewModelState> = _state.asStateFlow()
@@ -35,7 +35,7 @@ class SharedPlayerViewModel () : ViewModel() {
 
     fun handleEvent(event: SharedPlayerEvent) {
 
-        when(event) {
+        when (event) {
 
             is SharedPlayerEvent.ShowControls -> {
                 _state.value = _state.value.copy(isControlsVisible = true)

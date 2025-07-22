@@ -22,7 +22,7 @@ class RefreshViewModel @Inject constructor(
 
     private var refreshJob: Job? = null
 
-    private val _logoutEvent = MutableSharedFlow<Unit>(replay = 0)
+    private val _logoutEvent = MutableSharedFlow<Unit>(replay = 1)
     val logoutEvent = _logoutEvent.asSharedFlow()
 
     private val _isRefreshDataSaved = MutableSharedFlow<Unit>(replay = 1)
@@ -61,10 +61,11 @@ class RefreshViewModel @Inject constructor(
                     val timeLeft = expireTime - currentTime
 
                     if (refreshToken == null) {
+                        _logoutEvent.emit(Unit)
                         break
                     }
 
-                    if (timeLeft <= 3600) {
+                    if (timeLeft <= 120) {
                         // Immediate refresh
                         refreshToken.let {
                             Log.e("REFRESH_TOKEN", "Refreshing now — time left: $timeLeft sec")
@@ -88,7 +89,7 @@ class RefreshViewModel @Inject constructor(
                             _isRefreshDataSaved.emit(Unit)
                             isInitialRefresh = false
                         }
-                        val delayTime = (timeLeft - 3600) * 1000L // milliseconds
+                        val delayTime = (timeLeft - 120) * 1000L // milliseconds
                         Log.e("REFRESH_TOKEN", "Delaying refresh for $delayTime ms")
                         delay(delayTime)
 
