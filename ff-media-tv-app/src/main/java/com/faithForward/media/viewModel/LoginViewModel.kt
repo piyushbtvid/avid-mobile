@@ -204,15 +204,21 @@ class LoginViewModel @Inject constructor(
                 // refreshing token for one time only for first time (if refresh not get success then will send isLogged as false)
                 if (timeLeft <= 120) {
                     val handleRefresh = handleRefresh(refreshToken!!)
+                    // means refresh api is giving error (mostly refresh token expire error)
                     if (!handleRefresh) {
                         networkRepository.clearSession()
                         _isBuffer.emit(false)
                         _isLoggedIn.value = false
-                    } else {
+                    }
+                    // means token refreshed successfully  so user is logged in and start check refreshToken
+                    else {
                         _isBuffer.emit(false)
                         _isLoggedIn.value = true
+                        checkRefreshToken()
                     }
-                } else {
+                }
+                // still have time left for refresh token api so directly calling check refresh which will delay it
+                else {
                     _isBuffer.emit(false)
                     _isLoggedIn.value = true
                     checkRefreshToken()
