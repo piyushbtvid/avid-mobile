@@ -22,7 +22,6 @@ import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.common_ui.HomeContentSections
 import com.faithForward.media.viewModel.HomeViewModel
-import com.faithForward.media.viewModel.RefreshViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto

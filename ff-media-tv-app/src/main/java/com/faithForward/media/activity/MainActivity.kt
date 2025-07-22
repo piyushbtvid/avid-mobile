@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
                         sharedPlayerViewModel.state.collectAsStateWithLifecycle().value.isControlsVisible
-                    val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
+
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
 

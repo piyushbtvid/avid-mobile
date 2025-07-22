@@ -40,7 +40,7 @@ class LoginViewModel @Inject constructor(
 
 
     init {
-        Log.e("CHECK_LOGIN", "login viewModel init called")
+        //doing is logged in and refresh token in this method on start of the app
         startRefreshTokenImplementation()
     }
 
