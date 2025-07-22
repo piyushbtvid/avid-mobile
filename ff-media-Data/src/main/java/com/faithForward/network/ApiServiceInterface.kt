@@ -11,6 +11,7 @@ import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
@@ -200,6 +201,14 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
     ): Response<ApiMessageResponse>
+
+    @POST(Constants.REFRESH_TOKEN_POINT)
+    suspend fun refreshToken(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Query("refresh_token") refreshToken: String,
+    ): Response<RefreshTokenResponse>
 
     @GET(Constants.RECENT_SEARCH_END_POINT)
     suspend fun getRecentSearch(

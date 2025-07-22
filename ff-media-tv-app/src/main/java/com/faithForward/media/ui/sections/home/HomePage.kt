@@ -16,7 +16,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.common_ui.HomeContentSections
 import com.faithForward.media.viewModel.HomeViewModel
@@ -50,7 +52,6 @@ fun HomePage(
     LaunchedEffect(Unit) {
         homeViewModel.fetchHomePageData()
     }
-
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->

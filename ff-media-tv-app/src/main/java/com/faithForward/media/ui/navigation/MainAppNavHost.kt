@@ -65,6 +65,7 @@ fun MainAppNavHost(
         composable(route = Routes.Login.route) {
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
                 Log.e("GOING_TO_HOME", "going to home from Login screen ")
+                loginViewModel.checkRefreshToken()
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -76,6 +77,7 @@ fun MainAppNavHost(
             LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
+                loginViewModel.checkRefreshToken()
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -350,7 +352,8 @@ fun MainAppNavHost(
 
 
 
-        composable(route = Routes.PlayerScreen.route,
+        composable(
+            route = Routes.PlayerScreen.route,
             arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
@@ -359,7 +362,8 @@ fun MainAppNavHost(
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
-                })) { backStackEntry ->
+                })
+        ) { backStackEntry ->
 
             val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
 

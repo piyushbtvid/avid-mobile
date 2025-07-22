@@ -1,9 +1,9 @@
 package com.faithForward.util
 
 object Constants {
-    const val BASE_URL = "http://107.180.208.127:8000/api/"
+    //const val BASE_URL = "http://107.180.208.127:8000/api/"
 
-    // const val BASE_URL = "http://107.180.208.127:8001/api/"
+    const val BASE_URL = "http://107.180.208.127:8001/api/"
     const val CATEGORY_END_POINT = "http://107.180.208.127/api/get-category"
     const val CATEGORY_DETAIL_END_POINT = "category/{id}"
     const val HOME_SECTION_END_POINT = "client/v1/home"
@@ -25,4 +25,5 @@ object Constants {
     const val GENERATE_ACTIVATION_CODE_END_POINT = "client/v1/activation-code/generate"
     const val LOGIN_STATUS_CHECK_END_POINT = "client/v1/activation-code/status"
     const val LOGOUT_END_POINT = "client/v1/subscribers/logout"
+    const val REFRESH_TOKEN_POINT = "client/v1/refresh-token"
 }
