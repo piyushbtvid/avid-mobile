@@ -89,33 +89,6 @@ fun ChannelWithPrograms(
                 )
             }
         }
-//        LazyRow(
-//            state = horizontalScrollState,
-//            horizontalArrangement = Arrangement.spacedBy(5.dp)
-//        ) {
-//            itemsIndexed(channelWithProgramsUiModel.programs) { index, program ->
-//                val programModifier = if (isFirstRow && index == 0) {
-//                    Modifier
-//                        .focusRequester(firstItemFocusRequester)
-//                        .onFocusChanged {
-//                            if (it.isFocused) focusedIndex.value = index
-//                        }
-//                        .focusable()
-//                } else {
-//                    Modifier
-//                        .onFocusChanged {
-//                            if (it.isFocused) focusedIndex.value = index
-//                        }
-//                        .focusable()
-//                }
-//
-//                ProgramItem(
-//                    programUiModel = program,
-//                    isFocused = focusedIndex.value == index,
-//                    modifier = programModifier
-//                )
-//            }
-//        }
     }
 }
 
@@ -131,7 +104,6 @@ private fun ChannelWithProgramsPreview() {
             programs = List(20) {
                 ProgramUiModel(
                     programName = "Drive Thru History Holiday Special",
-                    programWidth = 23,
                     programTimeString = "8:00AM - 9:00AM"
                 )
             }
