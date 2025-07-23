@@ -56,7 +56,7 @@ fun ContentItem.toSearchItemDto(): SearchItemDto {
         title = channelName ?: name,
         contentType = content_type,
         contentSlug = slug,
-        image = portrait,
+        image = if (content_type == "Creator") creatorProfileImage else portrait,
         creatorName = if (!channelName.isNullOrEmpty()) name else "",
         duration = formatDurationInReadableFormat(duration),
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names
