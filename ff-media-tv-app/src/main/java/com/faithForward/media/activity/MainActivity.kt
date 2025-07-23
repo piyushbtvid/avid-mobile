@@ -22,7 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     val loginViewModel: LoginViewModel = hiltViewModel()
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     sharedPlayerViewModel = viewModel()
-                    val isLoading by loginViewModel.isBuffer.collectAsState()
+                    val isLoading = loginViewModel.isBuffer.collectAsStateWithLifecycle().value
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
@@ -78,6 +78,9 @@ class MainActivity : ComponentActivity() {
 
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
+                    LaunchedEffect(isLoading) {
+                        Log.e("LOADING", "is loading change in main is $isLoading")
+                    }
 
                     // Use CrossFade to animate between loading and MainScreen
                     Crossfade(

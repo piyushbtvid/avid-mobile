@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
@@ -23,7 +24,7 @@ enum class KeyboardMode {
 fun CustomKeyBoard(
     modifier: Modifier = Modifier,
     onKeyClick: (String) -> Unit,
-    searchResultLastFocusedIndex: Int ,
+    searchResultLastFocusedIndex: Int,
     currentKeyboardMode: KeyboardMode,
     onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
 ) {
@@ -63,6 +64,8 @@ fun CustomKeyBoard(
 
     var inputListFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
+    val firstButtonFocusRequester = remember { FocusRequester() }
+
     Row(
         modifier = modifier.wrapContentWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -80,6 +83,10 @@ fun CustomKeyBoard(
                 onClick = { state ->
                     onKeyBoardActionButtonClick.invoke(state)
                 },
+                firstFocusRequester = firstButtonFocusRequester,
+                onRequestFocusOnFirst = {
+
+                },
                 searchResultLastFocusedIndex = searchResultLastFocusedIndex,
                 displayText = if (currentKeyboardMode == KeyboardMode.ALPHABET) "123" else if (currentKeyboardMode == KeyboardMode.NUMBER) "abc" else "abc",
             )
@@ -89,6 +96,9 @@ fun CustomKeyBoard(
                 actionState = KeyboardActionState.space,
                 onClick = { state ->
                     onKeyBoardActionButtonClick.invoke(state)
+                },
+                onRequestFocusOnFirst = {
+
                 },
                 displayText = "Space",
                 searchResultLastFocusedIndex = searchResultLastFocusedIndex,
@@ -112,6 +122,13 @@ fun CustomKeyBoard(
             actionState = KeyboardActionState.clear,
             onClick = { state ->
                 onKeyBoardActionButtonClick.invoke(state)
+            },
+            onRequestFocusOnFirst = {
+                try {
+                    firstButtonFocusRequester.requestFocus()
+                } catch (_: Exception) {
+
+                }
             },
             iconId = R.drawable.outline_backspace_24,
             searchResultLastFocusedIndex = searchResultLastFocusedIndex,
