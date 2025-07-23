@@ -17,6 +17,7 @@ import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
@@ -216,5 +217,12 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
     ): Response<RecentSearchResponse>
+
+
+    @POST(Constants.RECENT_SEARCH_END_POINT)
+    suspend fun saveRecentSearch(
+        @Body recentSearchRequest: RecentSearchRequest,
+        @Header("Authorization") token: String,
+    ): Response<ApiMessageResponse>
 
 }

@@ -255,7 +255,17 @@ fun SearchScreenUi(
                         onSearchResultFocusedIndexChange = { int ->
                             searchResultFocusedIndex = int
                         },
-                        onItemClick = onSearchItemClick,
+                        onItemClick = { item ->
+                            if (item.itemId != null && item.contentType != null) {
+                                searchViewModel.onEvent(
+                                    SearchEvent.SaveToRecentSearch(
+                                        contentType = item.contentType,
+                                        contentID = item.itemId
+                                    )
+                                )
+                            }
+                            onSearchItemClick.invoke(item)
+                        },
                         onSearchLastFocusedIndexChange = { int ->
                             searchResultLastFocusedIndex = int
                         }
