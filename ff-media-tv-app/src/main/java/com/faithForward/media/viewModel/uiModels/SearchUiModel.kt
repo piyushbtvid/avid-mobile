@@ -24,6 +24,10 @@ data class SearchScreenUiState(
 sealed class SearchEvent {
     data class SubmitQuery(val query: String) : SearchEvent()
     data object GetRecentSearch : SearchEvent()
+    data class SaveToRecentSearch(
+        val contentType: String,
+        val contentID: String,
+    ) : SearchEvent()
 }
 
 
@@ -52,7 +56,7 @@ fun ContentItem.toSearchItemDto(): SearchItemDto {
         title = channelName ?: name,
         contentType = content_type,
         contentSlug = slug,
-        image = portrait,
+        image = if (content_type == "Creator") creatorProfileImage else portrait,
         creatorName = if (!channelName.isNullOrEmpty()) name else "",
         duration = formatDurationInReadableFormat(duration),
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names

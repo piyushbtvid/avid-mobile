@@ -44,31 +44,6 @@ class LoginViewModel @Inject constructor(
         startRefreshTokenImplementation()
     }
 
-    private fun checkLoginStatus() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    Log.e("GOING_TO_HOME", "checkLogin status called in Login VieWModel")
-                    Log.e("CHECK_LOGIN", "check login status in viewModel called")
-                    val session = networkRepository.getCurrentSession()
-                    Log.e(
-                        "CHECK_LOGIN",
-                        "Initial session check in checkLoginStatus is called: $session"
-                    )
-                    _isLoggedIn.value = session?.season?.token != null
-                    Log.e(
-                        "GOING_TO_HOME",
-                        "isLoged in value in checkLoginStatus is ${_isLoggedIn.value} and sesson is $session"
-                    )
-                    delay(200)
-                    _loginState.update { it.copy(isCheckingLoginStatus = false) } // Mark check as complete
-                } catch (ex: Exception) {
-                    Log.e("CHECK_LOGIN", "exception is ${ex.printStackTrace()}")
-                }
-            }
-        }
-    }
-
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EmailChanged -> {
@@ -81,8 +56,7 @@ class LoginViewModel @Inject constructor(
 
             is LoginEvent.SubmitLogin -> {
                 loginUser(
-                    deviceType = event.deviceType,
-                    deviceId = event.deviceId
+                    deviceType = event.deviceType, deviceId = event.deviceId
                 )
             }
 
@@ -112,9 +86,7 @@ class LoginViewModel @Inject constructor(
 
             try {
                 val response = networkRepository.loginUser(
-                    state.email, state.password,
-                    deviceType = deviceType,
-                    deviceId = deviceId
+                    state.email, state.password, deviceType = deviceType, deviceId = deviceId
                 )
 
                 if (response.isSuccessful) {
@@ -123,10 +95,7 @@ class LoginViewModel @Inject constructor(
 
                     if (loginData != null) {
                         Log.e("GOING_TO_HOME", "Login data is not empty with $loginData")
-                        if (!loginData.data.token.isNullOrEmpty() &&
-                            !loginData.data.refreshToken.isNullOrEmpty() &&
-                            !loginData.data.tokenType.isNullOrEmpty()
-                        ) {
+                        if (!loginData.data.token.isNullOrEmpty() && !loginData.data.refreshToken.isNullOrEmpty() && !loginData.data.tokenType.isNullOrEmpty()) {
                             Log.e("GOING_TO_HOME", "Login data is not empty in checkLogin")
                             withContext(Dispatchers.IO) {
                                 networkRepository.saveUserSession(
@@ -142,8 +111,7 @@ class LoginViewModel @Inject constructor(
                             }
                             _loginState.update {
                                 it.copy(
-                                    email = "",
-                                    password = ""
+                                    email = "", password = ""
                                 )
                             }
                         }
@@ -167,18 +135,15 @@ class LoginViewModel @Inject constructor(
                     Log.e("CHECK_LOGIN", "Error: $combinedErrorMessage")
 
                     _loginState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = combinedErrorMessage.ifBlank { "User not found" }
-                        )
+                        it.copy(isLoading = false,
+                            errorMessage = combinedErrorMessage.ifBlank { "User not found" })
                     }
                 }
             } catch (e: Exception) {
                 Log.e("CHECK_LOGIN", "Exception: ${e.message}")
                 _loginState.update {
                     it.copy(
-                        isLoading = false,
-                        errorMessage = "Network error: ${e.localizedMessage}"
+                        isLoading = false, errorMessage = "Network error: ${e.localizedMessage}"
                     )
                 }
             }
@@ -194,6 +159,7 @@ class LoginViewModel @Inject constructor(
 
     private fun startRefreshTokenImplementation() {
         viewModelScope.launch {
+            _isBuffer.emit(true)
             // user saved season for checking isLoggedIn or Not
             val userSeason = networkRepository.getCurrentSession()
             if (userSeason?.season?.refreshToken != null) {
@@ -202,17 +168,23 @@ class LoginViewModel @Inject constructor(
                 val currentTime = System.currentTimeMillis() / 1000 // in seconds
                 val timeLeft = expireTime - currentTime
                 // refreshing token for one time only for first time (if refresh not get success then will send isLogged as false)
-                if (timeLeft <= 120) {
+                if (timeLeft <= 3600) {
                     val handleRefresh = handleRefresh(refreshToken!!)
+                    // means refresh api is giving error (mostly refresh token expire error)
                     if (!handleRefresh) {
                         networkRepository.clearSession()
                         _isBuffer.emit(false)
                         _isLoggedIn.value = false
-                    } else {
+                    }
+                    // means token refreshed successfully  so user is logged in and start check refreshToken
+                    else {
                         _isBuffer.emit(false)
                         _isLoggedIn.value = true
+                        checkRefreshToken()
                     }
-                } else {
+                }
+                // still have time left for refresh token api so directly calling check refresh which will delay it
+                else {
                     _isBuffer.emit(false)
                     _isLoggedIn.value = true
                     checkRefreshToken()
@@ -240,14 +212,14 @@ class LoginViewModel @Inject constructor(
                     val currentTime = System.currentTimeMillis() / 1000 // in seconds
                     val timeLeft = expireTime - currentTime
 
-                    if (timeLeft <= 120) {
+                    if (timeLeft <= 3600) {
                         // Immediate refresh
                         refreshToken?.let {
                             Log.e("REFRESH_TOKEN", "Refreshing now — time left: $timeLeft sec")
                             handleRefresh(it)
                         }
                     } else {
-                        val delayTime = (timeLeft - 120) * 1000L // milliseconds
+                        val delayTime = (timeLeft - 3600) * 1000L // milliseconds
                         Log.e("REFRESH_TOKEN", "Delaying refresh for $delayTime ms")
                         delay(delayTime)
 

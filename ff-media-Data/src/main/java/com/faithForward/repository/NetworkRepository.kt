@@ -11,6 +11,7 @@ import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.preferences.UserPrefData
@@ -292,6 +293,27 @@ class NetworkRepository @Inject constructor(
         )
 
         return result
+    }
+
+    suspend fun updateRecentSearch(
+        contentType: String,
+        contentId: String,
+    ): Response<ApiMessageResponse> {
+
+        val recentSearchRequest = RecentSearchRequest(
+            content_type = contentType,
+            content_id = contentId
+        )
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+
+        return apiServiceInterface.saveRecentSearch(
+            recentSearchRequest,
+            token
+        )
+
     }
 
     suspend fun generateLoginQrCode(

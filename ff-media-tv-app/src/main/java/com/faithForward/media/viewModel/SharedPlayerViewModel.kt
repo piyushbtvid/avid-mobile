@@ -38,6 +38,10 @@ class SharedPlayerViewModel() : ViewModel() {
         when (event) {
 
             is SharedPlayerEvent.ShowControls -> {
+                Log.e(
+                    "IS_VISIBLE",
+                    "show controls changed called in viewModel and isContolesVisible is true"
+                )
                 _state.value = _state.value.copy(isControlsVisible = true)
                 startAutoHideTimer()
             }
@@ -70,9 +74,9 @@ class SharedPlayerViewModel() : ViewModel() {
     private fun startAutoHideTimer() {
         autoHideJob?.cancel()
         autoHideJob = viewModelScope.launch {
-            Log.e("PLAYER", "Starting auto-hide timer")
+            Log.e("IS_VISIBLE", "Starting auto-hide timer")
             delay(10000)
-            Log.e("PLAYER", "Setting controls invisible after timer")
+            Log.e("IS_VISIBLE", "Setting controls invisible after timer")
             _state.value = _state.value.copy(isControlsVisible = false)
         }
     }

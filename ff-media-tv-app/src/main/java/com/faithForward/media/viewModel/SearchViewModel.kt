@@ -40,6 +40,10 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.SubmitQuery -> searchGivenQuery(event.query)
             is SearchEvent.GetRecentSearch -> getRecentSearch()
+            is SearchEvent.SaveToRecentSearch -> saveToRecentSearch(
+                contentType = event.contentType,
+                contentId = event.contentID
+            )
         }
     }
 
@@ -115,6 +119,33 @@ class SearchViewModel @Inject constructor(
                 ex.printStackTrace()
                 Log.e("SEARCH_NEW", "recent search exception is ${ex.message}")
             }
+        }
+    }
+
+
+    private fun saveToRecentSearch(
+        contentType: String,
+        contentId: String,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = networkRepository.updateRecentSearch(
+                    contentType = contentType,
+                    contentId = contentId
+                )
+
+                if (response.isSuccessful) {
+                    Log.e("RECENT_SEARCH", "recent search saved Success")
+                } else {
+                    Log.e("RECENT_SEARCH", "recent search error ${response.message()}")
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("RECENT_SEARCH", "recent search exception is ${ex.message}")
+            }
+
         }
     }
 
