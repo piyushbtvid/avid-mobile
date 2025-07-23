@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.epg.util
+package com.faithForward.media.util
 
 import android.content.Context
 import android.provider.Settings

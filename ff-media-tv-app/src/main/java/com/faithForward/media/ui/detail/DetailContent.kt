@@ -40,7 +40,7 @@ import com.faithForward.media.ui.theme.detailNowTextStyle
 import com.faithForward.media.ui.theme.detailNowUnFocusTextStyle
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
-import com.faithForward.media.ui.epg.util.FocusState
+import com.faithForward.media.util.FocusState
 
 data class DetailDto(
     val id: String? = null,

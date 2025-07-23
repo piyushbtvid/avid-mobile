@@ -303,7 +303,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.R
 import com.faithForward.media.ui.theme.sideBarFocusedBackgroundColor
 import com.faithForward.media.ui.theme.sideBarFocusedTextColor
-import com.faithForward.media.ui.epg.util.Util
+import com.faithForward.media.util.Util
 import com.faithForward.media.viewModel.LoginViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

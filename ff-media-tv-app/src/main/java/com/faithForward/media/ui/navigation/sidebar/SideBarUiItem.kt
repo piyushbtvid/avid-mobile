@@ -24,7 +24,7 @@ import com.faithForward.media.ui.theme.focusedTextColor
 import com.faithForward.media.ui.theme.sideBarItemDefaultColor
 import com.faithForward.media.ui.theme.sideBarItemSelectedHighlightedColor
 import com.faithForward.media.ui.theme.whiteMain
-import com.faithForward.media.ui.epg.util.FocusState
+import com.faithForward.media.util.FocusState
 
 @Composable
 fun SideBarUiItem(

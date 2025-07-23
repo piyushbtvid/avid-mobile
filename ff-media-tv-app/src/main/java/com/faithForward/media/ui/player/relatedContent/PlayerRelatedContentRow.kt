@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.whiteMain
-import com.faithForward.media.ui.epg.util.FocusState
+import com.faithForward.media.util.FocusState
 
 data class PlayerRelatedContentRowDto(
     val title: String,

@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.epg.util
+package com.faithForward.media.util
 
 fun formatDuration(durationMillis: Long): String {
     val totalSeconds = (durationMillis / 1000).toInt()

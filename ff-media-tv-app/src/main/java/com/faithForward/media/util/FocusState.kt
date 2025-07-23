@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.epg.util
+package com.faithForward.media.util
 
 enum class FocusState {
     SELECTED,

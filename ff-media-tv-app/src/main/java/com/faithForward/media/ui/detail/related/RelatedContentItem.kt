@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.faithForward.media.ui.commanComponents.PosterCard
 import com.faithForward.media.ui.commanComponents.PosterCardDto
-import com.faithForward.media.ui.epg.util.FocusState
+import com.faithForward.media.util.FocusState
 
 
 @Composable

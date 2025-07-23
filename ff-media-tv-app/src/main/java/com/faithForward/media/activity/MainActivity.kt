@@ -40,6 +40,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
+import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
+import com.faithForward.media.ui.epg.Epg
+import com.faithForward.media.ui.epg.EpgUiModel
+import com.faithForward.media.ui.epg.channel.ChannelUiModel
+import com.faithForward.media.ui.epg.program.ProgramUiModel
 import com.faithForward.media.ui.navigation.MainScreen
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBar
@@ -99,14 +104,33 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         } else {
-                            MainScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                sideBarViewModel = sideBarViewModel,
-                                loginViewModel = loginViewModel,
-                                playerViewModel = sharedPlayerViewModel,
-                                navController = navController,
-                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.LoginQr.route
+                            Epg(
+                                epgUiModel = EpgUiModel(
+                                    channelWithProgramsUiModels = List(10) {
+                                        ChannelWithProgramsUiModel(
+                                            channelUiModel = ChannelUiModel(
+                                                channelImage = "",
+                                                channelName = ""
+                                            ),
+                                            programs = List(20) {
+                                                ProgramUiModel(
+                                                    programName = "Drive Thru History Holiday Special",
+                                                    programWidth = 23,
+                                                    programTimeString = "8:00AM - 9:00AM"
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
                             )
+//                            MainScreen(
+//                                modifier = Modifier.fillMaxSize(),
+//                                sideBarViewModel = sideBarViewModel,
+//                                loginViewModel = loginViewModel,
+//                                playerViewModel = sharedPlayerViewModel,
+//                                navController = navController,
+//                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.LoginQr.route
+//                            )
                         }
                     }
                 }

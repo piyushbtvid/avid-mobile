@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.epg.util.extensions
+package com.faithForward.media.util.extensions
 
 
 import android.graphics.BlurMaskFilter

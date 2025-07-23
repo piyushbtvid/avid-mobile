@@ -13,9 +13,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.LoadImage
+import com.faithForward.media.ui.theme.blackColor
 import com.faithForward.media.ui.theme.cardShadowColor
 
-data class Channel(
+data class ChannelUiModel(
     val channelName: String,
     val channelImage: String,
 )
@@ -23,17 +24,17 @@ data class Channel(
 @Composable
 fun ChannelItem(
     modifier: Modifier = Modifier,
-    channel: Channel,
+    channelUiModel: ChannelUiModel,
 ) {
     Box(
         modifier = modifier
             .width(136.5.dp)
             .height(75.dp)
             .clip(RoundedCornerShape(5.dp))
-            .background(color = cardShadowColor)
+            .background(color = blackColor)
             .padding(10.dp)
     ) {
-        LoadImage(modifier = Modifier.fillMaxSize(), imageUrl = channel.channelImage)
+        LoadImage(modifier = Modifier.fillMaxSize(), imageUrl = channelUiModel.channelImage)
     }
 }
 
@@ -41,7 +42,7 @@ fun ChannelItem(
 @Composable
 private fun ChannelItemPreview() {
     ChannelItem(
-        channel = Channel(
+        channelUiModel = ChannelUiModel(
             channelImage = "",
             channelName = ""
         )
