@@ -5,6 +5,7 @@ import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.common.ApiMessageResponse
+import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.creator.CreatorResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
@@ -224,5 +225,12 @@ interface ApiServiceInterface {
         @Body recentSearchRequest: RecentSearchRequest,
         @Header("Authorization") token: String,
     ): Response<ApiMessageResponse>
+
+
+    @GET(Constants.CONTINUE_WATCHING_LIST_END_POINT)
+    suspend fun getContinueWatchingList(
+        @Header("Authorization") token: String,
+    ): Response<CommanListResponse>
+
 
 }

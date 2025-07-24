@@ -3,6 +3,7 @@ package com.faithForward.repository
 import android.util.Log
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.network.dto.common.ApiMessageResponse
+import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
@@ -378,5 +379,16 @@ class NetworkRepository @Inject constructor(
             expireDate = newExpireTime,
             tokenType = newTokenType,
         )
+    }
+
+    suspend fun getContinueWatchingList(): Response<CommanListResponse> {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+
+        return apiServiceInterface.getContinueWatchingList(
+            token = token
+        )
+
     }
 }

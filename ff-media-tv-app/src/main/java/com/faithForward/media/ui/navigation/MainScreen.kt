@@ -38,8 +38,7 @@ fun MainScreen(
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-
-    ) {
+) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
 
@@ -160,6 +159,13 @@ fun MainScreen(
                             }
                         }
 
+                        Routes.MyAccount.route -> {
+                            navController.navigate(Routes.MyAccount.route) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+
                         "log_out" -> {
                             showLogoutDialog = true
                         }
@@ -202,5 +208,6 @@ val sidebarVisibleRoutes = listOf(
     Routes.Creator.route,
     Routes.MyList.route,
     Routes.Series.route,
-    Routes.Search.route
+    Routes.Search.route,
+    Routes.MyAccount.route
 )

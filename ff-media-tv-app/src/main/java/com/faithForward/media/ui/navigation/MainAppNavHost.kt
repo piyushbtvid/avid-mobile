@@ -22,6 +22,7 @@ import com.faithForward.media.ui.sections.genre.GenreDataScreen
 import com.faithForward.media.ui.sections.home.HomePage
 import com.faithForward.media.ui.sections.movies.MoviesPage
 import com.faithForward.media.ui.sections.myList.MyListPage
+import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.viewModel.ContentViewModel
@@ -31,6 +32,7 @@ import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
@@ -451,7 +453,8 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(
+                creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -464,20 +467,6 @@ fun MainAppNavHost(
             route = Routes.Search.route
         ) { backStackEntry ->
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
-
-//            SearchScreen(viewModel = searchViewModel,
-//                sideBarViewModel = sideBarViewModel,
-//                onBackClick = {
-//                    onBackClickForExit.invoke()
-//                    //activity?.finish()
-//                },
-//                onSearchItemClick = { item ->
-//                    if (item.contentSlug != null) {
-//                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
-//                    }
-//                })
-
-
             SearchScreenUi(searchViewModel = searchViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
@@ -492,6 +481,18 @@ fun MainAppNavHost(
                         }
                     }
                 })
+
+        }
+
+        composable(
+            route = Routes.MyAccount.route
+        ) { backStackEntry ->
+
+            val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
+
+            MyAccountScreen(
+                myAccountViewModel = myAccountViewModel
+            )
 
         }
 
