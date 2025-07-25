@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,7 @@ import com.faithForward.media.util.FocusState
 fun WatchSectionGrid(
     modifier: Modifier = Modifier,
     focusedIndex: Int,
+    focusRequesterList : List<FocusRequester>,
     onFocusedIndexChange: (Int) -> Unit,
     watchSectionItemDtoList: List<WatchSectionItemDto>,
 ) {
@@ -48,6 +51,7 @@ fun WatchSectionGrid(
 
             WatchSectionItem(
                 modifier = Modifier
+                    .focusRequester(focusRequesterList[index])
                     .onFocusChanged {
                         if (it.hasFocus) {
                             onFocusedIndexChange.invoke(index)

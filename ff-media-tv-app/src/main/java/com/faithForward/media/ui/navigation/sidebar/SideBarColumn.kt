@@ -99,6 +99,7 @@ fun SideBarColumn(
                     .focusRequester(itemFocusRequesters[index])
                     .onFocusChanged {
                         if (it.hasFocus) {
+                            Log.e("PROFILE", "side bar ui item has focus called")
                             onFocusChange.invoke(index)
                         } else if (focusedIndex == index) {
                             onFocusChange.invoke(-1)

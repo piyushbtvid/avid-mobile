@@ -24,12 +24,13 @@ fun MyAccountScreen(
 
     val myAccountUiState = myAccountViewModel.uiState.collectAsState()
     var profileFocusedIndex by rememberSaveable { mutableStateOf(-1) }
+    var profileSelectedIndex by rememberSaveable { mutableStateOf(-1) }
 
     Row(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                start = 83.dp,
+                start = 100.dp,
                 end = 20.dp,
                 top = 20.dp,
                 bottom = 20.dp
@@ -46,7 +47,14 @@ fun MyAccountScreen(
             onFocusedIndexChange = { int ->
                 profileFocusedIndex = int
             },
-            profileMenuItemDtoList = myAccountUiState.value.profileMenuItemList,
+            profileMenuItemDtoLists = myAccountUiState.value.profileMenuItemList,
+            selectedIndex = profileSelectedIndex,
+            onSelectedPositionChange = { int ->
+                profileSelectedIndex = int
+            },
+            onItemClick = { menutype ->
+
+            }
         )
 
         if (myAccountUiState.value.myWatchSectionItemDtoList != null) {

@@ -1,30 +1,43 @@
 package com.faithForward.media.ui.sections.my_account.profile_menu
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.util.FocusState
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileMenu(
     modifier: Modifier = Modifier,
     focusedIndex: Int,
+    selectedIndex: Int,
     userInfoItemDto: UserInfoItemDto,
     onFocusedIndexChange: (Int) -> Unit,
-    profileMenuItemDtoList: List<ProfileMenuItemDto>,
+    onSelectedPositionChange: (Int) -> Unit,
+    onItemClick: (ProfileMenuItemType) -> Unit,
+    profileMenuItemDtoLists: List<ProfileMenuItemDto>,
 ) {
-
+    val focusRequester = remember { FocusRequester() }
 
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.focusRestorer {
+            focusRequester
+        },
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
@@ -34,27 +47,32 @@ fun ProfileMenu(
             )
         }
 
-        itemsIndexed(profileMenuItemDtoList) { index, item ->
+        itemsIndexed(profileMenuItemDtoLists) { index, item ->
 
             val uiState = when (index) {
                 focusedIndex -> FocusState.FOCUSED
+                selectedIndex -> FocusState.SELECTED
                 else -> FocusState.UNFOCUSED
             }
 
             ProfileMenuItem(
                 modifier = Modifier
+                    .focusRequester(
+                        if (index == 0) focusRequester else FocusRequester()
+                    )
                     .onFocusChanged {
-                        if (it.hasFocus) {
+                        if (it.isFocused) {
                             onFocusedIndexChange.invoke(index)
                         } else {
                             onFocusedIndexChange.invoke(-1)
                         }
                     }
+                    .focusable()
                     .clickable(interactionSource = null, indication = null, onClick = {
-
-                    }
-                    )
-                    .focusable(),
+                        onSelectedPositionChange.invoke(index)
+                        onFocusedIndexChange.invoke(-1)
+                        onItemClick.invoke(item.menuType)
+                    }),
                 profileMenuItemDto = item,
                 focusState = uiState
             )
@@ -63,6 +81,14 @@ fun ProfileMenu(
 
     }
 
+    LaunchedEffect(Unit) {
+        try {
+            Log.e("PROFILE", "focus request is called")
+            focusRequester.requestFocus()
+        } catch (_: Exception) {
+
+        }
+    }
 
 }
 
@@ -80,23 +106,33 @@ private fun ProfileMenuPreview() {
     val menuItemList = listOf(
         ProfileMenuItemDto(
             name = "Continue Watching",
-            icon = R.drawable.plus_ic
+            icon = R.drawable.plus_ic,
+            menuType = ProfileMenuItemType.MY_LIST
         ),
         ProfileMenuItemDto(
             name = "Continue Watching",
-            icon = R.drawable.plus_ic
+            icon = R.drawable.plus_ic,
+            menuType = ProfileMenuItemType.MY_LIST
         ),
         ProfileMenuItemDto(
             name = "Continue Watching",
-            icon = R.drawable.plus_ic
+            icon = R.drawable.plus_ic,
+            menuType = ProfileMenuItemType.MY_LIST
         )
     )
 
     ProfileMenu(
         focusedIndex = 1,
-        profileMenuItemDtoList = menuItemList,
+        profileMenuItemDtoLists = menuItemList,
         userInfoItemDto = userInfo,
+        selectedIndex = 0,
+        onSelectedPositionChange = {
+
+        },
         onFocusedIndexChange = {
+
+        },
+        onItemClick = {
 
         }
     )
