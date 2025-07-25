@@ -361,6 +361,10 @@ fun MainAppNavHost(
                     type = NavType.BoolType
                     defaultValue = false
                 },
+                navArgument("isFromMyAccount") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
@@ -372,6 +376,9 @@ fun MainAppNavHost(
             val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
+
+            val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
+
             // Fix: Use getInt instead of getString
             val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
 
@@ -379,6 +386,9 @@ fun MainAppNavHost(
                 Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
             } ?: emptyList()
 
+            LaunchedEffect(isFromMyAccount) {
+                Log.e("MY_ACCOUNT", "is from my account $isFromMyAccount and $isContinueWatching")
+            }
 
             playerList?.let {
                 LaunchedEffect(playerList) {
@@ -399,7 +409,7 @@ fun MainAppNavHost(
                 isFromContinueWatching = isContinueWatching,
                 initialIndex = initialIndex,
                 onVideoEnded = {
-                    if (isContinueWatching) {
+                    if (isContinueWatching && !isFromMyAccount) {
                         // Get the current item's slug from playerDtoList
                         val currentItem = playerList?.getOrNull(0)
                         if (currentItem?.slug != null) {
@@ -413,6 +423,26 @@ fun MainAppNavHost(
                                 navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
                                     // Ensure Home screen remains in the back stack
                                     popUpTo(Routes.Home.route) { inclusive = false }
+                                }
+                            }
+                        } else {
+                            // Fallback to default back navigation if slug is unavailable
+                            navController.popBackStack()
+                        }
+                    } else if (isFromMyAccount && isContinueWatching) {
+                        // Get the current item's slug from playerDtoList
+                        val currentItem = playerList?.getOrNull(0)
+                        if (currentItem?.slug != null) {
+                            // Navigate to Detail screen
+                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
+                                }
+                            } else {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
                                 }
                             }
                         } else {
@@ -492,20 +522,19 @@ fun MainAppNavHost(
             MyAccountScreen(myAccountViewModel = myAccountViewModel,
                 onItemClick = { item, isFromContinueWatching ->
 
-                    val posterCardDto = item.toPosterCardDto()
+                    if (isFromContinueWatching) {
+                        val posterCardDto = item.toPosterCardDto()
 
-                    Log.e(
-                        "isFromContinueWatching",
-                        "isFromContinueWatching is $isFromContinueWatching with progress ${posterCardDto.progress}"
-                    )
-
-                    val route = Routes.PlayerScreen.createRoute(
-                        listOf(posterCardDto),
-                        isContinueWatching = isFromContinueWatching,
-                        initialIndex = 0
-                    )
-                    navController.navigate(route)
-
+                        val route = Routes.PlayerScreen.createRoute(
+                            listOf(posterCardDto),
+                            isContinueWatching = true,
+                            isFromMyAccount = true,
+                            initialIndex = 0
+                        )
+                        navController.navigate(route)
+                    } else {
+                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
+                    }
                 })
 
         }
