@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenu
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
 import com.faithForward.media.ui.sections.my_account.profile_menu.UserInfoItemDto
@@ -20,12 +21,13 @@ import com.faithForward.media.viewModel.uiModels.MyAccountEvent
 @Composable
 fun MyAccountScreen(
     modifier: Modifier = Modifier,
+    onItemClick: (WatchSectionItemDto, isFromContinueWatching: Boolean) -> Unit,
     myAccountViewModel: MyAccountViewModel,
 ) {
 
     val myAccountUiState = myAccountViewModel.uiState.collectAsState()
     var profileFocusedIndex by rememberSaveable { mutableStateOf(-1) }
-    var profileSelectedIndex by rememberSaveable { mutableStateOf(-1) }
+    var profileSelectedIndex by rememberSaveable { mutableStateOf(0) }
 
     Row(
         modifier = modifier
@@ -65,9 +67,25 @@ fun MyAccountScreen(
                 }
             })
 
-        if (myAccountUiState.value.watchSections?.items != null) {
+        if (myAccountUiState.value.continueWatchSections?.items != null) {
             WatchableGridSection(
-                watchSectionUiModel = myAccountUiState.value.watchSections!!,
+                watchSectionUiModel = myAccountUiState.value.continueWatchSections!!,
+                onItemClick = { item ->
+                    onItemClick(
+                        item, true
+                    )
+                }
+            )
+        }
+
+        if (myAccountUiState.value.myListWatchSections?.items != null) {
+            WatchableGridSection(
+                watchSectionUiModel = myAccountUiState.value.myListWatchSections!!,
+                onItemClick = { item ->
+                    onItemClick(
+                        item, false
+                    )
+                }
             )
         }
 

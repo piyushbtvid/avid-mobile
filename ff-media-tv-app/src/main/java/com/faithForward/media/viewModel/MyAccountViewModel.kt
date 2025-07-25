@@ -64,7 +64,8 @@ class MyAccountViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            watchSections = newSection
+                            continueWatchSections = newSection,
+                            myListWatchSections = null
                         )
                     }
                 } else {
@@ -100,7 +101,8 @@ class MyAccountViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            watchSections = newSection
+                            myListWatchSections = newSection,
+                            continueWatchSections = null
                         )
                     }
 

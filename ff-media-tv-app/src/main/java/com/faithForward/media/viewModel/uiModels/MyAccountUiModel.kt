@@ -1,6 +1,8 @@
 package com.faithForward.media.viewModel.uiModels
 
+import androidx.compose.animation.core.rememberTransition
 import com.faithForward.media.R
+import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.sections.my_account.WatchSectionUiModel
 import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemDto
@@ -30,7 +32,8 @@ sealed class MyAccountEvent {
 }
 
 data class MyAccountUiState(
-    val watchSections: WatchSectionUiModel? = null,
+    val continueWatchSections: WatchSectionUiModel? = null,
+    val myListWatchSections: WatchSectionUiModel? = null,
     val profileMenuItemList: List<ProfileMenuItemDto> = profileMenuItemDtoList,
 )
 
@@ -40,17 +43,21 @@ fun ContentItem.toWatchSectionItem(): WatchSectionItemDto {
     val totalDuration = duration?.toLong() ?: 0L
     val remaining = (totalDuration - progress).coerceAtLeast(0L)
 
-    val hours = remaining / 3600
-    val minutes = (remaining % 3600) / 60
-    val seconds = remaining % 60
 
-    val timeLeftFormatted = buildString {
-        if (hours > 0) append("${hours} h ")
-        if (minutes > 0) append("${minutes} m ")
-        if (seconds > 0 || (hours == 0L && minutes == 0L)) append("${seconds} s")
-        append(" left")
+    val timeLeftFormatted = if (progress == 0L) {
+        ""
+    } else {
+        val hours = remaining / 3600
+        val minutes = (remaining % 3600) / 60
+        val seconds = remaining % 60
+
+        buildString {
+            if (hours > 0) append("${hours} h ")
+            if (minutes > 0) append("${minutes} m ")
+            if (seconds > 0 || (hours == 0L && minutes == 0L)) append("${seconds} s")
+            append(" left")
+        }
     }
-
     return WatchSectionItemDto(
         contentType = content_type ?: "",
         id = id.toString(),
@@ -61,5 +68,21 @@ fun ContentItem.toWatchSectionItem(): WatchSectionItemDto {
         duration = totalDuration,
         timeLeft = timeLeftFormatted,
         image = landscape ?: "",
+        seriesSlug = seriesSlug
+    )
+}
+
+fun WatchSectionItemDto.toPosterCardDto(): PosterCardDto {
+    return PosterCardDto(
+        id = id,
+        contentType = contentType,
+        slug = contentSlug,
+        posterImageSrc = image,
+        landScapeImg = image,
+        title = title,
+        description = description,
+        duration = duration.toString(),
+        seriesSlug = seriesSlug,
+        progress = progress,
     )
 }

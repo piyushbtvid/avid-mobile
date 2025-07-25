@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.sections.my_account.comman
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +24,8 @@ import com.faithForward.media.util.FocusState
 fun WatchSectionGrid(
     modifier: Modifier = Modifier,
     focusedIndex: Int,
-    focusRequesterList : List<FocusRequester>,
+    focusRequesterList: List<FocusRequester>,
+    onItemClick: (WatchSectionItemDto) -> Unit,
     onFocusedIndexChange: (Int) -> Unit,
     watchSectionItemDtoList: List<WatchSectionItemDto>,
 ) {
@@ -59,6 +61,9 @@ fun WatchSectionGrid(
                             onFocusedIndexChange.invoke(-1)
                         }
                     }
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onItemClick.invoke(item)
+                    })
                     .focusable(),
                 focusState = uiState,
                 watchSectionItemDto = item,

@@ -453,8 +453,7 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -490,9 +489,24 @@ fun MainAppNavHost(
 
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
 
-            MyAccountScreen(
-                myAccountViewModel = myAccountViewModel
-            )
+            MyAccountScreen(myAccountViewModel = myAccountViewModel,
+                onItemClick = { item, isFromContinueWatching ->
+
+                    val posterCardDto = item.toPosterCardDto()
+
+                    Log.e(
+                        "isFromContinueWatching",
+                        "isFromContinueWatching is $isFromContinueWatching with progress ${posterCardDto.progress}"
+                    )
+
+                    val route = Routes.PlayerScreen.createRoute(
+                        listOf(posterCardDto),
+                        isContinueWatching = isFromContinueWatching,
+                        initialIndex = 0
+                    )
+                    navController.navigate(route)
+
+                })
 
         }
 

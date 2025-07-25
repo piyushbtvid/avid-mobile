@@ -23,14 +23,15 @@ import com.faithForward.media.ui.theme.whiteMain
 
 data class WatchSectionUiModel(
     val title: String,
-    val items: List<WatchSectionItemDto>?
+    val items: List<WatchSectionItemDto>?,
 )
 
 
 @Composable
 fun WatchableGridSection(
     modifier: Modifier = Modifier,
-    watchSectionUiModel : WatchSectionUiModel,
+    onItemClick: (WatchSectionItemDto) -> Unit,
+    watchSectionUiModel: WatchSectionUiModel,
 ) {
 
     var focusedIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -56,7 +57,9 @@ fun WatchableGridSection(
             focusRequesterList = focusRequesters,
             focusedIndex = focusedIndex, onFocusedIndexChange = { int ->
                 focusedIndex = int
-            }, watchSectionItemDtoList = watchSectionUiModel.items ?: emptyList()
+            },
+            onItemClick = onItemClick,
+            watchSectionItemDtoList = watchSectionUiModel.items ?: emptyList()
         )
 
     }
@@ -64,7 +67,7 @@ fun WatchableGridSection(
     LaunchedEffect(Unit) {
         try {
             Log.e("PROFILE", "grid first focus request")
-            //  focusRequesters[0].requestFocus()
+            focusRequesters[0].requestFocus()
         } catch (_: Exception) {
 
         }

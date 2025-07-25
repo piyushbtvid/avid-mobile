@@ -45,6 +45,7 @@ data class WatchSectionItemDto(
     val duration: Long,
     val timeLeft: String,
     val image: String,
+    val seriesSlug : String? = null
 )
 
 @Composable
