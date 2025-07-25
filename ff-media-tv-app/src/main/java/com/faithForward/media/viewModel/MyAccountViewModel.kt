@@ -24,9 +24,7 @@ class MyAccountViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MyAccountUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        onEvent(MyAccountEvent.GetContinueWatching)
-    }
+
 
     fun onEvent(myAccountEvent: MyAccountEvent) {
 
