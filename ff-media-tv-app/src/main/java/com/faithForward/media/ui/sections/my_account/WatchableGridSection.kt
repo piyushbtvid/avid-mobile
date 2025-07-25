@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.sections.my_account.continue_watching
+package com.faithForward.media.ui.sections.my_account
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -21,15 +21,21 @@ import com.faithForward.media.ui.sections.my_account.comman.WatchSectionGrid
 import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.theme.whiteMain
 
+data class WatchSectionUiModel(
+    val title: String,
+    val items: List<WatchSectionItemDto>?
+)
+
+
 @Composable
-fun ContinueWatching(
+fun WatchableGridSection(
     modifier: Modifier = Modifier,
-    watchSectionItemDtoList: List<WatchSectionItemDto>,
+    watchSectionUiModel : WatchSectionUiModel,
 ) {
 
     var focusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    val focusRequesters = remember(watchSectionItemDtoList.size) {
-        List(watchSectionItemDtoList.size) { FocusRequester() }
+    val focusRequesters = remember(watchSectionUiModel.items?.size ?: 0) {
+        List(watchSectionUiModel.items?.size ?: 0) { FocusRequester() }
     }
 
     Column(
@@ -39,7 +45,7 @@ fun ContinueWatching(
 
         TitleText(
             modifier = Modifier.padding(start = 10.dp),
-            text = "Continue Watching",
+            text = watchSectionUiModel.title,
             color = whiteMain,
             textSize = 18,
             lineHeight = 18,
@@ -50,7 +56,7 @@ fun ContinueWatching(
             focusRequesterList = focusRequesters,
             focusedIndex = focusedIndex, onFocusedIndexChange = { int ->
                 focusedIndex = int
-            }, watchSectionItemDtoList = watchSectionItemDtoList
+            }, watchSectionItemDtoList = watchSectionUiModel.items ?: emptyList()
         )
 
     }
@@ -58,7 +64,7 @@ fun ContinueWatching(
     LaunchedEffect(Unit) {
         try {
             Log.e("PROFILE", "grid first focus request")
-          //  focusRequesters[0].requestFocus()
+            //  focusRequesters[0].requestFocus()
         } catch (_: Exception) {
 
         }

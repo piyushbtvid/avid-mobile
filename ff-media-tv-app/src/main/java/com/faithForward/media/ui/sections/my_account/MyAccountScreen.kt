@@ -11,10 +11,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.faithForward.media.ui.sections.my_account.continue_watching.ContinueWatching
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenu
+import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
 import com.faithForward.media.ui.sections.my_account.profile_menu.UserInfoItemDto
 import com.faithForward.media.viewModel.MyAccountViewModel
+import com.faithForward.media.viewModel.uiModels.MyAccountEvent
 
 @Composable
 fun MyAccountScreen(
@@ -30,19 +31,13 @@ fun MyAccountScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                start = 100.dp,
-                end = 20.dp,
-                top = 20.dp,
-                bottom = 20.dp
+                start = 100.dp, end = 20.dp, top = 20.dp, bottom = 20.dp
             )
     ) {
 
-        ProfileMenu(
-            focusedIndex = profileFocusedIndex,
+        ProfileMenu(focusedIndex = profileFocusedIndex,
             userInfoItemDto = UserInfoItemDto(
-                userName = "Amit",
-                userEmail = "Subscriber1@gmail.com",
-                initialName = "AP"
+                userName = "Amit", userEmail = "Subscriber1@gmail.com", initialName = "AP"
             ),
             onFocusedIndexChange = { int ->
                 profileFocusedIndex = int
@@ -52,14 +47,27 @@ fun MyAccountScreen(
             onSelectedPositionChange = { int ->
                 profileSelectedIndex = int
             },
-            onItemClick = { menutype ->
+            onItemClick = { menuItemType ->
+                when (menuItemType) {
 
-            }
-        )
+                    ProfileMenuItemType.MY_LIST -> {
+                        myAccountViewModel.onEvent(MyAccountEvent.GetMyList)
+                    }
 
-        if (myAccountUiState.value.myWatchSectionItemDtoList != null) {
-            ContinueWatching(
-                watchSectionItemDtoList = myAccountUiState.value.myWatchSectionItemDtoList!!,
+                    ProfileMenuItemType.CONTINUE_WATCHING -> {
+                        myAccountViewModel.onEvent(MyAccountEvent.GetContinueWatching)
+                    }
+
+                    ProfileMenuItemType.SETTING -> {
+
+                    }
+
+                }
+            })
+
+        if (myAccountUiState.value.watchSections?.items != null) {
+            WatchableGridSection(
+                watchSectionUiModel = myAccountUiState.value.watchSections!!,
             )
         }
 

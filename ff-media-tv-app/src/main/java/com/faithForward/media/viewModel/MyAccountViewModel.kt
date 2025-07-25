@@ -3,6 +3,7 @@ package com.faithForward.media.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.ui.sections.my_account.WatchSectionUiModel
 import com.faithForward.media.viewModel.uiModels.MyAccountEvent
 import com.faithForward.media.viewModel.uiModels.MyAccountUiState
 import com.faithForward.media.viewModel.uiModels.toWatchSectionItem
@@ -36,7 +37,7 @@ class MyAccountViewModel @Inject constructor(
             }
 
             is MyAccountEvent.GetMyList -> {
-
+                getMyList()
             }
 
         }
@@ -56,9 +57,14 @@ class MyAccountViewModel @Inject constructor(
                     val watchSectionList = continueWatchingList?.map {
                         it.toWatchSectionItem()
                     }
+                    val newSection = WatchSectionUiModel(
+                        title = "Continue Watching",
+                        items = watchSectionList
+                    )
+
                     _uiState.update {
                         it.copy(
-                            myWatchSectionItemDtoList = watchSectionList
+                            watchSections = newSection
                         )
                     }
                 } else {
@@ -67,6 +73,44 @@ class MyAccountViewModel @Inject constructor(
             } catch (ex: Exception) {
                 ex.printStackTrace()
 
+            }
+        }
+    }
+
+    private fun getMyList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val myListResponse = networkRepository.getMyListSectionData("my-list")
+
+                if (myListResponse.isSuccessful) {
+
+                    val dataList = myListResponse.body()?.data
+
+                    val watchSectionList = dataList?.flatMap { section ->
+                        section.content.map { result ->
+                            result.toWatchSectionItem()
+                        }
+                    }
+
+                    val newSection = WatchSectionUiModel(
+                        title = "My List",
+                        items = watchSectionList
+                    )
+
+                    _uiState.update {
+                        it.copy(
+                            watchSections = newSection
+                        )
+                    }
+
+                } else {
+                    Log.e("MY_ACCOUNT", "my list not success with ${myListResponse.message()}")
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("EX", "ex is ${ex.message}")
             }
         }
     }

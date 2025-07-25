@@ -1,6 +1,7 @@
 package com.faithForward.media.viewModel.uiModels
 
 import com.faithForward.media.R
+import com.faithForward.media.ui.sections.my_account.WatchSectionUiModel
 import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
@@ -29,7 +30,7 @@ sealed class MyAccountEvent {
 }
 
 data class MyAccountUiState(
-    val myWatchSectionItemDtoList: List<WatchSectionItemDto>? = null,
+    val watchSections: WatchSectionUiModel? = null,
     val profileMenuItemList: List<ProfileMenuItemDto> = profileMenuItemDtoList,
 )
 
