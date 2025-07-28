@@ -62,18 +62,13 @@ fun MyAccountScreen(
 
     LaunchedEffect(Unit) {
 
+        Log.e("SIDE_BAR_ITEM", "my account is opend")
+
         if (profileSelectedIndex == 0) {
             myAccountViewModel.onEvent(MyAccountEvent.GetContinueWatching)
         } else {
             myAccountViewModel.onEvent(MyAccountEvent.GetMyList)
         }
-
-        try {
-
-        } catch (ex: Exception) {
-
-        }
-
     }
 
     Row(

@@ -160,6 +160,7 @@ fun MainScreen(
                         }
 
                         Routes.MyAccount.route -> {
+                            Log.e("SIDE_BAR_ITEM", "on side bar my account ")
                             navController.navigate(Routes.MyAccount.route) {
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true

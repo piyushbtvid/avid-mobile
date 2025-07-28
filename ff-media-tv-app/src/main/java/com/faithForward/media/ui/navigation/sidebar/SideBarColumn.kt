@@ -40,9 +40,7 @@ fun SideBarColumn(
 
     var targetValue = if (focusedIndex == -1) 38.dp else 114.dp
     val animatedWidth by animateDpAsState(
-        targetValue = targetValue,
-        animationSpec = tween(300),
-        label = ""
+        targetValue = targetValue, animationSpec = tween(300), label = ""
     )
 
 
@@ -52,6 +50,7 @@ fun SideBarColumn(
         if (focusedIndex != -1 && isSideBarFocusable) {
             try {
                 if (focusedIndex < itemFocusRequesters.size) {
+                    Log.e("SIDE_BAR_ITEM", "on side bar item request called")
                     itemFocusRequesters[focusedIndex].requestFocus()
                 }
             } catch (ex: Exception) {
@@ -61,18 +60,17 @@ fun SideBarColumn(
     }
 
     LazyColumn(
-        modifier = modifier
-            .onFocusChanged {
-                Log.d("onFocusChanged", "${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
-                if (it.hasFocus && isSideBarFocusable) {
-                    try {
-                        val targetIndex = selectedPosition.coerceIn(0, itemFocusRequesters.size - 1)
-                        itemFocusRequesters[targetIndex].requestFocus()
-                    } catch (ex: Exception) {
-                        Log.e("LOG", "${ex.message}")
-                    }
+        modifier = modifier.onFocusChanged {
+            Log.d("onFocusChanged", "${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
+            if (it.hasFocus && isSideBarFocusable) {
+                try {
+                    val targetIndex = selectedPosition.coerceIn(0, itemFocusRequesters.size - 1)
+                    itemFocusRequesters[targetIndex].requestFocus()
+                } catch (ex: Exception) {
+                    Log.e("LOG", "${ex.message}")
                 }
-            },
+            }
+        },
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -94,28 +92,29 @@ fun SideBarColumn(
             }
 
             //modifier is being applied to image inside Item
-            SideBarUiItem(
-                modifier = Modifier
-                    .focusRequester(itemFocusRequesters[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            Log.e("PROFILE", "side bar ui item has focus called")
-                            onFocusChange.invoke(index)
-                        } else if (focusedIndex == index) {
-                            onFocusChange.invoke(-1)
-                        }
+            SideBarUiItem(modifier = Modifier
+                .focusRequester(itemFocusRequesters[index])
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        Log.e("PROFILE", "side bar ui item has focus called")
+                        onFocusChange.invoke(index)
+                    } else if (focusedIndex == index) {
+                        onFocusChange.invoke(-1)
                     }
-                    .focusable(enabled = isSideBarFocusable)
-                    .focusProperties {
-                        canFocus = isSideBarFocusable
+                }
+                .focusable(enabled = isSideBarFocusable)
+                .focusProperties {
+                    canFocus = isSideBarFocusable
+                }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    Log.e("SIDE_BAR_ITEM", "on side bar item click called with index $index")
+                    if (index != columnItems.size - 1) {
+                        Log.e("SIDE_BAR_ITEM", "on side bar item click called inside if block")
+                        onSelectedPositionChange.invoke(index)
+                        onFocusChange.invoke(-1)
                     }
-                    .clickable(interactionSource = null, indication = null, onClick = {
-                        if (index != columnItems.size - 1) {
-                            onSelectedPositionChange.invoke(index)
-                            onFocusChange.invoke(-1)
-                        }
-                        onItemClick.invoke(item)
-                    }),
+                    onItemClick.invoke(item)
+                }),
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,
                 img = item.img,

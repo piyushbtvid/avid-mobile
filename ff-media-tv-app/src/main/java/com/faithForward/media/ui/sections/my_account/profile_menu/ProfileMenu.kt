@@ -80,16 +80,6 @@ fun ProfileMenu(
         }
 
     }
-
-    LaunchedEffect(Unit) {
-        try {
-            Log.e("PROFILE", "focus request is called")
-            focusRequester.requestFocus()
-        } catch (_: Exception) {
-
-        }
-    }
-
 }
 
 
