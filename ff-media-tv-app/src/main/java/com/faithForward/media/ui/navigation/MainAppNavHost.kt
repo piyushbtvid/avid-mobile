@@ -519,7 +519,12 @@ fun MainAppNavHost(
 
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
 
-            MyAccountScreen(myAccountViewModel = myAccountViewModel,
+            MyAccountScreen(
+                myAccountViewModel = myAccountViewModel,
+                sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    onBackClickForExit.invoke()
+                },
                 onItemClick = { item, isFromContinueWatching ->
 
                     if (isFromContinueWatching) {

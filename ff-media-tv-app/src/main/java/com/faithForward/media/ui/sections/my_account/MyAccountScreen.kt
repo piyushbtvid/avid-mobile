@@ -1,5 +1,7 @@
 package com.faithForward.media.ui.sections.my_account
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,17 +16,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenu
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
 import com.faithForward.media.ui.sections.my_account.profile_menu.UserInfoItemDto
 import com.faithForward.media.ui.sections.my_account.setting.Setting
 import com.faithForward.media.viewModel.MyAccountViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.MyAccountEvent
 
 @Composable
 fun MyAccountScreen(
     modifier: Modifier = Modifier,
+    sideBarViewModel: SideBarViewModel,
+    onBackClick: () -> Unit,
     onItemClick: (WatchSectionItemDto, isFromContinueWatching: Boolean) -> Unit,
     myAccountViewModel: MyAccountViewModel,
 ) {
@@ -35,6 +41,21 @@ fun MyAccountScreen(
 
     var selectedMenuItemType by rememberSaveable {
         mutableStateOf(ProfileMenuItemType.CONTINUE_WATCHING)
+    }
+
+    val sideBarState by sideBarViewModel.sideBarState
+
+    BackHandler {
+        Log.e("ON_BACK", "on back in search called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
+            onBackClick.invoke()
+        } else {
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(0))
+        }
     }
 
     LaunchedEffect(Unit) {
