@@ -116,10 +116,6 @@ fun VideoPlayer(
         label = "controlsAlpha"
     )
 
-    LaunchedEffect(isVisible) {
-        Log.e("IS_VISIBLE", "is visible changed in player with $isVisible")
-    }
-
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             playWhenReady = false
@@ -326,7 +322,7 @@ fun VideoPlayer(
             PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
         if (!playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible) {
-            Log.e("SHOW_CONTROLES", "show controles in player state change")
+            Log.e("VIDEO_PLAYER_SHOW", "show controles in player state change")
             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
 
