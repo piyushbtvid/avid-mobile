@@ -32,12 +32,12 @@ fun TextWithTitle(
 
         TitleText(
             text = displayText,
-            textSize = 12,
-            lineHeight = 12,
+            textSize = 11,
+            lineHeight = 11,
             color = whiteMain.copy(
                 alpha = 0.7f
             ),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Normal
         )
 
 

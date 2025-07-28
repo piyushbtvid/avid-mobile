@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.sections.my_account
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -51,7 +52,8 @@ fun MyAccountScreen(
             .fillMaxSize()
             .padding(
                 start = 100.dp, end = 20.dp, top = 20.dp, bottom = 20.dp
-            )
+            ),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         ProfileMenu(focusedIndex = profileFocusedIndex,
@@ -109,7 +111,7 @@ fun MyAccountScreen(
             ProfileMenuItemType.SETTING -> {
                 myAccountUiState.value.settingDto?.let {
                     Setting(
-                        modifier = Modifier,
+                        modifier = Modifier.padding(start = 16.dp),
                         settingItemDto = it
                     )
                 }

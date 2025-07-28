@@ -37,7 +37,7 @@ fun UserInfoItem(
     Row(
         modifier = modifier.wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
 
@@ -51,16 +51,16 @@ fun UserInfoItem(
 
             TitleText(
                 text = userInfoItemDto.userName,
-                textSize = 15,
-                lineHeight = 15,
+                textSize = 14,
+                lineHeight = 14,
                 fontWeight = FontWeight.Bold,
                 color = whiteMain
             )
 
             TitleText(
                 text = userInfoItemDto.userEmail,
-                textSize = 12,
-                lineHeight = 12,
+                textSize = 11,
+                lineHeight = 11,
                 fontWeight = FontWeight.Normal,
                 color = whiteMain
             )
@@ -82,7 +82,7 @@ fun InitialNameItem(
 
     Box(
         modifier = Modifier
-            .size(50.dp)
+            .size(40.dp)
             .clip(
                 shape = RoundedCornerShape(30.dp)
             )
@@ -92,7 +92,7 @@ fun InitialNameItem(
 
         Text(
             text = name,
-            fontSize = 15.sp,
+            fontSize = 14.sp,
             color = focusedMainColor
         )
 

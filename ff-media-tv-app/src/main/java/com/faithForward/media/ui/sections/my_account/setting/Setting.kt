@@ -33,7 +33,7 @@ fun Setting(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         with(settingItemDto) {
@@ -71,6 +71,14 @@ fun Setting(
                     .height(2.dp)
             )
 
+            TitleText(
+                text = "Subscription",
+                textSize = 17,
+                lineHeight = 17,
+                color = whiteMain,
+                fontWeight = FontWeight.ExtraBold
+            )
+
         }
 
     }
@@ -87,7 +95,7 @@ fun AccountSection(
 
     Column(
         modifier = modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         TitleText(
@@ -129,7 +137,7 @@ fun Preferences(
 
     Column(
         modifier = modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         TitleText(
