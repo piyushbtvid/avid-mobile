@@ -38,6 +38,8 @@ fun MyAccountScreen(
     val myAccountUiState = myAccountViewModel.uiState.collectAsState()
     var profileFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var profileSelectedIndex by rememberSaveable { mutableIntStateOf(0) }
+    var continueWatchingLastFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var myListLastFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     var selectedMenuItemType by rememberSaveable {
         mutableStateOf(ProfileMenuItemType.CONTINUE_WATCHING)
@@ -64,6 +66,12 @@ fun MyAccountScreen(
             myAccountViewModel.onEvent(MyAccountEvent.GetContinueWatching)
         } else {
             myAccountViewModel.onEvent(MyAccountEvent.GetMyList)
+        }
+
+        try {
+
+        } catch (ex: Exception) {
+
         }
 
     }
@@ -115,7 +123,11 @@ fun MyAccountScreen(
                 myAccountUiState.value.continueWatchSections?.items?.let {
                     WatchableGridSection(
                         watchSectionUiModel = myAccountUiState.value.continueWatchSections!!,
-                        onItemClick = { item -> onItemClick(item, true) }
+                        onItemClick = { item -> onItemClick(item, true) },
+                        lastFocusedIndex = continueWatchingLastFocusedIndex,
+                        onLastFocusedIndexChange = { int ->
+                            continueWatchingLastFocusedIndex = int
+                        }
                     )
                 }
             }
@@ -124,7 +136,11 @@ fun MyAccountScreen(
                 myAccountUiState.value.myListWatchSections?.items?.let {
                     WatchableGridSection(
                         watchSectionUiModel = myAccountUiState.value.myListWatchSections!!,
-                        onItemClick = { item -> onItemClick(item, false) }
+                        onItemClick = { item -> onItemClick(item, false) },
+                        lastFocusedIndex = myListLastFocusedIndex,
+                        onLastFocusedIndexChange = { int ->
+                            myListLastFocusedIndex = int
+                        }
                     )
                 }
             }

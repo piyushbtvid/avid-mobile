@@ -25,6 +25,7 @@ fun WatchSectionGrid(
     modifier: Modifier = Modifier,
     focusedIndex: Int,
     focusRequesterList: List<FocusRequester>,
+    onLastFocusedIndexChange: (Int) -> Unit,
     onItemClick: (WatchSectionItemDto) -> Unit,
     onFocusedIndexChange: (Int) -> Unit,
     watchSectionItemDtoList: List<WatchSectionItemDto>,
@@ -57,6 +58,7 @@ fun WatchSectionGrid(
                     .onFocusChanged {
                         if (it.hasFocus) {
                             onFocusedIndexChange.invoke(index)
+                            onLastFocusedIndexChange.invoke(index)
                         } else {
                             onFocusedIndexChange.invoke(-1)
                         }

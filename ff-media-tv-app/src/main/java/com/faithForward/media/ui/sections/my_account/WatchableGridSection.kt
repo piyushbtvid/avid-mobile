@@ -30,6 +30,8 @@ data class WatchSectionUiModel(
 @Composable
 fun WatchableGridSection(
     modifier: Modifier = Modifier,
+    lastFocusedIndex: Int,
+    onLastFocusedIndexChange: (Int) -> Unit,
     onItemClick: (WatchSectionItemDto) -> Unit,
     watchSectionUiModel: WatchSectionUiModel,
 ) {
@@ -39,9 +41,20 @@ fun WatchableGridSection(
         List(watchSectionUiModel.items?.size ?: 0) { FocusRequester() }
     }
 
+    LaunchedEffect(Unit) {
+        try {
+            if (lastFocusedIndex >= 0) {
+                focusRequesters[lastFocusedIndex].requestFocus()
+            } else if (lastFocusedIndex == -1) {
+                focusRequesters[0].requestFocus()
+            }
+        } catch (_: Exception) {
+
+        }
+    }
+
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(7.dp)
+        modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
 
         TitleText(
@@ -55,22 +68,14 @@ fun WatchableGridSection(
 
         WatchSectionGrid(
             focusRequesterList = focusRequesters,
-            focusedIndex = focusedIndex, onFocusedIndexChange = { int ->
+            focusedIndex = focusedIndex,
+            onFocusedIndexChange = { int ->
                 focusedIndex = int
             },
             onItemClick = onItemClick,
-            watchSectionItemDtoList = watchSectionUiModel.items ?: emptyList()
+            watchSectionItemDtoList = watchSectionUiModel.items ?: emptyList(),
+            onLastFocusedIndexChange = onLastFocusedIndexChange
         )
 
     }
-
-    LaunchedEffect(Unit) {
-        try {
-            Log.e("PROFILE", "grid first focus request")
-            focusRequesters[0].requestFocus()
-        } catch (_: Exception) {
-
-        }
-    }
-
 }
