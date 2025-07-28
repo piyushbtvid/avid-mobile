@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -16,6 +17,7 @@ import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenu
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
 import com.faithForward.media.ui.sections.my_account.profile_menu.UserInfoItemDto
+import com.faithForward.media.ui.sections.my_account.setting.Setting
 import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.uiModels.MyAccountEvent
 
@@ -27,8 +29,12 @@ fun MyAccountScreen(
 ) {
 
     val myAccountUiState = myAccountViewModel.uiState.collectAsState()
-    var profileFocusedIndex by rememberSaveable { mutableStateOf(-1) }
-    var profileSelectedIndex by rememberSaveable { mutableStateOf(0) }
+    var profileFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var profileSelectedIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    var selectedMenuItemType by rememberSaveable {
+        mutableStateOf(ProfileMenuItemType.CONTINUE_WATCHING)
+    }
 
     LaunchedEffect(Unit) {
 
@@ -61,6 +67,9 @@ fun MyAccountScreen(
                 profileSelectedIndex = int
             },
             onItemClick = { menuItemType ->
+
+                selectedMenuItemType = menuItemType
+
                 when (menuItemType) {
 
                     ProfileMenuItemType.MY_LIST -> {
@@ -78,26 +87,33 @@ fun MyAccountScreen(
                 }
             })
 
-        if (myAccountUiState.value.continueWatchSections?.items != null) {
-            WatchableGridSection(
-                watchSectionUiModel = myAccountUiState.value.continueWatchSections!!,
-                onItemClick = { item ->
-                    onItemClick(
-                        item, true
+        when (selectedMenuItemType) {
+            ProfileMenuItemType.CONTINUE_WATCHING -> {
+                myAccountUiState.value.continueWatchSections?.items?.let {
+                    WatchableGridSection(
+                        watchSectionUiModel = myAccountUiState.value.continueWatchSections!!,
+                        onItemClick = { item -> onItemClick(item, true) }
                     )
                 }
-            )
-        }
+            }
 
-        if (myAccountUiState.value.myListWatchSections?.items != null) {
-            WatchableGridSection(
-                watchSectionUiModel = myAccountUiState.value.myListWatchSections!!,
-                onItemClick = { item ->
-                    onItemClick(
-                        item, false
+            ProfileMenuItemType.MY_LIST -> {
+                myAccountUiState.value.myListWatchSections?.items?.let {
+                    WatchableGridSection(
+                        watchSectionUiModel = myAccountUiState.value.myListWatchSections!!,
+                        onItemClick = { item -> onItemClick(item, false) }
                     )
                 }
-            )
+            }
+
+            ProfileMenuItemType.SETTING -> {
+                myAccountUiState.value.settingDto?.let {
+                    Setting(
+                        modifier = Modifier,
+                        settingItemDto = it
+                    )
+                }
+            }
         }
 
     }

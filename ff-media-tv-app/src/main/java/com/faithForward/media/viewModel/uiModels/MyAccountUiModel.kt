@@ -1,12 +1,12 @@
 package com.faithForward.media.viewModel.uiModels
 
-import androidx.compose.animation.core.rememberTransition
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.sections.my_account.WatchSectionUiModel
 import com.faithForward.media.ui.sections.my_account.comman.WatchSectionItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemDto
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
+import com.faithForward.media.ui.sections.my_account.setting.SettingDto
 import com.faithForward.network.dto.ContentItem
 
 val profileMenuItemDtoList = listOf(
@@ -26,6 +26,16 @@ val profileMenuItemDtoList = listOf(
     )
 )
 
+val settingItemDto: SettingDto = SettingDto(
+    email = "abc@gmail.com",
+    passwordTxt = "Last Changes 3 month ago",
+    phoneNumber = "00000011111",
+    language = "English",
+    autoPlay = "play next episode automatically",
+    notification = "Get notified about new releases",
+    subtitles = "Show subtitles by default",
+)
+
 sealed class MyAccountEvent {
     data object GetContinueWatching : MyAccountEvent()
     data object GetMyList : MyAccountEvent()
@@ -35,6 +45,7 @@ data class MyAccountUiState(
     val continueWatchSections: WatchSectionUiModel? = null,
     val myListWatchSections: WatchSectionUiModel? = null,
     val profileMenuItemList: List<ProfileMenuItemDto> = profileMenuItemDtoList,
+    val settingDto: SettingDto? = settingItemDto,
 )
 
 
