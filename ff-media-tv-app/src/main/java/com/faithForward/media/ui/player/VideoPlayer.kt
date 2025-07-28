@@ -314,10 +314,31 @@ fun VideoPlayer(
 
     LaunchedEffect(playerState) {
         when (playerState) {
-            PlayerPlayingState.PLAYING -> exoPlayer.play()
-            PlayerPlayingState.PAUSED -> exoPlayer.pause()
-            PlayerPlayingState.REWINDING -> exoPlayer.seekBack()
-            PlayerPlayingState.FORWARDING -> exoPlayer.seekForward()
+            PlayerPlayingState.PLAYING -> {
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.play()
+                }
+            }
+
+            PlayerPlayingState.PAUSED -> {
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.pause()
+                }
+            }
+
+            PlayerPlayingState.REWINDING -> {
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.seekBack()
+                }
+            }
+
+            PlayerPlayingState.FORWARDING -> {
+
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.seekForward()
+                }
+            }
+
             PlayerPlayingState.IDLE -> {}
             PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
