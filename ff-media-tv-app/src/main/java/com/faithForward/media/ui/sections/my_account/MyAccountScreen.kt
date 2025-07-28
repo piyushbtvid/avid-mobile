@@ -56,14 +56,13 @@ fun MyAccountScreen(
             )
             onBackClick.invoke()
         } else {
-            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(0))
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(6))
         }
     }
 
     LaunchedEffect(Unit) {
 
         Log.e("SIDE_BAR_ITEM", "my account is opend")
-
         if (profileSelectedIndex == 0) {
             myAccountViewModel.onEvent(MyAccountEvent.GetContinueWatching)
         } else {
@@ -86,6 +85,10 @@ fun MyAccountScreen(
             ),
             onFocusedIndexChange = { int ->
                 profileFocusedIndex = int
+                // making side bar focusable again when focus comes in profile menu item
+                if (int != -1) {
+                    sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(true))
+                }
             },
             profileMenuItemDtoLists = myAccountUiState.value.profileMenuItemList,
             selectedIndex = profileSelectedIndex,

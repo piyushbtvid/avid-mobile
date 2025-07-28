@@ -161,6 +161,10 @@ fun MainScreen(
 
                         Routes.MyAccount.route -> {
                             Log.e("SIDE_BAR_ITEM", "on side bar my account ")
+
+                            //making side bar unFocusable when opening my Account due to side bar being opened when my account is opened
+
+                            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(false))
                             navController.navigate(Routes.MyAccount.route) {
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true

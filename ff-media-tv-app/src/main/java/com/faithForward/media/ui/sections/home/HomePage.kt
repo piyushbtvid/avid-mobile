@@ -10,6 +10,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -75,8 +78,17 @@ fun HomePage(
 
     val homePageItems = homePageItemsResource.data ?: return
 
-    if (homePageItemsResource is Resource.Success) {
-        onDataLoadedSuccess.invoke()
+    val hasTriggeredDataLoaded = rememberSaveable(homePageItemsResource) {
+        mutableStateOf(false)
+    }
+
+
+    LaunchedEffect(homePageItemsResource) {
+        if (homePageItemsResource is Resource.Success && !hasTriggeredDataLoaded.value) {
+            Log.e("FOCUSED_INDEX", "on home resource success called")
+            onDataLoadedSuccess.invoke()
+            hasTriggeredDataLoaded.value = true
+        }
     }
 
     when (val state = carouselClickUiState) {

@@ -46,7 +46,7 @@ fun SideBarColumn(
 
     // Ensure focus is requested when focusedIndex changes
     LaunchedEffect(focusedIndex, isSideBarFocusable) {
-        Log.e("FOCUSED_INDEX", "focused index changed with $focusedIndex")
+        Log.e("FOCUSED_INDEX", "focused index changed with $focusedIndex and $isSideBarFocusable")
         if (focusedIndex != -1 && isSideBarFocusable) {
             try {
                 if (focusedIndex < itemFocusRequesters.size) {
