@@ -61,13 +61,7 @@ fun GenreImageCard(
     Column(
         modifier = modifier
             .width(135.dp)
-            .scale(scale)
-            .zIndex(
-                when (focusState) {
-                    FocusState.SELECTED, FocusState.FOCUSED -> 1f
-                    else -> 0f
-                }
-            ),
+        ,
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {

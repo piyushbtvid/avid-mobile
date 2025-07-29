@@ -139,27 +139,21 @@ class MainActivity : ComponentActivity() {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     Log.e("CONTROLES", "isControlers visible is $isControlsVisible")
-                    if (isControlsVisible) {
-                        sharedPlayerViewModel.togglePlayPause()
-                    }
+                    sharedPlayerViewModel.togglePlayPause()
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
-                    if (isControlsVisible) {
-                        sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
-                    }
+                    sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
-                    if (isControlsVisible) {
-                        sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
-                    }
+                    sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
                 }
                 return true
             }
