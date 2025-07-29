@@ -38,8 +38,7 @@ fun MainScreen(
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-
-    ) {
+) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
 
@@ -160,6 +159,18 @@ fun MainScreen(
                             }
                         }
 
+                        Routes.MyAccount.route -> {
+                            Log.e("SIDE_BAR_ITEM", "on side bar my account ")
+
+                            //making side bar unFocusable when opening my Account due to side bar being opened when my account is opened
+
+                            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(false))
+                            navController.navigate(Routes.MyAccount.route) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+
                         "log_out" -> {
                             showLogoutDialog = true
                         }
@@ -202,5 +213,6 @@ val sidebarVisibleRoutes = listOf(
     Routes.Creator.route,
     Routes.MyList.route,
     Routes.Series.route,
-    Routes.Search.route
+    Routes.Search.route,
+    Routes.MyAccount.route
 )

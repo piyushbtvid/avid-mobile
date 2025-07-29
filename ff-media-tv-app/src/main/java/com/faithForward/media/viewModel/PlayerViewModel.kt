@@ -287,7 +287,9 @@ class PlayerViewModel @Inject constructor(
 
                     val relatedContentRowDtoList = relatedList.map { it.toRelatedItemDto() }
                     val currentPlayingItem =
-                        cardDetail.data.toPosterCardDto().toVideoPlayerDto().copy(progress = 0)
+                        cardDetail.data.toPosterCardDto().toVideoPlayerDto().copy(
+                            progress = if (isFromContinueWatching) firstItem.progress ?: 0 else 0
+                        )
 
                     val title = currentPlayingItem.title
 

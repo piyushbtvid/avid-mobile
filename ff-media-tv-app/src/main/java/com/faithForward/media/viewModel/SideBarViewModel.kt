@@ -45,7 +45,11 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
                 SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route),
                 SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
 //                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
-                SideBarItem("My Account", R.drawable.baseline_expand_less_24, "my_account"),
+                SideBarItem(
+                    "My Account",
+                    R.drawable.baseline_expand_less_24,
+                    Routes.MyAccount.route
+                ),
                 SideBarItem("Log Out", R.drawable.baseline_expand_less_24, "log_out"),
             )
         )
@@ -56,6 +60,10 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
             try {
                 when (event) {
                     is SideBarEvent.ChangeFocusState -> {
+                        Log.e(
+                            "FOCUSED_INDEX",
+                            "chnage focused index called with ${event.isFocusable}"
+                        )
                         _sideBarState.value = _sideBarState.value.copy(
                             isSideBarFocusable = event.isFocusable
                         )
