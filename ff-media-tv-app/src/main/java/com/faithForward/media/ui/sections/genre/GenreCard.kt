@@ -1,5 +1,7 @@
 package com.faithForward.media.ui.sections.genre
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
@@ -42,9 +47,26 @@ fun GenreCard(
     onItemClick: () -> Unit,
     focusState: FocusState,
 ) {
+
+    val scale by animateFloatAsState(
+        targetValue = when (focusState) {
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+            else -> 1f
+        }, animationSpec = tween(300), label = ""
+    )
+
     Column(
-        modifier = Modifier.wrapContentWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .wrapContentWidth()
+            .scale(scale)
+            .zIndex(
+                when (focusState) {
+                    FocusState.SELECTED, FocusState.FOCUSED -> 1f
+                    else -> 0f
+                }
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
 
         genreCardDto.image?.let {
@@ -56,17 +78,14 @@ fun GenreCard(
             )
         }
 
-        Spacer(modifier = Modifier.height(19.dp))
+
 
         Column(modifier = Modifier.width(135.dp)) {
             genreCardDto.description?.let {
                 TitleText(
-                    text = it,
-                    color = whiteMain.copy(
+                    text = it, color = whiteMain.copy(
                         alpha = 0.7f
-                    ),
-                    fontWeight = FontWeight.W600,
-                    textSize = 10
+                    ), fontWeight = FontWeight.W600, textSize = 10
                 )
             }
 
@@ -79,22 +98,16 @@ fun GenreCard(
                 ) {
                     genreCardDto.name?.let {
                         TitleText(
-                            text = it,
-                            color = whiteMain.copy(
+                            text = it, color = whiteMain.copy(
                                 alpha = 0.7f
-                            ),
-                            fontWeight = FontWeight.W400,
-                            textSize = 7
+                            ), fontWeight = FontWeight.W400, textSize = 7
                         )
                     }
                     genreCardDto.views?.let {
                         TitleText(
-                            text = it,
-                            color = whiteMain.copy(
+                            text = it, color = whiteMain.copy(
                                 alpha = 0.7f
-                            ),
-                            fontWeight = FontWeight.W400,
-                            textSize = 7
+                            ), fontWeight = FontWeight.W400, textSize = 7
                         )
                     }
                 }
@@ -110,22 +123,17 @@ private fun GenreCardPreview(
 
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
-        GenreCard(
-            genreCardDto = GenreCardDto(
-                genreId = "1",
-                name = "The Last Horizon",
-                description = "A sci-fi adventure exploring the edge of human survival in space.",
-                image = "",
-                views = "300k Views",
-                slug = ""
-            ),
-            focusState = FocusState.UNFOCUSED,
-            onItemClick = {
+        GenreCard(genreCardDto = GenreCardDto(
+            genreId = "1",
+            name = "The Last Horizon",
+            description = "A sci-fi adventure exploring the edge of human survival in space.",
+            image = "",
+            views = "300k Views",
+            slug = ""
+        ), focusState = FocusState.UNFOCUSED, onItemClick = {
 
-            }
-        )
+        })
     }
 }
