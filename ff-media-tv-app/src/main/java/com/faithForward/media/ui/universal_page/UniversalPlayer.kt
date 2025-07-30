@@ -12,9 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 
 @Composable
 fun UniversalPlayer(
@@ -32,15 +36,36 @@ fun UniversalPlayer(
             playWhenReady = true
         }
     }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(Unit){
-        Log.e("EPG","url list in player is $videoUrlList")
+    LaunchedEffect(Unit) {
+        Log.e("EPG", "url list in player is $videoUrlList")
     }
 
 
     // Release ExoPlayer when Composable leaves the composition
-    DisposableEffect(Unit) {
+    DisposableEffect(lifecycleOwner) {
+
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
+                Lifecycle.Event.ON_STOP -> {
+                    exoPlayer.pause()
+                }
+
+                Lifecycle.Event.ON_RESUME -> {
+                    exoPlayer.playWhenReady = true
+                    exoPlayer.prepare()
+                    exoPlayer.play()
+                }
+
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            Log.e("EXO_PLAYER_LIFE_CYCL", "on dispose called ")
             exoPlayer.release()
         }
     }
