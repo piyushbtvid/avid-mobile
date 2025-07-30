@@ -39,6 +39,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
+import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
+import com.faithForward.media.ui.epg.Epg
+import com.faithForward.media.ui.epg.EpgUiModel
+import com.faithForward.media.ui.epg.channel.ChannelUiModel
+import com.faithForward.media.ui.epg.program.ProgramUiModel
+import com.faithForward.media.ui.epg.util.generateSampleEpgUiModel
 import com.faithForward.media.ui.navigation.MainScreen
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBar
@@ -113,6 +119,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
+
                         }
                     }
 

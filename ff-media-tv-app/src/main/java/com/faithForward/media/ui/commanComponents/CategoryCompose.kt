@@ -14,17 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.btnShadowColor
 import com.faithForward.media.ui.theme.focusedMainColor
-import com.faithForward.media.ui.theme.pillButtonTextColor
-import com.faithForward.media.ui.theme.pillButtonTextUnFocusColor
 import com.faithForward.media.ui.theme.pillButtonUnFocusColor
 import com.faithForward.media.ui.theme.pillTextFocusedStyle
 import com.faithForward.media.ui.theme.pillTextUnFocusedStyle
-import com.faithForward.media.ui.theme.textUnFocusColor
-import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.util.FocusState
 
 
