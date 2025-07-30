@@ -25,7 +25,7 @@ import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
 import com.faithForward.media.util.extensions.shadow
 
-data class TopBarItemItem(
+data class TopBarItemDto(
     val name: String,
     val tag: String,
 )
@@ -33,7 +33,7 @@ data class TopBarItemItem(
 @Composable
 fun TopBarItem(
     modifier: Modifier = Modifier,
-    topBarItemItem: TopBarItemItem,
+    topBarItemDto: TopBarItemDto,
     focusState: FocusState,
     backgroundFocusedColor: Color,
     backgroundUnFocusedColor: Color,
@@ -91,14 +91,14 @@ fun TopBarItem(
 
     Button(
         onClick = {
-            onCategoryItemClick.invoke(topBarItemItem.tag)
+            onCategoryItemClick.invoke(topBarItemDto.tag)
         },
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
         modifier = buttonModifier
             .height(25.dp)
     ) {
         Text(
-            topBarItemItem.name,
+            topBarItemDto.name,
             style = pillTextStyle,
         )
     }
@@ -109,7 +109,7 @@ fun TopBarItem(
 @Composable
 private fun TopBarItemPreview() {
 
-    val item = TopBarItemItem(
+    val item = TopBarItemDto(
         name = "LIVE", tag = "live"
     )
 
@@ -120,7 +120,7 @@ private fun TopBarItemPreview() {
         contentAlignment = Alignment.Center
     ) {
 
-        TopBarItem(topBarItemItem = item,
+        TopBarItem(topBarItemDto = item,
             focusState = FocusState.UNFOCUSED,
             backgroundUnFocusedColor = Color.Transparent,
             backgroundFocusedColor = whiteMain.copy(alpha = 0.55f),
