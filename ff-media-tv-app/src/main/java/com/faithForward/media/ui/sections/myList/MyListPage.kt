@@ -125,7 +125,8 @@ fun MyListPage(
             },
             onSearchClick = {
                 onSearchClick.invoke()
-            }
+            },
+            onMicDoubleUpClick = {}
         )
     }
 

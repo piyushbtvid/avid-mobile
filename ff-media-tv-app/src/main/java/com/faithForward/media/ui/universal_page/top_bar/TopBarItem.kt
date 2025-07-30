@@ -95,7 +95,7 @@ fun TopBarItem(
         },
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
         modifier = buttonModifier
-            .height(25.dp)
+            .height(26.dp)
     ) {
         Text(
             topBarItemDto.name,

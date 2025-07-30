@@ -42,6 +42,7 @@ fun HomePage(
     onDataLoadedSuccess: () -> Unit,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
+    onMicDoubleUpClick: () -> Unit,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -215,6 +216,9 @@ fun HomePage(
             },
             onSearchClick = {
                 onSearchClick.invoke()
+            },
+            onMicDoubleUpClick = {
+                onMicDoubleUpClick.invoke()
             }
 
         )

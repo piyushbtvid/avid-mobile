@@ -143,6 +143,10 @@ fun MainAppNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onMicDoubleUpClick = {
+                    Log.e("DOUBLE", "on double up clicked")
+                    navController.navigate(Routes.Universal.route)
                 }
 
             )
@@ -485,7 +489,8 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(
+                creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -519,8 +524,7 @@ fun MainAppNavHost(
             route = Routes.MyAccount.route
         ) { backStackEntry ->
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
-            MyAccountScreen(
-                myAccountViewModel = myAccountViewModel,
+            MyAccountScreen(myAccountViewModel = myAccountViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -547,12 +551,9 @@ fun MainAppNavHost(
 
             val universalViewModel: UniversalViewModel = hiltViewModel(backStackEntry)
 
-            UniversalTopBarPage(
-                universalViewModel = universalViewModel,
-                onSearchClick = {
+            UniversalTopBarPage(universalViewModel = universalViewModel, onSearchClick = {
 
-                }
-            )
+            })
 
         }
 
