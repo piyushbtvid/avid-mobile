@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faithForward.media.ui.top_bar.TopBarItemDto
+import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

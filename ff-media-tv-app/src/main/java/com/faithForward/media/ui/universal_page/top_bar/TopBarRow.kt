@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.top_bar
+package com.faithForward.media.ui.universal_page.top_bar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

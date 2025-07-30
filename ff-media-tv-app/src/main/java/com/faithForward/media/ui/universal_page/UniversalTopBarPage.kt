@@ -1,4 +1,4 @@
-package com.faithForward.media.ui
+package com.faithForward.media.ui.universal_page
 
 import android.util.Log
 import androidx.compose.foundation.border
@@ -28,8 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.theme.textFocusedMainColor
-import com.faithForward.media.ui.top_bar.TopBarRow
-import com.faithForward.media.ui.universal_page.UniversalPlayer
+import com.faithForward.media.ui.universal_page.top_bar.TopBarRow
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.viewModel.UniversalViewModel
 

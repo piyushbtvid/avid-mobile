@@ -25,6 +25,7 @@ import com.faithForward.media.ui.sections.myList.MyListPage
 import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
+import com.faithForward.media.ui.universal_page.UniversalTopBarPage
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -39,6 +40,7 @@ import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
@@ -516,9 +518,7 @@ fun MainAppNavHost(
         composable(
             route = Routes.MyAccount.route
         ) { backStackEntry ->
-
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
-
             MyAccountScreen(
                 myAccountViewModel = myAccountViewModel,
                 sideBarViewModel = sideBarViewModel,
@@ -541,9 +541,22 @@ fun MainAppNavHost(
                         navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
                 })
+        }
+
+        composable(route = Routes.Universal.route) { backStackEntry ->
+
+            val universalViewModel: UniversalViewModel = hiltViewModel(backStackEntry)
+
+            UniversalTopBarPage(
+                universalViewModel = universalViewModel,
+                onSearchClick = {
+
+                }
+            )
 
         }
 
     }
+
 
 }
