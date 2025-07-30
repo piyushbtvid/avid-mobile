@@ -27,10 +27,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.sideBarFocusedTextColor
+import com.faithForward.media.ui.theme.topBarTextFocusedStyle
+import com.faithForward.media.ui.theme.topBarTextUnFocusedStyle
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
@@ -40,22 +44,17 @@ fun TopBarRow(
     focusedIndex: Int,
     onFocusedIndexChange: (Int) -> Unit,
     topBarItemList: List<TopBarItemDto>,
+    backgroundUnFocusedColor: Color = Color.Transparent,
+    backgroundFocusedColor: Color = whiteMain.copy(alpha = 0.55f),
+    shadowColor: Color = focusedMainColor.copy(0.55f),
+    borderColor: Color = focusedMainColor,
+    textFocusedStyle: TextStyle = topBarTextFocusedStyle,
+    textUnFocusedStyle: TextStyle = topBarTextUnFocusedStyle,
+    focusRequesterList : List<FocusRequester>
 ) {
 
 
-    val focusRequesterList = remember(topBarItemList.size) {
-        List(topBarItemList.size) { FocusRequester() }
-    }
-
     var selectedPosition by rememberSaveable { mutableIntStateOf(-1) }
-
-    LaunchedEffect(Unit) {
-        try {
-            focusRequesterList[1].requestFocus()
-        } catch (_: Exception) {
-
-        }
-    }
 
     Box(
         modifier = modifier.wrapContentSize(),
@@ -97,11 +96,15 @@ fun TopBarRow(
                         },
                     topBarItemDto = item,
                     focusState = uiState,
-                    backgroundUnFocusedColor = Color.Transparent,
-                    backgroundFocusedColor = whiteMain.copy(alpha = 0.55f),
+                    backgroundUnFocusedColor = backgroundUnFocusedColor,
+                    backgroundFocusedColor = backgroundFocusedColor,
                     onCategoryItemClick = {
 
-                    }
+                    },
+                    shadowColor = shadowColor,
+                    borderColor = borderColor,
+                    textFocusedStyle = textFocusedStyle,
+                    textUnFocusedStyle = textUnFocusedStyle
                 )
 
 
@@ -155,7 +158,10 @@ private fun TopBarPreview() {
         focusedIndex = 0,
         onFocusedIndexChange = {
 
-        }
+        },
+        backgroundUnFocusedColor = Color.Transparent,
+        backgroundFocusedColor = whiteMain.copy(alpha = 0.55f),
+        focusRequesterList = emptyList()
     )
 }
 

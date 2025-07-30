@@ -18,10 +18,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -45,9 +47,16 @@ fun UniversalTopBarPage(
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
 
+    val focusRequesterList = remember(topBarItemList.size) {
+        List(topBarItemList.size) { FocusRequester() }
+    }
+
     LaunchedEffect(Unit) {
-        Log.e("EPG", "universal page launch effect with $topBarItemList")
-        Log.e("EPG", "universal page launch effect with $liveFirstUrl")
+        try {
+            focusRequesterList[1].requestFocus()
+        } catch (_: Exception) {
+
+        }
     }
 
     Box(
@@ -68,7 +77,8 @@ fun UniversalTopBarPage(
             onFocusedIndexChange = { int ->
                 topBarFocusedIndex = int
             },
-            topBarItemList = topBarItemList
+            topBarItemList = topBarItemList,
+            focusRequesterList = focusRequesterList
         )
 
         Row(
