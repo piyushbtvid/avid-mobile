@@ -41,7 +41,7 @@ fun ChannelWithPrograms(
     horizontalScrollState: ScrollState = rememberScrollState(), // <- ScrollState instead of LazyListState
     isFirstRow: Boolean = false,
 ) {
-    val focusedIndex = remember { mutableIntStateOf(-1) }
+    var focusedIndex by remember { mutableIntStateOf(-1) }
     val firstItemFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -55,7 +55,7 @@ fun ChannelWithPrograms(
     Row(
         modifier = modifier.onFocusChanged {
             if (!it.hasFocus) {
-                focusedIndex.value = -1
+                focusedIndex = -1
             }
         },
         horizontalArrangement = Arrangement.spacedBy(15.dp)
@@ -71,21 +71,22 @@ fun ChannelWithPrograms(
                     Modifier
                         .focusRequester(firstItemFocusRequester)
                         .onFocusChanged {
-                            if (it.isFocused) focusedIndex.value = index
+                            if (it.isFocused) focusedIndex = index
                         }
                         .focusable()
                 } else {
                     Modifier
                         .onFocusChanged {
-                            if (it.isFocused) focusedIndex.value = index
+                            if (it.isFocused) focusedIndex = index
                         }
                         .focusable()
                 }
 
                 ProgramItem(
                     programUiModel = program,
-                    isFocused = focusedIndex.value == index,
-                    modifier = programModifier
+                    isFocused = focusedIndex == index,
+                    modifier = programModifier,
+                    addGapAfter = index< channelWithProgramsUiModel.programs.lastIndex
                 )
             }
         }

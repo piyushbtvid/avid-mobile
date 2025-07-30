@@ -34,11 +34,13 @@ fun ProgramItem(
     modifier: Modifier = Modifier,
     programUiModel: ProgramUiModel,
     isFocused: Boolean = false,
+    addGapAfter : Boolean = true
 ) {
     val width = remember {
         calculateProgramWidth(
             startTime = programUiModel.programStartTime,
-            endTime = programUiModel.programEndTime
+            endTime = programUiModel.programEndTime,
+            addGapAfter = addGapAfter
         )
     }
 

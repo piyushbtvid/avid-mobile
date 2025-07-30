@@ -99,19 +99,19 @@ fun Epg(
             }
         }
         // Red vertical line showing current time
-        Box(
-            modifier = Modifier
-                .padding(start = 151.5.dp)
-                .horizontalScroll(sharedScrollState)
-        ) {
-            Box(
-                modifier = Modifier
-                    .offset(x = currentTimeOffsetDp)
-                    .fillMaxHeight()
-                    .width(2.dp)
-                    .background(Color.Red)
-            )
-        }
+//        Box(
+//            modifier = Modifier
+//                .padding(start = 151.5.dp)
+//                .horizontalScroll(sharedScrollState)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .offset(x = currentTimeOffsetDp)
+//                    .fillMaxHeight()
+//                    .width(2.dp)
+//                    .background(Color.Red)
+//            )
+//        }
 
     }
 }

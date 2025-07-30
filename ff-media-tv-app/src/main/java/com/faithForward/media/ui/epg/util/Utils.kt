@@ -18,11 +18,14 @@ import kotlin.random.Random
 fun calculateProgramWidth(
     startTime: Long,
     endTime: Long,
-    dpPerMinute: Dp = 2.dp
+    dpPerMinute: Dp = 2.dp,
+    addGapAfter: Boolean = true,
+    programGap: Dp = 5.dp
 ): Dp {
     val durationMillis = endTime - startTime
     val durationMinutes = (durationMillis / (60 * 1000)).coerceAtLeast(1)
-    return durationMinutes.toInt() * dpPerMinute
+    val baseWidth = durationMinutes.toInt() * dpPerMinute
+    return if (addGapAfter) baseWidth + programGap else baseWidth
 }
 
 fun generateTimelineSlots(
@@ -47,35 +50,52 @@ fun generateTimelineSlots(
 
 fun generateSampleEpgUiModel(): EpgUiModel {
     val channelCount = 10
-    val programsPerChannel = 10
+    val programsPerChannel = 100 // increased to allow enough programs
     val random = Random(System.currentTimeMillis())
 
-    // Start EPG data 3 hours before current time
-    val startTime = System.currentTimeMillis() - (3 * 60 * 60 * 1000) // 3 hours before now
+    val startTime = System.currentTimeMillis() - (3 * 60 * 60 * 1000) // 3 hours ago
+    val epgWindowMillis = 20 * 60 * 60 * 1000 // 20 hours
+    val epgEndTime = startTime + epgWindowMillis
 
     val channelWithPrograms = (1..channelCount).map { channelIndex ->
         var currentStartTime = startTime
+        val programs = mutableListOf<ProgramUiModel>()
 
-        val programs = (1..programsPerChannel).map { i ->
-            val durationMinutes = random.nextInt(20, 120) // Duration between 20 and 120 minutes
+        repeat(programsPerChannel) { i ->
+            if (currentStartTime >= epgEndTime) return@repeat
+
+            val durationMinutes = random.nextInt(20, 120) // between 20 and 120 minutes
             val durationMillis = durationMinutes * 60 * 1000
-            val endTime = currentStartTime + durationMillis
+            val programEndTime = (currentStartTime + durationMillis).coerceAtMost(epgEndTime)
 
-            val program = ProgramUiModel(
-                programName = "Program $i",
-                programTimeString = formatProgramTime(currentStartTime, endTime),
-                programStartTime = currentStartTime,
-                programEndTime = endTime
+            programs.add(
+                ProgramUiModel(
+                    programName = "Program ${i + 1}",
+                    programTimeString = formatProgramTime(currentStartTime, programEndTime),
+                    programStartTime = currentStartTime,
+                    programEndTime = programEndTime
+                )
             )
 
-            currentStartTime = endTime
-            program
+            currentStartTime = programEndTime
+        }
+
+        // If space remains, add a "NO PROGRAM" filler
+        if (currentStartTime < epgEndTime) {
+            programs.add(
+                ProgramUiModel(
+                    programName = "NO PROGRAM",
+                    programTimeString = formatProgramTime(currentStartTime, epgEndTime),
+                    programStartTime = currentStartTime,
+                    programEndTime = epgEndTime
+                )
+            )
         }
 
         ChannelWithProgramsUiModel(
             channelUiModel = ChannelUiModel(
                 channelName = "Channel $channelIndex",
-                channelImage = "" // Can be placeholder or leave empty
+                channelImage = ""
             ),
             programs = programs
         )
