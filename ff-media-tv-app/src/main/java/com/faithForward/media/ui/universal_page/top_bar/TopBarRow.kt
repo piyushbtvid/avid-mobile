@@ -1,12 +1,16 @@
 package com.faithForward.media.ui.universal_page.top_bar
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -25,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
+import com.faithForward.media.ui.theme.sideBarFocusedTextColor
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
@@ -56,12 +62,14 @@ fun TopBarRow(
         contentAlignment = Alignment.Center
     ) {
 
-        Image(
-            modifier = Modifier.width(260.dp),
-            painter = painterResource(R.drawable.top_bar_background_img_2),
-            contentScale = ContentScale.FillWidth,
-            contentDescription = null
-        )
+//        Image(
+//            modifier = Modifier.width(260.dp),
+//            painter = painterResource(R.drawable.top_bar_background_img_2),
+//            contentScale = ContentScale.FillWidth,
+//            contentDescription = null
+//        )
+
+        TopBarBackGround()
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -103,7 +111,25 @@ fun TopBarRow(
         }
 
     }
+}
 
+@Composable
+fun TopBarBackGround(
+    modifier: Modifier = Modifier,
+) {
+
+    Box(
+        modifier = modifier
+            .width(260.dp)
+            .height(40.dp)
+            .clip(RoundedCornerShape(50.dp)) // Clip the shape first
+            .border(
+                width = 0.7.dp,
+                color = sideBarFocusedTextColor,
+                shape = RoundedCornerShape(50.dp)
+            )
+            .background(color = whiteMain.copy(alpha = 0.55f)) // Background comes after border
+    )
 
 }
 
@@ -126,10 +152,15 @@ private fun TopBarPreview() {
 
     TopBarRow(
         topBarItemList = ls,
-        focusedIndex = 2,
+        focusedIndex = 0,
         onFocusedIndexChange = {
 
         }
     )
+}
 
+@Preview
+@Composable
+private fun TopBarImagePreview() {
+    TopBarBackGround()
 }
