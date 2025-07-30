@@ -101,7 +101,7 @@ fun LoginQrScreen(
             ) {
 
                 Image(
-                    painter = painterResource(R.drawable.logo),
+                    painter = painterResource(R.drawable.logo_new),
                     modifier = Modifier
                         .width(80.5.dp)
                         .height(51.dp),

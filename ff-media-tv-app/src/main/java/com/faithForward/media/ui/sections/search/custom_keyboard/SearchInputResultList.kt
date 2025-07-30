@@ -36,7 +36,7 @@ fun SearchInputResultList(
 
 
         TitleText(
-            modifier = Modifier.height(30.dp),
+            modifier = Modifier.height(35.dp),
             text = text,
             textSize = 30,
             lineHeight = 30,

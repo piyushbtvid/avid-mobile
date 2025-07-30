@@ -25,6 +25,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,6 +52,8 @@ fun KeyboardActionButton(
     onClick: (KeyboardActionState) -> Unit,
     searchResultLastFocusedIndex: Int,
     displayText: String? = null,
+    firstFocusRequester: FocusRequester? = null,
+    onRequestFocusOnFirst: () -> Unit,
     iconId: Int? = null,
 ) {
 
@@ -62,7 +69,7 @@ fun KeyboardActionButton(
                     "SEARCH_RESULT",
                     "KEYboard button request Focus called with $searchResultLastFocusedIndex"
                 )
-                focusRequester.requestFocus()
+                firstFocusRequester?.requestFocus()
             }
         } catch (_: Exception) {
 
@@ -70,27 +77,36 @@ fun KeyboardActionButton(
     }
 
 
-    Box(
-        modifier = modifier
-            .wrapContentSize()
-            .background(
-                color = if (isFocused) focusedMainColor else focusedTextColor,
-                shape = RoundedCornerShape(30.dp)
-            )
-            .padding(
-                horizontal = 10.dp,
-                vertical = 5.dp
-            )
-            .focusRequester(focusRequester)
-            .onFocusChanged {
-                isFocused = it.hasFocus
+    Box(modifier = modifier
+        .wrapContentSize()
+        .background(
+            color = if (isFocused) focusedMainColor else focusedTextColor,
+            shape = RoundedCornerShape(30.dp)
+        )
+        .padding(
+            horizontal = 10.dp, vertical = 5.dp
+        )
+        .focusRequester(firstFocusRequester ?: FocusRequester())
+        .onFocusChanged {
+            isFocused = it.hasFocus
+        }
+        .onKeyEvent { keyEvent ->
+            if (keyEvent.key == Key.DirectionRight && keyEvent.type == KeyEventType.KeyDown) {
+                Log.e("DIRECTION_RIGHT", "direction right clicked")
+                if (actionState == KeyboardActionState.clear) {
+                    onRequestFocusOnFirst.invoke()
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
             }
-            .clickable(interactionSource = null, indication = null, onClick = {
-                onClick.invoke(actionState)
-            }
-            )
-            .focusable(),
-        contentAlignment = Alignment.Center
+        }
+        .clickable(interactionSource = null, indication = null, onClick = {
+            onClick.invoke(actionState)
+        })
+        .focusable(), contentAlignment = Alignment.Center
     ) {
 
         if (displayText != null) {
@@ -126,6 +142,7 @@ private fun ActionButtonPreview() {
             actionState = KeyboardActionState.number,
             displayText = "123",
             searchResultLastFocusedIndex = 1,
+            onRequestFocusOnFirst = {},
             onClick = { },
         )
 
@@ -133,6 +150,7 @@ private fun ActionButtonPreview() {
             actionState = KeyboardActionState.clear,
             iconId = R.drawable.outline_backspace_24,
             searchResultLastFocusedIndex = 1,
+            onRequestFocusOnFirst = {},
             onClick = { },
         )
 
@@ -141,6 +159,7 @@ private fun ActionButtonPreview() {
             actionState = KeyboardActionState.space,
             displayText = "Space",
             searchResultLastFocusedIndex = 1,
+            onRequestFocusOnFirst = {},
             onClick = { },
         )
 

@@ -27,7 +27,6 @@ import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.LoginViewModel
-import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 
@@ -60,6 +59,7 @@ fun MainScreen(
         sideBarViewModel.logoutEvent.collect {
             Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
             showLogoutDialog = false
+            loginViewModel.cancelRefreshJob()
             navController.navigate(Routes.LoginQr.route) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
@@ -159,6 +159,18 @@ fun MainScreen(
                             }
                         }
 
+                        Routes.MyAccount.route -> {
+                            Log.e("SIDE_BAR_ITEM", "on side bar my account ")
+
+                            //making side bar unFocusable when opening my Account due to side bar being opened when my account is opened
+
+                            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(false))
+                            navController.navigate(Routes.MyAccount.route) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+
                         "log_out" -> {
                             showLogoutDialog = true
                         }
@@ -201,5 +213,6 @@ val sidebarVisibleRoutes = listOf(
     Routes.Creator.route,
     Routes.MyList.route,
     Routes.Series.route,
-    Routes.Search.route
+    Routes.Search.route,
+    Routes.MyAccount.route
 )

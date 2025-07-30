@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -87,6 +88,7 @@ fun RecentSearch(
                 ) {
                     TitleText(
                         modifier = Modifier
+                            .width(150.dp)
                             .focusRequester(if (index == 0) focusRequester else FocusRequester())
                             .onFocusChanged {
                                 if (it.hasFocus) {
@@ -99,6 +101,7 @@ fun RecentSearch(
                                 onItemClick.invoke(item)
                             })
                             .focusable(),
+                        maxLine = 1,
                         text = item,
                         textSize = if (uiState == FocusState.FOCUSED) 20 else 10,
                         lineHeight = 10,

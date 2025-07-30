@@ -50,6 +50,23 @@ class UserPreferences @Inject constructor(
         }
     }
 
+    suspend fun updateTokenSession(
+        token: String?,
+        refreshToken: String?,
+        expireDate: Long,
+        tokenType: String?
+    ): Boolean = withContext(Dispatchers.IO) {
+        with(sharedPreferences.edit()) {
+            putString(TOKEN, token)
+            putString(REFRESH_TOKEN, refreshToken)
+            putLong(EXPIRE_DATE, expireDate)
+            putString(TOKEN_TYPE, tokenType)
+            commit() // this returns true if save is successful
+        }
+    }
+
+
+
     fun getUserSession(): UserPrefData? {
         Log.e("USER_PREF", "get Current Season called in UserPref")
         val name = sharedPreferences.getString(USER_NAME, null)

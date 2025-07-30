@@ -3,7 +3,6 @@ package com.faithForward.media.ui.player
 import android.annotation.SuppressLint
 import android.media.MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
@@ -117,7 +116,6 @@ fun VideoPlayer(
         label = "controlsAlpha"
     )
 
-
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             playWhenReady = false
@@ -152,7 +150,6 @@ fun VideoPlayer(
                                 "player state end called and State Redy Also with duration $duration and current Pos $currentPosition"
                             )
                             playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(false))
-                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                             playWhenReady = true
                             val currentTime = System.currentTimeMillis()
                             if (currentTime - lastUpdateTime >= 10000) {
@@ -270,6 +267,7 @@ fun VideoPlayer(
                     currentVideoDuration = duration.toInt()
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                    Log.e("SHOW_CONTROLES", "show controles in media trabsciation")
                     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 }
             })
@@ -316,14 +314,36 @@ fun VideoPlayer(
 
     LaunchedEffect(playerState) {
         when (playerState) {
-            PlayerPlayingState.PLAYING -> exoPlayer.play()
-            PlayerPlayingState.PAUSED -> exoPlayer.pause()
-            PlayerPlayingState.REWINDING -> exoPlayer.seekBack()
-            PlayerPlayingState.FORWARDING -> exoPlayer.seekForward()
+            PlayerPlayingState.PLAYING -> {
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.play()
+                }
+            }
+
+            PlayerPlayingState.PAUSED -> {
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.pause()
+                }
+            }
+
+            PlayerPlayingState.REWINDING -> {
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.seekBack()
+                }
+            }
+
+            PlayerPlayingState.FORWARDING -> {
+
+                if (!playerScreenState.isNextEpisodeDialogVisible) {
+                    exoPlayer.seekForward()
+                }
+            }
+
             PlayerPlayingState.IDLE -> {}
             PlayerPlayingState.MUTE_UN_MUTE -> {}
         }
         if (!playerScreenState.isNextEpisodeDialogVisible && !playerScreenState.isRelatedVisible) {
+            Log.e("VIDEO_PLAYER_SHOW", "show controles in player state change")
             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
 
@@ -361,8 +381,9 @@ fun VideoPlayer(
         }
     }
 
-    LaunchedEffect(playerScreenState) {
+    LaunchedEffect(!playerScreenState.isRelatedVisible) {
         if (!playerScreenState.isRelatedVisible) {
+            Log.e("SHOW_CONTROLES", "show controles in player Screen State Launch effect")
             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
     }
@@ -370,9 +391,6 @@ fun VideoPlayer(
     exoPlayer.addListener(object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             playerViewModel.handleEvent(PlayerEvent.UpdateIsPlaying(isPlaying))
-            if (isPlaying) {
-                sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-            }
         }
 
         override fun onPlayerError(error: PlaybackException) {
@@ -495,6 +513,7 @@ fun VideoPlayer(
                 Lifecycle.Event.ON_RESUME -> {
                     exoPlayer.playWhenReady = true
                     exoPlayer.prepare()
+                    Log.e("SHOW_CONTROLES", "show controles on Resume")
                     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                 }
 
@@ -629,6 +648,7 @@ fun VideoPlayer(
                 onUp = {
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                    Log.e("SHOW_CONTROLES", "show controles in media up")
                     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                     true
                 },
@@ -668,11 +688,13 @@ fun VideoPlayer(
                     onSeekTo = { exoPlayer.seekTo(it) },
                     onPrevAndNext = {
                         if (!sharedPlayerScreenState.isControlsVisible) {
+                            Log.e("SHOW_CONTROLES", "show controles in prev and next")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
                     },
                     onKeyEvent = {
                         if (!sharedPlayerScreenState.isControlsVisible) {
+                            Log.e("SHOW_CONTROLES", "show controles in keyEvent")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                             true
                         } else {
@@ -687,6 +709,7 @@ fun VideoPlayer(
                         if (sharedPlayerScreenState.isControlsVisible) {
                             exoPlayer.playWhenReady = !exoPlayer.isPlaying
                         } else {
+                            Log.e("SHOW_CONTROLES", "show controles in play pause ")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
                         //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
@@ -698,6 +721,7 @@ fun VideoPlayer(
                         if (sharedPlayerScreenState.isControlsVisible) {
                             exoPlayer.seekTo(newPosition)
                         } else {
+                            Log.e("SHOW_CONTROLES", "show controles on Rewind")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
                         //   sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
@@ -706,6 +730,7 @@ fun VideoPlayer(
                         if (sharedPlayerScreenState.isControlsVisible) {
                             exoPlayer.seekForward()
                         } else {
+                            Log.e("SHOW_CONTROLES", "show controles in on Forward")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
 
@@ -716,6 +741,7 @@ fun VideoPlayer(
                             exoPlayer.seekToPreviousMediaItem()
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                         } else {
+                            Log.e("SHOW_CONTROLES", "show controles on prev")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
 
@@ -725,6 +751,7 @@ fun VideoPlayer(
                             exoPlayer.seekToNextMediaItem()
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.HideControls)
                         } else {
+                            Log.e("SHOW_CONTROLES", "show controles on next")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
                     },
@@ -732,6 +759,7 @@ fun VideoPlayer(
                         if (sharedPlayerScreenState.isControlsVisible) {
                             playerViewModel.handleEvent(PlayerEvent.ShowRelated)
                         } else {
+                            Log.e("SHOW_CONTROLES", "show controles is Contoler up")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
                         true

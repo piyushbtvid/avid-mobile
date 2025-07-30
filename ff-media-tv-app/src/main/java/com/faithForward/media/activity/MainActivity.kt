@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +60,7 @@ import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
@@ -72,52 +72,57 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
+                    val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     sharedPlayerViewModel = viewModel()
+                    val isLoading = loginViewModel.isBuffer.collectAsStateWithLifecycle().value
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
                         sharedPlayerViewModel.state.collectAsStateWithLifecycle().value.isControlsVisible
-                    val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
+
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-                    LaunchedEffect(loginState.isCheckingLoginStatus, isLoggedIn) {
-                        Log.e("IS_LOGIN", "is login status in mainActivity is $isLoggedIn")
+                    LaunchedEffect(isLoading) {
+                        Log.e("LOADING", "is loading change in main is $isLoading")
                     }
 
-                    // Use Crossfade to animate between loading and MainScreen
+                    // Use CrossFade to animate between loading and MainScreen
                     Crossfade(
-                        targetState = loginState.isCheckingLoginStatus,
+                        targetState = isLoading,
                         modifier = Modifier.padding(innerPadding),
-                        animationSpec = tween(durationMillis = 100) // Adjust duration as needed
-                    ) { isChecking ->
-                        if (isChecking) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(pageBlackBackgroundColor),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    color = focusedMainColor
+                        animationSpec = tween(durationMillis = 100), label = ""
+                    ) { loading ->
+                        when {
+                            loading -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(pageBlackBackgroundColor),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(color = focusedMainColor)
+                                }
+                            }
+
+                            else -> {
+                                MainScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    sideBarViewModel = sideBarViewModel,
+                                    loginViewModel = loginViewModel,
+                                    playerViewModel = sharedPlayerViewModel,
+                                    navController = navController,
+                                    startRoute = when {
+                                        isLoggedIn -> Routes.Home.route
+                                        else -> Routes.LoginQr.route
+                                    }
                                 )
                             }
-                        } else {
-                            Epg(
-                                epgUiModel = generateSampleEpgUiModel()
-                            )
-//                            MainScreen(
-//                                modifier = Modifier.fillMaxSize(),
-//                                sideBarViewModel = sideBarViewModel,
-//                                loginViewModel = loginViewModel,
-//                                playerViewModel = sharedPlayerViewModel,
-//                                navController = navController,
-//                                startRoute = if (isLoggedIn) Routes.Home.route else Routes.LoginQr.route
-//                            )
+
                         }
                     }
+
                 }
             }
         }
@@ -137,36 +142,25 @@ class MainActivity : ComponentActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         Log.e("Logging", "onKeyDown()")
 
-        //  Show controls for ANY key press on PlayerScreen if they're not already visible
-        if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
-            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-        }
-
         when (keyCode) {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
                     Log.e("CONTROLES", "isControlers visible is $isControlsVisible")
-                    if (isControlsVisible) {
-                        sharedPlayerViewModel.togglePlayPause()
-                    }
+                    sharedPlayerViewModel.togglePlayPause()
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_REWIND, KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
-                    if (isControlsVisible) {
-                        sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
-                    }
+                    sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.REWINDING)
                 }
                 return true
             }
 
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (currentRoute == Routes.PlayerScreen.route) {
-                    if (isControlsVisible) {
-                        sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
-                    }
+                    sharedPlayerViewModel.handlePlayerAction(PlayerPlayingState.FORWARDING)
                 }
                 return true
             }
@@ -192,6 +186,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
+
 
     override fun onStop() {
         super.onStop()

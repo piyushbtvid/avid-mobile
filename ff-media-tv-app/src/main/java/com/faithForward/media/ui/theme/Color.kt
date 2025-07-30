@@ -43,7 +43,8 @@ val detailGradientStartColor = Color(0XFF3B3B3B)
 val detailGradientEndColor = Color(0x00EAE3C9)
 val focusedTextColor = Color(0xFFEAE3C9)
 val episodeButtonBackground = Color(0xFFB87333)
-
+val lightPink = Color(0xB3F8E1E5)
+val myAccountItemBackground = Color(0xFF3B3B3B)
 
 
 

@@ -179,8 +179,8 @@ fun GenreCardGrid(
                 LazyVerticalGrid(
                     state = scrollState,
                     columns = GridCells.Fixed(5),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(
                         bottom = 101.dp, start = 47.5.dp, end = 140.dp, top = 20.dp
                     ),

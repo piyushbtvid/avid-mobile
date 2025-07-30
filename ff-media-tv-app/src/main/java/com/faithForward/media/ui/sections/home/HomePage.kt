@@ -10,13 +10,18 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.common_ui.HomeContentSections
 import com.faithForward.media.viewModel.HomeViewModel
@@ -51,7 +56,6 @@ fun HomePage(
         homeViewModel.fetchHomePageData()
     }
 
-
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -74,8 +78,17 @@ fun HomePage(
 
     val homePageItems = homePageItemsResource.data ?: return
 
-    if (homePageItemsResource is Resource.Success) {
-        onDataLoadedSuccess.invoke()
+    val hasTriggeredDataLoaded = rememberSaveable(homePageItemsResource) {
+        mutableStateOf(false)
+    }
+
+
+    LaunchedEffect(homePageItemsResource) {
+        if (homePageItemsResource is Resource.Success && !hasTriggeredDataLoaded.value) {
+            Log.e("FOCUSED_INDEX", "on home resource success called")
+            onDataLoadedSuccess.invoke()
+            hasTriggeredDataLoaded.value = true
+        }
     }
 
     when (val state = carouselClickUiState) {

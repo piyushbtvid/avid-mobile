@@ -22,6 +22,7 @@ import com.faithForward.media.ui.sections.genre.GenreDataScreen
 import com.faithForward.media.ui.sections.home.HomePage
 import com.faithForward.media.ui.sections.movies.MoviesPage
 import com.faithForward.media.ui.sections.myList.MyListPage
+import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.viewModel.ContentViewModel
@@ -31,6 +32,7 @@ import com.faithForward.media.viewModel.DetailViewModel
 import com.faithForward.media.viewModel.GenreViewModel
 import com.faithForward.media.viewModel.HomeViewModel
 import com.faithForward.media.viewModel.LoginViewModel
+import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
@@ -65,6 +67,7 @@ fun MainAppNavHost(
         composable(route = Routes.Login.route) {
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
                 Log.e("GOING_TO_HOME", "going to home from Login screen ")
+                loginViewModel.checkRefreshToken()
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -76,6 +79,7 @@ fun MainAppNavHost(
             LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
+                loginViewModel.checkRefreshToken()
                 navController.navigate(Routes.Home.route) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
@@ -350,22 +354,31 @@ fun MainAppNavHost(
 
 
 
-        composable(route = Routes.PlayerScreen.route,
+        composable(
+            route = Routes.PlayerScreen.route,
             arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
+                navArgument("isFromMyAccount") {
                     type = NavType.BoolType
                     defaultValue = false
                 },
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
-                })) { backStackEntry ->
+                })
+        ) { backStackEntry ->
 
             val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
 
             val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
+
+            val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
+
             // Fix: Use getInt instead of getString
             val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
 
@@ -373,6 +386,9 @@ fun MainAppNavHost(
                 Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
             } ?: emptyList()
 
+            LaunchedEffect(isFromMyAccount) {
+                Log.e("MY_ACCOUNT", "is from my account $isFromMyAccount and $isContinueWatching")
+            }
 
             playerList?.let {
                 LaunchedEffect(playerList) {
@@ -393,7 +409,7 @@ fun MainAppNavHost(
                 isFromContinueWatching = isContinueWatching,
                 initialIndex = initialIndex,
                 onVideoEnded = {
-                    if (isContinueWatching) {
+                    if (isContinueWatching && !isFromMyAccount) {
                         // Get the current item's slug from playerDtoList
                         val currentItem = playerList?.getOrNull(0)
                         if (currentItem?.slug != null) {
@@ -407,6 +423,26 @@ fun MainAppNavHost(
                                 navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
                                     // Ensure Home screen remains in the back stack
                                     popUpTo(Routes.Home.route) { inclusive = false }
+                                }
+                            }
+                        } else {
+                            // Fallback to default back navigation if slug is unavailable
+                            navController.popBackStack()
+                        }
+                    } else if (isFromMyAccount && isContinueWatching) {
+                        // Get the current item's slug from playerDtoList
+                        val currentItem = playerList?.getOrNull(0)
+                        if (currentItem?.slug != null) {
+                            // Navigate to Detail screen
+                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
+                                }
+                            } else {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
                                 }
                             }
                         } else {
@@ -460,20 +496,6 @@ fun MainAppNavHost(
             route = Routes.Search.route
         ) { backStackEntry ->
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
-
-//            SearchScreen(viewModel = searchViewModel,
-//                sideBarViewModel = sideBarViewModel,
-//                onBackClick = {
-//                    onBackClickForExit.invoke()
-//                    //activity?.finish()
-//                },
-//                onSearchItemClick = { item ->
-//                    if (item.contentSlug != null) {
-//                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
-//                    }
-//                })
-
-
             SearchScreenUi(searchViewModel = searchViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
@@ -486,6 +508,37 @@ fun MainAppNavHost(
                         if (item.contentSlug != null) {
                             navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                         }
+                    }
+                })
+
+        }
+
+        composable(
+            route = Routes.MyAccount.route
+        ) { backStackEntry ->
+
+            val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
+
+            MyAccountScreen(
+                myAccountViewModel = myAccountViewModel,
+                sideBarViewModel = sideBarViewModel,
+                onBackClick = {
+                    onBackClickForExit.invoke()
+                },
+                onItemClick = { item, isFromContinueWatching ->
+
+                    if (isFromContinueWatching) {
+                        val posterCardDto = item.toPosterCardDto()
+
+                        val route = Routes.PlayerScreen.createRoute(
+                            listOf(posterCardDto),
+                            isContinueWatching = true,
+                            isFromMyAccount = true,
+                            initialIndex = 0
+                        )
+                        navController.navigate(route)
+                    } else {
+                        navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
                 })
 

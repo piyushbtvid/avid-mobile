@@ -5,17 +5,20 @@ import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.common.ApiMessageResponse
+import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.creator.CreatorResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
@@ -201,11 +204,33 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<ApiMessageResponse>
 
+    @POST(Constants.REFRESH_TOKEN_POINT)
+    suspend fun refreshToken(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Query("refresh_token") refreshToken: String,
+    ): Response<RefreshTokenResponse>
+
     @GET(Constants.RECENT_SEARCH_END_POINT)
     suspend fun getRecentSearch(
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
     ): Response<RecentSearchResponse>
+
+
+    @POST(Constants.RECENT_SEARCH_END_POINT)
+    suspend fun saveRecentSearch(
+        @Body recentSearchRequest: RecentSearchRequest,
+        @Header("Authorization") token: String,
+    ): Response<ApiMessageResponse>
+
+
+    @GET(Constants.CONTINUE_WATCHING_LIST_END_POINT)
+    suspend fun getContinueWatchingList(
+        @Header("Authorization") token: String,
+    ): Response<CommanListResponse>
+
 
 }
