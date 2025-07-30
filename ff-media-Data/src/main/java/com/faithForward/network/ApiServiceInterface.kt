@@ -9,6 +9,7 @@ import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.creator.CreatorResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
+import com.faithForward.network.dto.epg.EpgResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
@@ -232,5 +233,8 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<CommanListResponse>
 
+
+    @GET(Constants.GET_EPG_DATA)
+    suspend fun getEpgData(): Response<EpgResponse>
 
 }

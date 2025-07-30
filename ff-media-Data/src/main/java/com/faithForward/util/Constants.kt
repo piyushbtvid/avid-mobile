@@ -27,4 +27,5 @@ object Constants {
     const val LOGOUT_END_POINT = "client/v1/subscribers/logout"
     const val REFRESH_TOKEN_POINT = "client/v1/refresh-token"
     const val CONTINUE_WATCHING_LIST_END_POINT = "client/v1/continue-watching"
+    const val GET_EPG_DATA = "https://api.airy.tv/api/v2.1.7/channels?device=roku"
 }

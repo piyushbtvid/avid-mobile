@@ -85,7 +85,7 @@ val topBarTextFocusedStyle = TextStyle(
 val topBarTextUnFocusedStyle = TextStyle(
     fontSize = 10.sp,
     lineHeight = 10.sp,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Bold,
     color = pillButtonTextUnFocusColor
 )
 
