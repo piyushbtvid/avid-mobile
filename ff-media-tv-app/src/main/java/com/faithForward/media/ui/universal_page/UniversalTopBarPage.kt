@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.theme.textFocusedMainColor
+import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.ui.universal_page.top_bar.TopBarRow
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.viewModel.UniversalViewModel
@@ -81,6 +82,7 @@ fun UniversalTopBarPage(
                 topBarFocusedIndex = int
             },
             topBarItemList = topBarItemList,
+            backgroundFocusedColor = whiteMain.copy(alpha = 0.55f),
             focusRequesterList = focusRequesterList,
             onItemClick = { item ->
                 if (item.tag == "live") {

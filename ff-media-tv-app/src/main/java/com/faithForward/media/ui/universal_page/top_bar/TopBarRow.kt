@@ -32,21 +32,19 @@ import com.faithForward.media.util.FocusState
 fun TopBarRow(
     modifier: Modifier = Modifier,
     focusedIndex: Int,
-    selectedPosition : Int,
+    selectedPosition: Int,
     onFocusedIndexChange: (Int) -> Unit,
     topBarItemList: List<TopBarItemDto>,
     backgroundUnFocusedColor: Color = Color.Transparent,
-    backgroundFocusedColor: Color = whiteMain.copy(alpha = 0.55f),
+    backgroundFocusedColor: Color = Color.Transparent,
     shadowColor: Color = focusedMainColor.copy(0.55f),
     borderColor: Color = focusedMainColor,
     textFocusedStyle: TextStyle = topBarTextFocusedStyle,
     textUnFocusedStyle: TextStyle = topBarTextUnFocusedStyle,
     focusRequesterList: List<FocusRequester>,
     onItemClick: (TopBarItemDto) -> Unit,
-    onSelectedPositionClick : (Int) -> Unit
+    onSelectedPositionClick: (Int) -> Unit,
 ) {
-
-
 
 
     Box(
