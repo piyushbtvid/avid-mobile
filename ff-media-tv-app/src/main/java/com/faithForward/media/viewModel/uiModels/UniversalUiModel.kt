@@ -1,5 +1,6 @@
 package com.faithForward.media.viewModel.uiModels
 
+import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
 import com.faithForward.media.ui.epg.EpgUiModel
 import com.faithForward.media.ui.epg.channel.ChannelUiModel
@@ -53,6 +54,14 @@ fun mapToEpgUiModelWithSingleBroadcast(categoryList: List<Category>?): EpgUiMode
     return EpgUiModel(
         channelWithProgramsUiModels = channelWithProgramsUiModels,
         currentTime = System.currentTimeMillis()
+    )
+}
+
+
+fun Category.toCategoryComposeDto(): CategoryComposeDto {
+    return CategoryComposeDto(
+        btnText = name,
+        id = name
     )
 }
 

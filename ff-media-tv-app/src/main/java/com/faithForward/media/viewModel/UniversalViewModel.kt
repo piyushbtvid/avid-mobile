@@ -5,16 +5,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.epg.EpgUiModel
 import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
-import com.faithForward.media.viewModel.uiModels.mapToEpgUiModel
 import com.faithForward.media.viewModel.uiModels.mapToEpgUiModelWithSingleBroadcast
+import com.faithForward.media.viewModel.uiModels.toCategoryComposeDto
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +34,10 @@ class UniversalViewModel @Inject constructor(
     private val _epgUiModel: MutableStateFlow<Resource<EpgUiModel>> =
         MutableStateFlow(Resource.Unspecified())
     val epgUiModel = _epgUiModel.asStateFlow()
+
+    private val _categoryButtonList: MutableStateFlow<Resource<List<CategoryComposeDto>?>> =
+        MutableStateFlow(Resource.Unspecified())
+    val categoryButtonList = _categoryButtonList.asStateFlow()
 
     init {
         topBarItems.addAll(
@@ -68,7 +72,11 @@ class UniversalViewModel @Inject constructor(
 
                     val categoryList = response.body()?.response?.categories
                     val epgUiModel = mapToEpgUiModelWithSingleBroadcast(categoryList)
+                    val categoryButtonList = categoryList?.map {
+                        it.toCategoryComposeDto()
+                    }
                     _epgUiModel.emit(Resource.Success(epgUiModel))
+                    _categoryButtonList.emit(Resource.Success(categoryButtonList))
                 } else {
                     Log.e("EPG", "epg error message is ${response.message()}")
                 }
