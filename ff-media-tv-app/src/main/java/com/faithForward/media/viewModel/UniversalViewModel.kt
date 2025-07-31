@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.epg.EpgUiModel
 import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
+import com.faithForward.media.viewModel.uiModels.mapToEpgUiModel
 import com.faithForward.media.viewModel.uiModels.mapToEpgUiModelWithSingleBroadcast
 import com.faithForward.media.viewModel.uiModels.toCategoryComposeDto
 import com.faithForward.repository.NetworkRepository
@@ -34,6 +35,10 @@ class UniversalViewModel @Inject constructor(
     private val _epgUiModel: MutableStateFlow<Resource<EpgUiModel>> =
         MutableStateFlow(Resource.Unspecified())
     val epgUiModel = _epgUiModel.asStateFlow()
+
+    private val _guideUiModel: MutableStateFlow<Resource<EpgUiModel>> =
+        MutableStateFlow(Resource.Unspecified())
+    val guideEpgUiModel = _guideUiModel.asStateFlow()
 
     private val _categoryButtonList: MutableStateFlow<Resource<List<CategoryComposeDto>?>> =
         MutableStateFlow(Resource.Unspecified())
@@ -72,10 +77,12 @@ class UniversalViewModel @Inject constructor(
 
                     val categoryList = response.body()?.response?.categories
                     val epgUiModel = mapToEpgUiModelWithSingleBroadcast(categoryList)
+                    val guideEpgModel = mapToEpgUiModel(categoryList)
                     val categoryButtonList = categoryList?.map {
                         it.toCategoryComposeDto()
                     }
                     _epgUiModel.emit(Resource.Success(epgUiModel))
+                    _guideUiModel.emit(Resource.Success(guideEpgModel))
                     _categoryButtonList.emit(Resource.Success(categoryButtonList))
                 } else {
                     Log.e("EPG", "epg error message is ${response.message()}")

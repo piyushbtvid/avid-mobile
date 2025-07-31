@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.universal_page.live
+package com.faithForward.media.ui.universal_page.live.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.faithForward.media.ui.universal_page.live.LivePage
 import com.faithForward.media.ui.universal_page.live.guide.GuidePage
 import com.faithForward.media.viewModel.UniversalViewModel
 

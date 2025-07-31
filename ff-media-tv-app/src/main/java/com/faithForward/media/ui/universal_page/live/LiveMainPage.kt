@@ -32,6 +32,8 @@ import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.theme.liveTopBarTextFocusedStyle
 import com.faithForward.media.ui.theme.textFocusedMainColor
+import com.faithForward.media.ui.universal_page.live.navigation.LiveNavGraph
+import com.faithForward.media.ui.universal_page.live.navigation.LiveRoutes
 import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
 import com.faithForward.media.ui.universal_page.top_bar.TopBarRow
 import com.faithForward.media.util.extensions.shadow
@@ -46,11 +48,9 @@ fun LiveMainPage(
             listOf(
                 TopBarItemDto(
                     name = "LIVE", tag = "live"
-                ),
-                TopBarItemDto(
+                ), TopBarItemDto(
                     name = "GUIDE", tag = "guide"
-                ),
-                TopBarItemDto(
+                ), TopBarItemDto(
                     name = "MY CHANNEL", tag = "my_channel"
                 )
             )
@@ -78,8 +78,7 @@ fun LiveMainPage(
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter
+        modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter
     ) {
 
         LiveNavGraph(
@@ -94,8 +93,7 @@ fun LiveMainPage(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            TopBarRow(
-                focusedIndex = topBarFocusedIndex,
+            TopBarRow(focusedIndex = topBarFocusedIndex,
                 selectedPosition = selectedPosition,
                 onFocusedIndexChange = { int ->
                     topBarFocusedIndex = int
@@ -106,79 +104,87 @@ fun LiveMainPage(
                 shadowColor = Color.Transparent,
                 borderColor = Color.Transparent,
                 focusRequesterList = focusRequesterList,
-                onItemClick = {
+                onItemClick = { item ->
+                    when (item.tag) {
 
+                        "live" -> {
+                            navController.navigate(LiveRoutes.Live.route)
+                        }
+
+                        "guide" -> {
+                            navController.navigate(LiveRoutes.Guide.route)
+                        }
+
+                        "my_channel" -> {
+
+                        }
+
+                    }
                 },
                 onSelectedPositionClick = { int ->
                     selectedPosition = int
-                }
-            )
+                })
 
             Row(modifier = Modifier.wrapContentSize()) {
-                RoundedIconButton(
-                    modifier = Modifier
-                        .onFocusChanged {
-                            isMicFocused = it.hasFocus
-                        }
-                        .focusable()
-                        .then(
-                            if (isMicFocused) {
-                                Modifier
-                                    .shadow(
-                                        color = Color.White.copy(alpha = .11f),
-                                        borderRadius = 40.dp,
-                                        blurRadius = 7.dp,
-                                        spread = 5.dp,
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = textFocusedMainColor,
-                                        shape = RoundedCornerShape(40.dp)
-                                    )
-                            } else Modifier
-                        ),
+                RoundedIconButton(modifier = Modifier
+                    .onFocusChanged {
+                        isMicFocused = it.hasFocus
+                    }
+                    .focusable()
+                    .then(
+                        if (isMicFocused) {
+                            Modifier
+                                .shadow(
+                                    color = Color.White.copy(alpha = .11f),
+                                    borderRadius = 40.dp,
+                                    blurRadius = 7.dp,
+                                    spread = 5.dp,
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = textFocusedMainColor,
+                                    shape = RoundedCornerShape(40.dp)
+                                )
+                        } else Modifier
+                    ),
                     imageId = R.drawable.microphone_ic,
                     iconHeight = 15,
                     boxSize = 43,
                     iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
+                    backgroundColor = Color.White.copy(alpha = .75f))
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                RoundedIconButton(
-                    modifier = Modifier
-                        .onFocusChanged {
-                            isSearchFocused = it.hasFocus
-                        }
-                        .clickable(interactionSource = null, indication = null, onClick = {
-                            Log.e("SEARCH_IC", "on search click")
-                            //  onSearchClick.invoke()
-                        }
-                        )
-                        .focusable()
-                        .then(
-                            if (isSearchFocused) {
-                                Modifier
-                                    .shadow(
-                                        color = Color.White.copy(alpha = .11f),
-                                        borderRadius = 40.dp,
-                                        blurRadius = 7.dp,
-                                        spread = 5.dp,
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = textFocusedMainColor,
-                                        shape = RoundedCornerShape(40.dp)
-                                    )
-                            } else Modifier
-                        ),
+                RoundedIconButton(modifier = Modifier
+                    .onFocusChanged {
+                        isSearchFocused = it.hasFocus
+                    }
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        Log.e("SEARCH_IC", "on search click")
+                        //  onSearchClick.invoke()
+                    })
+                    .focusable()
+                    .then(
+                        if (isSearchFocused) {
+                            Modifier
+                                .shadow(
+                                    color = Color.White.copy(alpha = .11f),
+                                    borderRadius = 40.dp,
+                                    blurRadius = 7.dp,
+                                    spread = 5.dp,
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = textFocusedMainColor,
+                                    shape = RoundedCornerShape(40.dp)
+                                )
+                        } else Modifier
+                    ),
                     imageId = R.drawable.search_ic,
                     iconHeight = 15,
                     boxSize = 43,
                     iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
+                    backgroundColor = Color.White.copy(alpha = .75f))
             }
         }
 
