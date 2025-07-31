@@ -5,10 +5,17 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.ui.epg.EpgUiModel
 import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
+import com.faithForward.media.viewModel.uiModels.mapToEpgUiModel
+import com.faithForward.media.viewModel.uiModels.mapToEpgUiModelWithSingleBroadcast
 import com.faithForward.repository.NetworkRepository
+import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +29,11 @@ class UniversalViewModel @Inject constructor(
 
     var liveVideo = mutableStateOf<List<String?>>(emptyList())
         private set
+
+
+    private val _epgUiModel: MutableStateFlow<Resource<EpgUiModel>> =
+        MutableStateFlow(Resource.Unspecified())
+    val epgUiModel = _epgUiModel.asStateFlow()
 
     init {
         topBarItems.addAll(
@@ -53,6 +65,10 @@ class UniversalViewModel @Inject constructor(
                         ?.flatMap { it.streamChannels }
                         ?.firstNotNullOfOrNull { it.sourceUrl }
                     liveVideo.value = listOf(firstUrl)
+
+                    val categoryList = response.body()?.response?.categories
+                    val epgUiModel = mapToEpgUiModelWithSingleBroadcast(categoryList)
+                    _epgUiModel.emit(Resource.Success(epgUiModel))
                 } else {
                     Log.e("EPG", "epg error message is ${response.message()}")
                 }

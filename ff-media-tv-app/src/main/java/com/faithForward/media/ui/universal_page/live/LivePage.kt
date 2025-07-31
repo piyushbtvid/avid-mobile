@@ -1,6 +1,7 @@
 package com.faithForward.media.ui.universal_page.live
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,15 +33,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
+import com.faithForward.media.ui.epg.Epg
 import com.faithForward.media.ui.theme.liveTopBarTextFocusedStyle
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
+import com.faithForward.media.ui.universal_page.UniversalPlayer
 import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
 import com.faithForward.media.ui.universal_page.top_bar.TopBarRow
 import com.faithForward.media.util.extensions.shadow
+import com.faithForward.media.viewModel.UniversalViewModel
 
 @Composable
 fun LivePage(
     modifier: Modifier = Modifier,
+    universalViewModel: UniversalViewModel,
 ) {
 
     val topBarList = remember {
@@ -58,10 +65,15 @@ fun LivePage(
         )
     }
 
+    val epgUiModel = universalViewModel.epgUiModel.collectAsState()
+
     var topBarFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var selectedPosition by rememberSaveable { mutableIntStateOf(0) }
 
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
+
+    val liveFirstUrl = universalViewModel.liveVideo
 
     val focusRequesterList = remember(topBarList.value.size) {
         List(topBarList.value.size) { FocusRequester() }
@@ -69,7 +81,7 @@ fun LivePage(
 
     LaunchedEffect(Unit) {
         try {
-            focusRequesterList[1].requestFocus()
+            focusRequesterList[0].requestFocus()
         } catch (_: Exception) {
 
         }
@@ -80,10 +92,15 @@ fun LivePage(
         contentAlignment = Alignment.TopCenter
     ) {
 
+        if (liveFirstUrl.value.isNotEmpty()) {
+            UniversalPlayer(
+                videoUrlList = liveFirstUrl.value.filterNotNull()
+            )
+        }
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .padding(top = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(33.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -91,6 +108,7 @@ fun LivePage(
 
             TopBarRow(
                 focusedIndex = topBarFocusedIndex,
+                selectedPosition = selectedPosition,
                 onFocusedIndexChange = { int ->
                     topBarFocusedIndex = int
                 },
@@ -99,7 +117,13 @@ fun LivePage(
                 backgroundFocusedColor = Color.Transparent,
                 shadowColor = Color.Transparent,
                 borderColor = Color.Transparent,
-                focusRequesterList = focusRequesterList
+                focusRequesterList = focusRequesterList,
+                onItemClick = {
+
+                },
+                onSelectedPositionClick = { int ->
+                    selectedPosition = int
+                }
             )
 
             Row(modifier = Modifier.wrapContentSize()) {
@@ -170,6 +194,21 @@ fun LivePage(
             }
         }
 
+        if (epgUiModel.value.data != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 100.dp) // optional: shift down to avoid top bar overlap
+                    .align(Alignment.CenterStart)
+            ) {
+                Epg(
+                    modifier = Modifier
+                        .background(color = Color.Transparent)
+                        .padding(start = 30.dp, end = 15.dp),
+                    epgUiModel = epgUiModel.value.data!!
+                )
+            }
+        }
 
     }
 
@@ -179,5 +218,5 @@ fun LivePage(
 @Preview
 @Composable
 private fun LivePagePreview() {
-    LivePage()
+    // LivePage()
 }

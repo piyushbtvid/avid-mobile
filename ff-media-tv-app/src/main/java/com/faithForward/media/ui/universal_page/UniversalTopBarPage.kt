@@ -39,11 +39,13 @@ fun UniversalTopBarPage(
     modifier: Modifier = Modifier,
     universalViewModel: UniversalViewModel,
     onSearchClick: () -> Unit,
+    onLiveClick: () -> Unit,
 ) {
 
     val topBarItemList = universalViewModel.topBarItems
     val liveFirstUrl = universalViewModel.liveVideo
     var topBarFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var selectedPosition by rememberSaveable { mutableIntStateOf(-1) }
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
 
@@ -73,12 +75,21 @@ fun UniversalTopBarPage(
 
         TopBarRow(
             modifier = Modifier.padding(top = 20.dp),
+            selectedPosition = selectedPosition,
             focusedIndex = topBarFocusedIndex,
             onFocusedIndexChange = { int ->
                 topBarFocusedIndex = int
             },
             topBarItemList = topBarItemList,
-            focusRequesterList = focusRequesterList
+            focusRequesterList = focusRequesterList,
+            onItemClick = { item ->
+                if (item.tag == "live") {
+                    onLiveClick.invoke()
+                }
+            },
+            onSelectedPositionClick = { int ->
+                selectedPosition = int
+            }
         )
 
         Row(

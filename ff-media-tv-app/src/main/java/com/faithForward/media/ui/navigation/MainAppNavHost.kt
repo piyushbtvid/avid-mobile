@@ -26,6 +26,7 @@ import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.ui.universal_page.UniversalTopBarPage
+import com.faithForward.media.ui.universal_page.live.LivePage
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -489,8 +490,7 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -553,8 +553,16 @@ fun MainAppNavHost(
 
             UniversalTopBarPage(universalViewModel = universalViewModel, onSearchClick = {
 
+            }, onLiveClick = {
+                navController.navigate(Routes.Live.route)
             })
+        }
 
+        composable(route = Routes.Live.route) { backStackEntry ->
+            val universalViewModel: UniversalViewModel = hiltViewModel(backStackEntry)
+            LivePage(
+                universalViewModel = universalViewModel
+            )
         }
 
     }
