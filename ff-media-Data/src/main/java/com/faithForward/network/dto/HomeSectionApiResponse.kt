@@ -66,10 +66,17 @@ data class ContentItem(
     val resumeInfo: ResumeInfo? = null,
     val email: String? = null,
     val phone: String? = null,
+    @SerializedName("trailer") val trailer: Trailer? = null,
     @SerializedName("channel_name") val channelName: String? = null,
     @SerializedName("channel_category") val channelCategory: String? = null,
     @SerializedName("channel_banner") val channelBanner: String? = null,
     @SerializedName("channel_description") val channelDescription: String? = null,
     @SerializedName("channel_subscribers") val channelSubscribers: String? = null,
     @SerializedName("profile_img") val creatorProfileImage: String? = null,
+)
+
+data class Trailer(
+    val id: Int,
+    @SerializedName("play_link") val playLink: String,
+    val thumbnail: String,
 )

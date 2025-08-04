@@ -3,6 +3,8 @@ package com.faithForward.network.dto.series
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.Creator
 import com.faithForward.network.dto.Genre
+import com.faithForward.network.dto.Trailer
+import com.google.gson.annotations.SerializedName
 
 data class SingleSeriesDetailResponse(
     val status: String,
@@ -15,6 +17,7 @@ data class Season(
     val id: String,
     val name: String,
     val slug: String?,
+    @SerializedName("trailer") val trailer: Trailer? = null,
     val season_number: Int,
     val description: String? = null,
     val portrait: String,

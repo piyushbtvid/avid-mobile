@@ -120,6 +120,7 @@ sealed class PlayerEvent {
     data class UpdateOrLoadPlayerData(
         val itemList: List<PosterCardDto>,
         val index: Int? = null,
+        val isTrailer: Boolean = false,
         val isFromContinueWatching: Boolean = false,
     ) :
         PlayerEvent()

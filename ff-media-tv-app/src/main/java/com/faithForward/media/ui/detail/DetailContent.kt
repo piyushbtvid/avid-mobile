@@ -63,6 +63,7 @@ data class DetailDto(
     val contentType: String? = null,
     val progress: Long? = null,
     val relatedList: List<PosterCardDto>? = null,
+    val itemTrailer: String? = null,
 )
 
 @Composable
@@ -70,12 +71,16 @@ fun DetailContent(
     modifier: Modifier = Modifier,
     playNowBtnFocusRequester: FocusRequester = FocusRequester(),
     resumeBtnFocusRequester: FocusRequester = FocusRequester(),
+    playTrailerFocusRequester: FocusRequester = FocusRequester(),
     onWatchNowClick: (String) -> Unit,
     onResumeNowCLick: () -> Unit,
+    onPlayTrailer: () -> Unit,
     onWatchNowFocusChange: (Boolean) -> Unit,
     onResumeNowFocusChange: (Boolean) -> Unit,
+    onPlayTrailerFocusChange: (Boolean) -> Unit,
     isContentVisible: Boolean = true,
     isResumeVisible: Boolean = false,
+    isPlayTrailerButtonShow: Boolean = false,
     detailDto: DetailDto,
     resumeNowTxt: String = "Resume Now",
     onToggleFavorite: () -> Unit,
@@ -87,6 +92,7 @@ fun DetailContent(
     var dislikeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var isPlayFocused by remember { mutableStateOf(false) }
     var isResumeFocused by remember { mutableStateOf(false) }
+    var isPlayTrailerFocused by remember { mutableStateOf(false) }
 
 
     val targetAlpha by animateFloatAsState(
@@ -226,6 +232,30 @@ fun DetailContent(
                             focusState = if (isResumeFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
                         )
                     }
+
+                    if (isPlayTrailerButtonShow) {
+                        //Play Trailer
+                        CategoryCompose(modifier = Modifier
+                            .focusRequester(playTrailerFocusRequester)
+                            .onFocusChanged {
+                                isPlayTrailerFocused = it.hasFocus
+                                onPlayTrailerFocusChange.invoke(it.hasFocus)
+                            }
+                            .focusable(),
+                            categoryComposeDto = CategoryComposeDto(
+                                btnText = "Play Trailer",
+                                id = ""
+                            ),
+                            backgroundFocusedColor = focusedMainColor,
+                            textFocusedStyle = detailNowTextStyle,
+                            backgroundUnFocusedColor = blackColor,
+                            textUnFocusedStyle = detailNowUnFocusTextStyle,
+                            onCategoryItemClick = { id ->
+                                onPlayTrailer.invoke()
+                            },
+                            focusState = if (isPlayTrailerFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                        )
+                    }
                 }
 
 
@@ -255,6 +285,12 @@ private fun DetailPagePreview() {
 
         },
         onResumeNowCLick = {
+
+        },
+        onPlayTrailerFocusChange = {
+
+        },
+        onPlayTrailer = {
 
         }
 

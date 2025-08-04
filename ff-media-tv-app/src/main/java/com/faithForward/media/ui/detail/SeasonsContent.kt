@@ -33,6 +33,7 @@ data class SeasonsContentDto(
 
 data class SeasonDto(
     val seasonNumber: Int,
+    val trailer: String?,
     val episodesContentDto: List<PosterCardDto>,
 )
 

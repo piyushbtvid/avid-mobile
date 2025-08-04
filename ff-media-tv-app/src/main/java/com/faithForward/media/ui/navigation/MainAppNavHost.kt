@@ -328,6 +328,26 @@ fun MainAppNavHost(
                         }
                     }
                 },
+                onPlayTrailerClick = { item, posterItemList, index ->
+                    Log.e("SERIES_RELATED", "item is $item")
+                    Log.e(
+                        "SERIES_RELATED",
+                        "item List  Related list  when click in detail NavHost from series episode is ${
+                            posterItemList?.get(
+                                0
+                            )?.relatedList?.get(0)?.relatedList
+                        }"
+                    )
+                    if (item != null) {
+                        val itemWithProgressZero = item.copy(progress = 0)
+                        val route =
+                            Routes.PlayerScreen.createRoute(
+                                listOf(itemWithProgressZero),
+                                isPlayTrailer = true
+                            ) // Wrap item in a list
+                        navController.navigate(route)
+                    }
+                },
                 onResumeNowClick = { item, posterItemList, index ->
                     if (item != null) {
                         val route = Routes.PlayerScreen.createRoute(
@@ -365,6 +385,10 @@ fun MainAppNavHost(
                     type = NavType.BoolType
                     defaultValue = false
                 },
+                navArgument("isPlayTrailer") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
@@ -378,6 +402,7 @@ fun MainAppNavHost(
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
 
             val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
+            val isPlayTrailer = backStackEntry.arguments?.getBoolean("isPlayTrailer") ?: false
 
             // Fix: Use getInt instead of getString
             val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
@@ -397,6 +422,7 @@ fun MainAppNavHost(
                             PlayerEvent.UpdateOrLoadPlayerData(
                                 itemList = it,
                                 isFromContinueWatching = isContinueWatching,
+                                isTrailer = isPlayTrailer,
                                 index = initialIndex
                             )
                         )
