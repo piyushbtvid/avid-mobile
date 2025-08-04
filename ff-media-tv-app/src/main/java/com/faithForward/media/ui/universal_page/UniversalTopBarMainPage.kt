@@ -61,6 +61,7 @@ fun UniversalTopBarMainPage(
     LaunchedEffect(Unit) {
         try {
             focusRequesterList[0].requestFocus()
+            selectedPosition = 0
         } catch (_: Exception) {
 
         }
@@ -97,7 +98,10 @@ fun UniversalTopBarMainPage(
                     onLiveClick.invoke()
                 }
                 if (item.tag == "stream") {
-                    navController.navigate(UniversalPageRoutes.Stream.route)
+                    navController.navigate(UniversalPageRoutes.Stream.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             },
             onSelectedPositionClick = { int ->

@@ -108,11 +108,17 @@ fun LiveMainPage(
                     when (item.tag) {
 
                         "live" -> {
-                            navController.navigate(LiveRoutes.Live.route)
+                            navController.navigate(LiveRoutes.Live.route){
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
 
                         "guide" -> {
-                            navController.navigate(LiveRoutes.Guide.route)
+                            navController.navigate(LiveRoutes.Guide.route){
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
 
                         "my_channel" -> {
