@@ -10,7 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StreamPage(modifier: Modifier = Modifier) {
+fun StreamPage(
+    modifier: Modifier = Modifier,
+    onLeftClick: () -> Unit,
+) {
 
     val streamTestList = remember {
         listOf(
@@ -32,6 +35,7 @@ fun StreamPage(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(top = 63.5.dp, start = 25.dp),
+            onLeftClick = onLeftClick,
             list = streamTestList
         )
 

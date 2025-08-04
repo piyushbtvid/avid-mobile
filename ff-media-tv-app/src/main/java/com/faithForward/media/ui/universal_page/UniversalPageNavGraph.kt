@@ -20,15 +20,17 @@ sealed class UniversalPageRoutes(val route: String) {
 @Composable
 fun UniversalPageNavGraph(
     modifier: Modifier = Modifier,
+    onLeftClick: () -> Unit,
     navController: NavHostController,
 ) {
 
     NavHost(navController = navController, startDestination = UniversalPageRoutes.Stream.route) {
 
         composable(route = UniversalPageRoutes.Stream.route) {
-            StreamPage()
+            StreamPage(
+                onLeftClick = onLeftClick
+            )
         }
-
 
 
     }

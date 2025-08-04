@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.universal_page.stream
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -25,6 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +48,7 @@ data class StreamRecommendationsUiItem(
 @Composable
 fun StreamRecommendationsColumn(
     modifier: Modifier = Modifier,
+    onLeftClick: () -> Unit,
     list: List<StreamRecommendationsUiItem>,
 ) {
 
@@ -81,7 +88,16 @@ fun StreamRecommendationsColumn(
                                 lastFocusedIndex = index
                             }
                         }
-                        .focusable(),
+                        .focusable()
+                        .onKeyEvent { keyEvent ->
+                            if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.DirectionLeft) {
+                                Log.e("ON_LEFT", "on left click")
+                                onLeftClick.invoke()
+                                true
+                            } else {
+                                false
+                            }
+                        },
                     uiItem = item,
                     focusState = uiState
                 )

@@ -41,6 +41,7 @@ import com.faithForward.media.viewModel.UniversalViewModel
 fun UniversalTopBarMainPage(
     modifier: Modifier = Modifier,
     universalViewModel: UniversalViewModel,
+    onLeftClick: () -> Unit,
     onSearchClick: () -> Unit,
     onLiveClick: () -> Unit,
 ) {
@@ -80,7 +81,8 @@ fun UniversalTopBarMainPage(
         }
 
         UniversalPageNavGraph(
-            navController = navController
+            navController = navController,
+            onLeftClick = onLeftClick
         )
 
         TopBarRow(

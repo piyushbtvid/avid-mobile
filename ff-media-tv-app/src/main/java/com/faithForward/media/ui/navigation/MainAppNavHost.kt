@@ -490,8 +490,7 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -556,7 +555,11 @@ fun MainAppNavHost(
 
             }, onLiveClick = {
                 navController.navigate(Routes.Live.route)
-            })
+            }, onLeftClick = {
+                navController.popBackStack()
+            }
+
+            )
         }
 
         composable(route = Routes.Live.route) {
