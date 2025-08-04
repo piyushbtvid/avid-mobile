@@ -56,8 +56,10 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.ShowRelated -> {
-                _state.value = _state.value.copy(isRelatedVisible = true)
-                startAutoDismissTimerForRelated()
+                if (_state.value.videoPlayerDto.data?.playerRelatedContentRowDto?.rowList?.isNotEmpty() == true) {
+                    _state.value = _state.value.copy(isRelatedVisible = true)
+                    startAutoDismissTimerForRelated()
+                }
             }
 
             is PlayerEvent.ShowNextEpisodeDialog -> {
