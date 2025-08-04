@@ -420,7 +420,7 @@ class PlayerViewModel @Inject constructor(
                                     PlayerDto(
                                         videoPlayerDtoList = videoPlayList,
                                         playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                            title = "Next Up...", rowList = relatedList
+                                            title = "Episodes...", rowList = relatedList
                                         )
                                     )
                                 ),
