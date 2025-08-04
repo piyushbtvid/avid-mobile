@@ -62,20 +62,20 @@ fun TopBarItem(
     val buttonModifier =
         if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
             modifier
-                .shadow(
-                    color = shadowColor,
-                    borderRadius = 20.dp,
-                    blurRadius = 15.dp,
-                    offsetY = 4.dp,
-                    offsetX = 0.dp,
-                    spread = 3.dp
-                )
                 .border(
                     width = 0.4.dp,
                     color = borderColor,
                     shape = buttonShape // Pass the same shape
                 )
-                .clip(buttonShape) // First clip
+                .shadow(
+                    color = Color.Transparent,
+                    borderRadius = 50.dp,
+                    blurRadius = 4.dp,
+                    offsetY = 4.dp,
+                    offsetX = 0.dp,
+                    spread = 3.dp
+                )
+
         } else {
             modifier.shadow(
                 color = Color.Transparent,
@@ -94,6 +94,7 @@ fun TopBarItem(
             onCategoryItemClick.invoke(topBarItemDto.tag)
         },
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
+        shape = RoundedCornerShape(50),
         modifier = buttonModifier
             .height(26.dp)
     ) {

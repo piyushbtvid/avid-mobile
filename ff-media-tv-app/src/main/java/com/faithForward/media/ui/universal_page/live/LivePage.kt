@@ -22,7 +22,7 @@ fun LivePage(
 ) {
     val epgUiModel = universalViewModel.epgUiModel.collectAsState()
 
-    val liveFirstUrl = universalViewModel.liveVideo
+    val liveFirstUrl = universalViewModel.liveVideo.collectAsState()
 
 
     Box(

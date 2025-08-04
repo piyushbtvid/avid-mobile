@@ -20,8 +20,8 @@ fun GuideSmallPlayer(
 
     Box(
         modifier = modifier
-            .width(367.5.dp)
-            .height(210.dp)
+            .width(357.5.dp)
+            .height(203.dp)
             .background(pageBlackBackgroundColor)
             .clip(shape = RoundedCornerShape(10.dp))
     ) {

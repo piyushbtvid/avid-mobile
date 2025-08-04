@@ -115,7 +115,7 @@ fun TopBarBackGround(
 
     Box(
         modifier = modifier
-            .width(260.dp)
+            .width(280.dp)
             .height(40.dp)
             .clip(RoundedCornerShape(50.dp)) // Clip the shape first
             .border(

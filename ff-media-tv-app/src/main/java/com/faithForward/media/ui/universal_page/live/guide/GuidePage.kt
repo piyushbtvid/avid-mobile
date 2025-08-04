@@ -7,15 +7,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.epg.Epg
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.viewModel.UniversalViewModel
 
 @Composable
@@ -26,13 +32,13 @@ fun GuidePage(
 
     val categoryList = universalViewModel.categoryButtonList.collectAsState()
     val epgData = universalViewModel.guideEpgUiModel.collectAsState()
-    val liveFirstUrl = universalViewModel.liveVideo
+    val liveFirstUrl by universalViewModel.liveVideo.collectAsState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(top = 71.dp, start = 11.dp),
-        verticalArrangement = Arrangement.spacedBy(7.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
 
         Row(
@@ -50,9 +56,19 @@ fun GuidePage(
                 description = "Join us for better together Ever Day is New Day and a New beging join us join us join us"
             )
 
-            if (liveFirstUrl.value.isNotEmpty()) {
-                GuideSmallPlayer(urlList = liveFirstUrl.value)
+
+            if (liveFirstUrl.isNotEmpty()) {
+                GuideSmallPlayer(urlList = liveFirstUrl)
+            } else {
+                Box(
+                    modifier = modifier
+                        .width(357.5.dp)
+                        .height(203.dp)
+                        .background(pageBlackBackgroundColor)
+                        .clip(shape = RoundedCornerShape(10.dp))
+                )
             }
+
 
         }
 

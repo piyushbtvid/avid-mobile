@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.theme.textFocusedMainColor
@@ -36,7 +38,7 @@ import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.viewModel.UniversalViewModel
 
 @Composable
-fun UniversalTopBarPage(
+fun UniversalTopBarMainPage(
     modifier: Modifier = Modifier,
     universalViewModel: UniversalViewModel,
     onSearchClick: () -> Unit,
@@ -44,9 +46,9 @@ fun UniversalTopBarPage(
 ) {
 
     val topBarItemList = universalViewModel.topBarItems
-    val liveFirstUrl = universalViewModel.liveVideo
+    val liveFirstUrl = universalViewModel.liveVideo.collectAsState()
     var topBarFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var selectedPosition by rememberSaveable { mutableIntStateOf(-1) }
+    var selectedPosition by rememberSaveable { mutableIntStateOf(0) }
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
 
@@ -54,9 +56,11 @@ fun UniversalTopBarPage(
         List(topBarItemList.size) { FocusRequester() }
     }
 
+    val navController = rememberNavController()
+
     LaunchedEffect(Unit) {
         try {
-            focusRequesterList[1].requestFocus()
+            focusRequesterList[0].requestFocus()
         } catch (_: Exception) {
 
         }
@@ -74,6 +78,10 @@ fun UniversalTopBarPage(
             )
         }
 
+        UniversalPageNavGraph(
+            navController = navController
+        )
+
         TopBarRow(
             modifier = Modifier.padding(top = 20.dp),
             selectedPosition = selectedPosition,
@@ -87,6 +95,9 @@ fun UniversalTopBarPage(
             onItemClick = { item ->
                 if (item.tag == "live") {
                     onLiveClick.invoke()
+                }
+                if (item.tag == "stream") {
+                    navController.navigate(UniversalPageRoutes.Stream.route)
                 }
             },
             onSelectedPositionClick = { int ->
@@ -166,6 +177,7 @@ fun UniversalTopBarPage(
                 backgroundColor = Color.White.copy(alpha = .75f)
             )
         }
+
 
     }
 

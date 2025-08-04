@@ -2,7 +2,6 @@ package com.faithForward.media.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
@@ -16,6 +15,7 @@ import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,8 +28,8 @@ class UniversalViewModel @Inject constructor(
     var topBarItems = mutableStateListOf<TopBarItemDto>()
         private set
 
-    var liveVideo = mutableStateOf<List<String?>>(emptyList())
-        private set
+    private val _liveVideo = MutableStateFlow<List<String?>>(emptyList())
+    val liveVideo: StateFlow<List<String?>> = _liveVideo
 
 
     private val _epgUiModel: MutableStateFlow<Resource<EpgUiModel>> =
@@ -73,7 +73,7 @@ class UniversalViewModel @Inject constructor(
                     val firstUrl = epgData?.response?.categories
                         ?.flatMap { it.streamChannels }
                         ?.firstNotNullOfOrNull { it.sourceUrl }
-                    liveVideo.value = listOf(firstUrl)
+                    _liveVideo.emit(listOf(firstUrl))
 
                     val categoryList = response.body()?.response?.categories
                     val epgUiModel = mapToEpgUiModelWithSingleBroadcast(categoryList)
