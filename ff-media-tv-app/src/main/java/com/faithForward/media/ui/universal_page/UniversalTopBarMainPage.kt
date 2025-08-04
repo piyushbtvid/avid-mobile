@@ -108,6 +108,9 @@ fun UniversalTopBarMainPage(
             },
             onSelectedPositionClick = { int ->
                 selectedPosition = int
+            },
+            onTopBarUpClick = {
+
             }
         )
 

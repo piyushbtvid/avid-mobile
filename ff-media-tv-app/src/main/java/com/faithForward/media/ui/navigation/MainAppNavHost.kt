@@ -563,7 +563,11 @@ fun MainAppNavHost(
         }
 
         composable(route = Routes.Live.route) {
-            LiveMainPage()
+            LiveMainPage(
+                onTopBarUpClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
     }

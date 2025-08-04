@@ -41,6 +41,7 @@ import com.faithForward.media.util.extensions.shadow
 @Composable
 fun LiveMainPage(
     modifier: Modifier = Modifier,
+    onTopBarUpClick: () -> Unit,
 ) {
 
     val topBarList = remember {
@@ -108,14 +109,14 @@ fun LiveMainPage(
                     when (item.tag) {
 
                         "live" -> {
-                            navController.navigate(LiveRoutes.Live.route){
+                            navController.navigate(LiveRoutes.Live.route) {
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
 
                         "guide" -> {
-                            navController.navigate(LiveRoutes.Guide.route){
+                            navController.navigate(LiveRoutes.Guide.route) {
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -129,7 +130,10 @@ fun LiveMainPage(
                 },
                 onSelectedPositionClick = { int ->
                     selectedPosition = int
-                })
+                },
+                onTopBarUpClick = onTopBarUpClick
+
+            )
 
             Row(modifier = Modifier.wrapContentSize()) {
                 RoundedIconButton(modifier = Modifier
@@ -190,7 +194,8 @@ fun LiveMainPage(
                     iconHeight = 15,
                     boxSize = 43,
                     iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f))
+                    backgroundColor = Color.White.copy(alpha = .75f)
+                )
             }
         }
 
