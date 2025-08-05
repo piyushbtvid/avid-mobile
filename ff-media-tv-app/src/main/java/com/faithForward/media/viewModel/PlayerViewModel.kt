@@ -56,8 +56,10 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.ShowRelated -> {
-                _state.value = _state.value.copy(isRelatedVisible = true)
-                startAutoDismissTimerForRelated()
+                if (_state.value.videoPlayerDto.data?.playerRelatedContentRowDto?.rowList?.isNotEmpty() == true) {
+                    _state.value = _state.value.copy(isRelatedVisible = true)
+                    startAutoDismissTimerForRelated()
+                }
             }
 
             is PlayerEvent.ShowNextEpisodeDialog -> {
@@ -80,6 +82,7 @@ class PlayerViewModel @Inject constructor(
                 updateOrLoadVideoPlayerData(
                     event.itemList,
                     isFromContinueWatching = event.isFromContinueWatching,
+                    isPlayTrailer = event.isTrailer,
                     index = event.index
                 )
             }
@@ -178,6 +181,7 @@ class PlayerViewModel @Inject constructor(
     private fun updateOrLoadVideoPlayerData(
         itemList: List<PosterCardDto>,
         isFromContinueWatching: Boolean,
+        isPlayTrailer: Boolean,
         index: Int?,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -219,7 +223,23 @@ class PlayerViewModel @Inject constructor(
 
             try {
                 //  If URL and Related List are available  use directly And this is for Movies and its related from detail
-                if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
+
+                if (isPlayTrailer && hasUrl && itemList.size <= 1) {
+                    val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
+
+                    val title = videoPlayerDtoList.getOrNull(index ?: 0)?.title
+
+                    _state.value = _state.value.copy(
+                        videoPlayerDto = Resource.Success(
+                            PlayerDto(
+                                videoPlayerDtoList = videoPlayerDtoList,
+                                playerRelatedContentRowDto = PlayerRelatedContentRowDto(
+                                    title = "Next Up...", rowList = emptyList()
+                                ),
+                            )
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
+                    )
+                } else if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
                     Log.e(
                         "CONTINUE_WATCHING_CLICK",
                         "item has related and url  calling for isMovie"
@@ -244,7 +264,10 @@ class PlayerViewModel @Inject constructor(
                 }
                 //this is for series season episodes for all case i.e from detail and from related
                 else if (hasUrl && !isMovie && !isFromContinueWatching) {
-                    Log.e("CONTINUE_WATCHING_CLICK", "has Url and not movie and is Series episode")
+                    Log.e(
+                        "CONTINUE_WATCHING_CLICK",
+                        "has Url and not movie and is Series episode"
+                    )
                     Log.e(
                         "PLAYER_CONTINUE",
                         "item has url  calling for !isMovie with item index $index "
@@ -288,7 +311,8 @@ class PlayerViewModel @Inject constructor(
                     val relatedContentRowDtoList = relatedList.map { it.toRelatedItemDto() }
                     val currentPlayingItem =
                         cardDetail.data.toPosterCardDto().toVideoPlayerDto().copy(
-                            progress = if (isFromContinueWatching) firstItem.progress ?: 0 else 0
+                            progress = if (isFromContinueWatching) firstItem.progress
+                                ?: 0 else 0
                         )
 
                     val title = currentPlayingItem.title
@@ -355,13 +379,14 @@ class PlayerViewModel @Inject constructor(
 //                        }
 
                         // updating matched season episode to PosterCardDto and preserving progress
-                        val matchedSeasonUpdatedEpisodes = matchedSeasonEpisodes?.map { episode ->
-                            if (episode.slug == continueWatchingEpisodeSlug) {
-                                episode.toPosterDto().copy(progress = firstItem.progress)
-                            } else {
-                                episode.toPosterDto()
+                        val matchedSeasonUpdatedEpisodes =
+                            matchedSeasonEpisodes?.map { episode ->
+                                if (episode.slug == continueWatchingEpisodeSlug) {
+                                    episode.toPosterDto().copy(progress = firstItem.progress)
+                                } else {
+                                    episode.toPosterDto()
+                                }
                             }
-                        }
 
                         // Finding Resumed Index of continue watching item from all episodes
                         val resumeIndex =
@@ -395,7 +420,7 @@ class PlayerViewModel @Inject constructor(
                                     PlayerDto(
                                         videoPlayerDtoList = videoPlayList,
                                         playerRelatedContentRowDto = PlayerRelatedContentRowDto(
-                                            title = "Next Up...", rowList = relatedList
+                                            title = "Episodes...", rowList = relatedList
                                         )
                                     )
                                 ),

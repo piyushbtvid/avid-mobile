@@ -120,6 +120,8 @@ class DetailViewModel @Inject constructor(
                         val resumeSeasonEpisodes =
                             buildResumeEpisodes(newData.resumeInfo, seasonList)
 
+                        val firstSeasonTrailer = seasonList.firstOrNull()?.trailer
+
                         updateResumeUI(
                             progressSeconds = newData.resumeInfo?.progress_seconds?.toInt(),
                             resumeInfo = newData.resumeInfo
@@ -130,6 +132,7 @@ class DetailViewModel @Inject constructor(
                             selectedSeasonEpisodes = selectedSeasonEpisodes,
                             allSeasons = seasonList,
                             relatedSeries = relatedMovieList,
+                            firstSeasonTrailer = firstSeasonTrailer,
                             resumeSeasonEpisodes = resumeSeasonEpisodes.first,
                             resumeIndex = resumeSeasonEpisodes.second ?: 0,
                             firstSeasonEpisodes = selectedSeasonEpisodes
