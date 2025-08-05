@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.theme.focusedMainColor
+import com.faithForward.media.ui.theme.focusedTextColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.topBarTextFocusedStyle
 import com.faithForward.media.ui.theme.topBarTextUnFocusedStyle
@@ -39,6 +40,7 @@ fun TopBarItem(
     backgroundUnFocusedColor: Color,
     shadowColor: Color = focusedMainColor.copy(0.55f),
     borderColor: Color = focusedMainColor,
+    selectedTextColor: Color,
     textFocusedStyle: TextStyle = topBarTextFocusedStyle,
     textUnFocusedStyle: TextStyle = topBarTextUnFocusedStyle,
     onCategoryItemClick: (String) -> Unit,
@@ -51,7 +53,8 @@ fun TopBarItem(
     }
 
     val pillTextStyle = when (focusState) {
-        FocusState.SELECTED, FocusState.FOCUSED -> textFocusedStyle
+        FocusState.FOCUSED -> textFocusedStyle
+        FocusState.SELECTED -> textFocusedStyle.copy(color = selectedTextColor)
         FocusState.UNFOCUSED -> textUnFocusedStyle
         FocusState.UNDEFINED -> textUnFocusedStyle // Default to unfocused text color for UNDEFINED
     }
@@ -127,7 +130,10 @@ private fun TopBarItemPreview() {
             backgroundFocusedColor = whiteMain.copy(alpha = 0.55f),
             onCategoryItemClick = {
 
-            })
+            },
+            selectedTextColor = focusedTextColor
+
+        )
 
     }
 }

@@ -74,11 +74,11 @@ fun UniversalTopBarMainPage(
     ) {
 
 
-        if (liveFirstUrl.value.isNotEmpty()) {
-            UniversalPlayer(
-                videoUrlList = liveFirstUrl.value.filterNotNull()
-            )
-        }
+        //if (liveFirstUrl.value.isNotEmpty()) {
+        UniversalPlayer(
+            videoUrlList = listOf("https://rcntv-rcnmas-1-us.roku.wurl.tv//playlist.m3u8")
+        )
+        // }
 
         UniversalPageNavGraph(
             navController = navController,
@@ -89,6 +89,7 @@ fun UniversalTopBarMainPage(
             modifier = Modifier.padding(top = 20.dp),
             selectedPosition = selectedPosition,
             focusedIndex = topBarFocusedIndex,
+            selectedTextColor = whiteMain,
             onFocusedIndexChange = { int ->
                 topBarFocusedIndex = int
             },
@@ -105,12 +106,20 @@ fun UniversalTopBarMainPage(
                         launchSingleTop = true
                     }
                 }
+                if (item.tag == "browse") {
+                    //for returning to home
+                    onLeftClick.invoke()
+                }
             },
             onSelectedPositionClick = { int ->
                 selectedPosition = int
             },
             onTopBarUpClick = {
 
+            },
+            onTopBarLeftClick = {
+                //for returning to home
+                onLeftClick.invoke()
             }
         )
 

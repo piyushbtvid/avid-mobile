@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.liveTopBarTextFocusedStyle
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.universal_page.live.navigation.LiveNavGraph
@@ -94,11 +95,13 @@ fun LiveMainPage(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            TopBarRow(focusedIndex = topBarFocusedIndex,
+            TopBarRow(
+                focusedIndex = topBarFocusedIndex,
                 selectedPosition = selectedPosition,
                 onFocusedIndexChange = { int ->
                     topBarFocusedIndex = int
                 },
+                selectedTextColor = focusedMainColor,
                 topBarItemList = topBarList.value,
                 textFocusedStyle = liveTopBarTextFocusedStyle,
                 backgroundFocusedColor = Color.Transparent,
@@ -131,7 +134,8 @@ fun LiveMainPage(
                 onSelectedPositionClick = { int ->
                     selectedPosition = int
                 },
-                onTopBarUpClick = onTopBarUpClick
+                onTopBarUpClick = onTopBarUpClick,
+                onTopBarLeftClick = {}
 
             )
 

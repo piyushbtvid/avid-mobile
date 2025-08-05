@@ -48,9 +48,11 @@ fun TopBarRow(
     borderColor: Color = focusedMainColor,
     textFocusedStyle: TextStyle = topBarTextFocusedStyle,
     textUnFocusedStyle: TextStyle = topBarTextUnFocusedStyle,
+    selectedTextColor: Color,
     focusRequesterList: List<FocusRequester>,
     onTopBarUpClick: () -> Unit,
     onItemClick: (TopBarItemDto) -> Unit,
+    onTopBarLeftClick: () -> Unit,
     onSelectedPositionClick: (Int) -> Unit,
 ) {
 
@@ -99,6 +101,14 @@ fun TopBarRow(
                                 Log.e("ON_LEFT", "on up click")
                                 onTopBarUpClick.invoke()
                                 true
+                            } else if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.DirectionLeft) {
+                                if (index == 0) {
+                                    onTopBarLeftClick.invoke()
+                                    true
+                                } else {
+                                    false
+                                }
+
                             } else {
                                 false
                             }
@@ -114,7 +124,8 @@ fun TopBarRow(
                     shadowColor = shadowColor,
                     borderColor = borderColor,
                     textFocusedStyle = textFocusedStyle,
-                    textUnFocusedStyle = textUnFocusedStyle
+                    textUnFocusedStyle = textUnFocusedStyle,
+                    selectedTextColor = selectedTextColor
                 )
 
 
@@ -179,7 +190,9 @@ private fun TopBarPreview() {
         onTopBarUpClick = {},
         onSelectedPositionClick = {
 
-        }
+        },
+        selectedTextColor = focusedMainColor,
+        onTopBarLeftClick = {}
     )
 }
 

@@ -86,6 +86,8 @@ fun StreamRecommendationsColumn(
                         .onFocusChanged {
                             if (it.hasFocus) {
                                 lastFocusedIndex = index
+                            } else {
+                                lastFocusedIndex = -1
                             }
                         }
                         .focusable()
