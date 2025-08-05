@@ -25,6 +25,7 @@ import com.faithForward.media.ui.sections.myList.MyListPage
 import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
+import com.faithForward.media.ui.user_profile.AllProfileScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -35,6 +36,7 @@ import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.ProfileScreenViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
@@ -86,6 +88,16 @@ fun MainAppNavHost(
             }, onLoginPageOpenClick = {
                 navController.navigate(Routes.Login.route)
             })
+        }
+
+
+        composable(route = Routes.AllProfile.route) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            AllProfileScreen(
+                profileScreenViewModel = viewModel
+            )
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->

@@ -8,6 +8,7 @@ import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
+import com.faithForward.network.dto.profile.AllProfileResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
@@ -361,6 +362,22 @@ class NetworkRepository @Inject constructor(
         return apiServiceInterface.refreshToken(
             deviceId = deviceId, deviceType = deviceType, token = token, refreshToken = refreshToken
         )
+    }
+
+    suspend fun getAllProfiles(): Response<AllProfileResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        return apiServiceInterface.getUserAllProfiles(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token
+        )
+
     }
 
     suspend fun updateTokenSeason(

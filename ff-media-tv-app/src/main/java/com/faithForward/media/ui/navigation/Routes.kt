@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 
 sealed class Routes(val route: String) {
 
+    data object AllProfile : Routes("ALL_PROFILE_SCREEN")
     data object Home : Routes("HOME_SCREEN")
     data object Creator : Routes("CREATOR_SCREEN")
     data object Search : Routes("SEARCH_SCREEN")

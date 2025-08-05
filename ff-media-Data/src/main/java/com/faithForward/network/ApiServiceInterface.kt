@@ -14,6 +14,7 @@ import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
+import com.faithForward.network.dto.profile.AllProfileResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
@@ -234,5 +235,12 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<CommanListResponse>
 
+
+    @GET(Constants.GET_ALL_PROFILES_END_POINT)
+    suspend fun getUserAllProfiles(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+    ): Response<AllProfileResponse>
 
 }
