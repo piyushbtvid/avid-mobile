@@ -41,6 +41,7 @@ import com.faithForward.util.Resource
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
+    onPlayTrailerClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
     onWatchNowClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
     onResumeNowClick: (PosterCardDto?, List<PosterCardDto>?, index: Int) -> Unit,
     onRelatedItemClick: (PosterCardDto) -> Unit,
@@ -107,6 +108,21 @@ fun DetailScreen(
 
         is Resource.Success -> {
             val detailPageItem = cardDetail.data as? DetailPageItem.Card ?: return
+            val showPlayTrailer = when {
+                detailPageItem.detailDto.isSeries == true && relatedContentData is RelatedContentData.SeriesSeasons -> {
+                    Log.e("RESUME_INFO", "on watch Now click in detail for series")
+                    !(relatedContentData as RelatedContentData.SeriesSeasons).firstSeasonTrailer.isNullOrEmpty()
+                }
+
+                !detailPageItem.detailDto.itemTrailer.isNullOrEmpty() -> {
+                    true
+                }
+
+                else -> {
+                    false
+                }
+            }
+
             Box(modifier = modifier.fillMaxSize()) {
                 DetailContent(
                     detailDto = detailPageItem.detailDto,
@@ -114,6 +130,7 @@ fun DetailScreen(
                     resumeBtnFocusRequester = resumeNowBtnFocusRequester,
                     isContentVisible = uiState.isContentVisible,
                     isResumeVisible = uiState.isResumeVisible,
+                    isPlayTrailerButtonShow = showPlayTrailer,
                     resumeNowTxt = resumeTxt.value,
                     modifier = Modifier.fillMaxSize(),
                     onWatchNowClick = {
@@ -175,12 +192,49 @@ fun DetailScreen(
                             )
                         }
                     },
+                    onPlayTrailer = {
+                        if (detailPageItem.detailDto.isSeries == true) {
+                            Log.e("RESUME_INFO", "on watch Now click in deatil for series ")
+                            if (relatedContentData is RelatedContentData.SeriesSeasons) {
+                                onPlayTrailerClick.invoke(
+                                    PosterCardDto(
+                                        videoHlsUrl = (relatedContentData as RelatedContentData.SeriesSeasons).firstSeasonTrailer,
+                                        id = detailPageItem.detailDto.id,
+                                        slug = detailPageItem.detailDto.slug,
+                                        posterImageSrc = "",
+                                        landScapeImg = "",
+                                        title = detailPageItem.detailDto.title ?: "",
+                                        description = ""
+                                    ),
+                                    null,
+                                    0
+                                )
+                            }
+                        } else {
+                            onPlayTrailerClick.invoke(
+                                PosterCardDto(
+                                    videoHlsUrl = detailPageItem.detailDto.itemTrailer,
+                                    id = detailPageItem.detailDto.id,
+                                    slug = detailPageItem.detailDto.slug,
+                                    posterImageSrc = "",
+                                    landScapeImg = "",
+                                    title = detailPageItem.detailDto.title ?: "",
+                                    description = ""
+                                ),
+                                null,
+                                0
+                            )
+                        }
+                    },
                     onWatchNowFocusChange = { hasFocus ->
                         if (hasFocus) {
                             lastFocusedItem = -1
                         }
                     },
                     onResumeNowFocusChange = { boolean ->
+                    },
+                    onPlayTrailerFocusChange = { boolean ->
+
                     },
                     onToggleFavorite = {
                         if (detailPageItem.detailDto.slug != null) {

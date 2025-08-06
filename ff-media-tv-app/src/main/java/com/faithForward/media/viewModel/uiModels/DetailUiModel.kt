@@ -25,6 +25,7 @@ sealed interface RelatedContentData {
         val resumeSeasonEpisodes: List<PosterCardDto>,
         val allSeasons: List<SeasonDto>,
         val relatedSeries: List<PosterCardDto>,
+        val firstSeasonTrailer: String? = null,
         val resumeIndex: Int,
     ) : RelatedContentData
 
@@ -72,6 +73,7 @@ fun CardDetail.toDetailDto(): DetailDto {
         isSeries = data.content_type == "Series" || data.content_type == "Episode",
         contentType = data.content_type,
         progress = data.progressSeconds,
+        itemTrailer = data.trailer?.playLink,
         relatedList = relatedList)
 }
 
@@ -103,7 +105,8 @@ fun Season.toSeasonDto(): SeasonDto {
             .map { currentEpisode ->
                 currentEpisode.toPosterDto()
             },
-        seasonNumber = season_number
+        seasonNumber = season_number,
+        trailer = trailer?.playLink
     )
 }
 

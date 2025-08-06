@@ -112,6 +112,8 @@ interface ApiServiceInterface {
     ): Response<GenreResponse>
 
 
+    //for getting detail of every thing movie , series etc
+
     @GET(Constants.GIVEN_ITEM_DETAIL_END_POINT)
     suspend fun getGivenCardDetail(
         @Header("X-Device-Id") deviceId: String,
