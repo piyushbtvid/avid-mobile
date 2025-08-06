@@ -26,6 +26,7 @@ import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.ui.user_profile.AllProfileScreen
+import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -96,8 +97,21 @@ fun MainAppNavHost(
             val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
 
             AllProfileScreen(
+                profileScreenViewModel = viewModel,
+                onAddProfileClick = {
+                    navController.navigate(Routes.CreateProfile.route)
+                }
+            )
+        }
+
+        composable(route = Routes.CreateProfile.route) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            CreateProfileScreen(
                 profileScreenViewModel = viewModel
             )
+
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->

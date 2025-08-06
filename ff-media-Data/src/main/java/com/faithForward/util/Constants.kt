@@ -28,4 +28,6 @@ object Constants {
     const val REFRESH_TOKEN_POINT = "client/v1/refresh-token"
     const val CONTINUE_WATCHING_LIST_END_POINT = "client/v1/continue-watching"
     const val GET_ALL_PROFILES_END_POINT = "client/v1/subscribers/profiles"
+    const val CREATE_PROFILE_END_POINT = "client/v1/subscribers/profiles/create"
+    const val GET_ALL_AVATARS = "client/v1/avatars"
 }

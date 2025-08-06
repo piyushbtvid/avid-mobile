@@ -1,6 +1,7 @@
 package com.faithForward.media.viewModel.uiModels
 
 import com.faithForward.media.ui.user_profile.UserProfileUiItem
+import com.faithForward.network.dto.profile.AvatarItem
 import com.faithForward.network.dto.profile.Profile
 
 fun Profile.toUserProfileUiItem(): UserProfileUiItem {
@@ -13,4 +14,16 @@ fun Profile.toUserProfileUiItem(): UserProfileUiItem {
         name = name
     )
 
+}
+
+fun AvatarItem.toAvatarUiItem(): com.faithForward.media.ui.user_profile.create_profile.AvatarItem {
+    return com.faithForward.media.ui.user_profile.create_profile.AvatarItem(
+        imgSrc = image_url,
+        id = id
+    )
+}
+
+sealed class ProfileEvent {
+    data object GetAllProfiles : ProfileEvent()
+    data object GetAllAvatars : ProfileEvent()
 }

@@ -42,7 +42,7 @@ import com.faithForward.media.ui.theme.whiteMain
 
 
 enum class KeyboardActionState {
-    space, number, alphabet, clear
+    space, number, alphabet, clear , clearAll
 }
 
 @Composable

@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.user_profile
+package com.faithForward.media.ui.user_profile.create_profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,23 +21,22 @@ import com.faithForward.media.viewModel.uiModels.ProfileEvent
 import com.faithForward.util.Resource
 
 @Composable
-fun AllProfileScreen(
+fun CreateProfileScreen(
     modifier: Modifier = Modifier,
     profileScreenViewModel: ProfileScreenViewModel,
-    onAddProfileClick: () -> Unit,
 ) {
 
-
     LaunchedEffect(Unit) {
-        profileScreenViewModel.onEvent(ProfileEvent.GetAllProfiles)
+        profileScreenViewModel.onEvent(ProfileEvent.GetAllAvatars)
     }
 
-    val userProfileResponse by profileScreenViewModel.allProfiles.collectAsState()
+    val allAvatarsResponse by profileScreenViewModel.allAvatars.collectAsState()
 
-
-    if (userProfileResponse is Resource.Unspecified || userProfileResponse is Resource.Error || userProfileResponse is Resource.Loading) {
+    if (allAvatarsResponse is Resource.Unspecified || allAvatarsResponse is Resource.Error) {
         return
     }
+
+    val allAvatarsList = allAvatarsResponse.data ?: emptyList()
 
     Box(
         modifier = modifier
@@ -52,19 +51,22 @@ fun AllProfileScreen(
         ) {
 
             TitleText(
-                text = "Who's Watching?",
+                text = "Create Profile",
                 color = whiteMain,
                 fontWeight = FontWeight.ExtraBold,
                 textSize = 26,
                 lineHeight = 26
             )
-            if (userProfileResponse.data != null) {
-                AllProfileScreenRow(
-                    userProfileList = userProfileResponse.data!!,
-                    onAddProfileClick = onAddProfileClick
-                )
-            }
+
+
+            SelectAvatarRow(
+                avatarList = allAvatarsList
+            )
+
+
         }
+
+
     }
 
 

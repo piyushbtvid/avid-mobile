@@ -8,8 +8,11 @@ import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
+import com.faithForward.network.dto.profile.AllAvatarListResponse
 import com.faithForward.network.dto.profile.AllProfileResponse
+import com.faithForward.network.dto.profile.CreateProfileResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
+import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
@@ -377,8 +380,45 @@ class NetworkRepository @Inject constructor(
             deviceType = deviceType,
             token = token
         )
+    }
+
+    suspend fun createUserProfile(
+        userName: String,
+        avatarId: Int,
+    ): Response<CreateProfileResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        val createProfileRequest = CreateProfileRequest(
+            name = userName,
+            avatar = avatarId,
+            language = "english",
+            preferences = "",
+        )
+
+        return apiServiceInterface.createUserProfile(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token,
+            createProfileRequest = createProfileRequest
+        )
 
     }
+
+    suspend fun getAllAvatars(): Response<AllAvatarListResponse> {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+
+        return apiServiceInterface.getAllAvatars(
+            token = token
+        )
+    }
+
 
     suspend fun updateTokenSeason(
         newToken: String?,

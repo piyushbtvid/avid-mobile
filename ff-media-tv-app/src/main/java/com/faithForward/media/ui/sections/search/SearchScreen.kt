@@ -222,6 +222,7 @@ fun SearchScreenUi(
                             currentKeyboardMode = KeyboardMode.ALPHABET
                         }
 
+                        KeyboardActionState.clearAll -> {}
                     }
                 }
             )

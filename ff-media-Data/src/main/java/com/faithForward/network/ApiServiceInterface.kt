@@ -14,8 +14,11 @@ import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
+import com.faithForward.network.dto.profile.AllAvatarListResponse
 import com.faithForward.network.dto.profile.AllProfileResponse
+import com.faithForward.network.dto.profile.CreateProfileResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
+import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
@@ -242,5 +245,18 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
     ): Response<AllProfileResponse>
+
+    @POST(Constants.CREATE_PROFILE_END_POINT)
+    suspend fun createUserProfile(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Body createProfileRequest: CreateProfileRequest,
+    ): Response<CreateProfileResponse>
+
+    @GET(Constants.GET_ALL_AVATARS)
+    suspend fun getAllAvatars(
+        @Header("Authorization") token: String,
+    ): Response<AllAvatarListResponse>
 
 }
