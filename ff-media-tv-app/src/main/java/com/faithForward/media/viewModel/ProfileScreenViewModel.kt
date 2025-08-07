@@ -6,15 +6,20 @@ import androidx.lifecycle.viewModelScope
 import com.faithForward.media.ui.user_profile.UserProfileUiItem
 import com.faithForward.media.ui.user_profile.create_profile.AvatarItem
 import com.faithForward.media.viewModel.uiModels.ProfileEvent
+import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toAvatarUiItem
 import com.faithForward.media.viewModel.uiModels.toUserProfileUiItem
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +36,9 @@ class ProfileScreenViewModel @Inject constructor(
         MutableStateFlow(Resource.Unspecified())
     val allAvatars = _allAvatars.asStateFlow()
 
+    private val _uiEvent = MutableSharedFlow<UiEvent?>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
@@ -40,6 +48,13 @@ class ProfileScreenViewModel @Inject constructor(
 
             is ProfileEvent.GetAllAvatars -> {
                 getAllAvatars()
+            }
+
+            is ProfileEvent.CreateProfile -> {
+                createProfile(
+                    name = event.name,
+                    avatarId = event.avatarId
+                )
             }
         }
     }
@@ -91,5 +106,44 @@ class ProfileScreenViewModel @Inject constructor(
 
         }
     }
+
+    private fun createProfile(
+        name: String,
+        avatarId: Int,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = networkRepository.createUserProfile(
+                    userName = name,
+                    avatarId = avatarId
+                )
+                if (response.isSuccessful) {
+                    _uiEvent.emit(UiEvent(response.message()))
+                } else {
+                    val errorMessage = parseErrorMessage(response)
+                    _uiEvent.emit(UiEvent(errorMessage))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                _uiEvent.emit(UiEvent("Something went wrong!"))
+            }
+        }
+    }
+
+
+    private fun parseErrorMessage(response: Response<*>): String {
+        return try {
+            val errorJson = response.errorBody()?.string()
+            if (errorJson != null) {
+                val jsonObject = JSONObject(errorJson)
+                jsonObject.getString("message")
+            } else {
+                "Unknown error"
+            }
+        } catch (e: Exception) {
+            "SomeThing went wrong!"
+        }
+    }
+
 
 }

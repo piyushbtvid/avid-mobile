@@ -26,4 +26,8 @@ fun AvatarItem.toAvatarUiItem(): com.faithForward.media.ui.user_profile.create_p
 sealed class ProfileEvent {
     data object GetAllProfiles : ProfileEvent()
     data object GetAllAvatars : ProfileEvent()
+    data class CreateProfile(
+        val avatarId : Int,
+        val name : String,
+    ) : ProfileEvent()
 }

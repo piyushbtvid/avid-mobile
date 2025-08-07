@@ -33,6 +33,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.faithForward.media.R
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.util.FocusState
 
 data class AvatarItem(
@@ -43,11 +44,13 @@ data class AvatarItem(
 @Composable
 fun SelectAvatarRow(
     modifier: Modifier = Modifier,
+    onSelectProfileClick: (Int) -> Unit,
     avatarList: List<AvatarItem>,
 ) {
 
     var rowFocusedIndex by rememberSaveable { mutableStateOf(-1) }
 
+    var selectedIndex by rememberSaveable { mutableStateOf(-1) }
 
     LazyRow(
         modifier = modifier,
@@ -57,10 +60,13 @@ fun SelectAvatarRow(
 
         itemsIndexed(avatarList) { index, item ->
 
+
             val uiState = when (index) {
+                selectedIndex -> FocusState.SELECTED
                 rowFocusedIndex -> FocusState.FOCUSED
                 else -> FocusState.UNFOCUSED
             }
+
 
             val itemModifier = Modifier
                 .onFocusChanged {
@@ -69,7 +75,8 @@ fun SelectAvatarRow(
                 .clickable(
                     interactionSource = null, indication = null
                 ) {
-
+                    selectedIndex = index
+                    onSelectProfileClick.invoke(item.id)
                 }
                 .focusable()
 
@@ -94,12 +101,13 @@ fun AvatarUiItem(
 ) {
 
     val borderColor = when (uiState) {
-        FocusState.SELECTED, FocusState.FOCUSED -> Color.White
+        FocusState.FOCUSED -> Color.White
+        FocusState.SELECTED -> focusedMainColor
         FocusState.UNFOCUSED, FocusState.UNDEFINED -> Color.Transparent
     }
 
     val scaleFactor by animateFloatAsState(
-        targetValue = if (uiState == FocusState.FOCUSED) 1.1f else 1f,
+        targetValue = if (uiState == FocusState.FOCUSED || uiState == FocusState.SELECTED) 1.1f else 1f,
         animationSpec = tween(durationMillis = 200),
         label = "scaling avatar"
     )

@@ -1,6 +1,7 @@
 package com.faithForward.media.ui.user_profile.create_profile
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,18 +22,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.ui.commanComponents.CategoryCompose
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.commanComponents.TitleText
-import com.faithForward.media.ui.login.CustomTextField
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardMode
 import com.faithForward.media.ui.sections.search.custom_keyboard.NewKeyboardActionState
 import com.faithForward.media.ui.theme.detailNowTextStyle
@@ -55,6 +55,10 @@ fun CreateProfileScreen(
         profileScreenViewModel.onEvent(ProfileEvent.GetAllAvatars)
     }
 
+    val uiEvent by profileScreenViewModel.uiEvent.collectAsStateWithLifecycle(null)
+
+    val context =  LocalContext.current
+
     val allAvatarsResponse by profileScreenViewModel.allAvatars.collectAsState()
 
     if (allAvatarsResponse is Resource.Unspecified || allAvatarsResponse is Resource.Error) {
@@ -70,6 +74,17 @@ fun CreateProfileScreen(
     var textFieldValue by remember { mutableStateOf("") }
 
     var currentKeyBoardAlphabetSize by remember { mutableStateOf(NewKeyboardActionState.large) }
+
+    var selectedAvatarId by remember { mutableStateOf(-1) }
+
+    // Showing Toast when uiEvent changes
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
+            // detailViewModel.resetUiEvent()
+        }
+    }
 
     Box(
         modifier = modifier
@@ -93,7 +108,10 @@ fun CreateProfileScreen(
 
 
             SelectAvatarRow(
-                avatarList = allAvatarsList
+                avatarList = allAvatarsList,
+                onSelectProfileClick = { avatarId ->
+                    selectedAvatarId = avatarId
+                }
             )
 
             // tex field
@@ -180,7 +198,12 @@ fun CreateProfileScreen(
                 backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
                 textUnFocusedStyle = detailNowUnFocusTextStyle,
                 onCategoryItemClick = { id ->
-                    //onWatchNowClick.invoke(id)
+                    profileScreenViewModel.onEvent(
+                        ProfileEvent.CreateProfile(
+                            name = textFieldValue,
+                            avatarId = selectedAvatarId
+                        )
+                    )
                 },
                 focusState = if (isSubmitFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
             )
