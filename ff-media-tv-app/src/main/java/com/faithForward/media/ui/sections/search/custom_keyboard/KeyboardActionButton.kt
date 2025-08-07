@@ -41,15 +41,15 @@ import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.whiteMain
 
 
-enum class KeyboardActionState {
-    space, number, alphabet, clear , clearAll
+enum class NewKeyboardActionState {
+    space, number, alphabet, clear , clearAll  , small , large
 }
 
 @Composable
 fun KeyboardActionButton(
     modifier: Modifier = Modifier,
-    actionState: KeyboardActionState,
-    onClick: (KeyboardActionState) -> Unit,
+    actionState: NewKeyboardActionState,
+    onClick: (NewKeyboardActionState) -> Unit,
     searchResultLastFocusedIndex: Int,
     displayText: String? = null,
     firstFocusRequester: FocusRequester? = null,
@@ -64,7 +64,7 @@ fun KeyboardActionButton(
 
     LaunchedEffect(Unit) {
         try {
-            if ((actionState == KeyboardActionState.number || actionState == KeyboardActionState.alphabet) && searchResultLastFocusedIndex == -1) {
+            if ((actionState == NewKeyboardActionState.number || actionState == NewKeyboardActionState.alphabet) && searchResultLastFocusedIndex == -1) {
                 Log.e(
                     "SEARCH_RESULT",
                     "KEYboard button request Focus called with $searchResultLastFocusedIndex"
@@ -93,7 +93,7 @@ fun KeyboardActionButton(
         .onKeyEvent { keyEvent ->
             if (keyEvent.key == Key.DirectionRight && keyEvent.type == KeyEventType.KeyDown) {
                 Log.e("DIRECTION_RIGHT", "direction right clicked")
-                if (actionState == KeyboardActionState.clear) {
+                if (actionState == NewKeyboardActionState.clear) {
                     onRequestFocusOnFirst.invoke()
                     true
                 } else {
@@ -139,7 +139,7 @@ private fun ActionButtonPreview() {
     ) {
 
         KeyboardActionButton(
-            actionState = KeyboardActionState.number,
+            actionState = NewKeyboardActionState.number,
             displayText = "123",
             searchResultLastFocusedIndex = 1,
             onRequestFocusOnFirst = {},
@@ -147,7 +147,7 @@ private fun ActionButtonPreview() {
         )
 
         KeyboardActionButton(
-            actionState = KeyboardActionState.clear,
+            actionState = NewKeyboardActionState.clear,
             iconId = R.drawable.outline_backspace_24,
             searchResultLastFocusedIndex = 1,
             onRequestFocusOnFirst = {},
@@ -156,7 +156,7 @@ private fun ActionButtonPreview() {
 
 
         KeyboardActionButton(
-            actionState = KeyboardActionState.space,
+            actionState = NewKeyboardActionState.space,
             displayText = "Space",
             searchResultLastFocusedIndex = 1,
             onRequestFocusOnFirst = {},

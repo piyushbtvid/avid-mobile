@@ -23,8 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -33,7 +31,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.faithForward.media.ui.user_profile.UserProfileItem
+import coil3.request.error
+import com.faithForward.media.R
 import com.faithForward.media.util.FocusState
 
 data class AvatarItem(
@@ -123,7 +122,8 @@ fun AvatarUiItem(
             modifier = Modifier
                 .size(83.dp)
                 .clip(shape = RoundedCornerShape(150.dp)),
-            model = ImageRequest.Builder(LocalContext.current).data(imgSrc).crossfade(true).build(),
+            model = ImageRequest.Builder(LocalContext.current).data(imgSrc)
+                .error(R.drawable.test_avatar).crossfade(true).build(),
             contentDescription = "user avatar",
             contentScale = ContentScale.Crop,
         )

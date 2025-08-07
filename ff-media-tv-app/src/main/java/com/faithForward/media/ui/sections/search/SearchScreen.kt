@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyBoardUi
-import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardActionState
+import com.faithForward.media.ui.sections.search.custom_keyboard.NewKeyboardActionState
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardMode
 import com.faithForward.media.ui.sections.search.item.SearchItemDto
 import com.faithForward.media.ui.sections.search.recent.RecentSearch
@@ -202,27 +202,29 @@ fun SearchScreenUi(
                 onKeyBoardActionButtonClick = { state ->
 
                     when (state) {
-                        KeyboardActionState.space -> {
+                        NewKeyboardActionState.space -> {
                             searchInputText += " "
                         }
 
-                        KeyboardActionState.clear -> {
+                        NewKeyboardActionState.clear -> {
                             if (searchInputText.isNotEmpty()) {
                                 searchInputText = searchInputText.dropLast(1)
                             }
                         }
 
-                        KeyboardActionState.number -> {
+                        NewKeyboardActionState.number -> {
                             // switch to number keyboard layout
                             currentKeyboardMode = KeyboardMode.NUMBER
                         }
 
-                        KeyboardActionState.alphabet -> {
+                        NewKeyboardActionState.alphabet -> {
                             // switch to alphabet keyboard layout
                             currentKeyboardMode = KeyboardMode.ALPHABET
                         }
 
-                        KeyboardActionState.clearAll -> {}
+                        NewKeyboardActionState.clearAll -> {}
+                        NewKeyboardActionState.small -> {}
+                        NewKeyboardActionState.large -> {}
                     }
                 }
             )

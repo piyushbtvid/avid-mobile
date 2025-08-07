@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.user_profile.create_profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.R
-import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardActionState
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardMode
+import com.faithForward.media.ui.sections.search.custom_keyboard.NewKeyboardActionState
 import com.faithForward.media.ui.theme.focusedMainColor
-import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.whiteMain
 
 @Composable
@@ -44,13 +45,15 @@ fun InputKeyList(
     inputList: List<String>,
     onKeyPress: (String) -> Unit,
     keyboardMode: KeyboardMode = KeyboardMode.ALPHABET,
-    onBackspace: (KeyboardActionState) -> Unit
+    keyboardActionState: NewKeyboardActionState = NewKeyboardActionState.large,
+    onBackspace: (NewKeyboardActionState) -> Unit,
+    onUpPress: (NewKeyboardActionState) -> Unit,
 ) {
 
     val firstFocusRequester = remember { FocusRequester() }
 
     val chunkedInput = remember(inputList) {
-        inputList.chunked(7) // split into rows of 7 characters each
+        inputList.chunked(10) // split into rows of 7 characters each
     }
 
     var isClearFocused by remember { mutableStateOf(true) }
@@ -80,11 +83,28 @@ fun InputKeyList(
                 }
 
                 // Show Clear button conditionally
-                val shouldShowClear = (keyboardMode == KeyboardMode.ALPHABET && rowIndex == 3) ||
-                        (keyboardMode == KeyboardMode.NUMBER && rowIndex == 1)
+                val shouldShowClear = (keyboardMode == KeyboardMode.ALPHABET && rowIndex == 2) ||
+                        (keyboardMode == KeyboardMode.NUMBER && rowIndex == 0)
 
                 if (shouldShowClear) {
-                    Spacer(modifier = Modifier.width(24.dp))
+
+                    Spacer(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(28.dp)
+                    )
+
+                    UpButton(
+                        onKeyPress = {
+                            val newState = if (keyboardActionState == NewKeyboardActionState.large)
+                                NewKeyboardActionState.small
+                            else
+                                NewKeyboardActionState.large
+
+                            onUpPress.invoke(newState)
+                        }
+                    )
+
 
                     Box(
                         modifier = Modifier
@@ -104,7 +124,7 @@ fun InputKeyList(
                                     interactionSource = null,
                                     indication = null
                                 ) {
-                                    onBackspace(KeyboardActionState.clear)
+                                    onBackspace(NewKeyboardActionState.clear)
                                 },
                             painter = painterResource(R.drawable.clear_ic),
                             contentDescription = null,
@@ -125,7 +145,7 @@ fun KeyButton(
     modifier: Modifier = Modifier,
     text: String,
     focusRequester: FocusRequester,
-    onKeyPress: (String) -> Unit
+    onKeyPress: (String) -> Unit,
 ) {
 
     var isFocused by remember {
@@ -152,7 +172,7 @@ fun KeyButton(
     ) {
         Text(
             text = text,
-            color = if (isFocused) whiteMain else Color.White.copy(alpha = 0.85f),
+            color = if (isFocused) pageBlackBackgroundColor else Color.White.copy(alpha = 0.90f),
             fontSize = 14.sp,
             fontWeight = FontWeight.W500
         )
@@ -162,18 +182,58 @@ fun KeyButton(
 
 
 @Composable
+fun UpButton(
+    modifier: Modifier = Modifier,
+    onKeyPress: () -> Unit,
+) {
+
+    var isFocused by remember {
+        mutableStateOf(true)
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .width(24.dp)
+            .height(28.dp)
+            .background(
+                if (isFocused) Color.White else Color.Transparent,
+                shape = RoundedCornerShape(4.dp)
+            )
+            .onFocusChanged {
+                isFocused = it.hasFocus
+            }
+            .focusable()
+            .clickable(interactionSource = null, indication = null, onClick = {
+                Log.e("ON_UP","on up click")
+                onKeyPress.invoke()
+            })
+    ) {
+        Image(
+            modifier = Modifier,
+            painter = painterResource(R.drawable.up_arrow),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(
+                if (isFocused) pageBlackBackgroundColor else whiteMain
+            )
+        )
+    }
+
+}
+
+@Composable
 fun KeyBoardActionButton(
     modifier: Modifier = Modifier,
-    actionState: KeyboardActionState,
+    actionState: NewKeyboardActionState,
     displayText: String,
-    onClick: (KeyboardActionState) -> Unit,
+    onClick: (NewKeyboardActionState) -> Unit,
 ) {
 
     var isFocused by remember { mutableStateOf(false) }
 
     Box(modifier = modifier
         .background(
-            color = if (isFocused) focusedMainColor else unFocusMainColor,
+            color = if (isFocused) focusedMainColor else Color.White.copy(alpha = .33f),
             shape = RoundedCornerShape(6.dp)
         )
         .onFocusChanged {
@@ -187,7 +247,7 @@ fun KeyBoardActionButton(
 
         Text(
             text = displayText,
-            color = if (isFocused) Color.White else Color.White.copy(alpha = 0.85f),
+            color = if (isFocused) pageBlackBackgroundColor else Color.White.copy(alpha = 0.90f),
             fontSize = 14.sp,
             lineHeight = 14.sp,
             fontWeight = FontWeight.W500
