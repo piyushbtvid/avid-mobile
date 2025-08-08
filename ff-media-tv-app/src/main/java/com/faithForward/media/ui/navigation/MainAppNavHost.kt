@@ -62,7 +62,7 @@ fun MainAppNavHost(
     loginViewModel: LoginViewModel,
     sharedPlayerViewModel: SharedPlayerViewModel,
     sideBarViewModel: SideBarViewModel,
-    startRoute: String = Routes.Home.route,
+    startRoute: String = Routes.AllProfile.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
     onBackClickForExit: () -> Unit,
@@ -76,8 +76,8 @@ fun MainAppNavHost(
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
                 Log.e("GOING_TO_HOME", "going to home from Login screen ")
                 loginViewModel.checkRefreshToken()
-                navController.navigate(Routes.Home.route) {
-                    popUpTo(Routes.Login.route) { inclusive = true }
+                navController.navigate(Routes.AllProfile.route) {
+                    popUpTo(0) { inclusive = true }
                 }
             })
         }
@@ -88,8 +88,8 @@ fun MainAppNavHost(
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
                 loginViewModel.checkRefreshToken()
-                navController.navigate(Routes.Home.route) {
-                    popUpTo(Routes.Login.route) { inclusive = true }
+                navController.navigate(Routes.AllProfile.route) {
+                    popUpTo(0) { inclusive = true }
                 }
             }, onLoginPageOpenClick = {
                 navController.navigate(Routes.Login.route)
