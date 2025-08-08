@@ -56,6 +56,28 @@ class ProfileScreenViewModel @Inject constructor(
                     avatarId = event.avatarId
                 )
             }
+
+            is ProfileEvent.UpdateProfile -> {
+                updateProfile(
+                    name = event.name,
+                    avatarId = event.avatarId,
+                    profileId = event.profileId
+                )
+            }
+
+            is ProfileEvent.DeleteProfile -> {
+                deleteProfile(
+                    name = event.name,
+                    avatarId = event.avatarId,
+                    profileId = event.profileId
+                )
+            }
+
+            is ProfileEvent.SetProfile -> {
+                setProfile(
+                    profileId = event.profileId
+                )
+            }
         }
     }
 
@@ -131,9 +153,82 @@ class ProfileScreenViewModel @Inject constructor(
     }
 
 
-    private fun editProfile(){
+    private fun updateProfile(
+        profileId: Int,
+        name: String,
+        avatarId: Int,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = networkRepository.updateProfile(
+                    profileId = profileId,
+                    userName = name,
+                    avatarId = avatarId
+                )
+
+                if (response.isSuccessful) {
+
+                } else {
+
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+
+    private fun deleteProfile(
+        profileId: Int,
+        name: String,
+        avatarId: Int,
+    ) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = networkRepository.deleteProfile(
+                    profileId = profileId,
+                    userName = name,
+                    avatarId = avatarId
+                )
+
+                if (response.isSuccessful) {
+
+                } else {
+
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
 
     }
+
+    private fun setProfile(
+        profileId: Int,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = networkRepository.setProfile(
+                    profileId = profileId
+                )
+
+                if (response.isSuccessful) {
+
+                } else {
+
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
+        }
+    }
+
 
     private fun parseErrorMessage(response: Response<*>): String {
         return try {

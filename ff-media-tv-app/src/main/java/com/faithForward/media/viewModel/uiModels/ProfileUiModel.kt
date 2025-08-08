@@ -27,7 +27,23 @@ sealed class ProfileEvent {
     data object GetAllProfiles : ProfileEvent()
     data object GetAllAvatars : ProfileEvent()
     data class CreateProfile(
-        val avatarId : Int,
-        val name : String,
+        val avatarId: Int,
+        val name: String,
+    ) : ProfileEvent()
+
+    data class UpdateProfile(
+        val profileId: Int,
+        val name: String,
+        val avatarId: Int,
+    ) : ProfileEvent()
+
+    data class DeleteProfile(
+        val profileId: Int,
+        val name: String,
+        val avatarId: Int,
+    ) : ProfileEvent()
+
+    data class SetProfile(
+        val profileId: Int,
     ) : ProfileEvent()
 }

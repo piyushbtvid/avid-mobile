@@ -27,6 +27,8 @@ import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.ui.universal_page.UniversalTopBarMainPage
 import com.faithForward.media.ui.universal_page.live.LiveMainPage
+import com.faithForward.media.ui.user_profile.AllProfileScreen
+import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -37,6 +39,7 @@ import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.ProfileScreenViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
@@ -89,6 +92,28 @@ fun MainAppNavHost(
             }, onLoginPageOpenClick = {
                 navController.navigate(Routes.Login.route)
             })
+        }
+
+        composable(route = Routes.AllProfile.route) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            AllProfileScreen(
+                profileScreenViewModel = viewModel,
+                onAddProfileClick = {
+                    navController.navigate(Routes.CreateProfile.route)
+                }
+            )
+        }
+
+        composable(route = Routes.CreateProfile.route) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            CreateProfileScreen(
+                profileScreenViewModel = viewModel
+            )
+
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
