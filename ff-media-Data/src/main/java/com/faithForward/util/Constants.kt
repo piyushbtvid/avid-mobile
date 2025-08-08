@@ -30,4 +30,7 @@ object Constants {
     const val GET_ALL_PROFILES_END_POINT = "client/v1/subscribers/profiles"
     const val CREATE_PROFILE_END_POINT = "client/v1/subscribers/profiles/create"
     const val GET_ALL_AVATARS = "client/v1/avatars"
+    const val DELETE_PROFILE = "client/v1/subscribers/profiles/{id}"
+    const val UPDATE_PROFILE = "client/v1/subscribers/profiles/{profile_id}"
+    const val SET_PROFILE = "client/v1/subscribers/profiles/set/{profile_id}"
 }

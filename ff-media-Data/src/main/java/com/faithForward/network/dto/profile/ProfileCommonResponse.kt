@@ -1,6 +1,6 @@
 package com.faithForward.network.dto.profile
 
-data class CreateProfileResponse(
+data class ProfileCommonResponse(
     val status: String,
     val message: String,
     val data: Profile,

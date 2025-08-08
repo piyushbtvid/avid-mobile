@@ -16,7 +16,7 @@ import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.profile.AllAvatarListResponse
 import com.faithForward.network.dto.profile.AllProfileResponse
-import com.faithForward.network.dto.profile.CreateProfileResponse
+import com.faithForward.network.dto.profile.ProfileCommonResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
@@ -252,11 +252,38 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
         @Body createProfileRequest: CreateProfileRequest,
-    ): Response<CreateProfileResponse>
+    ): Response<ProfileCommonResponse>
 
     @GET(Constants.GET_ALL_AVATARS)
     suspend fun getAllAvatars(
         @Header("Authorization") token: String,
     ): Response<AllAvatarListResponse>
+
+    @DELETE(Constants.DELETE_PROFILE)
+    suspend fun deleteProfile(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Body createProfileRequest: CreateProfileRequest,
+        @Path("id") profileId: Int,
+    ): Response<ApiMessageResponse>
+
+
+    @POST(Constants.UPDATE_PROFILE)
+    suspend fun updateProfile(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Body createProfileRequest: CreateProfileRequest,
+        @Path("profile_id") profileId: Int,
+    ): Response<ProfileCommonResponse>
+
+    @POST(Constants.SET_PROFILE)
+    suspend fun setProfile(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Path("profile_id") profileId: Int,
+    ): Response<ProfileCommonResponse>
 
 }

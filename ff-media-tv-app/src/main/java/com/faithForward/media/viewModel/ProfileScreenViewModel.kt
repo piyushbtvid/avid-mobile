@@ -131,6 +131,10 @@ class ProfileScreenViewModel @Inject constructor(
     }
 
 
+    private fun editProfile(){
+
+    }
+
     private fun parseErrorMessage(response: Response<*>): String {
         return try {
             val errorJson = response.errorBody()?.string()

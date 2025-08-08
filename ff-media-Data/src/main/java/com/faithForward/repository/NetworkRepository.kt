@@ -10,7 +10,7 @@ import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.profile.AllAvatarListResponse
 import com.faithForward.network.dto.profile.AllProfileResponse
-import com.faithForward.network.dto.profile.CreateProfileResponse
+import com.faithForward.network.dto.profile.ProfileCommonResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
 import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
@@ -385,7 +385,7 @@ class NetworkRepository @Inject constructor(
     suspend fun createUserProfile(
         userName: String,
         avatarId: Int,
-    ): Response<CreateProfileResponse> {
+    ): Response<ProfileCommonResponse> {
 
         val userSession = userPreferences.getUserSession()
         val token =
@@ -408,6 +408,85 @@ class NetworkRepository @Inject constructor(
         )
 
     }
+
+
+    suspend fun updateProfile(
+        profileId: Int,
+        userName: String,
+        avatarId: Int,
+    ): Response<ProfileCommonResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        val createProfileRequest = CreateProfileRequest(
+            name = userName,
+            avatar = avatarId,
+            language = "english",
+            preferences = "",
+        )
+
+        return apiServiceInterface.updateProfile(
+            token = token,
+            deviceId = deviceId,
+            deviceType = deviceType,
+            createProfileRequest = createProfileRequest,
+            profileId = profileId
+        )
+
+    }
+
+    suspend fun deleteProfile(
+        profileId: Int,
+        userName: String,
+        avatarId: Int,
+    ): Response<ApiMessageResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        val createProfileRequest = CreateProfileRequest(
+            name = userName,
+            avatar = avatarId,
+            language = "english",
+            preferences = "",
+        )
+
+
+        return apiServiceInterface.deleteProfile(
+            token = token,
+            deviceId = deviceId,
+            deviceType = deviceType,
+            createProfileRequest = createProfileRequest,
+            profileId = profileId
+        )
+
+    }
+
+    suspend fun setProfile(
+        profileId: Int,
+    ): Response<ProfileCommonResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        return apiServiceInterface.setProfile(
+            token = token,
+            deviceId = deviceId,
+            deviceType = deviceType,
+            profileId = profileId
+        )
+    }
+
 
     suspend fun getAllAvatars(): Response<AllAvatarListResponse> {
         val userSession = userPreferences.getUserSession()
