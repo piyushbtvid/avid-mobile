@@ -22,12 +22,13 @@ sealed class Routes(val route: String) {
     data class UpdateProfile(
         val avatarId: Int,
         val userName: String,
-        val profileId: Int
-    ) : Routes("update_profile/$avatarId/$userName/$profileId") {
+        val profileId: Int,
+        val isDefaultProfile : Boolean
+    ) : Routes("update_profile/$avatarId/$userName/$profileId/$isDefaultProfile") {
 
         companion object {
             const val ROUTE_BASE = "update_profile"
-            const val FULL_ROUTE = "$ROUTE_BASE/{avatarId}/{userName}/{profileId}"
+            const val FULL_ROUTE = "$ROUTE_BASE/{avatarId}/{userName}/{profileId}/{isDefaultProfile}"
         }
     }
 

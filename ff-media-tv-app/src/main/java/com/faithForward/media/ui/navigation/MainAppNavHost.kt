@@ -133,7 +133,7 @@ fun MainAppNavHost(
             EditProfileScreen(
                 profileScreenViewModel = viewModel,
                 onItemClick = { item ->
-                    navController.navigate("update_profile/${item.avatarId}/${item.name}/${item.id}")
+                    navController.navigate("update_profile/${item.avatarId}/${item.name}/${item.id}/${item.isDefault}")
                 }
             )
 
@@ -145,7 +145,8 @@ fun MainAppNavHost(
             arguments = listOf(
                 navArgument("avatarId") { type = NavType.IntType },
                 navArgument("userName") { type = NavType.StringType },
-                navArgument("profileId") { type = NavType.IntType }
+                navArgument("profileId") { type = NavType.IntType },
+                navArgument("isDefaultProfile"){type = NavType.BoolType}
             )
         ) { backStackEntry ->
 
@@ -154,12 +155,14 @@ fun MainAppNavHost(
             val avatarId = backStackEntry.arguments?.getInt("avatarId") ?: -1
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
             val profileId = backStackEntry.arguments?.getInt("profileId") ?: -1
+            val isDefaultProfile = backStackEntry.arguments?.getBoolean("isDefaultProfile") ?: false
 
             UpdateProfileScreen(
                 profileScreenViewModel = viewModel,
                 avatarId = avatarId,
                 userName = userName,
                 profileId = profileId,
+                isDefaultProfile = isDefaultProfile,
                 onDeleteSuccess = {
                     navController.popBackStack()
                 }

@@ -56,7 +56,8 @@ fun UpdateProfileScreen(
     avatarId: Int,
     userName: String,
     profileId: Int,
-    onDeleteSuccess : () -> Unit
+    isDefaultProfile: Boolean = false,
+    onDeleteSuccess: () -> Unit,
 ) {
 
     LaunchedEffect(Unit) {
@@ -133,11 +134,9 @@ fun UpdateProfileScreen(
 
 
             SelectAvatarRow(
-                avatarList = allAvatarsList,
-                onSelectProfileClick = { avatarId ->
+                avatarList = allAvatarsList, onSelectProfileClick = { avatarId ->
                     selectedAvatarId = avatarId
-                },
-                defaultSelectedIndex = selectedAvatarIndex
+                }, defaultSelectedIndex = selectedAvatarIndex
             )
 
             // tex field
@@ -149,8 +148,7 @@ fun UpdateProfileScreen(
                         color = Color.White.copy(alpha = 0.35f), // adjust background as needed
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(horizontal = 5.dp),
-                contentAlignment = Alignment.CenterStart
+                    .padding(horizontal = 5.dp), contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     text = if (textFieldValue.isNotEmpty()) textFieldValue else "Enter profile name",
@@ -162,10 +160,9 @@ fun UpdateProfileScreen(
             }
 
 
-            CustomKeyBoard(
-                onKeyClick = { string ->
-                    textFieldValue += string
-                },
+            CustomKeyBoard(onKeyClick = { string ->
+                textFieldValue += string
+            },
                 currentKeyboardMode = currentKeyboardMode,
                 onCurrentKeyBoardModeChange = { keyboardMode ->
                     currentKeyboardMode = keyboardMode
@@ -209,8 +206,7 @@ fun UpdateProfileScreen(
                         }
                     }
 
-                }
-            )
+                })
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -238,28 +234,30 @@ fun UpdateProfileScreen(
                     focusState = if (isSubmitFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
                 )
 
-
-                CategoryCompose(modifier = Modifier
-                    .onFocusChanged {
-                        isDeleteFocused = it.hasFocus
-                    }
-                    .focusable(),
-                    categoryComposeDto = CategoryComposeDto(btnText = "Delete", id = ""),
-                    backgroundFocusedColor = focusedMainColor,
-                    textFocusedStyle = detailNowTextStyle,
-                    backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
-                    textUnFocusedStyle = detailNowUnFocusTextStyle,
-                    onCategoryItemClick = { id ->
-                        profileScreenViewModel.onEvent(
-                            ProfileEvent.DeleteProfile(
-                                name = textFieldValue,
-                                avatarId = selectedAvatarId,
-                                profileId = profileId,
+                if (!isDefaultProfile) {
+                    CategoryCompose(modifier = Modifier
+                        .onFocusChanged {
+                            isDeleteFocused = it.hasFocus
+                        }
+                        .focusable(),
+                        categoryComposeDto = CategoryComposeDto(btnText = "Delete", id = ""),
+                        backgroundFocusedColor = focusedMainColor,
+                        textFocusedStyle = detailNowTextStyle,
+                        backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
+                        textUnFocusedStyle = detailNowUnFocusTextStyle,
+                        onCategoryItemClick = { id ->
+                            profileScreenViewModel.onEvent(
+                                ProfileEvent.DeleteProfile(
+                                    name = textFieldValue,
+                                    avatarId = selectedAvatarId,
+                                    profileId = profileId,
+                                )
                             )
-                        )
-                    },
-                    focusState = if (isDeleteFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
-                )
+                        },
+                        focusState = if (isDeleteFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                    )
+
+                }
 
             }
 
