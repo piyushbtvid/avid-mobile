@@ -23,7 +23,9 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.request.crossfade
+import coil3.request.error
 import coil3.size.Size
+import com.faithForward.media.R
 
 
 @Composable
@@ -82,11 +84,12 @@ internal fun LoadImage(
     @DrawableRes imageResId: Int? = null,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Crop,
-    colorFilter: ColorFilter? = null
+    colorFilter: ColorFilter? = null,
 ) {
     when {
         imageUrl.isNullOrBlank().not() -> {
-            URLImage(imageUrl!!,
+            URLImage(
+                imageUrl!!,
                 modifier = modifier,
                 contentScale = contentScale,
                 colorFilter = colorFilter,

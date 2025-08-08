@@ -92,7 +92,8 @@ fun CreatorScreen(
             onCreatorItemClick = onCreatorItemClick,
             onSearchClick = {
                 onSearchClick.invoke()
-            }
+            },
+            onMicDoubleUpClick = {}
         )
     }
 }

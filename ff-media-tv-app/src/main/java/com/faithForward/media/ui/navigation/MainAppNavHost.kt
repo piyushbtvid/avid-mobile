@@ -25,8 +25,8 @@ import com.faithForward.media.ui.sections.myList.MyListPage
 import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
-import com.faithForward.media.ui.user_profile.AllProfileScreen
-import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
+import com.faithForward.media.ui.universal_page.UniversalTopBarMainPage
+import com.faithForward.media.ui.universal_page.live.LiveMainPage
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -37,11 +37,11 @@ import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
-import com.faithForward.media.viewModel.ProfileScreenViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
@@ -89,29 +89,6 @@ fun MainAppNavHost(
             }, onLoginPageOpenClick = {
                 navController.navigate(Routes.Login.route)
             })
-        }
-
-
-        composable(route = Routes.AllProfile.route) { navBackStackEntry ->
-
-            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
-
-            AllProfileScreen(
-                profileScreenViewModel = viewModel,
-                onAddProfileClick = {
-                    navController.navigate(Routes.CreateProfile.route)
-                }
-            )
-        }
-
-        composable(route = Routes.CreateProfile.route) { navBackStackEntry ->
-
-            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
-
-            CreateProfileScreen(
-                profileScreenViewModel = viewModel
-            )
-
         }
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
@@ -167,6 +144,10 @@ fun MainAppNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onMicDoubleUpClick = {
+                    Log.e("DOUBLE", "on double up clicked")
+                    navController.navigate(Routes.Universal.route)
                 }
 
             )
@@ -568,11 +549,8 @@ fun MainAppNavHost(
         composable(
             route = Routes.MyAccount.route
         ) { backStackEntry ->
-
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
-
-            MyAccountScreen(
-                myAccountViewModel = myAccountViewModel,
+            MyAccountScreen(myAccountViewModel = myAccountViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -593,9 +571,32 @@ fun MainAppNavHost(
                         navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
                 })
+        }
 
+        composable(route = Routes.Universal.route) { backStackEntry ->
+
+            val universalViewModel: UniversalViewModel = hiltViewModel(backStackEntry)
+
+            UniversalTopBarMainPage(universalViewModel = universalViewModel, onSearchClick = {
+
+            }, onLiveClick = {
+                navController.navigate(Routes.Live.route)
+            }, onLeftClick = {
+                navController.popBackStack()
+            }
+
+            )
+        }
+
+        composable(route = Routes.Live.route) {
+            LiveMainPage(
+                onTopBarUpClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
     }
+
 
 }

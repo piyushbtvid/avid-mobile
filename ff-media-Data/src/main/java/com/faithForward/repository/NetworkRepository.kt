@@ -527,4 +527,6 @@ class NetworkRepository @Inject constructor(
         )
 
     }
+
+    suspend fun getEpgData() = apiServiceInterface.getEpgData()
 }

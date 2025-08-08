@@ -81,9 +81,37 @@ val pillTextUnFocusedStyle = TextStyle(
     color = pillButtonTextUnFocusColor
 )
 
+val topBarTextFocusedStyle = TextStyle(
+    fontSize = 10.sp,
+    fontWeight = FontWeight.Bold,
+    lineHeight = 10.sp,
+    color = focusedMainColor
+)
+
+val topBarTextUnFocusedStyle = TextStyle(
+    fontSize = 10.sp,
+    lineHeight = 10.sp,
+    fontWeight = FontWeight.Bold,
+    color = blackColor
+)
+
+val liveTopBarTextFocusedStyle = TextStyle(
+    fontSize = 10.sp,
+    fontWeight = FontWeight.Bold,
+    lineHeight = 10.sp,
+    color = whiteMain
+)
+
+val liveTopBarTextUnFocusedStyle = TextStyle(
+    fontSize = 10.sp,
+    lineHeight = 10.sp,
+    fontWeight = FontWeight.Bold,
+    color = blackColor
+)
+
 val watchNowTextStyle = TextStyle(
-    fontSize = 15.sp,
-    color = focusedTextColor
+    fontSize = 10.sp,
+    color = pillButtonTextUnFocusColor
 )
 
 val detailNowTextStyle = TextStyle(

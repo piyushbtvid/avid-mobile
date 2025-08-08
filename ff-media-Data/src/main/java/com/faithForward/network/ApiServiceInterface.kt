@@ -9,16 +9,13 @@ import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.creator.CreatorResponse
 import com.faithForward.network.dto.creator.CreatorsListApiResponse
 import com.faithForward.network.dto.detail.CardDetail
+import com.faithForward.network.dto.epg.EpgResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
-import com.faithForward.network.dto.profile.AllAvatarListResponse
-import com.faithForward.network.dto.profile.AllProfileResponse
-import com.faithForward.network.dto.profile.ProfileCommonResponse
 import com.faithForward.network.dto.request.ContinueWatchingRequest
-import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
@@ -239,51 +236,7 @@ interface ApiServiceInterface {
     ): Response<CommanListResponse>
 
 
-    @GET(Constants.GET_ALL_PROFILES_END_POINT)
-    suspend fun getUserAllProfiles(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-    ): Response<AllProfileResponse>
-
-    @POST(Constants.CREATE_PROFILE_END_POINT)
-    suspend fun createUserProfile(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-        @Body createProfileRequest: CreateProfileRequest,
-    ): Response<ProfileCommonResponse>
-
-    @GET(Constants.GET_ALL_AVATARS)
-    suspend fun getAllAvatars(
-        @Header("Authorization") token: String,
-    ): Response<AllAvatarListResponse>
-
-    @DELETE(Constants.DELETE_PROFILE)
-    suspend fun deleteProfile(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-        @Body createProfileRequest: CreateProfileRequest,
-        @Path("id") profileId: Int,
-    ): Response<ApiMessageResponse>
-
-
-    @POST(Constants.UPDATE_PROFILE)
-    suspend fun updateProfile(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-        @Body createProfileRequest: CreateProfileRequest,
-        @Path("profile_id") profileId: Int,
-    ): Response<ProfileCommonResponse>
-
-    @POST(Constants.SET_PROFILE)
-    suspend fun setProfile(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-        @Path("profile_id") profileId: Int,
-    ): Response<ProfileCommonResponse>
+    @GET(Constants.GET_EPG_DATA)
+    suspend fun getEpgData(): Response<EpgResponse>
 
 }
