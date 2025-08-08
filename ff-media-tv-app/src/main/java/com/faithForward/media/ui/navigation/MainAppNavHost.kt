@@ -28,7 +28,6 @@ import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.ui.universal_page.UniversalTopBarMainPage
 import com.faithForward.media.ui.universal_page.live.LiveMainPage
 import com.faithForward.media.ui.user_profile.AllProfileScreen
-import com.faithForward.media.ui.user_profile.comman.EditProfile
 import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
 import com.faithForward.media.ui.user_profile.edit_profile.EditProfileScreen
 import com.faithForward.media.ui.user_profile.edit_profile.UpdateProfileScreen
@@ -108,6 +107,9 @@ fun MainAppNavHost(
                 },
                 onManageProfileClick = {
                     navController.navigate(Routes.EditProfile.route)
+                },
+                onSetProfileSuccess = {
+                    navController.navigate(Routes.Home.route)
                 }
             )
         }

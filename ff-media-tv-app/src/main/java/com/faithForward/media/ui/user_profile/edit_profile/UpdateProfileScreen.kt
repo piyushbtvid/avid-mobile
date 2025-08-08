@@ -88,10 +88,6 @@ fun UpdateProfileScreen(
         mutableIntStateOf(allAvatarsList.indexOfFirst { it.id == avatarId })
     }
 
-    LaunchedEffect(Unit) {
-        Log.e("SELECTED_AVATAR", "selected avatar index is $selectedAvatarId and id $avatarId")
-    }
-
 
 
     LaunchedEffect(uiEvent) {

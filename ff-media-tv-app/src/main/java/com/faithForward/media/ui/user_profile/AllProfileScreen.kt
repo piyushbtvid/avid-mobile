@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.user_profile
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.faithForward.media.ui.commanComponents.CategoryCompose
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.commanComponents.TitleText
@@ -40,6 +43,7 @@ fun AllProfileScreen(
     profileScreenViewModel: ProfileScreenViewModel,
     onAddProfileClick: () -> Unit,
     onManageProfileClick: () -> Unit,
+    onSetProfileSuccess: () -> Unit,
 ) {
 
 
@@ -47,7 +51,11 @@ fun AllProfileScreen(
         profileScreenViewModel.onEvent(ProfileEvent.GetAllProfiles)
     }
 
+    val context = LocalContext.current
+
     val userProfileResponse by profileScreenViewModel.allProfiles.collectAsState()
+
+    val uiEvent by profileScreenViewModel.uiEvent.collectAsStateWithLifecycle(null)
 
 
     if (userProfileResponse is Resource.Unspecified || userProfileResponse is Resource.Error || userProfileResponse is Resource.Loading) {
@@ -55,6 +63,14 @@ fun AllProfileScreen(
     }
 
     var isManageFocused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            onSetProfileSuccess.invoke()
+        }
+    }
+
 
     Box(
         modifier = modifier
@@ -81,7 +97,11 @@ fun AllProfileScreen(
                     shouldShowAddProfileButton = true,
                     onAddProfileClick = onAddProfileClick,
                     onItemClick = { item ->
-
+                        profileScreenViewModel.onEvent(
+                            ProfileEvent.SetProfile(
+                                item.id
+                            )
+                        )
                     }
                 )
             }

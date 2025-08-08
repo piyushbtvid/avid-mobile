@@ -229,8 +229,8 @@ class ProfileScreenViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _uiEvent.emit(UiEvent(response.body()?.message ?: ""))
                 } else {
-                    val errorMessage = parseErrorMessage(response)
-                    _uiEvent.emit(UiEvent(errorMessage))
+//                    val errorMessage = parseErrorMessage(response)
+//                    _uiEvent.emit(UiEvent(errorMessage))
                 }
 
             } catch (ex: Exception) {
