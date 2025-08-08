@@ -269,7 +269,6 @@ interface ApiServiceInterface {
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
-        @Body createProfileRequest: CreateProfileRequest,
         @Path("id") profileId: Int,
     ): Response<ApiMessageResponse>
 

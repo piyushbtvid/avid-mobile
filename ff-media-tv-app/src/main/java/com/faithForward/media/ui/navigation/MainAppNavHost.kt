@@ -160,6 +160,9 @@ fun MainAppNavHost(
                 avatarId = avatarId,
                 userName = userName,
                 profileId = profileId,
+                onDeleteSuccess = {
+                    navController.popBackStack()
+                }
             )
         }
 

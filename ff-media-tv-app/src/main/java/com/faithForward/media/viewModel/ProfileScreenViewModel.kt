@@ -40,6 +40,9 @@ class ProfileScreenViewModel @Inject constructor(
     )
     val uiEvent = _uiEvent.asSharedFlow()
 
+    private val _deleteUiEvent = MutableSharedFlow<UiEvent?>(
+    )
+    val deleteUiEvent = _deleteUiEvent.asSharedFlow()
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
@@ -203,7 +206,7 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-                    _uiEvent.emit(UiEvent(response.body()?.message ?: ""))
+                    _deleteUiEvent.emit(UiEvent(response.body()?.message ?: ""))
                 } else {
                     val errorMessage = parseErrorMessage(response)
                     _uiEvent.emit(UiEvent(errorMessage))

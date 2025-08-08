@@ -66,7 +66,7 @@ fun AllProfileScreen(
 
     LaunchedEffect(uiEvent) {
         uiEvent?.let { event ->
-            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+           // Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             onSetProfileSuccess.invoke()
         }
     }

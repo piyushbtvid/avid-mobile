@@ -7,6 +7,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -55,6 +56,7 @@ fun UpdateProfileScreen(
     avatarId: Int,
     userName: String,
     profileId: Int,
+    onDeleteSuccess : () -> Unit
 ) {
 
     LaunchedEffect(Unit) {
@@ -62,6 +64,7 @@ fun UpdateProfileScreen(
     }
 
     val uiEvent by profileScreenViewModel.uiEvent.collectAsStateWithLifecycle(null)
+    val deleteUiEvent by profileScreenViewModel.deleteUiEvent.collectAsStateWithLifecycle(null)
 
     val context = LocalContext.current
 
@@ -76,6 +79,7 @@ fun UpdateProfileScreen(
     var currentKeyboardMode by remember { mutableStateOf(KeyboardMode.ALPHABET) }
 
     var isSubmitFocused by remember { mutableStateOf(false) }
+    var isDeleteFocused by remember { mutableStateOf(false) }
 
     var textFieldValue by remember { mutableStateOf(userName) }
 
@@ -95,6 +99,14 @@ fun UpdateProfileScreen(
             Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             delay(200)
             profileScreenViewModel.resetUiEvent()
+        }
+    }
+
+    LaunchedEffect(deleteUiEvent) {
+        deleteUiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            delay(200)
+            onDeleteSuccess.invoke()
         }
     }
 
@@ -200,28 +212,57 @@ fun UpdateProfileScreen(
                 }
             )
 
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
 
-            CategoryCompose(modifier = Modifier
-                .onFocusChanged {
-                    isSubmitFocused = it.hasFocus
-                }
-                .focusable(),
-                categoryComposeDto = CategoryComposeDto(btnText = "Update", id = ""),
-                backgroundFocusedColor = focusedMainColor,
-                textFocusedStyle = detailNowTextStyle,
-                backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
-                textUnFocusedStyle = detailNowUnFocusTextStyle,
-                onCategoryItemClick = { id ->
-                    profileScreenViewModel.onEvent(
-                        ProfileEvent.UpdateProfile(
-                            name = textFieldValue,
-                            avatarId = selectedAvatarId,
-                            profileId = profileId,
+                CategoryCompose(modifier = Modifier
+                    .onFocusChanged {
+                        isSubmitFocused = it.hasFocus
+                    }
+                    .focusable(),
+                    categoryComposeDto = CategoryComposeDto(btnText = "Update", id = ""),
+                    backgroundFocusedColor = focusedMainColor,
+                    textFocusedStyle = detailNowTextStyle,
+                    backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
+                    textUnFocusedStyle = detailNowUnFocusTextStyle,
+                    onCategoryItemClick = { id ->
+                        profileScreenViewModel.onEvent(
+                            ProfileEvent.UpdateProfile(
+                                name = textFieldValue,
+                                avatarId = selectedAvatarId,
+                                profileId = profileId,
+                            )
                         )
-                    )
-                },
-                focusState = if (isSubmitFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
-            )
+                    },
+                    focusState = if (isSubmitFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                )
+
+
+                CategoryCompose(modifier = Modifier
+                    .onFocusChanged {
+                        isDeleteFocused = it.hasFocus
+                    }
+                    .focusable(),
+                    categoryComposeDto = CategoryComposeDto(btnText = "Delete", id = ""),
+                    backgroundFocusedColor = focusedMainColor,
+                    textFocusedStyle = detailNowTextStyle,
+                    backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
+                    textUnFocusedStyle = detailNowUnFocusTextStyle,
+                    onCategoryItemClick = { id ->
+                        profileScreenViewModel.onEvent(
+                            ProfileEvent.DeleteProfile(
+                                name = textFieldValue,
+                                avatarId = selectedAvatarId,
+                                profileId = profileId,
+                            )
+                        )
+                    },
+                    focusState = if (isDeleteFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                )
+
+            }
+
 
         }
 
