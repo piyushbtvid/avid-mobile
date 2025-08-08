@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.sections.my_account.setting
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,11 +9,27 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.ui.commanComponents.CategoryCompose
+import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.theme.detailNowTextStyle
+import com.faithForward.media.ui.theme.detailNowUnFocusTextStyle
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.util.FocusState
 
 data class SettingDto(
     val email: String,
@@ -29,7 +46,20 @@ data class SettingDto(
 fun Setting(
     modifier: Modifier = Modifier,
     settingItemDto: SettingDto,
+    onSwitchProfile: () -> Unit,
 ) {
+
+    var isSwitchFocused by rememberSaveable { mutableStateOf(false) }
+
+    val switchFocusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        try {
+            switchFocusRequester.requestFocus()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -71,12 +101,29 @@ fun Setting(
                     .height(2.dp)
             )
 
-            TitleText(
-                text = "Subscription",
-                textSize = 17,
-                lineHeight = 17,
-                color = whiteMain,
-                fontWeight = FontWeight.ExtraBold
+//            TitleText(
+//                text = "Subscription",
+//                textSize = 17,
+//                lineHeight = 17,
+//                color = whiteMain,
+//                fontWeight = FontWeight.ExtraBold
+//            )
+
+            CategoryCompose(modifier = Modifier
+                .focusRequester(switchFocusRequester)
+                .onFocusChanged {
+                    isSwitchFocused = it.hasFocus
+                }
+                .focusable(),
+                categoryComposeDto = CategoryComposeDto(btnText = "Switch Profile", id = ""),
+                backgroundFocusedColor = focusedMainColor,
+                textFocusedStyle = detailNowTextStyle,
+                backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
+                textUnFocusedStyle = detailNowUnFocusTextStyle,
+                onCategoryItemClick = { id ->
+                    onSwitchProfile.invoke()
+                },
+                focusState = if (isSwitchFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
             )
 
         }

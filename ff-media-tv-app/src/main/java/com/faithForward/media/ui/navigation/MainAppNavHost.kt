@@ -146,7 +146,7 @@ fun MainAppNavHost(
                 navArgument("avatarId") { type = NavType.IntType },
                 navArgument("userName") { type = NavType.StringType },
                 navArgument("profileId") { type = NavType.IntType },
-                navArgument("isDefaultProfile"){type = NavType.BoolType}
+                navArgument("isDefaultProfile") { type = NavType.BoolType }
             )
         ) { backStackEntry ->
 
@@ -649,7 +649,11 @@ fun MainAppNavHost(
                     } else {
                         navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
-                })
+                },
+                onSwitchProfile = {
+                    navController.navigate(Routes.AllProfile.route)
+                }
+            )
         }
 
         composable(route = Routes.Universal.route) { backStackEntry ->

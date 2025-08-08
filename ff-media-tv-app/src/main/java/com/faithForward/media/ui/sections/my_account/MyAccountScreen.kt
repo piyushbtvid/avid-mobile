@@ -33,6 +33,7 @@ fun MyAccountScreen(
     onBackClick: () -> Unit,
     onItemClick: (WatchSectionItemDto, isFromContinueWatching: Boolean) -> Unit,
     myAccountViewModel: MyAccountViewModel,
+    onSwitchProfile : () -> Unit
 ) {
 
     val myAccountUiState = myAccountViewModel.uiState.collectAsState()
@@ -151,7 +152,8 @@ fun MyAccountScreen(
                 myAccountUiState.value.settingDto?.let {
                     Setting(
                         modifier = Modifier.padding(start = 16.dp),
-                        settingItemDto = it
+                        settingItemDto = it,
+                        onSwitchProfile = onSwitchProfile
                     )
                 }
             }
