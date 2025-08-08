@@ -1,5 +1,6 @@
 package com.faithForward.media.ui.user_profile
 
+import android.os.Parcelable
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -46,6 +47,7 @@ import coil3.request.crossfade
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
+import kotlinx.parcelize.Parcelize
 
 
 data class UserProfileUiItem(
@@ -62,6 +64,8 @@ data class UserProfileUiItem(
 fun AllProfileScreenRow(
     modifier: Modifier = Modifier,
     userProfileList: List<UserProfileUiItem>,
+    onItemClick: (UserProfileUiItem) -> Unit,
+    shouldShowAddProfileButton: Boolean = false,
     onAddProfileClick: () -> Unit,
 ) {
 
@@ -91,7 +95,7 @@ fun AllProfileScreenRow(
                 .clickable(
                     interactionSource = null, indication = null
                 ) {
-
+                    onItemClick.invoke(item)
                 }
                 .focusable()
 
@@ -103,23 +107,25 @@ fun AllProfileScreenRow(
             )
         }
 
-        item {
+        if (shouldShowAddProfileButton) {
+            item {
 
-            val uiState = when (isAddProfileFocused) {
-                true -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
+                val uiState = when (isAddProfileFocused) {
+                    true -> FocusState.FOCUSED
+                    else -> FocusState.UNFOCUSED
+                }
+
+                AddProfileItem(uiState = uiState, modifier = Modifier
+                    .onFocusChanged {
+                        isAddProfileFocused = it.hasFocus
+                    }
+                    .clickable(
+                        interactionSource = null, indication = null
+                    ) {
+                        onAddProfileClick.invoke()
+                    }
+                    .focusable())
             }
-
-            AddProfileItem(uiState = uiState, modifier = Modifier
-                .onFocusChanged {
-                    isAddProfileFocused = it.hasFocus
-                }
-                .clickable(
-                    interactionSource = null, indication = null
-                ) {
-                    onAddProfileClick.invoke()
-                }
-                .focusable())
         }
     }
 

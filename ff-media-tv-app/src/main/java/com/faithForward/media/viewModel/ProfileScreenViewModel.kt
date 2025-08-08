@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.ui.user_profile.UserProfileUiItem
-import com.faithForward.media.ui.user_profile.create_profile.AvatarItem
+import com.faithForward.media.ui.user_profile.comman.AvatarItem
 import com.faithForward.media.viewModel.uiModels.ProfileEvent
 import com.faithForward.media.viewModel.uiModels.UiEvent
 import com.faithForward.media.viewModel.uiModels.toAvatarUiItem
@@ -36,7 +36,9 @@ class ProfileScreenViewModel @Inject constructor(
         MutableStateFlow(Resource.Unspecified())
     val allAvatars = _allAvatars.asStateFlow()
 
-    private val _uiEvent = MutableSharedFlow<UiEvent?>()
+    private val _uiEvent = MutableSharedFlow<UiEvent?>(
+        extraBufferCapacity = 1
+    )
     val uiEvent = _uiEvent.asSharedFlow()
 
 
@@ -167,9 +169,10 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-
+                    _uiEvent.emit(UiEvent(response.message()))
                 } else {
-
+                    val errorMessage = parseErrorMessage(response)
+                    _uiEvent.emit(UiEvent(errorMessage))
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -194,9 +197,10 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-
+                    _uiEvent.emit(UiEvent(response.message()))
                 } else {
-
+                    val errorMessage = parseErrorMessage(response)
+                    _uiEvent.emit(UiEvent(errorMessage))
                 }
 
             } catch (ex: Exception) {
@@ -217,9 +221,10 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-
+                    _uiEvent.emit(UiEvent(response.message()))
                 } else {
-
+                    val errorMessage = parseErrorMessage(response)
+                    _uiEvent.emit(UiEvent(errorMessage))
                 }
 
             } catch (ex: Exception) {

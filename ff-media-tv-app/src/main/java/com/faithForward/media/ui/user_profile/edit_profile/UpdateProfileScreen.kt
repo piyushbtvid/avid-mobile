@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.user_profile.create_profile
+package com.faithForward.media.ui.user_profile.edit_profile
 
 import android.util.Log
 import android.widget.Toast
@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,7 +27,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,7 +40,6 @@ import com.faithForward.media.ui.theme.detailNowUnFocusTextStyle
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.whiteMain
-import com.faithForward.media.ui.user_profile.comman.AvatarItem
 import com.faithForward.media.ui.user_profile.comman.CustomKeyBoard
 import com.faithForward.media.ui.user_profile.comman.SelectAvatarRow
 import com.faithForward.media.util.FocusState
@@ -49,9 +48,12 @@ import com.faithForward.media.viewModel.uiModels.ProfileEvent
 import com.faithForward.util.Resource
 
 @Composable
-fun CreateProfileScreen(
+fun UpdateProfileScreen(
     modifier: Modifier = Modifier,
     profileScreenViewModel: ProfileScreenViewModel,
+    avatarId: Int,
+    userName: String,
+    profileId: Int,
 ) {
 
     LaunchedEffect(Unit) {
@@ -60,7 +62,7 @@ fun CreateProfileScreen(
 
     val uiEvent by profileScreenViewModel.uiEvent.collectAsStateWithLifecycle(null)
 
-    val context =  LocalContext.current
+    val context = LocalContext.current
 
     val allAvatarsResponse by profileScreenViewModel.allAvatars.collectAsState()
 
@@ -74,13 +76,19 @@ fun CreateProfileScreen(
 
     var isSubmitFocused by remember { mutableStateOf(false) }
 
-    var textFieldValue by remember { mutableStateOf("") }
+    var textFieldValue by remember { mutableStateOf(userName) }
 
     var currentKeyBoardAlphabetSize by remember { mutableStateOf(NewKeyboardActionState.large) }
 
-    var selectedAvatarId by remember { mutableStateOf(-1) }
+    var selectedAvatarId by remember { mutableIntStateOf(avatarId) }
 
-    // Showing Toast when uiEvent changes
+
+    val selectedAvatarIndex by remember(allAvatarsList, avatarId) {
+        mutableIntStateOf(allAvatarsList.indexOfFirst { it.id == avatarId })
+    }
+
+
+
     LaunchedEffect(uiEvent) {
         uiEvent?.let { event ->
             Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
@@ -97,12 +105,13 @@ fun CreateProfileScreen(
     ) {
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(30.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+
             TitleText(
-                text = "Create Profile",
+                text = "Update Profile",
                 color = whiteMain,
                 fontWeight = FontWeight.ExtraBold,
                 textSize = 26,
@@ -114,7 +123,8 @@ fun CreateProfileScreen(
                 avatarList = allAvatarsList,
                 onSelectProfileClick = { avatarId ->
                     selectedAvatarId = avatarId
-                }
+                },
+                defaultSelectedIndex = selectedAvatarIndex
             )
 
             // tex field
@@ -195,16 +205,17 @@ fun CreateProfileScreen(
                     isSubmitFocused = it.hasFocus
                 }
                 .focusable(),
-                categoryComposeDto = CategoryComposeDto(btnText = "Submit", id = ""),
+                categoryComposeDto = CategoryComposeDto(btnText = "Update", id = ""),
                 backgroundFocusedColor = focusedMainColor,
                 textFocusedStyle = detailNowTextStyle,
                 backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
                 textUnFocusedStyle = detailNowUnFocusTextStyle,
                 onCategoryItemClick = { id ->
                     profileScreenViewModel.onEvent(
-                        ProfileEvent.CreateProfile(
+                        ProfileEvent.UpdateProfile(
                             name = textFieldValue,
-                            avatarId = selectedAvatarId
+                            avatarId = selectedAvatarId,
+                            profileId = profileId,
                         )
                     )
                 },
@@ -215,27 +226,5 @@ fun CreateProfileScreen(
 
 
     }
-
-
-}
-
-
-@Preview(device = "id:tv_1080p")
-@Composable
-private fun CreateProfileScreenPrevew() {
-
-    val avatarItem = AvatarItem(
-        id = 0,
-        imgSrc = ""
-    )
-
-    val list = listOf(
-        avatarItem, avatarItem,
-        avatarItem, avatarItem, avatarItem, avatarItem
-    )
-
-//    CreateProfileScreen(
-//        allAvatarsList = list
-//    )
 
 }

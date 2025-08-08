@@ -39,6 +39,7 @@ fun AllProfileScreen(
     modifier: Modifier = Modifier,
     profileScreenViewModel: ProfileScreenViewModel,
     onAddProfileClick: () -> Unit,
+    onManageProfileClick: () -> Unit,
 ) {
 
 
@@ -77,7 +78,11 @@ fun AllProfileScreen(
             if (userProfileResponse.data != null) {
                 AllProfileScreenRow(
                     userProfileList = userProfileResponse.data!!,
-                    onAddProfileClick = onAddProfileClick
+                    shouldShowAddProfileButton = true,
+                    onAddProfileClick = onAddProfileClick,
+                    onItemClick = { item ->
+
+                    }
                 )
             }
 
@@ -89,13 +94,13 @@ fun AllProfileScreen(
                     isManageFocused = it.hasFocus
                 }
                 .focusable(),
-                categoryComposeDto = CategoryComposeDto(btnText = "Manage Profile", id = ""),
+                categoryComposeDto = CategoryComposeDto(btnText = "Profile", id = ""),
                 backgroundFocusedColor = focusedMainColor,
                 textFocusedStyle = detailNowTextStyle,
                 backgroundUnFocusedColor = Color.White.copy(alpha = 0.35f),
                 textUnFocusedStyle = detailNowUnFocusTextStyle,
                 onCategoryItemClick = { id ->
-
+                    onManageProfileClick.invoke()
                 },
                 focusState = if (isManageFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
             )

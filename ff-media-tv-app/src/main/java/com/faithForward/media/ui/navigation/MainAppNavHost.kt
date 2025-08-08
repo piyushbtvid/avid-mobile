@@ -28,7 +28,10 @@ import com.faithForward.media.ui.sections.series.SeriesPage
 import com.faithForward.media.ui.universal_page.UniversalTopBarMainPage
 import com.faithForward.media.ui.universal_page.live.LiveMainPage
 import com.faithForward.media.ui.user_profile.AllProfileScreen
+import com.faithForward.media.ui.user_profile.comman.EditProfile
 import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
+import com.faithForward.media.ui.user_profile.edit_profile.EditProfileScreen
+import com.faithForward.media.ui.user_profile.edit_profile.UpdateProfileScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -102,6 +105,9 @@ fun MainAppNavHost(
                 profileScreenViewModel = viewModel,
                 onAddProfileClick = {
                     navController.navigate(Routes.CreateProfile.route)
+                },
+                onManageProfileClick = {
+                    navController.navigate(Routes.EditProfile.route)
                 }
             )
         }
@@ -115,6 +121,46 @@ fun MainAppNavHost(
             )
 
         }
+
+        composable(
+            route = Routes.EditProfile.route
+        ) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            EditProfileScreen(
+                profileScreenViewModel = viewModel,
+                onItemClick = { item ->
+                    navController.navigate("update_profile/${item.avatarId}/${item.name}/${item.id}")
+                }
+            )
+
+        }
+
+
+        composable(
+            route = Routes.UpdateProfile.FULL_ROUTE,
+            arguments = listOf(
+                navArgument("avatarId") { type = NavType.IntType },
+                navArgument("userName") { type = NavType.StringType },
+                navArgument("profileId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(backStackEntry)
+
+            val avatarId = backStackEntry.arguments?.getInt("avatarId") ?: -1
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            val profileId = backStackEntry.arguments?.getInt("profileId") ?: -1
+
+            UpdateProfileScreen(
+                profileScreenViewModel = viewModel,
+                avatarId = avatarId,
+                userName = userName,
+                profileId = profileId,
+            )
+        }
+
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
             // Scope the ViewModel to the navigation destination

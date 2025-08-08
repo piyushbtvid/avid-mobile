@@ -16,8 +16,8 @@ fun Profile.toUserProfileUiItem(): UserProfileUiItem {
 
 }
 
-fun AvatarItem.toAvatarUiItem(): com.faithForward.media.ui.user_profile.create_profile.AvatarItem {
-    return com.faithForward.media.ui.user_profile.create_profile.AvatarItem(
+fun AvatarItem.toAvatarUiItem(): com.faithForward.media.ui.user_profile.comman.AvatarItem {
+    return com.faithForward.media.ui.user_profile.comman.AvatarItem(
         imgSrc = image_url,
         id = id
     )

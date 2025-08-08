@@ -17,6 +17,21 @@ sealed class Routes(val route: String) {
     data object MyAccount : Routes("MY_ACCOUNT_SCREEN")
     data object Universal : Routes("UNIVERSAL_SCREEN")
     data object Live : Routes("LIVE_PAGE")
+    data object EditProfile : Routes("EDIT_PROFILE_SCREEN")
+
+    data class UpdateProfile(
+        val avatarId: Int,
+        val userName: String,
+        val profileId: Int
+    ) : Routes("update_profile/$avatarId/$userName/$profileId") {
+
+        companion object {
+            const val ROUTE_BASE = "update_profile"
+            const val FULL_ROUTE = "$ROUTE_BASE/{avatarId}/{userName}/{profileId}"
+        }
+    }
+
+
     object Movies {
         const val route = "movies/{contentType}"
         fun createRoute(contentType: String) = "movies/$contentType"

@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.user_profile.create_profile
+package com.faithForward.media.ui.user_profile.comman
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable

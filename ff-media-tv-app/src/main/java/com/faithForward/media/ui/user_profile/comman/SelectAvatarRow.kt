@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.user_profile.create_profile
+package com.faithForward.media.ui.user_profile.comman
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -45,12 +46,13 @@ data class AvatarItem(
 fun SelectAvatarRow(
     modifier: Modifier = Modifier,
     onSelectProfileClick: (Int) -> Unit,
+    defaultSelectedIndex: Int = -1,
     avatarList: List<AvatarItem>,
 ) {
 
-    var rowFocusedIndex by rememberSaveable { mutableStateOf(-1) }
+    var rowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
 
-    var selectedIndex by rememberSaveable { mutableStateOf(-1) }
+    var selectedIndex by rememberSaveable { mutableStateOf(defaultSelectedIndex) }
 
     LazyRow(
         modifier = modifier,
