@@ -37,7 +37,6 @@ class ProfileScreenViewModel @Inject constructor(
     val allAvatars = _allAvatars.asStateFlow()
 
     private val _uiEvent = MutableSharedFlow<UiEvent?>(
-        extraBufferCapacity = 1
     )
     val uiEvent = _uiEvent.asSharedFlow()
 
@@ -80,6 +79,13 @@ class ProfileScreenViewModel @Inject constructor(
                     profileId = event.profileId
                 )
             }
+        }
+    }
+
+
+    fun resetUiEvent() {
+        viewModelScope.launch {
+            _uiEvent.emit(null)
         }
     }
 
@@ -142,7 +148,7 @@ class ProfileScreenViewModel @Inject constructor(
                     avatarId = avatarId
                 )
                 if (response.isSuccessful) {
-                    _uiEvent.emit(UiEvent(response.message()))
+                    _uiEvent.emit(UiEvent(response.body()?.message ?: ""))
                 } else {
                     val errorMessage = parseErrorMessage(response)
                     _uiEvent.emit(UiEvent(errorMessage))
@@ -169,7 +175,7 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-                    _uiEvent.emit(UiEvent(response.message()))
+                    _uiEvent.emit(UiEvent(response.body()?.message ?: ""))
                 } else {
                     val errorMessage = parseErrorMessage(response)
                     _uiEvent.emit(UiEvent(errorMessage))
@@ -197,7 +203,7 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-                    _uiEvent.emit(UiEvent(response.message()))
+                    _uiEvent.emit(UiEvent(response.body()?.message ?: ""))
                 } else {
                     val errorMessage = parseErrorMessage(response)
                     _uiEvent.emit(UiEvent(errorMessage))
@@ -221,7 +227,7 @@ class ProfileScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-                    _uiEvent.emit(UiEvent(response.message()))
+                    _uiEvent.emit(UiEvent(response.body()?.message ?: ""))
                 } else {
                     val errorMessage = parseErrorMessage(response)
                     _uiEvent.emit(UiEvent(errorMessage))

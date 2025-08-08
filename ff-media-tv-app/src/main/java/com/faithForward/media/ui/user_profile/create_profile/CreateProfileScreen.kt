@@ -47,6 +47,7 @@ import com.faithForward.media.util.FocusState
 import com.faithForward.media.viewModel.ProfileScreenViewModel
 import com.faithForward.media.viewModel.uiModels.ProfileEvent
 import com.faithForward.util.Resource
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateProfileScreen(
@@ -84,8 +85,8 @@ fun CreateProfileScreen(
     LaunchedEffect(uiEvent) {
         uiEvent?.let { event ->
             Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
-            // detailViewModel.resetUiEvent()
+            delay(200)
+            profileScreenViewModel.resetUiEvent()
         }
     }
 

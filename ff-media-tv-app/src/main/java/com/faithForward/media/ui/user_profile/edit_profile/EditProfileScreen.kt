@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.ui.user_profile.AllProfileScreenRow
 import com.faithForward.media.ui.user_profile.UserProfileUiItem
 import com.faithForward.media.viewModel.ProfileScreenViewModel
+import com.faithForward.media.viewModel.uiModels.ProfileEvent
 import com.faithForward.util.Resource
 
 @Composable
@@ -26,6 +28,10 @@ fun EditProfileScreen(
     profileScreenViewModel: ProfileScreenViewModel,
     onItemClick: (UserProfileUiItem) -> Unit,
 ) {
+
+    LaunchedEffect(Unit) {
+        profileScreenViewModel.onEvent(ProfileEvent.GetAllProfiles)
+    }
 
     val userProfileResponse by profileScreenViewModel.allProfiles.collectAsState()
 
