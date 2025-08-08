@@ -47,6 +47,8 @@ fun MyAccountScreen(
 
     val sideBarState by sideBarViewModel.sideBarState
 
+
+
     BackHandler {
         Log.e("ON_BACK", "on back in search called")
         if (sideBarState.sideBarFocusedIndex != -1) {
@@ -81,7 +83,9 @@ fun MyAccountScreen(
 
         ProfileMenu(focusedIndex = profileFocusedIndex,
             userInfoItemDto = UserInfoItemDto(
-                userName = "Amit", userEmail = "Subscriber1@gmail.com", initialName = "AP"
+                userName = myAccountUiState.value.currentUserName,
+                userEmail = myAccountUiState.value.currentUserEmail,
+                initialName = myAccountUiState.value.initialName
             ),
             onFocusedIndexChange = { int ->
                 profileFocusedIndex = int

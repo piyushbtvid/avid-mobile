@@ -25,6 +25,9 @@ class MyAccountViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
 
+    init {
+        onEvent(MyAccountEvent.GetCurrentUser)
+    }
 
     fun onEvent(myAccountEvent: MyAccountEvent) {
 
@@ -36,6 +39,10 @@ class MyAccountViewModel @Inject constructor(
 
             is MyAccountEvent.GetMyList -> {
                 getMyList()
+            }
+
+            is MyAccountEvent.GetCurrentUser -> {
+                getCurrentUserInfo()
             }
 
         }
@@ -114,5 +121,30 @@ class MyAccountViewModel @Inject constructor(
             }
         }
     }
+
+    private fun getCurrentUserInfo() {
+        viewModelScope.launch {
+            val response = networkRepository.getCurrentSession()
+            if (response != null) {
+                val initials = getInitials(response.season.user?.name)
+                _uiState.update {
+                    it.copy(
+                        currentUserEmail = response.season.user?.email ?: "",
+                        currentUserName = response.season.user?.name ?: "",
+                        initialName = initials
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getInitials(name: String?): String {
+        return name
+            ?.trim()
+            ?.split("\\s+".toRegex()) // Split by whitespace
+            ?.mapNotNull { it.firstOrNull()?.uppercaseChar() }
+            ?.joinToString("") ?: ""
+    }
+
 
 }
