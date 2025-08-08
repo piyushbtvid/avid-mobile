@@ -1,6 +1,5 @@
 package com.faithForward.media.ui.user_profile
 
-import android.os.Parcelable
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -46,8 +45,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.util.FocusState
-import kotlinx.parcelize.Parcelize
 
 
 data class UserProfileUiItem(
@@ -149,7 +148,8 @@ fun UserProfileItem(
 ) {
 
     val borderColor = when (uiState) {
-        FocusState.SELECTED, FocusState.FOCUSED -> Color.White
+        FocusState.SELECTED -> Color.White
+        FocusState.FOCUSED -> focusedMainColor
         FocusState.UNFOCUSED, FocusState.UNDEFINED -> Color.Transparent
     }
 
@@ -211,7 +211,8 @@ fun AddProfileItem(
 ) {
 
     val borderColor = when (uiState) {
-        FocusState.SELECTED, FocusState.FOCUSED -> Color.White
+        FocusState.SELECTED -> Color.White
+        FocusState.FOCUSED -> focusedMainColor
         FocusState.UNFOCUSED, FocusState.UNDEFINED -> Color.White.copy(alpha = 0.70f)
     }
 

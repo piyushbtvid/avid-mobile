@@ -103,8 +103,8 @@ fun AvatarUiItem(
 ) {
 
     val borderColor = when (uiState) {
-        FocusState.FOCUSED -> Color.White
-        FocusState.SELECTED -> focusedMainColor
+        FocusState.FOCUSED -> focusedMainColor
+        FocusState.SELECTED -> Color.White
         FocusState.UNFOCUSED, FocusState.UNDEFINED -> Color.Transparent
     }
 
