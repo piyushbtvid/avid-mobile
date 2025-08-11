@@ -78,6 +78,7 @@ fun PlayerControls(
     inControllerUp: () -> Boolean = {
         false
     },
+    onSeekBarCenterClick: () -> Unit,
 ) {
     // val focusRequester = remember { FocusRequester() }
 
@@ -103,7 +104,9 @@ fun PlayerControls(
             inControllerUp = inControllerUp,
             onSeekTo = { onSeekTo(it) },
             onRewind = { onRewind() },
-            onForward = { onForward() })
+            onForward = { onForward() },
+            onSeekBarCenterClick = { onSeekBarCenterClick() }
+        )
 
         Box(
             modifier = Modifier
@@ -403,6 +406,7 @@ fun TvSeekBar(
     },
     onRewind: () -> Unit,
     onForward: () -> Unit,
+    onSeekBarCenterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -441,7 +445,8 @@ fun TvSeekBar(
             }
         }
         .clickable(interactionSource = null, indication = null, onClick = {
-           // onForward()
+            // onForward()
+            onSeekBarCenterClick.invoke()
         })
         .focusable()
         .border(

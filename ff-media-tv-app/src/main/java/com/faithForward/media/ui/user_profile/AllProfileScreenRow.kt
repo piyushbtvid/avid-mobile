@@ -75,7 +75,9 @@ fun AllProfileScreenRow(
     var isAddProfileFocused by remember { mutableStateOf(false) }
 
     LazyRow(
-        modifier = modifier.focusRestorer(),
+        modifier = modifier.focusRestorer {
+            focusRequester
+        },
         contentPadding = PaddingValues(start = 56.dp, end = 40.dp),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {

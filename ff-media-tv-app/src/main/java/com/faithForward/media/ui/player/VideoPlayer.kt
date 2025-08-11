@@ -686,10 +686,20 @@ fun VideoPlayer(
                 PlayerControls(currentPosition = playerScreenState.currentPosition,
                     duration = playerScreenState.duration,
                     onSeekTo = { exoPlayer.seekTo(it) },
+                    onSeekBarCenterClick = {
+                        if (!sharedPlayerScreenState.isControlsVisible) {
+                            Log.e("SHOW_CONTROLES", "show controles in on center click")
+                            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        } else {
+                            sharedPlayerViewModel.startAutoHideTimer()
+                        }
+                    },
                     onPrevAndNext = {
                         if (!sharedPlayerScreenState.isControlsVisible) {
                             Log.e("SHOW_CONTROLES", "show controles in prev and next")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        } else {
+                            sharedPlayerViewModel.startAutoHideTimer()
                         }
                     },
                     onKeyEvent = {
@@ -708,6 +718,7 @@ fun VideoPlayer(
                         )
                         if (sharedPlayerScreenState.isControlsVisible) {
                             exoPlayer.playWhenReady = !exoPlayer.isPlaying
+                            sharedPlayerViewModel.startAutoHideTimer()
                         } else {
                             Log.e("SHOW_CONTROLES", "show controles in play pause ")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
@@ -720,6 +731,7 @@ fun VideoPlayer(
                             (exoPlayer.currentPosition - rewindMillis).coerceAtLeast(0L)
                         if (sharedPlayerScreenState.isControlsVisible) {
                             exoPlayer.seekTo(newPosition)
+                            sharedPlayerViewModel.startAutoHideTimer()
                         } else {
                             Log.e("SHOW_CONTROLES", "show controles on Rewind")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
@@ -729,6 +741,7 @@ fun VideoPlayer(
                     onForward = {
                         if (sharedPlayerScreenState.isControlsVisible) {
                             exoPlayer.seekForward()
+                            sharedPlayerViewModel.startAutoHideTimer()
                         } else {
                             Log.e("SHOW_CONTROLES", "show controles in on Forward")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
