@@ -77,8 +77,16 @@ fun SelectAvatarRow(
                 .clickable(
                     interactionSource = null, indication = null
                 ) {
-                    selectedIndex = index
-                    onSelectProfileClick.invoke(item.id)
+                    selectedIndex = if (selectedIndex == index) {
+                        // if  Already selected
+                        -1
+                    } else {
+                        index
+                    }
+                    onSelectProfileClick.invoke(
+                        // if already selected then making selected id of avatar to -1
+                        if (selectedIndex == -1) -1 else item.id
+                    )
                 }
                 .focusable()
 
