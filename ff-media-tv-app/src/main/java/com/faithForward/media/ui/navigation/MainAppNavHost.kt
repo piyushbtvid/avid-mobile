@@ -25,6 +25,12 @@ import com.faithForward.media.ui.sections.myList.MyListPage
 import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
+import com.faithForward.media.ui.universal_page.UniversalTopBarMainPage
+import com.faithForward.media.ui.universal_page.live.LiveMainPage
+import com.faithForward.media.ui.user_profile.AllProfileScreen
+import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
+import com.faithForward.media.ui.user_profile.edit_profile.EditProfileScreen
+import com.faithForward.media.ui.user_profile.edit_profile.UpdateProfileScreen
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -35,10 +41,12 @@ import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.MyListViewModel
 import com.faithForward.media.viewModel.PlayerViewModel
+import com.faithForward.media.viewModel.ProfileScreenViewModel
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import kotlinx.serialization.encodeToString
@@ -54,7 +62,7 @@ fun MainAppNavHost(
     loginViewModel: LoginViewModel,
     sharedPlayerViewModel: SharedPlayerViewModel,
     sideBarViewModel: SideBarViewModel,
-    startRoute: String = Routes.Home.route,
+    startRoute: String = Routes.AllProfile.route,
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
     onBackClickForExit: () -> Unit,
@@ -68,8 +76,8 @@ fun MainAppNavHost(
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
                 Log.e("GOING_TO_HOME", "going to home from Login screen ")
                 loginViewModel.checkRefreshToken()
-                navController.navigate(Routes.Home.route) {
-                    popUpTo(Routes.Login.route) { inclusive = true }
+                navController.navigate(Routes.AllProfile.route) {
+                    popUpTo(0) { inclusive = true }
                 }
             })
         }
@@ -80,13 +88,87 @@ fun MainAppNavHost(
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
                 loginViewModel.checkRefreshToken()
-                navController.navigate(Routes.Home.route) {
-                    popUpTo(Routes.Login.route) { inclusive = true }
+                navController.navigate(Routes.AllProfile.route) {
+                    popUpTo(0) { inclusive = true }
                 }
             }, onLoginPageOpenClick = {
                 navController.navigate(Routes.Login.route)
             })
         }
+
+        composable(route = Routes.AllProfile.route) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            AllProfileScreen(
+                profileScreenViewModel = viewModel,
+                onAddProfileClick = {
+                    navController.navigate(Routes.CreateProfile.route)
+                },
+                onManageProfileClick = {
+                    navController.navigate(Routes.EditProfile.route)
+                },
+                onSetProfileSuccess = {
+                    navController.navigate(Routes.Home.route)
+                }
+            )
+        }
+
+        composable(route = Routes.CreateProfile.route) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            CreateProfileScreen(
+                profileScreenViewModel = viewModel
+            )
+
+        }
+
+        composable(
+            route = Routes.EditProfile.route
+        ) { navBackStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+
+            EditProfileScreen(
+                profileScreenViewModel = viewModel,
+                onItemClick = { item ->
+                    navController.navigate("update_profile/${item.avatarId}/${item.name}/${item.id}/${item.isDefault}")
+                }
+            )
+
+        }
+
+
+        composable(
+            route = Routes.UpdateProfile.FULL_ROUTE,
+            arguments = listOf(
+                navArgument("avatarId") { type = NavType.IntType },
+                navArgument("userName") { type = NavType.StringType },
+                navArgument("profileId") { type = NavType.IntType },
+                navArgument("isDefaultProfile") { type = NavType.BoolType }
+            )
+        ) { backStackEntry ->
+
+            val viewModel: ProfileScreenViewModel = hiltViewModel(backStackEntry)
+
+            val avatarId = backStackEntry.arguments?.getInt("avatarId") ?: -1
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            val profileId = backStackEntry.arguments?.getInt("profileId") ?: -1
+            val isDefaultProfile = backStackEntry.arguments?.getBoolean("isDefaultProfile") ?: false
+
+            UpdateProfileScreen(
+                profileScreenViewModel = viewModel,
+                avatarId = avatarId,
+                userName = userName,
+                profileId = profileId,
+                isDefaultProfile = isDefaultProfile,
+                onDeleteSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
             // Scope the ViewModel to the navigation destination
@@ -141,6 +223,10 @@ fun MainAppNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onMicDoubleUpClick = {
+                    Log.e("DOUBLE", "on double up clicked")
+                    navController.navigate(Routes.Universal.route)
                 }
 
             )
@@ -542,11 +628,8 @@ fun MainAppNavHost(
         composable(
             route = Routes.MyAccount.route
         ) { backStackEntry ->
-
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
-
-            MyAccountScreen(
-                myAccountViewModel = myAccountViewModel,
+            MyAccountScreen(myAccountViewModel = myAccountViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -566,10 +649,37 @@ fun MainAppNavHost(
                     } else {
                         navController.navigate(Routes.Detail.createRoute(item.contentSlug))
                     }
-                })
+                },
+                onSwitchProfile = {
+                    navController.navigate(Routes.AllProfile.route)
+                }
+            )
+        }
 
+        composable(route = Routes.Universal.route) { backStackEntry ->
+
+            val universalViewModel: UniversalViewModel = hiltViewModel(backStackEntry)
+
+            UniversalTopBarMainPage(universalViewModel = universalViewModel, onSearchClick = {
+
+            }, onLiveClick = {
+                navController.navigate(Routes.Live.route)
+            }, onLeftClick = {
+                navController.popBackStack()
+            }
+
+            )
+        }
+
+        composable(route = Routes.Live.route) {
+            LiveMainPage(
+                onTopBarUpClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
     }
+
 
 }

@@ -120,7 +120,8 @@ fun MoviesPage(
             },
             onSearchClick = {
                 onSearchClick.invoke()
-            }
+            },
+            onMicDoubleUpClick = {}
         )
     }
 

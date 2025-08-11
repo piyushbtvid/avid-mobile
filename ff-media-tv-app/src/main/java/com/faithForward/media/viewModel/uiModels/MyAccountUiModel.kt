@@ -39,6 +39,7 @@ val settingItemDto: SettingDto = SettingDto(
 sealed class MyAccountEvent {
     data object GetContinueWatching : MyAccountEvent()
     data object GetMyList : MyAccountEvent()
+    data object GetCurrentUser : MyAccountEvent()
 }
 
 data class MyAccountUiState(
@@ -46,6 +47,9 @@ data class MyAccountUiState(
     val myListWatchSections: WatchSectionUiModel? = null,
     val profileMenuItemList: List<ProfileMenuItemDto> = profileMenuItemDtoList,
     val settingDto: SettingDto? = settingItemDto,
+    val currentUserEmail: String = "",
+    val currentUserName: String = "",
+    val initialName : String = ""
 )
 
 

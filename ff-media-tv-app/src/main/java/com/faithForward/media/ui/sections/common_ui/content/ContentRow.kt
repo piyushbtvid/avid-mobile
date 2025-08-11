@@ -79,27 +79,29 @@ fun ContentRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRestorer {
-                    itemFocusRequesters[0]
-                },
+                    itemFocusRequesters.firstOrNull() ?: FocusRequester()
+                }
+            ,
             contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp)
         )
         {
             itemsIndexed(posterRowDto.dtos) { index, posterCardDto ->
 
-                focusRequesters[Pair(rowIndex, index)] = itemFocusRequesters[index]
-
+                if (index < itemFocusRequesters.size) {
+                    focusRequesters[Pair(rowIndex, index)] = itemFocusRequesters[index]
+                }
 
                 // Restore focus to the last focused item when returning to this row
                 LaunchedEffect(lastFocusedItem) {
-                    if (lastFocusedItem == Pair(rowIndex, index)) {
+                    if (lastFocusedItem == Pair(rowIndex, index) && index < itemFocusRequesters.size) {
                         try {
                             itemFocusRequesters[index].requestFocus()
                         } catch (_: Exception) {
-
                         }
                     }
                 }
+
 
                 val uiState = when (index) {
                     contentRowFocusedIndex -> FocusState.FOCUSED
@@ -108,7 +110,7 @@ fun ContentRow(
 
                 PosterCard(
                     modifier = Modifier
-                        .focusRequester(itemFocusRequesters[index])
+                        .focusRequester(itemFocusRequesters.getOrNull(index) ?: remember { FocusRequester() })
                         .onFocusChanged {
                             if (it.hasFocus) {
                                 onItemFocused(Pair(rowIndex, index))

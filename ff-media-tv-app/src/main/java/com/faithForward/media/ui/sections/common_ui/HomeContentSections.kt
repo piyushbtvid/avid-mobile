@@ -50,6 +50,7 @@ fun HomeContentSections(
     showContentOfCard: Boolean = true,
     onToggleLike: (String?) -> Unit,
     onToggleDisLike: (String?) -> Unit,
+    onMicDoubleUpClick: () -> Unit,
 ) {
     // State for the vertical LazyColumn
     val listState = rememberLazyListState()
@@ -94,7 +95,8 @@ fun HomeContentSections(
                         onToggleLike = onToggleLike,
                         onToggleDisLike = onToggleDisLike,
                         onCarouselItemClick = onCarouselItemClick,
-                        onSearchClick = onSearchClick
+                        onSearchClick = onSearchClick,
+                        onMicDoubleUpClick = onMicDoubleUpClick
                     )
 
                     is HomePageItem.CategoryRow -> CategoryRow(

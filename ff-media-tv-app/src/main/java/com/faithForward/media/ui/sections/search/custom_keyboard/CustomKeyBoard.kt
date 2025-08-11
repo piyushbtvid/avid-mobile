@@ -26,7 +26,7 @@ fun CustomKeyBoard(
     onKeyClick: (String) -> Unit,
     searchResultLastFocusedIndex: Int,
     currentKeyboardMode: KeyboardMode,
-    onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
+    onKeyBoardActionButtonClick: (NewKeyboardActionState) -> Unit,
 ) {
 
     val alphabetList = remember {
@@ -79,7 +79,7 @@ fun CustomKeyBoard(
         ) {
 
             KeyboardActionButton(
-                actionState = if (currentKeyboardMode == KeyboardMode.ALPHABET) KeyboardActionState.number else if (currentKeyboardMode == KeyboardMode.NUMBER) KeyboardActionState.alphabet else KeyboardActionState.alphabet,
+                actionState = if (currentKeyboardMode == KeyboardMode.ALPHABET) NewKeyboardActionState.number else if (currentKeyboardMode == KeyboardMode.NUMBER) NewKeyboardActionState.alphabet else NewKeyboardActionState.alphabet,
                 onClick = { state ->
                     onKeyBoardActionButtonClick.invoke(state)
                 },
@@ -93,7 +93,7 @@ fun CustomKeyBoard(
 
 
             KeyboardActionButton(
-                actionState = KeyboardActionState.space,
+                actionState = NewKeyboardActionState.space,
                 onClick = { state ->
                     onKeyBoardActionButtonClick.invoke(state)
                 },
@@ -119,7 +119,7 @@ fun CustomKeyBoard(
         )
 
         KeyboardActionButton(
-            actionState = KeyboardActionState.clear,
+            actionState = NewKeyboardActionState.clear,
             onClick = { state ->
                 onKeyBoardActionButtonClick.invoke(state)
             },

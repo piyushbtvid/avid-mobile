@@ -33,6 +33,7 @@ fun MyAccountScreen(
     onBackClick: () -> Unit,
     onItemClick: (WatchSectionItemDto, isFromContinueWatching: Boolean) -> Unit,
     myAccountViewModel: MyAccountViewModel,
+    onSwitchProfile : () -> Unit
 ) {
 
     val myAccountUiState = myAccountViewModel.uiState.collectAsState()
@@ -46,6 +47,8 @@ fun MyAccountScreen(
     }
 
     val sideBarState by sideBarViewModel.sideBarState
+
+
 
     BackHandler {
         Log.e("ON_BACK", "on back in search called")
@@ -81,7 +84,9 @@ fun MyAccountScreen(
 
         ProfileMenu(focusedIndex = profileFocusedIndex,
             userInfoItemDto = UserInfoItemDto(
-                userName = "Amit", userEmail = "Subscriber1@gmail.com", initialName = "AP"
+                userName = myAccountUiState.value.currentUserName,
+                userEmail = myAccountUiState.value.currentUserEmail,
+                initialName = myAccountUiState.value.initialName
             ),
             onFocusedIndexChange = { int ->
                 profileFocusedIndex = int
@@ -147,7 +152,8 @@ fun MyAccountScreen(
                 myAccountUiState.value.settingDto?.let {
                     Setting(
                         modifier = Modifier.padding(start = 16.dp),
-                        settingItemDto = it
+                        settingItemDto = it,
+                        onSwitchProfile = onSwitchProfile
                     )
                 }
             }

@@ -7,12 +7,32 @@ import kotlinx.serialization.json.Json
 
 sealed class Routes(val route: String) {
 
+    data object AllProfile : Routes("ALL_PROFILE_SCREEN")
+    data object CreateProfile : Routes("CREATE_PROFILE_SCREEN")
     data object Home : Routes("HOME_SCREEN")
     data object Creator : Routes("CREATOR_SCREEN")
     data object Search : Routes("SEARCH_SCREEN")
     data object Login : Routes("LOGIN_SCREEN")
     data object LoginQr : Routes("LOGIN_QR_SCREEN")
     data object MyAccount : Routes("MY_ACCOUNT_SCREEN")
+    data object Universal : Routes("UNIVERSAL_SCREEN")
+    data object Live : Routes("LIVE_PAGE")
+    data object EditProfile : Routes("EDIT_PROFILE_SCREEN")
+
+    data class UpdateProfile(
+        val avatarId: Int,
+        val userName: String,
+        val profileId: Int,
+        val isDefaultProfile : Boolean
+    ) : Routes("update_profile/$avatarId/$userName/$profileId/$isDefaultProfile") {
+
+        companion object {
+            const val ROUTE_BASE = "update_profile"
+            const val FULL_ROUTE = "$ROUTE_BASE/{avatarId}/{userName}/{profileId}/{isDefaultProfile}"
+        }
+    }
+
+
     object Movies {
         const val route = "movies/{contentType}"
         fun createRoute(contentType: String) = "movies/$contentType"

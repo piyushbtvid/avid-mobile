@@ -127,7 +127,8 @@ fun SeriesPage(
             onCreatorItemClick = {
 
             },
-            onSearchClick = onSearchClick
+            onSearchClick = onSearchClick,
+            onMicDoubleUpClick = {}
         )
     }
 

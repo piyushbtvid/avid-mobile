@@ -114,7 +114,7 @@ class MainActivity : ComponentActivity() {
                                     playerViewModel = sharedPlayerViewModel,
                                     navController = navController,
                                     startRoute = when {
-                                        isLoggedIn -> Routes.Home.route
+                                        isLoggedIn -> Routes.AllProfile.route
                                         else -> Routes.LoginQr.route
                                     }
                                 )

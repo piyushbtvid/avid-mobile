@@ -76,7 +76,7 @@ fun Epg(
 
     Box {
         Column(
-            modifier = modifier.background(Color.LightGray),
+            modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             TimeLine(

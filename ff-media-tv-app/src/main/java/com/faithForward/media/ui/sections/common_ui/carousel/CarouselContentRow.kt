@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,6 +24,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
 
@@ -45,6 +51,7 @@ fun CarouselContentRow(
     onToggleFavorite: (String?) -> Unit,
     onToggleLike: (String?) -> Unit,
     onSearchClick: () -> Unit,
+    onMicDoubleUpClick: () -> Unit,
     onToggleDisLike: (String?) -> Unit,
 ) {
 
@@ -57,6 +64,8 @@ fun CarouselContentRow(
     var likeFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var disLikeFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     val itemFocusRequesters = remember { List(carouselList.size) { FocusRequester() } }
+
+    var lastUpKeyTime by remember { mutableStateOf(0L) }
 
 //    LaunchedEffect(shouldFocusOnFirstItem) {
 //        if (shouldFocusOnFirstItem) {
@@ -91,6 +100,7 @@ fun CarouselContentRow(
                 }
             }
         }
+
 
         val carouselItem = carouselList.get(index)
         val uiState = when (index) {
@@ -167,7 +177,26 @@ fun CarouselContentRow(
                         }
                     }
                 }
-                .focusable(),
+                .focusable()
+                .onKeyEvent { keyEvent ->
+                    if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.DirectionUp) {
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastUpKeyTime < 500) {
+                            Log.e("CARSOUEL", "Double Up Click detected in carousel")
+                            // Handle double Up key press here
+                            onMicDoubleUpClick.invoke()
+                            lastUpKeyTime = 0L // Reset to prevent multiple triggers
+                            true
+                        } else {
+                            Log.e("CARSOUEL", "Single Up Click detected in carousel")
+                            lastUpKeyTime = currentTime
+                            true
+                        }
+                    } else {
+                        Log.e("CARSOUEL", "Non-Up key event or different action")
+                        false
+                    }
+                },
             searchIcModifier = Modifier
                 .onFocusChanged {
                     if (it.hasFocus) {

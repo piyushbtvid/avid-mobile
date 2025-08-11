@@ -14,7 +14,7 @@ fun KeyBoardUi(
     onInputTextChange: (String) -> Unit,
     searchResultLastFocusedIndex: Int = -1,
     currentKeyboardMode: KeyboardMode,
-    onKeyBoardActionButtonClick: (KeyboardActionState) -> Unit,
+    onKeyBoardActionButtonClick: (NewKeyboardActionState) -> Unit,
 ) {
 
 
