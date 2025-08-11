@@ -1,6 +1,7 @@
 package com.faithForward.media.ui.player
 
 //noinspection UsingMaterialAndMaterial3Libraries
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -75,7 +76,7 @@ fun PlayerControls(
     // only used for right and left for prev and next video focusable button for showing contoler
     onPrevAndNext: () -> Unit,
     shouldShowNextAndPrevVideo: Boolean = false,
-    inControllerUp: () -> Boolean = {
+    onShowRelatedList: () -> Boolean = {
         false
     },
     onSeekBarCenterClick: () -> Unit,
@@ -101,7 +102,7 @@ fun PlayerControls(
         TvSeekBar(currentPosition = currentPosition,
             duration = duration,
             focusedColor = focusedColor,
-            inControllerUp = inControllerUp,
+            inControllerUp = onShowRelatedList,
             onSeekTo = { onSeekTo(it) },
             onRewind = { onRewind() },
             onForward = { onForward() },
@@ -133,7 +134,8 @@ fun PlayerControls(
 
                                 Key.DirectionDown -> {
                                     // consume or not
-                                    onKeyEvent.invoke()
+                                    //    onKeyEvent.invoke()
+                                    onShowRelatedList.invoke()
 
                                 }
 
@@ -170,7 +172,9 @@ fun PlayerControls(
 
                             Key.DirectionDown -> {
                                 // consume or not
-                                onKeyEvent.invoke()
+                                //   onKeyEvent.invoke()
+                                Log.e("DIRECTION_DOWN", "on direction down click in onRewind")
+                                onShowRelatedList.invoke()
                             }
 
                             Key.DirectionLeft -> {
@@ -201,10 +205,7 @@ fun PlayerControls(
                                 onKeyEvent.invoke()
                             }
 
-                            Key.DirectionDown -> {
-                                // consume or not
-                                onKeyEvent.invoke()
-                            }
+                            Key.DirectionDown -> onShowRelatedList.invoke()
 
                             Key.DirectionLeft -> {
                                 // consume or not
@@ -236,7 +237,8 @@ fun PlayerControls(
 
                             Key.DirectionDown -> {
                                 // consume or not
-                                onKeyEvent.invoke()
+                                //   onKeyEvent.invoke()
+                                onShowRelatedList.invoke()
                             }
 
                             Key.DirectionLeft -> {
@@ -270,7 +272,8 @@ fun PlayerControls(
 
                                 Key.DirectionDown -> {
                                     // consume or not
-                                    onKeyEvent.invoke()
+                                    //onKeyEvent.invoke()
+                                    onShowRelatedList.invoke()
                                 }
 
                                 Key.DirectionLeft -> {
@@ -476,6 +479,7 @@ fun TvSeekBar(
 
     LaunchedEffect(Unit) {
         try {
+            Log.e("PLAYER_FOCUS", "focus request called in player controlers ")
             focusRequester.requestFocus()
         } catch (ex: Exception) {
 

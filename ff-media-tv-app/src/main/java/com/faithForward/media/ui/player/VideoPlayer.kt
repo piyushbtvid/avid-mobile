@@ -351,6 +351,7 @@ fun VideoPlayer(
 
     LaunchedEffect(Unit) {
         try {
+            Log.e("PLAYER_FOCUS", "focus request called in player ")
             focusRequester.requestFocus()
         } catch (_: Exception) {
         }
@@ -768,10 +769,22 @@ fun VideoPlayer(
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
                     },
-                    inControllerUp = {
+                    onShowRelatedList = {
+                        Log.e(
+                            "DIRECTION_DOWN",
+                            "on direction down click in inControllerUp with ${sharedPlayerScreenState.isControlsVisible}"
+                        )
                         if (sharedPlayerScreenState.isControlsVisible) {
+                            Log.e(
+                                "DIRECTION_DOWN",
+                                "on direction down click in inControllerUp inside isControlsVisible block"
+                            )
                             playerViewModel.handleEvent(PlayerEvent.ShowRelated)
                         } else {
+                            Log.e(
+                                "DIRECTION_DOWN",
+                                "on direction down click in inControllerUp inside else block"
+                            )
                             Log.e("SHOW_CONTROLES", "show controles is Contoler up")
                             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         }
