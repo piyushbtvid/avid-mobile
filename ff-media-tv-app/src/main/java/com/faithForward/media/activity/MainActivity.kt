@@ -130,7 +130,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+        if (currentRoute == Routes.PlayerScreen.route) {
             Log.e(
                 "ON_USER_INTERCATION",
                 "on user intercation is called if current route is player with $isControlsVisible"

@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.ui.universal_page.UniversalPlayer
 
 @Composable
 fun StreamPage(
@@ -31,6 +32,10 @@ fun StreamPage(
         modifier = modifier
             .fillMaxSize()
     ) {
+
+        UniversalPlayer(
+            videoUrlList = listOf("https://rcntv-rcnmas-1-us.roku.wurl.tv//playlist.m3u8")
+        )
 
         StreamRecommendationsColumn(
             modifier = Modifier

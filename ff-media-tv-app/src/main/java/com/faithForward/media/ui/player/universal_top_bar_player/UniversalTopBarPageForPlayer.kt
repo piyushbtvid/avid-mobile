@@ -1,4 +1,4 @@
-package com.faithForward.media.ui.universal_page
+package com.faithForward.media.ui.player.universal_top_bar_player
 
 import android.util.Log
 import androidx.compose.foundation.border
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,38 +30,40 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.ui.universal_page.UniversalPageNavGraph
+import com.faithForward.media.ui.universal_page.UniversalPageRoutes
+import com.faithForward.media.ui.universal_page.top_bar.TopBarItemDto
 import com.faithForward.media.ui.universal_page.top_bar.TopBarRow
 import com.faithForward.media.util.extensions.shadow
-import com.faithForward.media.viewModel.UniversalViewModel
 
 @Composable
-fun UniversalTopBarMainPage(
+fun UniversalTopBarPageForPlayer(
     modifier: Modifier = Modifier,
-    universalViewModel: UniversalViewModel,
     onLeftClick: () -> Unit,
-    onSearchClick: () -> Unit,
     onLiveClick: () -> Unit,
+    onStreamClick: () -> Unit,
+    topBarItemList: List<TopBarItemDto>,
+    focusRequesterList: List<FocusRequester>,
+    onTopBarDownClick: () -> Boolean = {
+        false
+    },
 ) {
 
-    val topBarItemList = universalViewModel.topBarItems
-    val liveFirstUrl = universalViewModel.liveVideo.collectAsState()
+
     var topBarFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var selectedPosition by rememberSaveable { mutableIntStateOf(0) }
+    var selectedPosition by rememberSaveable { mutableIntStateOf(-1) }
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
 
-    val focusRequesterList = remember(topBarItemList.size) {
-        List(topBarItemList.size) { FocusRequester() }
-    }
 
     val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
         try {
             focusRequesterList[0].requestFocus()
-            selectedPosition = 0
         } catch (_: Exception) {
 
         }
@@ -74,22 +75,19 @@ fun UniversalTopBarMainPage(
     ) {
 
 
-        //if (liveFirstUrl.value.isNotEmpty()) {
-//        UniversalPlayer(
-//            videoUrlList = listOf("https://rcntv-rcnmas-1-us.roku.wurl.tv//playlist.m3u8")
-//        )
         // }
 
         UniversalPageNavGraph(
+            startRoute = UniversalPageRoutes.Empty.route,
             navController = navController,
-            onLeftClick = onLeftClick
+            onLeftClick = {}
         )
 
         TopBarRow(
             modifier = Modifier.padding(top = 20.dp),
             selectedPosition = selectedPosition,
             focusedIndex = topBarFocusedIndex,
-            selectedTextColor = whiteMain,
+            selectedTextColor = focusedMainColor,
             onFocusedIndexChange = { int ->
                 topBarFocusedIndex = int
             },
@@ -101,10 +99,7 @@ fun UniversalTopBarMainPage(
                     onLiveClick.invoke()
                 }
                 if (item.tag == "stream") {
-                    navController.navigate(UniversalPageRoutes.Stream.route) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    onStreamClick.invoke()
                 }
                 if (item.tag == "browse") {
                     //for returning to home
@@ -119,8 +114,9 @@ fun UniversalTopBarMainPage(
             },
             onTopBarLeftClick = {
                 //for returning to home
-                onLeftClick.invoke()
-            }
+                //  onLeftClick.invoke()
+            },
+            onTopBarDownClick = onTopBarDownClick,
         )
 
         Row(
@@ -168,7 +164,7 @@ fun UniversalTopBarMainPage(
                     }
                     .clickable(interactionSource = null, indication = null, onClick = {
                         Log.e("SEARCH_IC", "on search click")
-                        onSearchClick.invoke()
+                        //  onSearchClick.invoke()
                     }
                     )
                     .focusable()

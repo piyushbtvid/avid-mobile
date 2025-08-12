@@ -99,6 +99,7 @@ data class PlayerState(
     val isEpisodePlaying: Boolean = false,
     val videoPlayingIndex: Int? = 0,
     val currentTitle: String? = null,
+    val isUniversalTopBarVisible: Boolean = false,
 )
 
 data class SharedPlayerViewModelState(
@@ -107,6 +108,7 @@ data class SharedPlayerViewModelState(
 
 sealed class PlayerEvent {
     data object StartRelatedDialogAutoHide : PlayerEvent()
+    data object StartTopBarAutoHide : PlayerEvent()
     data class UpdateDuration(val value: Long) : PlayerEvent()
     data class UpdateCurrentPosition(val value: Long) : PlayerEvent()
     data object OnContinueWatchingUpdate : PlayerEvent()
@@ -114,6 +116,8 @@ sealed class PlayerEvent {
     data object HideNextEpisodeDialog : PlayerEvent()
     data object ShowRelated : PlayerEvent()
     data object HideRelated : PlayerEvent()
+    data object ShowTopBar : PlayerEvent()
+    data object HideTopBar : PlayerEvent()
     data class UpdateIsEpisodePlayingOrNot(val isEpisode: Boolean) : PlayerEvent()
     data class UpdateIsPlaying(val isPlaying: Boolean) : PlayerEvent()
     data class UpdateVideoPlayingIndex(val value: Int) : PlayerEvent()

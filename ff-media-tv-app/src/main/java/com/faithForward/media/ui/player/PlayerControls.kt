@@ -80,6 +80,9 @@ fun PlayerControls(
         false
     },
     onSeekBarCenterClick: () -> Unit,
+    onSeekBarUpClick: () -> Boolean = {
+        false
+    },
 ) {
     // val focusRequester = remember { FocusRequester() }
 
@@ -109,7 +112,7 @@ fun PlayerControls(
         TvSeekBar(currentPosition = currentPosition,
             duration = duration,
             focusedColor = focusedColor,
-            inControllerUp = onShowRelatedList,
+            inControllerUp = onSeekBarUpClick,
             onSeekTo = { onSeekTo(it) },
             onRewind = { onRewind() },
             onForward = { onForward() },
@@ -488,7 +491,7 @@ fun TvSeekBar(
         try {
             Log.e("PLAYER_FOCUS", "focus request called in player controlers ")
             focusRequester.requestFocus()
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
 
         }
     }
