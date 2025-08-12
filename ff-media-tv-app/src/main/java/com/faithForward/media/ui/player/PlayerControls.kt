@@ -63,8 +63,8 @@ fun PlayerControls(
     focusedColor: Color = focusedMainColor,
     prevVideoIc: Int = R.drawable.prev_video_ic,
     nextVideoIc: Int = R.drawable.next_video_ic,
-    rewindIc: Int = R.drawable.rewind,
-    forwardIc: Int = R.drawable.forword,
+    rewindIc: Int = R.drawable.rewind_icon,
+    forwardIc: Int = R.drawable.forward_icon__1_,
     playIc: Int = R.drawable.ic_play,
     pauseIc: Int = R.drawable.baseline_pause_24,
     onNext: () -> Unit,
@@ -90,6 +90,13 @@ fun PlayerControls(
 //        onBackClick.invoke()
 //    }
 
+//    LaunchedEffect(Unit) {
+//        try {
+//            Log.e("PLAYER_FOCUS", "focus request called in player ")
+//            focusRequester.requestFocus()
+//        } catch (_: Exception) {
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -195,7 +202,7 @@ fun PlayerControls(
                 FocusableIconButton(
                     onClick = onPlayPause,
                     imageResId = if (isPlaying) pauseIc else playIc,
-                    focusRequester = null,
+                    focusRequester = focusRequester,
                     focusedColor = focusedColor,
                     description = "Play/Pause",
                     onKeyEvent = { event ->
