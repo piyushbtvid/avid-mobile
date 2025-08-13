@@ -39,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
+import com.faithForward.media.activity.splash.SplashScreen
 import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
 import com.faithForward.media.ui.epg.Epg
 import com.faithForward.media.ui.epg.EpgUiModel
@@ -96,14 +97,15 @@ class MainActivity : ComponentActivity() {
                     ) { loading ->
                         when {
                             loading -> {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(pageBlackBackgroundColor),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(color = focusedMainColor)
-                                }
+//                                Box(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .background(pageBlackBackgroundColor),
+//                                    contentAlignment = Alignment.Center
+//                                ) {
+//                                    CircularProgressIndicator(color = focusedMainColor)
+//                                }
+                                SplashScreen()
                             }
 
                             else -> {
