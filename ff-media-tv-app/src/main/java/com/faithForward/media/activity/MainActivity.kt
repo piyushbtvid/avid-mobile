@@ -63,7 +63,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
     private var isControlsVisible: Boolean = false
     private var currentRoute: String? = null
@@ -109,9 +109,8 @@ class MainActivity : AppCompatActivity() {
 
                             else -> {
                                 Epg(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
                                     epgUiModel = generateSampleEpgUiModel(),
-                                    fragmentManager = this.supportFragmentManager
                                 )
                             }
                         }

@@ -14,39 +14,37 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.random.Random
-
 fun calculateProgramWidth(
     startTime: Long,
-    endTime: Long,
-    dpPerMinute: Dp = 2.dp,
-    addGapAfter: Boolean = true,
-    programGap: Dp = 5.dp
+    endTime: Long
 ): Dp {
-    val durationMillis = endTime - startTime
-    val durationMinutes = (durationMillis / (60 * 1000)).coerceAtLeast(1)
-    val baseWidth = durationMinutes.toInt() * dpPerMinute
-    return if (addGapAfter) baseWidth + programGap else baseWidth
+    val durationMinutes = ((endTime - startTime) / 60_000).coerceAtLeast(1)
+    return durationMinutes.toFloat() * DpPerMinute
 }
 
-fun generateTimelineSlots(
+
+private val DpPerMinute = 2.dp
+
+fun generateTimeSlots(
     startTime: Long,
     endTime: Long,
-    dpPerMinute: Dp = 2.dp,
-    intervalMinutes: Int = 30
+    stepMinutes: Int = 2 * 60
 ): List<TimeSlotUiModel> {
     val slots = mutableListOf<TimeSlotUiModel>()
     var current = startTime
 
+    val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
     while (current < endTime) {
-        val next = current + intervalMinutes * 60 * 1000
-        val label = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(current))
-        val width = dpPerMinute * intervalMinutes
-        slots += TimeSlotUiModel(timeLabel = label, width = width)
+        val next = current + stepMinutes * 60_000
+        val width = ((next - current) / 60_000).toFloat() * DpPerMinute
+        val label = formatter.format(Date(current))
+        slots.add(TimeSlotUiModel(label, width))
         current = next
     }
-
     return slots
 }
+
 
 fun generateSampleEpgUiModel(): EpgUiModel {
     val channelCount = 10

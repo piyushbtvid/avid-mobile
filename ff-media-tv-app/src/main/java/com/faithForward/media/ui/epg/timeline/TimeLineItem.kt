@@ -24,9 +24,8 @@ fun TimeLineItem(
     slot: TimeSlotUiModel,
 ) {
     Box(
-        modifier = Modifier
-            .width(slot.width)
-            .height(50.dp),
+        modifier = modifier
+            .width(slot.width),
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
