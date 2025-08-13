@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId = "com.faithForward.media"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 35
         versionCode = 8
         versionName = "3.5"
@@ -94,6 +94,7 @@ dependencies {
 
     // data module
     implementation(project(":ff-media-Data"))
+    implementation(project(":library"))
 
     //media
     val media3 = "1.4.1"
@@ -129,4 +130,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.leanback:leanback:1.2.0")
+
 }
