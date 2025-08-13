@@ -1,14 +1,21 @@
 package com.faithForward.media.ui.epg
 
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -21,9 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.FragmentManager
 import com.faithForward.media.ui.epg.channel.ChannelUiModel
 import com.faithForward.media.ui.epg.program.ProgramUiModel
 import com.faithForward.media.ui.epg.timeline.TimeLine
@@ -42,77 +54,33 @@ data class EpgUiModel(
 fun Epg(
     modifier: Modifier = Modifier,
     epgUiModel: EpgUiModel,
+    fragmentManager: FragmentManager,
 ) {
-    val sharedScrollState = rememberScrollState()
-    val allPrograms = epgUiModel.channelWithProgramsUiModels.flatMap { it.programs }
-
-    // Dynamically compute min and max time range from all programs
-    val epgStartTime = allPrograms.minOfOrNull { it.programStartTime } ?: System.currentTimeMillis()
-    val epgEndTime = allPrograms.maxOfOrNull { it.programEndTime }
-        ?: (System.currentTimeMillis() + 1 * 60 * 60 * 1000)
-
-    val timeSlots = remember(epgStartTime, epgEndTime) {
-        generateTimelineSlots(epgStartTime, epgEndTime)
-    }
-
-    val programWidthPerMinute = 2.dp // Keep same as used for ProgramBox
-
-    // For drawing the red line
-    val now = rememberUpdatedState(System.currentTimeMillis())
-    val currentTimeOffsetDp by remember(now, epgStartTime) {
-        derivedStateOf {
-            val diffInMinutes = ((now.value - epgStartTime).coerceAtLeast(0)) / (60 * 1000)
-            programWidthPerMinute * diffInMinutes.toInt()
-        }
-    }
+    Box(modifier = modifier.focusable(false)) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize().focusable(false),
+            factory = { context ->
+                // Create a container for the fragment
+                FragmentContainerView(context).apply {
+                    id = View.generateViewId()
 
 
-    // Infinite recomposition for updating the line
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(60 * 1000) // update every minute
-        }
-    }
+                    // Ensure TV focus can go to children
+                    isFocusable = false
+                    isFocusableInTouchMode = false
+                    descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+                    Log.d("Logging","epgUiModel:${epgUiModel.toNewObj()}")
+                    fragmentManager.beginTransaction()
+                        .replace(id, EpgFragment().apply {
+                            setNewObj(epgUiModel.toNewObj())
+                        })
+                        .setReorderingAllowed(true)
+                        .commit()
 
-    Box {
-        Column(
-            modifier = modifier.background(Color.LightGray),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            TimeLine(
-                modifier = Modifier
-                    .padding(start = 151.5.dp)
-                    .horizontalScroll(sharedScrollState),
-                timeSlots = timeSlots
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(7.5.dp)
-            ) {
-                itemsIndexed(epgUiModel.channelWithProgramsUiModels) { index, channelWithProgram ->
-                    ChannelWithPrograms(
-                        channelWithProgramsUiModel = channelWithProgram,
-                        isFirstRow = index == 0,
-                        horizontalScrollState = sharedScrollState
-                    )
                 }
-            }
-        }
-        // Red vertical line showing current time
-//        Box(
-//            modifier = Modifier
-//                .padding(start = 151.5.dp)
-//                .horizontalScroll(sharedScrollState)
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .offset(x = currentTimeOffsetDp)
-//                    .fillMaxHeight()
-//                    .width(2.dp)
-//                    .background(Color.Red)
-//            )
-//        }
-
+            },
+            update = { /* You can update the fragment's view here if needed */ }
+        )
     }
 }
 
@@ -120,7 +88,7 @@ fun Epg(
 @Preview(device = "id:tv_1080p")
 @Composable
 private fun EpgPreview() {
-    Epg(
-        epgUiModel = generateSampleEpgUiModel()
-    )
+//    Epg(
+//        epgUiModel = generateSampleEpgUiModel()
+//    )
 }

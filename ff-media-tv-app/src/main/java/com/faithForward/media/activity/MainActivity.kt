@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -62,7 +63,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var sharedPlayerViewModel: SharedPlayerViewModel
     private var isControlsVisible: Boolean = false
     private var currentRoute: String? = null
@@ -107,19 +108,12 @@ class MainActivity : ComponentActivity() {
                             }
 
                             else -> {
-                                MainScreen(
+                                Epg(
                                     modifier = Modifier.fillMaxSize(),
-                                    sideBarViewModel = sideBarViewModel,
-                                    loginViewModel = loginViewModel,
-                                    playerViewModel = sharedPlayerViewModel,
-                                    navController = navController,
-                                    startRoute = when {
-                                        isLoggedIn -> Routes.Home.route
-                                        else -> Routes.LoginQr.route
-                                    }
+                                    epgUiModel = generateSampleEpgUiModel(),
+                                    fragmentManager = this.supportFragmentManager
                                 )
                             }
-
                         }
                     }
 

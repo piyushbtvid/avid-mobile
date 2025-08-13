@@ -50,7 +50,7 @@ fun generateTimelineSlots(
 
 fun generateSampleEpgUiModel(): EpgUiModel {
     val channelCount = 10
-    val programsPerChannel = 100 // increased to allow enough programs
+    val programsPerChannel = 100 // Increased for full coverage
     val random = Random(System.currentTimeMillis())
 
     val startTime = System.currentTimeMillis() - (3 * 60 * 60 * 1000) // 3 hours ago
@@ -68,19 +68,20 @@ fun generateSampleEpgUiModel(): EpgUiModel {
             val durationMillis = durationMinutes * 60 * 1000
             val programEndTime = (currentStartTime + durationMillis).coerceAtMost(epgEndTime)
 
-            programs.add(
-                ProgramUiModel(
-                    programName = "Program ${i + 1}",
-                    programTimeString = formatProgramTime(currentStartTime, programEndTime),
-                    programStartTime = currentStartTime,
-                    programEndTime = programEndTime
+            if (programEndTime > currentStartTime) {
+                programs.add(
+                    ProgramUiModel(
+                        programName = "Program ${i + 1}",
+                        programTimeString = formatProgramTime(currentStartTime, programEndTime),
+                        programStartTime = currentStartTime,
+                        programEndTime = programEndTime
+                    )
                 )
-            )
-
-            currentStartTime = programEndTime
+                currentStartTime = programEndTime
+            }
         }
 
-        // If space remains, add a "NO PROGRAM" filler
+        // ✅ Force-fill the gap at the end if needed
         if (currentStartTime < epgEndTime) {
             programs.add(
                 ProgramUiModel(
