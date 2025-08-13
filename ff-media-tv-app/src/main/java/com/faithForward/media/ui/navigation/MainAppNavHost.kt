@@ -520,6 +520,12 @@ fun MainAppNavHost(
                 sharedPlayerViewModel = sharedPlayerViewModel,
                 isFromContinueWatching = isContinueWatching,
                 initialIndex = initialIndex,
+                onStreamFromTopBarClick = {
+                    navController.navigate(Routes.Universal.route)
+                },
+                onLiveClick = {
+                    navController.navigate(Routes.Live.route)
+                },
                 onVideoEnded = {
                     if (isContinueWatching && !isFromMyAccount) {
                         // Get the current item's slug from playerDtoList

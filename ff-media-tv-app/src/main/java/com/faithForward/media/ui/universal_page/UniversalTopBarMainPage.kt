@@ -75,9 +75,9 @@ fun UniversalTopBarMainPage(
 
 
         //if (liveFirstUrl.value.isNotEmpty()) {
-        UniversalPlayer(
-            videoUrlList = listOf("https://rcntv-rcnmas-1-us.roku.wurl.tv//playlist.m3u8")
-        )
+//        UniversalPlayer(
+//            videoUrlList = listOf("https://rcntv-rcnmas-1-us.roku.wurl.tv//playlist.m3u8")
+//        )
         // }
 
         UniversalPageNavGraph(

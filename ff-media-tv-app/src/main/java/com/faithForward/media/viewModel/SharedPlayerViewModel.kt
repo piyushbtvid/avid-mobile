@@ -71,7 +71,8 @@ class SharedPlayerViewModel() : ViewModel() {
         }
     }
 
-    private fun startAutoHideTimer() {
+    fun startAutoHideTimer() {
+        Log.e("IS_VISIBLE", "Starting auto-hide timer function")
         autoHideJob?.cancel()
         autoHideJob = viewModelScope.launch {
             Log.e("IS_VISIBLE", "Starting auto-hide timer")

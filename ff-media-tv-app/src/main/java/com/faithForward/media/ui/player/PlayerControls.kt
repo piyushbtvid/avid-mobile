@@ -1,6 +1,7 @@
 package com.faithForward.media.ui.player
 
 //noinspection UsingMaterialAndMaterial3Libraries
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -62,8 +63,8 @@ fun PlayerControls(
     focusedColor: Color = focusedMainColor,
     prevVideoIc: Int = R.drawable.prev_video_ic,
     nextVideoIc: Int = R.drawable.next_video_ic,
-    rewindIc: Int = R.drawable.rewind,
-    forwardIc: Int = R.drawable.forword,
+    rewindIc: Int = R.drawable.rewind_icon,
+    forwardIc: Int = R.drawable.forward_icon__1_,
     playIc: Int = R.drawable.ic_play,
     pauseIc: Int = R.drawable.baseline_pause_24,
     onNext: () -> Unit,
@@ -75,7 +76,11 @@ fun PlayerControls(
     // only used for right and left for prev and next video focusable button for showing contoler
     onPrevAndNext: () -> Unit,
     shouldShowNextAndPrevVideo: Boolean = false,
-    inControllerUp: () -> Boolean = {
+    onShowRelatedList: () -> Boolean = {
+        false
+    },
+    onSeekBarCenterClick: () -> Unit,
+    onSeekBarUpClick: () -> Boolean = {
         false
     },
 ) {
@@ -88,6 +93,13 @@ fun PlayerControls(
 //        onBackClick.invoke()
 //    }
 
+//    LaunchedEffect(Unit) {
+//        try {
+//            Log.e("PLAYER_FOCUS", "focus request called in player ")
+//            focusRequester.requestFocus()
+//        } catch (_: Exception) {
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -100,10 +112,12 @@ fun PlayerControls(
         TvSeekBar(currentPosition = currentPosition,
             duration = duration,
             focusedColor = focusedColor,
-            inControllerUp = inControllerUp,
+            inControllerUp = onSeekBarUpClick,
             onSeekTo = { onSeekTo(it) },
             onRewind = { onRewind() },
-            onForward = { onForward() })
+            onForward = { onForward() },
+            onSeekBarCenterClick = { onSeekBarCenterClick() }
+        )
 
         Box(
             modifier = Modifier
@@ -130,7 +144,8 @@ fun PlayerControls(
 
                                 Key.DirectionDown -> {
                                     // consume or not
-                                    onKeyEvent.invoke()
+                                    //    onKeyEvent.invoke()
+                                    onShowRelatedList.invoke()
 
                                 }
 
@@ -167,7 +182,9 @@ fun PlayerControls(
 
                             Key.DirectionDown -> {
                                 // consume or not
-                                onKeyEvent.invoke()
+                                //   onKeyEvent.invoke()
+                                Log.e("DIRECTION_DOWN", "on direction down click in onRewind")
+                                onShowRelatedList.invoke()
                             }
 
                             Key.DirectionLeft -> {
@@ -188,7 +205,7 @@ fun PlayerControls(
                 FocusableIconButton(
                     onClick = onPlayPause,
                     imageResId = if (isPlaying) pauseIc else playIc,
-                    focusRequester = null,
+                    focusRequester = focusRequester,
                     focusedColor = focusedColor,
                     description = "Play/Pause",
                     onKeyEvent = { event ->
@@ -198,10 +215,7 @@ fun PlayerControls(
                                 onKeyEvent.invoke()
                             }
 
-                            Key.DirectionDown -> {
-                                // consume or not
-                                onKeyEvent.invoke()
-                            }
+                            Key.DirectionDown -> onShowRelatedList.invoke()
 
                             Key.DirectionLeft -> {
                                 // consume or not
@@ -233,7 +247,8 @@ fun PlayerControls(
 
                             Key.DirectionDown -> {
                                 // consume or not
-                                onKeyEvent.invoke()
+                                //   onKeyEvent.invoke()
+                                onShowRelatedList.invoke()
                             }
 
                             Key.DirectionLeft -> {
@@ -267,7 +282,8 @@ fun PlayerControls(
 
                                 Key.DirectionDown -> {
                                     // consume or not
-                                    onKeyEvent.invoke()
+                                    //onKeyEvent.invoke()
+                                    onShowRelatedList.invoke()
                                 }
 
                                 Key.DirectionLeft -> {
@@ -403,6 +419,7 @@ fun TvSeekBar(
     },
     onRewind: () -> Unit,
     onForward: () -> Unit,
+    onSeekBarCenterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -441,7 +458,8 @@ fun TvSeekBar(
             }
         }
         .clickable(interactionSource = null, indication = null, onClick = {
-           // onForward()
+            // onForward()
+            onSeekBarCenterClick.invoke()
         })
         .focusable()
         .border(
@@ -471,8 +489,9 @@ fun TvSeekBar(
 
     LaunchedEffect(Unit) {
         try {
+            Log.e("PLAYER_FOCUS", "focus request called in player controlers ")
             focusRequester.requestFocus()
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
 
         }
     }

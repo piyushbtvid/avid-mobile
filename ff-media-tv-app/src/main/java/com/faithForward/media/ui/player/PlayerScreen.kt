@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +12,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,8 +36,10 @@ fun PlayerScreen(
     sharedPlayerViewModel: SharedPlayerViewModel,
     initialIndex: Int = 0,
     onVideoEnded: () -> Unit,
+    onLiveClick: () -> Unit,
     onEpisodePlayNowClick: (List<VideoPlayerDto>, index: Int?) -> Unit,
     onRelatedItemClick: (RelatedContentItemDto?, List<RelatedContentItemDto>?, index: Int?) -> Unit,
+    onStreamFromTopBarClick: () -> Unit,
 ) {
     val state by playerViewModel.state.collectAsState()
 
@@ -93,7 +91,8 @@ fun PlayerScreen(
             is Resource.Success -> {
                 val playerDtoItems = resource.data?.videoPlayerDtoList ?: return@Box
                 val relatedList = resource.data?.playerRelatedContentRowDto ?: return@Box
-                VideoPlayer(videoPlayerItem = playerDtoItems,
+                VideoPlayer(
+                    videoPlayerItem = playerDtoItems,
                     initialIndex = state.videoPlayingIndex ?: 0,
                     playerViewModel = playerViewModel,
                     sharedPlayerViewModel = sharedPlayerViewModel,
@@ -113,7 +112,10 @@ fun PlayerScreen(
                         playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
                         sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
                         onRelatedItemClick.invoke(item, list, index)
-                    })
+                    },
+                    onStreamFromTopBarClick = onStreamFromTopBarClick,
+                    onLiveClick = onLiveClick
+                )
             }
         }
     }

@@ -39,6 +39,7 @@ class PlayerViewModel @Inject constructor(
     val continueWatchingUpdateFlow = _onContinueWatchingUpdateFlow.asSharedFlow()
 
     private var relatedAutoDismissJob: Job? = null
+    private var topBarAutoDismissJob: Job? = null
 
 
     fun handleEvent(event: PlayerEvent) {
@@ -53,6 +54,15 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.HideRelated -> {
                 _state.value = _state.value.copy(isRelatedVisible = false)
+            }
+
+            is PlayerEvent.ShowTopBar -> {
+                _state.value = _state.value.copy(isUniversalTopBarVisible = true)
+                startTopBarAutoDismissTimer()
+            }
+
+            is PlayerEvent.HideTopBar -> {
+                _state.value = _state.value.copy(isUniversalTopBarVisible = false)
             }
 
             is PlayerEvent.ShowRelated -> {
@@ -129,6 +139,10 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.StartRelatedDialogAutoHide -> {
                 startAutoDismissTimerForRelated()
+            }
+
+            is PlayerEvent.StartTopBarAutoHide -> {
+                startTopBarAutoDismissTimer()
             }
 
         }
@@ -510,8 +524,21 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    private fun startTopBarAutoDismissTimer() {
+        topBarAutoDismissJob?.cancel()
+        topBarAutoDismissJob = viewModelScope.launch {
+            delay(10_000) // 10 seconds
+            _state.update {
+                it.copy(
+                    isUniversalTopBarVisible = false,
+                )
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         relatedAutoDismissJob?.cancel()
+        topBarAutoDismissJob?.cancel()
     }
 }

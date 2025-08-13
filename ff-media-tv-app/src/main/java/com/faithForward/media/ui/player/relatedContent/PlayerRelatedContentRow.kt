@@ -100,12 +100,13 @@ fun PlayerRelatedContentRow(
                                 }
                             }
                         }
-                        .focusable()
                         .onKeyEvent { keyEvent ->
-                            if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.DirectionUp || keyEvent.key == Key.DirectionDown) {
+                            if (keyEvent.type == KeyEventType.KeyDown &&
+                                (keyEvent.key == Key.DirectionUp || keyEvent.key == Key.DirectionDown)
+                            ) {
+
                                 Log.e("ON_UP", "on up in related row item")
                                 onUp.invoke()
-                                true
                             } else if (index == 0 && keyEvent.key == Key.DirectionLeft) {
                                 true
                             } else if (index == rowList.size - 1 && keyEvent.key == Key.DirectionRight)
@@ -113,7 +114,8 @@ fun PlayerRelatedContentRow(
                             else {
                                 false
                             }
-                        },
+                        }
+                        .focusable(),
                         focusState = uiState,
                         relatedContentItemDto = item,
                         onItemClick = {
