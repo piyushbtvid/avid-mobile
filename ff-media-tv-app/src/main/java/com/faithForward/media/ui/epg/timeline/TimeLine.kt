@@ -63,7 +63,7 @@ fun TimeLine(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(top = 50.dp)
+                .padding(top = 30.dp)
                 .width(1.5.dp)
                 .offset(x = nowOffset)
                 .background(Color.Gray)

@@ -76,11 +76,11 @@ fun Epg(
                 .horizontalScroll(sharedScrollState),
             timeSlots = timeSlots,
             startTimeMillis = epgStartTime,
-            dpPerMinute = 2.dp
+            dpPerMinute = 2.dp,
         )
 
         LazyColumn(
-            modifier = Modifier.padding(top = 50.dp),
+            modifier = Modifier.padding(top = 30.dp),
             verticalArrangement = Arrangement.spacedBy(7.5.dp),
             contentPadding = PaddingValues(bottom = 20.dp)
         ) {
