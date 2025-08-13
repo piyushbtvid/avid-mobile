@@ -54,6 +54,9 @@ fun TopBarRow(
     onItemClick: (TopBarItemDto) -> Unit,
     onTopBarLeftClick: () -> Unit,
     onSelectedPositionClick: (Int) -> Unit,
+    onTopBarDownClick: () -> Boolean = {
+        false
+    },
 ) {
 
 
@@ -108,7 +111,8 @@ fun TopBarRow(
                                 } else {
                                     false
                                 }
-
+                            } else if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.DirectionDown) {
+                                onTopBarDownClick.invoke()
                             } else {
                                 false
                             }

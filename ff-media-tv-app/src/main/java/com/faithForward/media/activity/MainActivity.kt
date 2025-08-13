@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -39,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
+import com.faithForward.media.activity.splash.SplashScreen
 import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
 import com.faithForward.media.ui.epg.Epg
 import com.faithForward.media.ui.epg.EpgUiModel
@@ -96,14 +98,15 @@ class MainActivity : ComponentActivity() {
                     ) { loading ->
                         when {
                             loading -> {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(pageBlackBackgroundColor),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(color = focusedMainColor)
-                                }
+//                                Box(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .background(pageBlackBackgroundColor),
+//                                    contentAlignment = Alignment.Center
+//                                ) {
+//                                    CircularProgressIndicator(color = focusedMainColor)
+//                                }
+                                SplashScreen()
                             }
 
                             else -> {
@@ -119,7 +122,6 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
-
                         }
                     }
 
@@ -130,7 +132,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        if (currentRoute == Routes.PlayerScreen.route && !isControlsVisible) {
+        if (currentRoute == Routes.PlayerScreen.route) {
             Log.e(
                 "ON_USER_INTERCATION",
                 "on user intercation is called if current route is player with $isControlsVisible"

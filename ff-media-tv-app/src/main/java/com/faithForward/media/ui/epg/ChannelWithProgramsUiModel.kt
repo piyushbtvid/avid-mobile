@@ -5,6 +5,8 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -64,7 +66,7 @@ fun ChannelWithPrograms(
 
         Row(
             modifier = Modifier.horizontalScroll(horizontalScrollState),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             channelWithProgramsUiModel.programs.fastForEachIndexed { index, program ->
                 val programModifier = if (isFirstRow && index == 0) {
@@ -86,9 +88,10 @@ fun ChannelWithPrograms(
                     programUiModel = program,
                     isFocused = focusedIndex == index,
                     modifier = programModifier,
-                    addGapAfter = index< channelWithProgramsUiModel.programs.lastIndex
                 )
             }
+            Spacer(Modifier.width(16.dp))
+
         }
     }
 }
