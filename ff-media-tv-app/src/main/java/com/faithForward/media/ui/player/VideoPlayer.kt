@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -389,7 +390,7 @@ fun VideoPlayer(
                 playerViewModel.handleEvent(PlayerEvent.HideRelated)
                 playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
             }
-            sharedPlayerViewModel.startAutoHideTimer()
+            sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
     }
 
@@ -412,6 +413,8 @@ fun VideoPlayer(
             sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
         }
     }
+
+
 
     exoPlayer.addListener(object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -644,11 +647,13 @@ fun VideoPlayer(
             ) {
                 TitleText(
                     modifier = Modifier
+                        .width(310.dp)
                         .align(Alignment.TopStart)
                         .padding(start = 20.dp, top = 16.dp),
                     text = playerScreenState.currentTitle!!,
                     textSize = 28,
                     color = whiteMain,
+                    maxLine = 2,
                     lineHeight = 28,
                     fontWeight = FontWeight.Bold
                 )
@@ -842,11 +847,6 @@ fun VideoPlayer(
             UniversalTopBarPageForPlayer(
                 onLeftClick = {
 
-                },
-                onTopBarDownClick = {
-                    Log.e("TOP_BAR", "on top bar down click")
-                    sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-                    false
                 },
                 onLiveClick = onLiveClick,
                 onStreamClick = onStreamFromTopBarClick,
