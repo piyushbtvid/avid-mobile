@@ -29,8 +29,8 @@ android {
         applicationId = "com.faithForward.media"
         minSdk = 21
         targetSdk = 35
-        versionCode = 8
-        versionName = "3.5"
+        versionCode = 9
+        versionName = "3.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
