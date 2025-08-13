@@ -68,19 +68,6 @@ fun Epg(
 
 
     Box {
-        Column(
-            modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            TimeLine(
-                modifier = Modifier
-                    .padding(start = 151.5.dp)
-                    .horizontalScroll(sharedScrollState),
-                timeSlots = timeSlots,
-                startTimeMillis = epgStartTime,
-                dpPerMinute = 2.dp
-            )
-        }
     // Timeline row
 //    Box(
 //        modifier = modifier
@@ -107,6 +94,20 @@ fun Epg(
                     horizontalScrollState = sharedScrollState
                 )
             }
+        }
+
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            TimeLine(
+                modifier = Modifier
+                    .padding(start = 151.5.dp)
+                    .horizontalScroll(sharedScrollState),
+                timeSlots = timeSlots,
+                startTimeMillis = epgStartTime,
+                dpPerMinute = 2.dp
+            )
         }
     }
 }
