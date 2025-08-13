@@ -382,6 +382,7 @@ fun VideoPlayer(
             if (playerScreenState.isRelatedVisible) {
                 playerViewModel.handleEvent(PlayerEvent.StartRelatedDialogAutoHide)
             }
+            Log.e("UNIVERSAL_TOP_BAR","universal top visible condition is ${playerScreenState.isUniversalTopBarVisible}")
             if (playerScreenState.isUniversalTopBarVisible) {
                 playerViewModel.handleEvent(PlayerEvent.StartTopBarAutoHide)
             }
@@ -532,13 +533,30 @@ fun VideoPlayer(
 
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
+                Lifecycle.Event.ON_PAUSE -> {
+                    Log.e(
+                        "PLAYER_POS",
+                        "on pause called of player with ${playerScreenState.currentPosition}  and ${exoPlayer.currentPosition}"
+                    )
+                    exoPlayer.pause()
+                }
+
                 Lifecycle.Event.ON_STOP -> {
+                    Log.e(
+                        "PLAYER_POS",
+                        "on stop called of player with ${playerScreenState.currentPosition}  and ${exoPlayer.currentPosition}"
+                    )
+
                     Log.e("STOP_TRACK", "on Stop is called with ${playerScreenState.hasVideoEnded}")
                     exoPlayer.pause()
                 }
 
                 Lifecycle.Event.ON_RESUME -> {
+                    Log.e(
+                        "PLAYER_POS",
+                        "on resume called of player with ${playerScreenState.currentPosition}  and ${exoPlayer.currentPosition}"
+                    )
+
                     exoPlayer.playWhenReady = true
                     exoPlayer.prepare()
                     Log.e("SHOW_CONTROLES", "show controles on Resume")
@@ -845,9 +863,7 @@ fun VideoPlayer(
         ) {
 
             UniversalTopBarPageForPlayer(
-                onLeftClick = {
-
-                },
+                onLeftClick = onStreamFromTopBarClick,
                 onLiveClick = onLiveClick,
                 onStreamClick = onStreamFromTopBarClick,
                 focusRequesterList = topBarFocusRequesterList,
