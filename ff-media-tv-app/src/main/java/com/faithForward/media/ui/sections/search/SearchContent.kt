@@ -34,7 +34,7 @@ import com.faithForward.util.Resource
 
 
 data class SearchContentDto(
-    val searchItemList: List<SearchItemDto>,
+    val searchItemList: List<SearchItemDto>?,
 )
 
 

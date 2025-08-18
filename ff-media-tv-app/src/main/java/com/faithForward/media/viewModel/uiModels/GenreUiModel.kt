@@ -22,7 +22,8 @@ fun ContentItem.toGenreCardDto(): GenreCardDto {
         imdbRating = rating.takeIf { !it.isNullOrBlank() },
         releaseDate = dateUploaded.takeIf { !it.isNullOrBlank() },
         videoUrl = video_link.takeIf { !it.isNullOrBlank() },
-        slug = slug.takeIf { !it.isNullOrBlank() }
+        slug = slug.takeIf { !it.isNullOrBlank() },
+        contentType = content_type
     )
 }
 
