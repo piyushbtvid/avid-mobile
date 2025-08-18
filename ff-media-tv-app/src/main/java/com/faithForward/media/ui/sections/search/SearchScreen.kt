@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyBoardUi
-import com.faithForward.media.ui.sections.search.custom_keyboard.NewKeyboardActionState
 import com.faithForward.media.ui.sections.search.custom_keyboard.KeyboardMode
+import com.faithForward.media.ui.sections.search.custom_keyboard.NewKeyboardActionState
 import com.faithForward.media.ui.sections.search.item.SearchItemDto
 import com.faithForward.media.ui.sections.search.recent.RecentSearch
 import com.faithForward.media.ui.theme.cardShadowColor
@@ -156,6 +156,9 @@ fun SearchScreenUi(
         if (searchInputText.length >= 3) {
             searchViewModel.onEvent(SearchEvent.SubmitQuery(searchInputText))
         }
+        if (searchInputText.length == 2) {
+            searchViewModel.onEvent(SearchEvent.EmptySearchResult)
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -250,42 +253,49 @@ fun SearchScreenUi(
 
 
 
-                if (!uiState.result?.searchItemDtoList.isNullOrEmpty()) {
-                    SearchLazyList(
-                        lastFocusedIndex = searchResultFocusedIndex,
-                        searchResultList = uiState.result!!.searchItemDtoList!!,
-                        searchResultFocusRequesterList = searchResultFocusRequesterList,
-                        onSearchResultFocusedIndexChange = { int ->
-                            searchResultFocusedIndex = int
-                        },
-                        onItemClick = { item ->
-                            if (item.itemId != null && item.contentType != null) {
-                                searchViewModel.onEvent(
-                                    SearchEvent.SaveToRecentSearch(
-                                        contentType = item.contentType,
-                                        contentID = item.itemId
+                when {
+                    uiState.result?.searchItemDtoList?.isNotEmpty() == true -> {
+                        SearchLazyList(
+                            lastFocusedIndex = searchResultFocusedIndex,
+                            searchResultList = uiState.result!!.searchItemDtoList!!,
+                            searchResultFocusRequesterList = searchResultFocusRequesterList,
+                            onSearchResultFocusedIndexChange = { int ->
+                                searchResultFocusedIndex = int
+                            },
+                            onItemClick = { item ->
+                                if (item.itemId != null && item.contentType != null) {
+                                    searchViewModel.onEvent(
+                                        SearchEvent.SaveToRecentSearch(
+                                            contentType = item.contentType,
+                                            contentID = item.itemId
+                                        )
                                     )
-                                )
+                                }
+                                onSearchItemClick.invoke(item)
+                            },
+                            onSearchLastFocusedIndexChange = { int ->
+                                searchResultLastFocusedIndex = int
                             }
-                            onSearchItemClick.invoke(item)
-                        },
-                        onSearchLastFocusedIndexChange = { int ->
-                            searchResultLastFocusedIndex = int
-                        }
-                    )
-                } else if (uiState.result?.searchItemDtoList?.isEmpty() == true) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No results found",
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
                         )
                     }
+
+                    uiState.result?.searchItemDtoList?.isEmpty() == true -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No results found",
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                            )
+                        }
+                    }
+                    else -> {
+                    }
                 }
+
 
             }
 

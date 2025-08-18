@@ -3,6 +3,7 @@ package com.faithForward.media.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faithForward.media.ui.sections.search.SearchContentDto
 import com.faithForward.media.viewModel.uiModels.SearchEvent
 import com.faithForward.media.viewModel.uiModels.SearchScreenUiState
 import com.faithForward.media.viewModel.uiModels.SearchUiState
@@ -40,12 +41,29 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.SubmitQuery -> searchGivenQuery(event.query)
             is SearchEvent.GetRecentSearch -> getRecentSearch()
+            is SearchEvent.EmptySearchResult -> emptySearchResult()
             is SearchEvent.SaveToRecentSearch -> saveToRecentSearch(
-                contentType = event.contentType,
-                contentId = event.contentID
+                contentType = event.contentType, contentId = event.contentID
             )
         }
     }
+
+    private fun emptySearchResult() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.e("EMPTY", "empty search list is called")
+            _uiState.update {
+                it.copy(
+                    searchResults = Resource.Success(SearchContentDto(searchItemList = null))
+                )
+            }
+            _searchUiState.update {
+                it.copy(
+                    result = null
+                )
+            }
+        }
+    }
+
 
     private fun searchGivenQuery(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -108,8 +126,7 @@ class SearchViewModel @Inject constructor(
                     }
                     _searchUiState.update {
                         it.copy(
-                            isLoading = false,
-                            recentSearch = recentSearchList
+                            isLoading = false, recentSearch = recentSearchList
                         )
                     }
                 } else {
@@ -131,8 +148,7 @@ class SearchViewModel @Inject constructor(
             try {
 
                 val response = networkRepository.updateRecentSearch(
-                    contentType = contentType,
-                    contentId = contentId
+                    contentType = contentType, contentId = contentId
                 )
 
                 if (response.isSuccessful) {
