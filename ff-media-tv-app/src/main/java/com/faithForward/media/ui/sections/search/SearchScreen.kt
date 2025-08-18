@@ -156,7 +156,7 @@ fun SearchScreenUi(
         if (searchInputText.length >= 3) {
             searchViewModel.onEvent(SearchEvent.SubmitQuery(searchInputText))
         }
-        if (searchInputText.length == 2) {
+        if (searchInputText.length <= 2) {
             searchViewModel.onEvent(SearchEvent.EmptySearchResult)
         }
     }
@@ -292,6 +292,7 @@ fun SearchScreenUi(
                             )
                         }
                     }
+
                     else -> {
                     }
                 }

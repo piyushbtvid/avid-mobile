@@ -50,7 +50,7 @@ fun GenreCard(
 
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.1f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )

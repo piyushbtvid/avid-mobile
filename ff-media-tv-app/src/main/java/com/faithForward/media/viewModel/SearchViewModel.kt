@@ -13,12 +13,14 @@ import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +33,8 @@ class SearchViewModel @Inject constructor(
 
     private val _searchUiState = MutableStateFlow(SearchScreenUiState())
     val searchUiState = _searchUiState.asStateFlow()
+
+    private var searchJob: Job? = null
 
     init {
         Log.e("RECENT", "search viewModel init")
@@ -49,40 +53,37 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun emptySearchResult() {
+        searchJob?.cancel()
         viewModelScope.launch(Dispatchers.IO) {
-            Log.e("EMPTY", "empty search list is called")
             _uiState.update {
                 it.copy(
                     searchResults = Resource.Success(SearchContentDto(searchItemList = null))
                 )
             }
             _searchUiState.update {
-                it.copy(
-                    result = null
-                )
+                it.copy(result = null)
             }
         }
     }
 
 
     private fun searchGivenQuery(query: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             try {
                 _uiState.update { it.copy(query = query, searchResults = Resource.Loading()) }
-                _searchUiState.update {
-                    it.copy(isLoading = true)
-                }
+                _searchUiState.update { it.copy(isLoading = true) }
+
                 val response = async { networkRepository.searchContent(query) }
                 val recentResponse = async { networkRepository.getRecentSearchContent() }
+
                 val result = response.await()
                 val recentResult = recentResponse.await()
-                Log.e("SEARCH_RESULT", "search response in viewModel is $response")
+
                 if (result.isSuccessful && recentResult.isSuccessful) {
                     val body = result.body()
-                    val recentSearchList = recentResult.body()?.data?.map {
-                        it.term
-                    }
-                    Log.e("SEARCH_RESULT", "search result in viewModel is ${body?.data}")
+                    val recentSearchList = recentResult.body()?.data?.map { it.term }
+
                     _uiState.update {
                         it.copy(
                             searchResults = when {
@@ -98,16 +99,13 @@ class SearchViewModel @Inject constructor(
                             recentSearch = recentSearchList
                         )
                     }
-
                 } else {
-                    Log.e("SEARCH_RESULT", "search error in viewModel is ${result.message()}")
                     _uiState.update {
                         it.copy(searchResults = Resource.Error("Error: ${result.code()}"))
                     }
                 }
             } catch (ex: Exception) {
-                ex.printStackTrace()
-                Log.e("SEARCH_RESULT", "search exception in viewModel is ${ex.message}")
+                if (ex is CancellationException) throw ex
                 _uiState.update {
                     it.copy(searchResults = Resource.Error(ex.message ?: "Unknown error"))
                 }
@@ -163,6 +161,12 @@ class SearchViewModel @Inject constructor(
             }
 
         }
+    }
+
+
+    override fun onCleared() {
+        searchJob?.cancel()
+        super.onCleared()
     }
 
 }
