@@ -2,6 +2,7 @@ package com.faithForward.media.ui.sections.genre
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -45,6 +46,7 @@ import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
@@ -78,6 +80,7 @@ fun GenreCardGrid(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(pageBlackBackgroundColor)
             .padding(start = 41.dp),
     ) {
         Column(

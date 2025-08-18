@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ data class GenreCardDto(
     val releaseDate: String? = null,
     val videoUrl: String? = null,
     val slug: String?,
+    val contentType: String? = null,
 )
 
 @Composable
@@ -50,7 +52,7 @@ fun GenreCard(
 
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.1f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
@@ -74,7 +76,8 @@ fun GenreCard(
                 modifier = modifier,
                 posterCardDto = GenreImageCardDto(posterImageSrc = it),
                 focusState = focusState,
-                onItemClick = onItemClick
+                onItemClick = onItemClick,
+                imageContentScale = if (genreCardDto.contentType == "Live Channel") ContentScale.Fit else ContentScale.FillBounds
             )
         }
 
