@@ -2,12 +2,12 @@ package com.faithForward.media.ui.subscription
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,8 +19,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,95 +35,122 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.faithForward.media.ui.theme.blackColor
 import com.faithForward.media.ui.theme.focusedMainColor
+import com.faithForward.media.ui.theme.whiteMain
 
 data class SubscriptionUiItem(
-    val amount : String
+    val amount: String,
+    val time: String,
+    val headLineText: String,
+    val featureTextList: List<String>,
+    val subHeadLineText: String,
 )
 
 @Composable
 fun SubscriptionItem(
     modifier: Modifier = Modifier,
-    subscriptionUiItem: SubscriptionUiItem
+    subscriptionUiItem: SubscriptionUiItem,
+    buttonText: String,
+    focusRequester: FocusRequester = FocusRequester(),
 ) {
+
+    var isButtonFocused by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
+            .width(340.dp)
             .border(
-                width = 1.dp,
-                color = focusedMainColor,
+                width = 2.dp,
+                color = if (isButtonFocused) focusedMainColor else Color.Transparent,
                 shape = RoundedCornerShape(12.dp)
             )
             .background(
-                color = Color(0xFF0D0B25), // dark background like in screenshot
+                color = Color(0xFF0D0B25),
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(vertical = 30.dp, horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "Monthly Plan",
+            text = subscriptionUiItem.headLineText,
             style = TextStyle(
                 color = Color.White,
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 fontWeight = FontWeight.Bold
             )
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = "$9.99",
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+
+        Row(
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = subscriptionUiItem.amount,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
-        Text(
-            text = "/month",
-            style = TextStyle(
-                color = Color.LightGray,
-                fontSize = 14.sp
+            Text(
+                text = subscriptionUiItem.time,
+                style = TextStyle(
+                    color = Color.LightGray,
+                    fontSize = 12.sp
+                )
             )
-        )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        }
+
+
+
+
 
         Text(
-            text = "Perfect for trying out premium features",
+            text = subscriptionUiItem.subHeadLineText,
             style = TextStyle(
-                color = Color.Gray,
-                fontSize = 12.sp
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 11.sp
             ),
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            FeatureItem("Ad-free streaming")
-            FeatureItem("4K Ultra HD quality")
-            FeatureItem("Download for offline viewing")
-            FeatureItem("Stream on 4 devices")
-            FeatureItem("Cancel anytime")
+            subscriptionUiItem.featureTextList.forEach { feature ->
+                FeatureItem(feature)
+            }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+
+
 
         Button(
             onClick = { /* Handle click */ },
             colors = ButtonDefaults.buttonColors(
-                containerColor = focusedMainColor
+                containerColor = if (isButtonFocused) focusedMainColor else whiteMain.copy(alpha = 0.9f)
             ),
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .width(300.dp)
+                .align(Alignment.Start)
+                .focusRequester(focusRequester = focusRequester)
+                .onFocusChanged {
+                    isButtonFocused = it.hasFocus
+                }
+                .focusable()
         ) {
             Text(
-                text = "Choose Monthly",
-                color = Color.White,
+                text = buttonText,
+                color = if (isButtonFocused) whiteMain else blackColor,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -148,6 +182,19 @@ private fun FeatureItem(text: String) {
 @Composable
 private fun SubscriptionItemPreview() {
     SubscriptionItem(
-        subscriptionUiItem = SubscriptionUiItem(amount = "2")
+        subscriptionUiItem = SubscriptionUiItem(
+            amount = "$9.99",
+            time = "/month",
+            headLineText = "Monthly Plan",
+            featureTextList = listOf(
+                "Ad-free streaming",
+                "4K Ultra HD quality",
+                "Download for offline viewing",
+                "Stream on 4 devices",
+                "Cancel anytime"
+            ),
+            subHeadLineText = "Perfect for trying out premium features",
+        ),
+        buttonText = "Choose Monthly",
     )
 }
