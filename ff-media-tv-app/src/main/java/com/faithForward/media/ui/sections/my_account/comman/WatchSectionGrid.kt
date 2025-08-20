@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.util.CustomLazyGrid
 import com.faithForward.media.util.FocusState
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -31,47 +32,38 @@ fun WatchSectionGrid(
     watchSectionItemDtoList: List<WatchSectionItemDto>,
 ) {
 
-    val scrollState = rememberLazyGridState()
 
-
-    LazyVerticalGrid(
-        state = scrollState,
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(28.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(
-            bottom = 80.dp, start = 16.dp, end = 16.dp, top = 16.dp
-        ),
+    CustomLazyGrid(
         modifier = modifier
-            .fillMaxSize()
-            .focusRestorer() // Keep this, but ensure it doesn't override initial focus
-    ) {
-        itemsIndexed(watchSectionItemDtoList) { index, item ->
-            val uiState = when (index) {
-                focusedIndex -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
-            }
-
-            WatchSectionItem(
-                modifier = Modifier
-                    .focusRequester(focusRequesterList[index])
-                    .onFocusChanged {
-                        if (it.hasFocus) {
-                            onFocusedIndexChange.invoke(index)
-                            onLastFocusedIndexChange.invoke(index)
-                        } else {
-                            onFocusedIndexChange.invoke(-1)
-                        }
-                    }
-                    .clickable(interactionSource = null, indication = null, onClick = {
-                        onItemClick.invoke(item)
-                    })
-                    .focusable(),
-                focusState = uiState,
-                watchSectionItemDto = item,
-            )
-
+            .fillMaxSize(),
+        items = watchSectionItemDtoList,
+        columns = 3,
+//        verticalSpacing = 45.dp,
+//        horizontalSpacing = 30.dp,
+//        rowContentPadding = PaddingValues(horizontal = 16.dp),
+//        columnContentPadding = PaddingValues(top = 16.dp, bottom = 80.dp),
+    ) { index, item ->
+        val uiState = when (index) {
+            focusedIndex -> FocusState.FOCUSED
+            else -> FocusState.UNFOCUSED
         }
+        WatchSectionItem(
+            modifier = Modifier
+                .focusRequester(focusRequesterList[index])
+                .onFocusChanged {
+                    if (it.hasFocus) {
+                        onFocusedIndexChange.invoke(index)
+                        onLastFocusedIndexChange.invoke(index)
+                    } else {
+                        onFocusedIndexChange.invoke(-1)
+                    }
+                }
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    onItemClick.invoke(item)
+                })
+                .focusable(),
+            focusState = uiState,
+            watchSectionItemDto = item,
+        )
     }
-
 }
