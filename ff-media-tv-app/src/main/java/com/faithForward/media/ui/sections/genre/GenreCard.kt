@@ -56,7 +56,7 @@ fun GenreCard(
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .wrapContentWidth()
             .scale(scale)
             .zIndex(
@@ -71,7 +71,7 @@ fun GenreCard(
 
         genreCardDto.image?.let {
             GenreImageCard(
-                modifier = modifier,
+                modifier = Modifier,
                 posterCardDto = GenreImageCardDto(posterImageSrc = it),
                 focusState = focusState,
                 onItemClick = onItemClick
