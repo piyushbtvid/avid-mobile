@@ -34,4 +34,5 @@ object Constants {
     const val DELETE_PROFILE = "client/v1/subscribers/profiles/{id}"
     const val UPDATE_PROFILE = "client/v1/subscribers/profiles/{profile_id}"
     const val SET_PROFILE = "client/v1/subscribers/profiles/set/{profile_id}"
+    const val SET_PURCHASE = "client/v1/purchase"
 }

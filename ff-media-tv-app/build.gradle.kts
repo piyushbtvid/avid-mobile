@@ -133,4 +133,6 @@ dependencies {
 
     implementation("androidx.leanback:leanback:1.2.0")
 
+    implementation ("com.amazon.device:amazon-appstore-sdk:+")
+
 }

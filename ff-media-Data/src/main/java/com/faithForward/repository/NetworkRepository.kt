@@ -16,6 +16,7 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
@@ -484,6 +485,28 @@ class NetworkRepository @Inject constructor(
             deviceId = deviceId,
             deviceType = deviceType,
             profileId = profileId
+        )
+    }
+
+    suspend fun setPurchase(
+        receipt_id: String,
+        product_id: String,
+    ): Response<ApiMessageResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        return apiServiceInterface.setPurchase(
+            deviceId = deviceId,
+            token = token,
+            deviceType = deviceType,
+            purchaseRequest = PurchaseRequest(
+                receipt_id = receipt_id,
+                product_id = product_id
+            )
         )
     }
 

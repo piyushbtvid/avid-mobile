@@ -23,6 +23,7 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
@@ -289,5 +290,13 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
         @Path("profile_id") profileId: Int,
     ): Response<ProfileCommonResponse>
+
+    @POST(Constants.SET_PURCHASE)
+    suspend fun setPurchase(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Body purchaseRequest: PurchaseRequest,
+    ) : Response<ApiMessageResponse>
 
 }

@@ -2,7 +2,6 @@ package com.faithForward.media.ui.subscription
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,19 +18,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,14 +45,14 @@ fun SubscriptionItem(
     modifier: Modifier = Modifier,
     subscriptionUiItem: SubscriptionUiItem,
     buttonText: String,
-    focusRequester: FocusRequester = FocusRequester(),
+    isButtonFocused: Boolean,
+    onButtonClick: () -> Unit,
 ) {
 
-    var isButtonFocused by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
-            .width(340.dp)
+        modifier = Modifier
+            .width(250.dp)
             .border(
                 width = 2.dp,
                 color = if (isButtonFocused) focusedMainColor else Color.Transparent,
@@ -69,15 +62,15 @@ fun SubscriptionItem(
                 color = Color(0xFF0D0B25),
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(vertical = 30.dp, horizontal = 20.dp),
+            .padding(vertical = 20.dp, horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
         Text(
             text = subscriptionUiItem.headLineText,
             style = TextStyle(
                 color = Color.White,
-                fontSize = 17.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
         )
@@ -91,7 +84,7 @@ fun SubscriptionItem(
                 text = subscriptionUiItem.amount,
                 style = TextStyle(
                     color = Color.White,
-                    fontSize = 30.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -115,6 +108,8 @@ fun SubscriptionItem(
                 color = Color.White.copy(alpha = 0.7f),
                 fontSize = 11.sp
             ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
         )
 
@@ -134,19 +129,16 @@ fun SubscriptionItem(
 
 
         Button(
-            onClick = { /* Handle click */ },
+            onClick = {
+                onButtonClick.invoke()
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (isButtonFocused) focusedMainColor else whiteMain.copy(alpha = 0.9f)
             ),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
+            shape = RoundedCornerShape(11.dp),
+            modifier = modifier
                 .width(300.dp)
                 .align(Alignment.Start)
-                .focusRequester(focusRequester = focusRequester)
-                .onFocusChanged {
-                    isButtonFocused = it.hasFocus
-                }
-                .focusable()
         ) {
             Text(
                 text = buttonText,
@@ -172,7 +164,7 @@ private fun FeatureItem(text: String) {
         Text(
             text = text,
             color = Color.White,
-            fontSize = 14.sp
+            fontSize = 12.sp
         )
     }
 }
@@ -196,5 +188,9 @@ private fun SubscriptionItemPreview() {
             subHeadLineText = "Perfect for trying out premium features",
         ),
         buttonText = "Choose Monthly",
+        onButtonClick = {
+
+        },
+        isButtonFocused = false
     )
 }

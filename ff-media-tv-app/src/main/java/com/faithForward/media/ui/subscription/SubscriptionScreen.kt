@@ -1,49 +1,84 @@
 package com.faithForward.media.ui.subscription
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.viewModel.SubscriptionViewModel
+import kotlinx.coroutines.time.delay
 
 @Composable
 fun SubscriptionScreen(
     modifier: Modifier = Modifier,
+    subscriptionViewModel: SubscriptionViewModel = hiltViewModel(),
 ) {
 
     val buttonFocusRequester = remember { FocusRequester() }
+    var buttonFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
+
+    val products by subscriptionViewModel.products.collectAsState()
+    val purchase by subscriptionViewModel.purchaseResult.collectAsState(null)
 
     LaunchedEffect(Unit) {
-        try {
-            buttonFocusRequester.requestFocus()
-        } catch (_: Exception) {
+        subscriptionViewModel.loadProducts()
+    }
 
+    LaunchedEffect(products) {
+        if (products.isNotEmpty()) {
+            try {
+                Log.e("PLAN", "plan request focus after products loaded")
+                buttonFocusRequester.requestFocus()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
+
+    LaunchedEffect(purchase) {
+        if (purchase != null) {
+            Log.e("PURCHASE", "purchase called in launch effect with $purchase")
+            subscriptionViewModel.handlePurchase(purchase!!)
+        }
+    }
+
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(pageBlackBackgroundColor)
             .padding(top = 30.dp, bottom = 20.dp)
-            .padding( horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(17.dp),
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -66,54 +101,65 @@ fun SubscriptionScreen(
             fontWeight = FontWeight.W400,
         )
 
+        Spacer(modifier = Modifier.height(5.dp))
 
-        Row(
+        LazyRow(
             modifier = Modifier.wrapContentSize(),
             horizontalArrangement = Arrangement.spacedBy(35.dp)
         ) {
+            itemsIndexed(products) { index, product ->
 
-            SubscriptionItem(
-                subscriptionUiItem = SubscriptionUiItem(
-                    amount = "$9.99",
-                    time = "/month",
-                    headLineText = "Monthly Plan",
-                    featureTextList = listOf(
-                        "Ad-free streaming",
-                        "4K Ultra HD quality",
-                        "Download for offline viewing",
-                        "Stream on 4 devices",
-                        "Cancel anytime"
-                    ),
-                    subHeadLineText = "Perfect for trying out premium features",
-                ),
-                buttonText = "Choose Monthly",
-                focusRequester = buttonFocusRequester
-            )
+                val isButtonFocused = index == buttonFocusedIndex
 
-            SubscriptionItem(
-                subscriptionUiItem = SubscriptionUiItem(
-                    amount = "$99.99",
-                    time = "/year",
-                    headLineText = "Yearly Plan",
-                    featureTextList = listOf(
-                        "Everything in Monthly Plan",
-                        "Exclusive premium content",
-                        "Early access to new releases",
-                        "Priority customer support",
-                        "Stream on 6 devices"
+
+                SubscriptionItem(
+                    isButtonFocused = isButtonFocused,
+                    modifier = Modifier
+                        .focusRequester(focusRequester = if (index == 0) buttonFocusRequester else FocusRequester())
+                        .onFocusChanged {
+                            buttonFocusedIndex = if (it.hasFocus) {
+                                index
+                            } else {
+                                -1
+                            }
+                        }
+                        .focusable(),
+                    subscriptionUiItem = SubscriptionUiItem(
+                        amount = product.price,                // from Product
+                        time = if (index == 0) "/month" else "/year", // static
+                        headLineText = product.title,          // from Product
+                        featureTextList = if (index == 0) {
+                            listOf(
+                                "Ad-free streaming",
+                                "4K Ultra HD quality",
+                                "Download for offline viewing",
+                                "Stream on 4 devices",
+                                "Cancel anytime"
+                            )
+                        } else {
+                            listOf(
+                                "Everything in Monthly Plan",
+                                "Exclusive premium content",
+                                "Early access to new releases",
+                                "Priority customer support",
+                                "Stream on 6 devices"
+                            )
+                        },
+                        subHeadLineText = product.description  // from Product
                     ),
-                    subHeadLineText = "Best value for premium entertainment",
-                ),
-                buttonText = "Choose Yearly",
-            )
+                    buttonText = if (index == 0) "Choose Monthly" else "Choose Yearly",
+                    onButtonClick = {
+                        subscriptionViewModel.buy(product.sku)
+                    }
+                )
+            }
         }
     }
-
 }
 
 
 @Preview(device = "id:tv_1080p")
 @Composable
 private fun SubscriptionUiPreview() {
-    SubscriptionScreen()
+    //SubscriptionScreen()
 }
