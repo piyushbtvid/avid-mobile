@@ -18,7 +18,7 @@ sealed class Routes(val route: String) {
     data object Universal : Routes("UNIVERSAL_SCREEN")
     data object Live : Routes("LIVE_PAGE")
     data object EditProfile : Routes("EDIT_PROFILE_SCREEN")
-
+    data object Subscription : Routes("SUBSCRIPTION_SCREEN")
     data class UpdateProfile(
         val avatarId: Int,
         val userName: String,

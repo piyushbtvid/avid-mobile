@@ -46,6 +46,7 @@ data class RelatedContentItemDto(
     val url: String? = null,
     val seasonNumber: Int? = null,
     val episodeNumber: Int? = null,
+    val access: String? = null,
 )
 
 @Composable
@@ -89,7 +90,8 @@ fun RelatedContentItem(
                     .clip(RoundedCornerShape(10.dp))
                     .clickable(interactionSource = null, indication = null, onClick = {
                         onItemClick.invoke()
-                    }))
+                    })
+            )
 
             Spacer(modifier = Modifier.height(5.dp))
 

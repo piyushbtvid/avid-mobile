@@ -76,6 +76,7 @@ data class VideoPlayerDto(
     val description: String,
     val seasonNumber: Int? = null,
     val episodeNumber: Int? = null,
+    val access: String? = null,
 )
 
 
@@ -382,7 +383,10 @@ fun VideoPlayer(
             if (playerScreenState.isRelatedVisible) {
                 playerViewModel.handleEvent(PlayerEvent.StartRelatedDialogAutoHide)
             }
-            Log.e("UNIVERSAL_TOP_BAR","universal top visible condition is ${playerScreenState.isUniversalTopBarVisible}")
+            Log.e(
+                "UNIVERSAL_TOP_BAR",
+                "universal top visible condition is ${playerScreenState.isUniversalTopBarVisible}"
+            )
             if (playerScreenState.isUniversalTopBarVisible) {
                 playerViewModel.handleEvent(PlayerEvent.StartTopBarAutoHide)
             }

@@ -41,6 +41,12 @@ class PlayerViewModel @Inject constructor(
     private var relatedAutoDismissJob: Job? = null
     private var topBarAutoDismissJob: Job? = null
 
+    private val _userType = MutableStateFlow<String?>(null)
+    val userType: StateFlow<String?> = _userType
+
+    init {
+        getCurrentUserInfo()
+    }
 
     fun handleEvent(event: PlayerEvent) {
         when (event) {
@@ -509,6 +515,10 @@ class PlayerViewModel @Inject constructor(
                     Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
                 }
             }
+        } else {
+            if (shouldNaviagte) {
+                handleEvent(PlayerEvent.OnContinueWatchingUpdate)
+            }
         }
     }
 
@@ -532,6 +542,16 @@ class PlayerViewModel @Inject constructor(
                 it.copy(
                     isUniversalTopBarVisible = false,
                 )
+            }
+        }
+    }
+
+    private fun getCurrentUserInfo() {
+        viewModelScope.launch {
+            val response = networkRepository.getCurrentSession()
+            response?.season?.user?.user_type?.let {
+                Log.e("USER_TYPE", "user type in PlayerViewModel checkVideo is $it")
+                _userType.value = it
             }
         }
     }

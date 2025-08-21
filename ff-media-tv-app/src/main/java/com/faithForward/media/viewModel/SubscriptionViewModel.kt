@@ -62,12 +62,15 @@ class SubscriptionViewModel @Inject constructor(
                 try {
                     val result = networkRepository.setPurchase(receiptId, productId)
                     if (result.isSuccessful) {
+                        Log.e("SUBSSCRIPTION_CHECK","set purchase sucess with $result")
                         iapRepository.notifyFulfillment(receiptId, FulfillmentResult.FULFILLED)
                     } else {
-                        iapRepository.notifyFulfillment(receiptId, FulfillmentResult.UNAVAILABLE)
+                        Log.e("SUBSSCRIPTION_CHECK","set purchase error with $result")
+                      //  iapRepository.notifyFulfillment(receiptId, FulfillmentResult.UNAVAILABLE)
                     }
                 } catch (e: Exception) {
-                    Log.e("IAP", "Error sending purchase to backend", e)
+                    e.printStackTrace()
+                    Log.e("SUBSSCRIPTION_CHECK", "Error sending purchase to backend", e)
                     iapRepository.notifyFulfillment(receiptId, FulfillmentResult.UNAVAILABLE)
                 }
             } else {

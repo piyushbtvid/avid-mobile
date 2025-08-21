@@ -43,6 +43,7 @@ import com.faithForward.media.ui.navigation.MainScreen
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
+import com.faithForward.media.ui.subscription.SubscriptionScreen
 import com.faithForward.media.ui.theme.FfmediaTheme
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
@@ -112,7 +113,7 @@ class MainActivity : ComponentActivity() {
                                         else -> Routes.LoginQr.route
                                     }
                                 )
-                                //   SubscriptionScreen()
+                                // SubscriptionScreen()
 
                             }
                         }

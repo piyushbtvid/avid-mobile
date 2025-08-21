@@ -40,7 +40,7 @@ import kotlinx.coroutines.time.delay
 @Composable
 fun SubscriptionScreen(
     modifier: Modifier = Modifier,
-    subscriptionViewModel: SubscriptionViewModel = hiltViewModel(),
+    subscriptionViewModel: SubscriptionViewModel,
 ) {
 
     val buttonFocusRequester = remember { FocusRequester() }

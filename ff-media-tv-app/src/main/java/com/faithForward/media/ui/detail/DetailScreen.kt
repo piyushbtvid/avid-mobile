@@ -200,7 +200,7 @@ fun DetailScreen(
                                     PosterCardDto(
                                         videoHlsUrl = (relatedContentData as RelatedContentData.SeriesSeasons).firstSeasonTrailer,
                                         id = detailPageItem.detailDto.id,
-                                        slug = detailPageItem.detailDto.slug,
+                                        slug = null,
                                         posterImageSrc = "",
                                         landScapeImg = "",
                                         title = detailPageItem.detailDto.title ?: "",
@@ -215,7 +215,7 @@ fun DetailScreen(
                                 PosterCardDto(
                                     videoHlsUrl = detailPageItem.detailDto.itemTrailer,
                                     id = detailPageItem.detailDto.id,
-                                    slug = detailPageItem.detailDto.slug,
+                                    slug = null,
                                     posterImageSrc = "",
                                     landScapeImg = "",
                                     title = detailPageItem.detailDto.title ?: "",
