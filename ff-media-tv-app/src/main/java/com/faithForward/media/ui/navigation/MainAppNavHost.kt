@@ -647,7 +647,14 @@ fun MainAppNavHost(
                         onStartPlay = { canPlay = true },
                         onRequireSubscription = {
                             canPlay = false
-                            navController.navigate(Routes.Subscription.route) {
+                            val route = Routes.Subscription.createRoute(
+                                playerDtoList = playerList,
+                                isContinueWatching = isContinueWatching,
+                                initialIndex = initialIndex,
+                                isPlayTrailer = isPlayTrailer,
+                                isFromMyAccount = isFromMyAccount
+                            )
+                            navController.navigate(route) {
                                 popUpTo(Routes.PlayerScreen.route) { inclusive = true }
                             }
                         }
@@ -655,7 +662,7 @@ fun MainAppNavHost(
                 }
             }
 
-            // ✅ Now inside composable scope, decide what to render
+            // inside composable scope, decide what to render
             if (canPlay == true) {
                 LaunchedEffect(playerList) {
                     playerViewModel.handleEvent(
@@ -841,10 +848,65 @@ fun MainAppNavHost(
             )
         }
 
-        composable(route = Routes.Subscription.route) { backStackEntry ->
+        composable(
+            route = Routes.Subscription.route,
+            arguments = listOf(
+                navArgument("playerDtoList") { type = NavType.StringType },
+                navArgument("isContinueWatching") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
+                navArgument("isFromMyAccount") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
+                navArgument("isPlayTrailer") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
+                navArgument("initialIndex") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) { backStackEntry ->
             val subscriptionViewModel = hiltViewModel<SubscriptionViewModel>(backStackEntry)
+
+            val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
+            val isContinueWatching =
+                backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
+            val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
+            val isPlayTrailer = backStackEntry.arguments?.getBoolean("isPlayTrailer") ?: false
+            val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
+
+            val playerList = encodedJson?.let {
+                Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
+            } ?: emptyList()
+
+            LaunchedEffect(Unit) {
+                Log.e(
+                    "SUBSCRIPTION_SCREEN",
+                    "data in subscrioption is $isContinueWatching  and $isFromMyAccount  and $isPlayTrailer  and $initialIndex  and final the list $playerList"
+                )
+            }
+
             SubscriptionScreen(
-                subscriptionViewModel = subscriptionViewModel
+                subscriptionViewModel = subscriptionViewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToPlayer = {
+                    val route = Routes.PlayerScreen.createRoute(
+                        playerDtoList = playerList,
+                        isContinueWatching = isContinueWatching,
+                        isFromMyAccount = isFromMyAccount,
+                        isPlayTrailer = isPlayTrailer,
+                        initialIndex = initialIndex
+                    )
+                    navController.navigate(route){
+                        popUpTo(Routes.Subscription.route) { inclusive = true }
+                    }
+                }
             )
         }
 

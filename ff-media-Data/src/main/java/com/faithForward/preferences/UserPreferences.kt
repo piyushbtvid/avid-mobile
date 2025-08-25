@@ -66,6 +66,23 @@ class UserPreferences @Inject constructor(
     }
 
 
+    suspend fun updateUserInfo(
+        name: String?,
+        email: String?,
+        userType: String?,
+        role: String?
+    ): Boolean = withContext(Dispatchers.IO) {
+        with(sharedPreferences.edit()) {
+            putString(USER_NAME, name)
+            putString(USER_EMAIL, email)
+            putString(USER_TYPE, userType)
+            putString(USER_ROLE, role)
+            commit() // returns true if successful
+        }
+    }
+
+
+
     fun getUserSession(): UserPrefData? {
         Log.e("USER_PREF", "get Current Season called in UserPref")
         val name = sharedPreferences.getString(USER_NAME, null)

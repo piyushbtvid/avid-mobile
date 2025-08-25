@@ -297,6 +297,6 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
         @Body purchaseRequest: PurchaseRequest,
-    ) : Response<ApiMessageResponse>
+    ) : Response<LoginResponse>
 
 }

@@ -7,6 +7,7 @@ import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.login.User
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.profile.AllAvatarListResponse
 import com.faithForward.network.dto.profile.AllProfileResponse
@@ -491,7 +492,7 @@ class NetworkRepository @Inject constructor(
     suspend fun setPurchase(
         receipt_id: String,
         product_id: String,
-    ): Response<ApiMessageResponse> {
+    ): Response<LoginResponse> {
 
         val userSession = userPreferences.getUserSession()
         val token =
@@ -537,6 +538,16 @@ class NetworkRepository @Inject constructor(
             refreshToken = newRefreshToken,
             expireDate = newExpireTime,
             tokenType = newTokenType,
+        )
+    }
+
+    suspend fun updateUserInfo(user: User): Boolean {
+
+        return userPreferences.updateUserInfo(
+            name = user.name,
+            email = user.email,
+            userType = user.user_type,
+            role = user.role,
         )
     }
 

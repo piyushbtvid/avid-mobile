@@ -1,5 +1,6 @@
 package com.faithForward.network.dto.login
 
+import com.faithForward.network.dto.profile.Profile
 import com.google.gson.annotations.SerializedName
 
 data class LoginResponse(
@@ -21,5 +22,16 @@ data class User(
     val name: String?,
     val email: String?,
     val user_type: String?,
-    val role: String?
+    val role: String?,
+    val plans: List<Plan>?=null,
+    val profile: Profile?=null
 )
+
+data class Plan(
+    val platform_name: String,
+    val product_id: String,
+    val starts_at: String,
+    val expires_at: String
+)
+
+
