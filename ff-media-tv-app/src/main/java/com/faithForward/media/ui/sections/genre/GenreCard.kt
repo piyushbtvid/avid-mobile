@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ data class GenreCardDto(
     val releaseDate: String? = null,
     val videoUrl: String? = null,
     val slug: String?,
+    val contentType: String? = null,
 )
 
 @Composable
@@ -56,7 +58,7 @@ fun GenreCard(
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .wrapContentWidth()
             .scale(scale)
             .zIndex(
@@ -71,10 +73,11 @@ fun GenreCard(
 
         genreCardDto.image?.let {
             GenreImageCard(
-                modifier = modifier,
+                modifier = Modifier,
                 posterCardDto = GenreImageCardDto(posterImageSrc = it),
                 focusState = focusState,
-                onItemClick = onItemClick
+                onItemClick = onItemClick,
+                imageContentScale = if (genreCardDto.contentType == "Live Channel") ContentScale.Fit else ContentScale.FillBounds
             )
         }
 

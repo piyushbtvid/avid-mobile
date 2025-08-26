@@ -57,7 +57,7 @@ fun WatchSectionItem(
 
     val scale by animateFloatAsState(
         targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+            FocusState.SELECTED, FocusState.FOCUSED -> 1.1f
             else -> 1f
         },
         animationSpec = tween(300), label = ""
@@ -67,7 +67,6 @@ fun WatchSectionItem(
         modifier = modifier
             .scale(scale)
             .width(150.dp)
-            .wrapContentHeight()
             .background(myAccountItemBackground)
     ) {
 

@@ -24,6 +24,7 @@ data class SearchScreenUiState(
 sealed class SearchEvent {
     data class SubmitQuery(val query: String) : SearchEvent()
     data object GetRecentSearch : SearchEvent()
+    data object EmptySearchResult : SearchEvent()
     data class SaveToRecentSearch(
         val contentType: String,
         val contentID: String,

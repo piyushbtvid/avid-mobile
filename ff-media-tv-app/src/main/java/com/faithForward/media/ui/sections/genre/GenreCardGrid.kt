@@ -2,6 +2,7 @@ package com.faithForward.media.ui.sections.genre
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -16,9 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -45,9 +43,11 @@ import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.util.CustomLazyGrid
 import com.faithForward.media.util.FocusState
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 
@@ -78,6 +78,7 @@ fun GenreCardGrid(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(pageBlackBackgroundColor)
             .padding(start = 41.dp),
     ) {
         Column(
@@ -176,39 +177,33 @@ fun GenreCardGrid(
                         textSize = 30
                     )
                 }
-                LazyVerticalGrid(
-                    state = scrollState,
-                    columns = GridCells.Fixed(5),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(
-                        bottom = 101.dp, start = 47.5.dp, end = 140.dp, top = 20.dp
-                    ),
+                CustomLazyGrid(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .focusRestorer()
-                ) {
-                    itemsIndexed(genreGridDto.genreCardList) { index, genreCardItem ->
-                        val uiState = when (index) {
-                            lastFocusedIndex -> FocusState.FOCUSED
-                            else -> FocusState.UNFOCUSED
-                        }
-                        GenreCard(
-                            modifier = Modifier
-                                .focusRequester(focusRequesters[index])
-                                .onFocusChanged {
-                                    if (it.hasFocus) {
-                                        lastFocusedIndex = index
-                                    }
-                                }
-                                .focusable(),
-                            genreCardDto = genreCardItem,
-                            focusState = uiState,
-                            onItemClick = {
-                                onItemClick.invoke(genreCardItem.toPosterCardDto())
-                            }
-                        )
+                        .fillMaxSize(),
+                    items = genreGridDto.genreCardList,
+                    columns = 5,
+//                    verticalSpacing = 40.dp,
+//                    horizontalSpacing = 25.dp,
+                ) { index, genreCardItem ->
+
+                    val uiState = when (index) {
+                        lastFocusedIndex -> FocusState.FOCUSED
+                        else -> FocusState.UNFOCUSED
                     }
+
+                    GenreCard(
+                        modifier = Modifier
+                            .focusRequester(focusRequesters[index])
+                            .onFocusChanged {
+                                if (it.hasFocus) {
+                                    lastFocusedIndex = index
+                                }
+                            }
+                            .focusable(),
+                        genreCardDto = genreCardItem,
+                        focusState = uiState,
+                        onItemClick = { onItemClick(genreCardItem.toPosterCardDto()) }
+                    )
                 }
             }
         }

@@ -55,6 +55,7 @@ class PlayerViewModel @Inject constructor(
             }
 
             is PlayerEvent.UpdateCurrentPosition -> {
+                Log.d("UpdateCurrentPosition","UpdateCurrentPosition:${event.value}")
                 _state.value = _state.value.copy(currentPosition = event.value)
             }
 
@@ -218,28 +219,7 @@ class PlayerViewModel @Inject constructor(
 
             val isMovie = firstItem?.contentType == "Movie"
 
-            Log.e(
-                "CONTINUE_WATCHING_CLICK",
-                "item list in PlayerViewModel with  is ${firstItem?.relatedList}"
-            )
 
-            Log.e(
-                "CONTINUE_WATCHING_CLICK",
-                "item content type in viewModel is ${firstItem?.contentType}"
-            )
-
-            Log.e(
-                "CONTINUE_WATCHING_CLICK", "item List size  in viewModel is ${itemList.size}"
-            )
-            Log.e(
-                "CONTINUE_WATCHING_CLICK",
-                "is from continue watching $isFromContinueWatching   player viewModel with ${firstItem?.seriesSlug}"
-            )
-
-            Log.e(
-                "CONTINUE_WATCHING_CLICK",
-                "load Player data called in viewModel with $index and  $itemList"
-            )
 
             try {
                 //  If URL and Related List are available  use directly And this is for Movies and its related from detail
@@ -260,14 +240,9 @@ class PlayerViewModel @Inject constructor(
                         ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 } else if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
-                    Log.e(
-                        "CONTINUE_WATCHING_CLICK",
-                        "item has related and url  calling for isMovie"
-                    )
                     val relatedContentItemDtoList =
                         firstItem!!.relatedList!!.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
-
                     val title = videoPlayerDtoList.getOrNull(index ?: 0)?.title
 
                     _state.value = _state.value.copy(
@@ -284,14 +259,6 @@ class PlayerViewModel @Inject constructor(
                 }
                 //this is for series season episodes for all case i.e from detail and from related
                 else if (hasUrl && !isMovie && !isFromContinueWatching) {
-                    Log.e(
-                        "CONTINUE_WATCHING_CLICK",
-                        "has Url and not movie and is Series episode"
-                    )
-                    Log.e(
-                        "PLAYER_CONTINUE",
-                        "item has url  calling for !isMovie with item index $index "
-                    )
                     val relatedContentItemDtoList = itemList.map { it.toRelatedItemDto() }
                     val videoPlayerDtoList = itemList.map { it.toVideoPlayerDto() }
 
@@ -350,14 +317,6 @@ class PlayerViewModel @Inject constructor(
                 }
                 //is from continue watching and is a Series episode
                 else if (isFromContinueWatching && firstItem?.seriesSlug != null) {
-                    Log.e(
-                        "IS_CONTINUE_WATCHING_CLICK",
-                        "is from continue watching in player viewModel with ${firstItem.seriesSlug} and progress is ${firstItem.progress}  "
-                    )
-                    Log.e(
-                        "IS_CONTINUE_WATCHING_CLICK",
-                        "is from continue watching in player viewModel with item is $firstItem  "
-                    )
                     val response = networkRepository.getGivenCardDetail(firstItem.seriesSlug)
                     if (!response.isSuccessful) return@launch
 
@@ -423,15 +382,6 @@ class PlayerViewModel @Inject constructor(
                         }
                         Log.e("ResumeList", "Updated episodes: $matchedSeasonUpdatedEpisodes")
                         Log.e("ResumeList", "Resume episode index: $resumeIndex")
-                        Log.e(
-                            "IS_CONTINUE_WATCHING_CLICK",
-                            "is from continue watching in player viewModel with finial result of VideoList $videoPlayList  "
-                        )
-                        Log.e(
-                            "IS_CONTINUE_WATCHING_CLICK",
-                            "is from continue watching in player viewModel with finial result of RelatedList $relatedList  "
-                        )
-
                         val title = videoPlayList?.getOrNull(index ?: 0)?.title
 
                         if (videoPlayList != null && relatedList != null) {
@@ -473,19 +423,6 @@ class PlayerViewModel @Inject constructor(
 
         val itemSlug = currentVideoList.data?.videoPlayerDtoList?.getOrNull(itemIndex)?.itemSlug
 
-        Log.e(
-            "TEST_WATCH",
-            "current Video List size is ${currentVideoList.data?.videoPlayerDtoList?.size}"
-        )
-
-        Log.e(
-            "STOP_TRACK",
-            "Save to continue watching is called in ViewModel with progress $progress_seconds and duartion is ${videoDuration / 1000}"
-        )
-        Log.e(
-            "CONTINUE_WATCHING",
-            "save to continue watching called with $itemIndex  $progress_seconds  $videoDuration"
-        )
 
         if (itemSlug != null) {
             viewModelScope.launch {
