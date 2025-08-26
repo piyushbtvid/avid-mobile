@@ -52,7 +52,6 @@ import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
 import dagger.hilt.android.AndroidEntryPoint
 
-const val parentSKU = "com.faithForward.media.subscription"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -122,7 +121,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        //  PurchasingService.registerListener(this, purchasingListener)
+
     }
 
     override fun onUserInteraction() {
