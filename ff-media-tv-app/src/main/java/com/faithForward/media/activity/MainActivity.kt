@@ -43,7 +43,6 @@ import com.faithForward.media.ui.navigation.MainScreen
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
-import com.faithForward.media.ui.subscription.SubscriptionScreen
 import com.faithForward.media.ui.theme.FfmediaTheme
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
@@ -78,8 +77,18 @@ class MainActivity : ComponentActivity() {
 
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-                    LaunchedEffect(isLoading) {
-                        Log.e("LOADING", "is loading change in main is $isLoading")
+                    LaunchedEffect(isLoggedIn) {
+                        Log.e(
+                            "CHECK_USER_SUBSCRIPTION",
+                            "is Logged in launch effect called with $isLoggedIn"
+                        )
+                        if (isLoggedIn) {
+                            Log.e(
+                                "CHECK_USER_SUBSCRIPTION",
+                                "is Logged is True in  launch effect So calling load User Subscription data from MainActivity"
+                            )
+                            loginViewModel.updateUserSubscriptionDetails()
+                        }
                     }
 
                     // Use CrossFade to animate between loading and MainScreen
@@ -90,14 +99,6 @@ class MainActivity : ComponentActivity() {
                     ) { loading ->
                         when {
                             loading -> {
-//                                Box(
-//                                    modifier = Modifier
-//                                        .fillMaxSize()
-//                                        .background(pageBlackBackgroundColor),
-//                                    contentAlignment = Alignment.Center
-//                                ) {
-//                                    CircularProgressIndicator(color = focusedMainColor)
-//                                }
                                 SplashScreen()
                             }
 
@@ -113,8 +114,6 @@ class MainActivity : ComponentActivity() {
                                         else -> Routes.LoginQr.route
                                     }
                                 )
-                                // SubscriptionScreen()
-
                             }
                         }
                     }

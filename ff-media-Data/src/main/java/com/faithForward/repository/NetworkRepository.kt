@@ -21,6 +21,7 @@ import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
+import com.faithForward.network.dto.subscription.SubscriptionResponse
 import com.faithForward.preferences.UserPrefData
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -563,4 +564,18 @@ class NetworkRepository @Inject constructor(
     }
 
     suspend fun getEpgData() = apiServiceInterface.getEpgData()
+
+    suspend fun getUserSubscriptionDetail(): Response<SubscriptionResponse> {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        return apiServiceInterface.getUserSubscriptionDetail(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token,
+        )
+    }
 }
