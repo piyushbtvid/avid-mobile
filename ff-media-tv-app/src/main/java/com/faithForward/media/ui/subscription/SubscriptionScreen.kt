@@ -72,7 +72,7 @@ fun SubscriptionScreen(
 
                 is SubscriptionEvent.Error -> {
                     showLoader = false
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                  //  Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                     //  onNavigateBack()
                     try {
                         Log.e("PLAN", "plan request focus ")
