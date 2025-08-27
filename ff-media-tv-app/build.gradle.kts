@@ -103,6 +103,7 @@ dependencies {
     implementation("androidx.media3:media3-common:$media3")
     implementation("androidx.media3:media3-exoplayer-dash:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
+    implementation ("androidx.media3:media3-exoplayer-ima:$media3") // for ads
 
     // implementation(libs.kotlinx.coroutines.android)
 

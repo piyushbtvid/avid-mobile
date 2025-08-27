@@ -103,7 +103,7 @@ data class PlayerState(
 )
 
 data class SharedPlayerViewModelState(
-    val isControlsVisible: Boolean = true,
+    val isControlsVisible: Boolean = false,
 )
 
 sealed class PlayerEvent {
