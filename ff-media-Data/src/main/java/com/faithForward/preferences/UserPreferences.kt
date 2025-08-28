@@ -54,7 +54,7 @@ class UserPreferences @Inject constructor(
         token: String?,
         refreshToken: String?,
         expireDate: Long,
-        tokenType: String?
+        tokenType: String?,
     ): Boolean = withContext(Dispatchers.IO) {
         with(sharedPreferences.edit()) {
             putString(TOKEN, token)
@@ -62,6 +62,22 @@ class UserPreferences @Inject constructor(
             putLong(EXPIRE_DATE, expireDate)
             putString(TOKEN_TYPE, tokenType)
             commit() // this returns true if save is successful
+        }
+    }
+
+
+    suspend fun updateUserInfo(
+        name: String?,
+        email: String?,
+        userType: String?,
+        role: String?
+    ): Boolean = withContext(Dispatchers.IO) {
+        with(sharedPreferences.edit()) {
+            putString(USER_NAME, name)
+            putString(USER_EMAIL, email)
+            putString(USER_TYPE, userType)
+            putString(USER_ROLE, role)
+            commit() // returns true if successful
         }
     }
 
@@ -85,7 +101,12 @@ class UserPreferences @Inject constructor(
 
         return UserPrefData(
             season = LoginData(
-                user = User(name, email, role, userType),
+                user = User(
+                    name = name,
+                    email = email,
+                    user_type = userType,
+                    role = role,
+                ),
                 token = token,
                 tokenType = tokenType,
                 refreshToken = refreshToken,

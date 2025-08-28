@@ -197,7 +197,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun checkRefreshToken() {
-        // Cancel any existing job
+        // Canceling any existing job
         cancelRefreshJob()
 
         refreshJob = viewModelScope.launch(Dispatchers.IO) {
@@ -272,6 +272,46 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+
+     fun updateUserSubscriptionDetails() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = networkRepository.getUserSubscriptionDetail()
+                if (response.isSuccessful) {
+                    Log.e(
+                        "CHECK_USER_SUBSCRIPTION",
+                        "check user subscription resonse when sucess is ${response.body()}"
+                    )
+                    val userUpdatedData = response.body()
+                    if (userUpdatedData?.data != null) {
+                        Log.e(
+                            "CHECK_USER_SUBSCRIPTION",
+                            "check user subscription User New Data is not null so updating user Subscription locally"
+                        )
+                        val isUserDataSaved = networkRepository.updateUserInfo(userUpdatedData.data)
+                        if(isUserDataSaved){
+                            Log.e(
+                                "CHECK_USER_SUBSCRIPTION",
+                                "check user subscription User New Data is Saved Sucess in Local"
+                            )
+                        }else{
+                            Log.e(
+                                "CHECK_USER_SUBSCRIPTION",
+                                "check user subscription User New Data is Not Saved Sucess in Local"
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "CHECK_USER_SUBSCRIPTION",
+                        "check user subscription resonse when error is ${response.message()}"
+                    )
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

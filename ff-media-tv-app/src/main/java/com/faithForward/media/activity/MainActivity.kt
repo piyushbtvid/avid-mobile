@@ -7,7 +7,6 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,19 +39,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.activity.splash.SplashScreen
-import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
-import com.faithForward.media.ui.epg.Epg
-import com.faithForward.media.ui.epg.EpgUiModel
-import com.faithForward.media.ui.epg.channel.ChannelUiModel
-import com.faithForward.media.ui.epg.program.ProgramUiModel
-import com.faithForward.media.ui.epg.util.generateSampleEpgUiModel
 import com.faithForward.media.ui.navigation.MainScreen
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
 import com.faithForward.media.ui.theme.FfmediaTheme
-import com.faithForward.media.ui.theme.focusedMainColor
-import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
@@ -86,8 +76,18 @@ class MainActivity : ComponentActivity() {
 
                     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-                    LaunchedEffect(isLoading) {
-                        Log.e("LOADING", "is loading change in main is $isLoading")
+                    LaunchedEffect(isLoggedIn) {
+                        Log.e(
+                            "CHECK_USER_SUBSCRIPTION",
+                            "is Logged in launch effect called with $isLoggedIn"
+                        )
+                        if (isLoggedIn) {
+                            Log.e(
+                                "CHECK_USER_SUBSCRIPTION",
+                                "is Logged is True in  launch effect So calling load User Subscription data from MainActivity"
+                            )
+                            loginViewModel.updateUserSubscriptionDetails()
+                        }
                     }
 
                     // Use CrossFade to animate between loading and MainScreen
@@ -98,14 +98,6 @@ class MainActivity : ComponentActivity() {
                     ) { loading ->
                         when {
                             loading -> {
-//                                Box(
-//                                    modifier = Modifier
-//                                        .fillMaxSize()
-//                                        .background(pageBlackBackgroundColor),
-//                                    contentAlignment = Alignment.Center
-//                                ) {
-//                                    CircularProgressIndicator(color = focusedMainColor)
-//                                }
                                 SplashScreen()
                             }
 
@@ -125,9 +117,11 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+
                 }
             }
         }
+
     }
 
     override fun onUserInteraction() {
@@ -194,7 +188,6 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
-
 }
 
 

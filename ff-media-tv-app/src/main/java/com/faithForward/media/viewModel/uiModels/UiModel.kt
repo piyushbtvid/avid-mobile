@@ -241,7 +241,8 @@ fun ContentItem.toPosterCardDto(): PosterCardDto =
         progress = progressSeconds,
         contentType = content_type,
         uploadYear = uploadedYear,
-        landScapeImg = landscape ?: ""
+        landScapeImg = landscape ?: "",
+        access = access
     )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {

@@ -64,6 +64,7 @@ data class DetailDto(
     val progress: Long? = null,
     val relatedList: List<PosterCardDto>? = null,
     val itemTrailer: String? = null,
+    var access: String? = null
 )
 
 @Composable

@@ -29,8 +29,8 @@ android {
         applicationId = "com.faithForward.media"
         minSdk = 21
         targetSdk = 35
-        versionCode = 9
-        versionName = "3.6"
+        versionCode = 11
+        versionName = "3.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -133,5 +133,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.leanback:leanback:1.2.0")
+
+    implementation ("com.amazon.device:amazon-appstore-sdk:+")
 
 }

@@ -4,6 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="ff-media-tv-app">
         <option name="selectionMode" value="DROPDOWN" />
+<<<<<<< HEAD
         <DropdownSelection timestamp="2025-08-28T10:19:18.004787700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
@@ -12,6 +13,8 @@
           </Target>
         </DropdownSelection>
         <DialogSelection />
+=======
+>>>>>>> 38e70e714a26355bf84a96f1beb59d1120d3ba3d
       </SelectionState>
     </selectionStates>
   </component>
