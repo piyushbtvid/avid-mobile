@@ -100,6 +100,7 @@ data class PlayerState(
     val videoPlayingIndex: Int? = 0,
     val currentTitle: String? = null,
     val isUniversalTopBarVisible: Boolean = false,
+    val isTrailerPlaying: Boolean = false,
 )
 
 data class SharedPlayerViewModelState(

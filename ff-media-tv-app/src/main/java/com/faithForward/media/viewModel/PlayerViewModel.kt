@@ -231,7 +231,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = emptyList()
                                 ),
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = true
                     )
                 } else if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
                     val relatedContentItemDtoList =
@@ -247,7 +247,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentItemDtoList
                                 ),
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = false
                     )
 
                 }
@@ -269,7 +269,7 @@ class PlayerViewModel @Inject constructor(
                                     rowList = relatedContentItemDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = false
                     )
                 }
                 // For movies from related Movie
@@ -306,7 +306,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentRowDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = false
                     )
                 }
                 //is from continue watching and is a Series episode
@@ -390,7 +390,8 @@ class PlayerViewModel @Inject constructor(
                                 ),
                                 isLoading = false,
                                 videoPlayingIndex = resumeIndex,
-                                currentTitle = title
+                                currentTitle = title,
+                                isTrailerPlaying = false
                             )
                         }
                     }
