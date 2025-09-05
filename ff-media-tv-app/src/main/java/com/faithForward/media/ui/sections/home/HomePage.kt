@@ -1,0 +1,234 @@
+package com.faithForward.media.ui.sections.home
+
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.faithForward.media.util.Util.isTvDevice
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.navigation.Routes
+import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
+import com.faithForward.media.ui.sections.common_ui.HomeContentSections
+import com.faithForward.media.viewModel.HomeViewModel
+import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.uiModels.CarouselClickUiState
+import com.faithForward.media.viewModel.uiModels.toPosterCardDto
+import com.faithForward.util.Resource
+
+@Composable
+fun HomePage(
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel,
+    changeSideBarSelectedPosition: (Int) -> Unit,
+    onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
+    onCategoryClick: (String) -> Unit,
+    sideBarViewModel: SideBarViewModel,
+    onCarouselItemClick: (PosterCardDto, Boolean) -> Unit,
+    onDataLoadedSuccess: () -> Unit,
+    onSearchClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onMicDoubleUpClick: () -> Unit,
+) {
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val uiEvent by homeViewModel.uiEvent.collectAsStateWithLifecycle(null)
+    val context = LocalContext.current
+    val carouselClickUiState by homeViewModel.carouselClickUiState.collectAsState(null)
+    val sideBarState by sideBarViewModel.sideBarState
+
+
+
+    LaunchedEffect(Unit) {
+        homeViewModel.fetchHomePageData()
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                Log.e("SIDE_BAR", "home page compose on resume is called")
+                // For TV devices, Home is at index 1 (after Search)
+                // For mobile devices, Home is at index 0 (Search is removed)
+                val homeIndex = if (context.isTvDevice()) 1 else 0
+                changeSideBarSelectedPosition.invoke(homeIndex)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+
+    val homePageItemsResource by homeViewModel.homePageData.collectAsState()
+
+    if (homePageItemsResource is Resource.Unspecified || homePageItemsResource is Resource.Error || homePageItemsResource is Resource.Loading) return
+
+    val homePageItems = homePageItemsResource.data ?: return
+
+    val hasTriggeredDataLoaded = rememberSaveable(homePageItemsResource) {
+        mutableStateOf(false)
+    }
+
+
+    LaunchedEffect(homePageItemsResource) {
+        if (homePageItemsResource is Resource.Success && !hasTriggeredDataLoaded.value) {
+            Log.e("FOCUSED_INDEX", "on home resource success called")
+            onDataLoadedSuccess.invoke()
+            hasTriggeredDataLoaded.value = true
+        }
+    }
+
+    when (val state = carouselClickUiState) {
+        is CarouselClickUiState.NavigateToPlayer -> {
+            Log.e(
+                "CONTINUE_WATCHING_CLICK",
+                "naviagte to player is called with ${state.posterCardDto} and ${state.isFromContinueWatching}"
+            )
+            LaunchedEffect(state.posterCardDto) {
+                onCarouselItemClick.invoke(state.posterCardDto, state.isFromContinueWatching)
+                // Reset state to prevent repeated navigation
+                homeViewModel.loadDetailForUrl("", isFromContinueWatching = false) // Reset to idle
+            }
+        }
+
+        is CarouselClickUiState.Idle -> {}
+        null -> {
+
+        }
+    }
+
+    BackHandler {
+        Log.e("ON_BACK", "on back in home called")
+        if (sideBarState.sideBarFocusedIndex != -1) {
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
+            onBackClick.invoke()
+        } else {
+            Log.e(
+                "ON_BACK",
+                "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
+            )
+            // For TV devices, Home is at index 1 (after Search)
+            // For mobile devices, Home is at index 0 (Search is removed)
+            val homeIndex = if (context.isTvDevice()) 1 else 0
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(homeIndex))
+        }
+    }
+
+
+    // Showing Toast when uiEvent changes
+    LaunchedEffect(uiEvent) {
+        uiEvent?.let { event ->
+            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            // Reset uiEvent to prevent repeated toasts (optional, depending on ViewModel reset)
+            // detailViewModel.resetUiEvent()
+        }
+    }
+
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        HomeContentSections(modifier = Modifier,
+            homePageItems = homePageItems,
+            showContentOfCard = false,
+            onChangeContentRowFocusedIndex = { index ->
+                homeViewModel.onContentRowFocusedIndexChange(index)
+            },
+            onItemClick = { posterItem, list, rowId ->
+                if (rowId == "continue-watching") {
+                    if (posterItem.slug != null) {
+                        homeViewModel.loadDetailForUrl(
+                            posterItem.slug,
+                            progress = posterItem.progress ?: 0,
+                            isFromContinueWatching = true
+                        )
+                    }
+                } else {
+                    onItemClick.invoke(posterItem, list)
+                }
+            },
+            onCategoryItemClick = { id ->
+                onCategoryClick.invoke(id)
+            },
+            onToggleFavorite = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleFavorite(slug)
+                }
+            },
+            onToggleLike = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleLike(slug)
+                }
+            },
+            onToggleDisLike = { slug ->
+                if (slug != null) {
+                    homeViewModel.toggleDislike(slug)
+                }
+            },
+            sideBarViewModel = sideBarViewModel,
+            onCarouselItemClick = { item ->
+                val contentType = item.contentType?.trim()
+                Log.e(
+                    "CAROUSEL_SLUG",
+                    "item slug: ${item.slug}, contentType: $contentType, seriesSlug: ${item.seriesSlug}"
+                )
+
+                when {
+                    contentType.equals("Episode", ignoreCase = true) -> {
+                        Log.e("CAROUSEL_SLUG", "Episode block")
+                        val newItem = item.toPosterCardDto().copy(slug = item.seriesSlug)
+                        Log.e("CAROUSEL_SLUG", "Episode with updated slug: $newItem")
+                        onItemClick.invoke(newItem, emptyList())
+                    }
+
+                    contentType.equals("Series", ignoreCase = true) -> {
+                        Log.e("CAROUSEL_SLUG", "Series block")
+                        onItemClick.invoke(item.toPosterCardDto(), emptyList())
+                    }
+
+                    !item.slug.isNullOrEmpty() -> {
+                        Log.e("CAROUSEL_SLUG", "Fallback block - loading detail")
+                        homeViewModel.loadDetailForUrl(item.slug!!, isFromContinueWatching = false)
+                    }
+
+                    else -> {
+                        Log.e("CAROUSEL_SLUG", "Unknown content type or missing slug.")
+                    }
+                }
+            },
+            onCreatorItemClick = {
+
+            },
+            onSearchClick = {
+                onSearchClick.invoke()
+            },
+            onMicDoubleUpClick = {
+                onMicDoubleUpClick.invoke()
+            }
+
+        )
+    }
+
+}

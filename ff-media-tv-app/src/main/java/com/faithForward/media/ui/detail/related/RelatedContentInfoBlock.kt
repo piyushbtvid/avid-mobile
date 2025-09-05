@@ -1,0 +1,52 @@
+package com.faithForward.media.ui.detail.related
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.faithForward.media.ui.commanComponents.PosterCardDto
+import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.sections.common_ui.carousel.ContentMetaBlock
+import com.faithForward.media.ui.theme.whiteMain
+
+@Composable
+fun RelatedContentInfoBlock(
+    modifier: Modifier = Modifier,
+    currentFocusedItem: PosterCardDto?,
+) {
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        with(currentFocusedItem) {
+            TitleText(
+                textSize = 18,
+                modifier = Modifier
+                    .padding(start = 20.dp),
+                text = this?.title ?: "",
+                fontWeight = FontWeight.W600,
+                color = whiteMain
+            )
+            ContentMetaBlock(
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .wrapContentHeight(),
+                description = this?.description,
+                title = null,
+                textColor = whiteMain,
+                buttonModifier = modifier,
+                releaseDate = this?.releaseDate,
+                imdbRating = this?.imdbRating,
+                duration = null, // sending null in duration for not showing it in related item content block
+                genre = this?.genre,
+                seasons = this?.seasons
+            )
+        }
+    }
+
+}

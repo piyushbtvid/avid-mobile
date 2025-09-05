@@ -1,0 +1,42 @@
+# Android build outputs (applies to all modules)
+/build/
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Gradle files
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+local.properties
+
+# Kotlin build outputs
+*.kt.meta
+*.kotlin_module
+/build/kotlin/
+
+# Hilt generated files
+/build/generated/hilt/
+
+# Temporary files
+*.tmp
+/build/tmp/
+
+# IntelliJ/Android Studio
+.idea/
+*.iml
+
+# Compiled files
+*.dex
+*.class
+*.jar
+
+# Build intermediates and outputs
+/build/intermediates/
+/build/outputs/
+
+# Module-specific build directories
+ff-media-Data/build/
+ff-media-tv-app/build/
