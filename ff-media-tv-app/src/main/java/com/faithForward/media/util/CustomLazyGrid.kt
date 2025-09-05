@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import android.util.Log
 import com.faithForward.media.util.Util.isTvDevice
 
 sealed class CustomGridCells {
@@ -50,13 +49,9 @@ fun <T> CustomLazyGrid(
     var containerWidth by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
 
-    Log.d("CustomLazyGrid", "Items count: ${items.size}")
-    Log.d("CustomLazyGrid", "Columns: $columns")
-
     Box(
         modifier = modifier.onGloballyPositioned { coords ->
             containerWidth = coords.size.width
-            Log.d("CustomLazyGrid", "Container width: $containerWidth")
         }
     ) {
         if (containerWidth > 0) {
@@ -71,10 +66,6 @@ fun <T> CustomLazyGrid(
             }
 
             val rows = items.chunked(columnCount)
-            
-            Log.d("CustomLazyGrid", "Column count: $columnCount")
-            Log.d("CustomLazyGrid", "Rows count: ${rows.size}")
-            Log.d("CustomLazyGrid", "Rows: $rows")
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(verticalSpacing),
