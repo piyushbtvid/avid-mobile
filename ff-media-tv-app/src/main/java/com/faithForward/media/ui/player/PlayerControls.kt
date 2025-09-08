@@ -43,10 +43,12 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.ui.theme.focusedMainColor
+import com.faithForward.media.util.Util.isTvDevice
 
 
 @Composable
@@ -83,6 +85,7 @@ fun PlayerControls(
     onSeekBarUpClick: () -> Boolean = {
         false
     },
+    onRelatedContentClick: () -> Unit = {},
 ) {
     // val focusRequester = remember { FocusRequester() }
 
@@ -308,7 +311,7 @@ fun PlayerControls(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = formatTime(currentPosition),
@@ -316,11 +319,28 @@ fun PlayerControls(
                     modifier = Modifier.focusable(enabled = false)
                 )
 
-                Text(
-                    text = formatTime(duration),
-                    color = Color.White,
-                    modifier = Modifier.focusable(enabled = false)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Related content button (only show on mobile)
+                    if (!LocalContext.current.isTvDevice()) {
+                        FocusableIconButton(
+                            onClick = onRelatedContentClick,
+                            imageResId = R.drawable.ic_play, // Using play icon as placeholder
+                            description = "Related Content",
+                            focusedColor = focusedColor,
+                            focusRequester = null,
+                            onKeyEvent = { false }
+                        )
+                    }
+                    
+                    Text(
+                        text = formatTime(duration),
+                        color = Color.White,
+                        modifier = Modifier.focusable(enabled = false)
+                    )
+                }
             }
         }
 

@@ -24,11 +24,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.PosterCard
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.Util.isTvDevice
 
 data class PosterRowDto(
     val heading: String,
@@ -80,8 +82,7 @@ fun ContentRow(
                 .fillMaxWidth()
                 .focusRestorer {
                     itemFocusRequesters.firstOrNull() ?: FocusRequester()
-                }
-            ,
+                },
             contentPadding = PaddingValues(start = 25.dp, end = 20.dp, bottom = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp)
         )
@@ -94,7 +95,11 @@ fun ContentRow(
 
                 // Restore focus to the last focused item when returning to this row
                 LaunchedEffect(lastFocusedItem) {
-                    if (lastFocusedItem == Pair(rowIndex, index) && index < itemFocusRequesters.size) {
+                    if (lastFocusedItem == Pair(
+                            rowIndex,
+                            index
+                        ) && index < itemFocusRequesters.size
+                    ) {
                         try {
                             itemFocusRequesters[index].requestFocus()
                         } catch (_: Exception) {
@@ -110,7 +115,8 @@ fun ContentRow(
 
                 PosterCard(
                     modifier = Modifier
-                        .focusRequester(itemFocusRequesters.getOrNull(index) ?: remember { FocusRequester() })
+                        .focusRequester(
+                            itemFocusRequesters.getOrNull(index) ?: remember { FocusRequester() })
                         .onFocusChanged {
                             if (it.hasFocus) {
                                 onItemFocused(Pair(rowIndex, index))
@@ -136,7 +142,7 @@ fun ContentRow(
                 )
             }
             item {
-                Spacer(modifier = Modifier.width(100.dp))
+                Spacer(modifier = Modifier.width(if (LocalContext.current.isTvDevice()) 100.dp else 10.dp))
             }
         }
     }

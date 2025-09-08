@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,6 +50,7 @@ import androidx.media3.ui.PlayerView
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRow
 import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentRowDto
+import com.faithForward.media.ui.player.relatedContent.PlayerRelatedContentMobile
 import com.faithForward.media.ui.player.relatedContent.RelatedContentItemDto
 import com.faithForward.media.ui.player.seriesNextUi.EpisodeNextUpDialog
 import com.faithForward.media.ui.player.seriesNextUi.EpisodeNextUpItemDto
@@ -615,24 +618,52 @@ fun VideoPlayer(
             }
         }
 
-        AnimatedVisibility(
-            visible = playerScreenState.isRelatedVisible,
-            enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(500)),
-            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(500))
-        ) {
-            PlayerRelatedContentRow(
-                playerRelatedContentRowDto = playerRelatedContentRowDto,
-                onUp = {
+        // TV Layout - Keep existing animated visibility
+        if (LocalContext.current.isTvDevice()) {
+            AnimatedVisibility(
+                visible = playerScreenState.isRelatedVisible,
+                enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(500)),
+                exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(500))
+            ) {
+                PlayerRelatedContentRow(
+                    playerRelatedContentRowDto = playerRelatedContentRowDto,
+                    onUp = {
+                        playerViewModel.handleEvent(PlayerEvent.HideRelated)
+                        playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
+                        Log.e("SHOW_CONTROLES", "show controles in media up")
+                        sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
+                        try {
+                            focusRequester.requestFocus()
+                        } catch (_: Exception) {
+
+                        }
+                        true
+                    },
+                    onItemClick = { relatedItem, relatedItemList, index ->
+                        if (!playerScreenState.hasVideoEnded) {
+                            val item = videoPlayerItem[exoPlayer.currentMediaItemIndex]
+                            if (item.itemSlug != null) {
+                                playerViewModel.handleEvent(
+                                    PlayerEvent.SaveToContinueWatching(
+                                        itemIndex = exoPlayer.currentMediaItemIndex,
+                                        progressSeconds = (exoPlayer.currentPosition / 1000).toString(),
+                                        videoDuration = exoPlayer.duration,
+                                        shouldNavigateFromContinueWatching = false
+                                    )
+                                )
+                            }
+                        }
+                        onRelatedItemClick(relatedItem, relatedItemList, index)
+                    })
+            }
+        } else {
+            // Mobile Layout - YouTube-like bottom sheet
+            PlayerRelatedContentMobile(
+                isVisible = playerScreenState.isRelatedVisible,
+                onDismiss = {
                     playerViewModel.handleEvent(PlayerEvent.HideRelated)
                     playerViewModel.handleEvent(PlayerEvent.HideNextEpisodeDialog)
-                    Log.e("SHOW_CONTROLES", "show controles in media up")
                     sharedPlayerViewModel.handleEvent(SharedPlayerEvent.ShowControls)
-                    try {
-                        focusRequester.requestFocus()
-                    } catch (_: Exception) {
-
-                    }
-                    true
                 },
                 onItemClick = { relatedItem, relatedItemList, index ->
                     if (!playerScreenState.hasVideoEnded) {
@@ -649,14 +680,34 @@ fun VideoPlayer(
                         }
                     }
                     onRelatedItemClick(relatedItem, relatedItemList, index)
-                })
+                },
+                playerRelatedContentRowDto = playerRelatedContentRowDto
+            )
         }
 
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
+                .then(
+                    if (!LocalContext.current.isTvDevice()) {
+                        Modifier.pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = { },
+                                onDragEnd = { },
+                                onDrag = { _, dragAmount ->
+                                    // Detect swipe up gesture
+                                    if (dragAmount.y < -50 && !playerScreenState.isRelatedVisible) {
+                                        playerViewModel.handleEvent(PlayerEvent.ShowRelated)
+                                    }
+                                }
+                            )
+                        }
+                    } else {
+                        Modifier
+                    }
+                ),
             contentAlignment = Alignment.BottomCenter
         ) {
             Box(
@@ -770,6 +821,9 @@ fun VideoPlayer(
 
                         }
                         true
+                    },
+                    onRelatedContentClick = {
+                        playerViewModel.handleEvent(PlayerEvent.ShowRelated)
                     },
                     isPlaying = playerScreenState.isPlaying,
                     focusRequester = focusRequester,

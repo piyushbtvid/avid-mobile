@@ -40,7 +40,7 @@ import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.posterCardShadowColor
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
-import com.faithForward.media.util.Util.isTvDevice
+import com.faithForward.media.util.rememberIsTvDevice
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -78,13 +78,13 @@ fun PosterCard(
     @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
+    val isTv = rememberIsTvDevice()
     val scale by animateFloatAsState(
-        targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.12f
+        targetValue = when {
+            isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1.12f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
-    val isTv = LocalContext.current.isTvDevice()
     
     // Define dimensions once to avoid repetition
     val cardWidth = if (isTv) 135.dp else 102.dp
@@ -92,7 +92,7 @@ fun PosterCard(
 
     // changed card shadow to transprent due to black background
     val posterModifier =
-        if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
+        if (isTv && (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED)) {
             modifier.shadow(
                 color = Color.Transparent,  //cardShadowColor
                 borderRadius = 23.dp,
@@ -115,8 +115,8 @@ fun PosterCard(
             transformOrigin = TransformOrigin(0f, 0.5f) // X-center, Y-top
         }
         .zIndex(
-            when (focusState) {
-                FocusState.SELECTED, FocusState.FOCUSED -> 1f
+            when {
+                isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1f
                 else -> 0f
             }
         ), horizontalAlignment = Alignment.CenterHorizontally) {

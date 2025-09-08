@@ -38,6 +38,7 @@ fun RelatedContentRow(
     onRelatedUpClick: () -> Boolean,
     onItemClick: (PosterCardDto, Int) -> Unit,
     onRelatedRowFocusedIndexChange: (Int) -> Unit,
+    selectedIndex: Int = -1,
 ) {
 
     // val itemFocusRequesters = remember { List(relatedContentRowDto.size) { FocusRequester() } }
@@ -75,8 +76,8 @@ fun RelatedContentRow(
                 }
             }
 
-            val uiState = when (index) {
-                relatedRowFocusedIndex -> FocusState.FOCUSED
+            val uiState = when {
+                index == relatedRowFocusedIndex -> FocusState.FOCUSED
                 else -> FocusState.UNFOCUSED
             }
 

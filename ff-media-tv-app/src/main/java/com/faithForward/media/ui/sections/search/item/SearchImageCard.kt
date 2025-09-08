@@ -27,6 +27,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import com.faithForward.media.R
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 
 
 @Composable
@@ -39,9 +40,10 @@ fun SearchImageCard(
     @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
+    val isTv = rememberIsTvDevice()
     val scale by animateFloatAsState(
-        targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+        targetValue = when {
+            isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1.13f
             else -> 1f
         },
         animationSpec = tween(300), label = ""

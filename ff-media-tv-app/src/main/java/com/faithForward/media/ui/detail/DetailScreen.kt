@@ -61,6 +61,7 @@ fun DetailScreen(
 
     var lastFocusedItem by rememberSaveable { mutableStateOf(-1) }
     var seasonNumberSelectedItem by rememberSaveable { mutableStateOf(-1) }
+    var selectedRelatedItem by rememberSaveable { mutableStateOf(-1) }
     // Create a list of FocusRequesters for seasons
     val seasonFocusRequesters = remember(relatedContentData) {
         (relatedContentData as? RelatedContentData.SeriesSeasons)?.seasonNumberList?.map { FocusRequester() }
@@ -83,6 +84,27 @@ fun DetailScreen(
                     slug, emptyList()
                 )
             )
+        }
+    }
+
+    // Initialize selected states when data becomes available
+    LaunchedEffect(relatedContentData) {
+        val contentData = relatedContentData
+        when (contentData) {
+            is RelatedContentData.RelatedMovies -> {
+                if (selectedRelatedItem == -1 && contentData.movies.isNotEmpty()) {
+                    selectedRelatedItem = 0
+                }
+            }
+            is RelatedContentData.SeriesSeasons -> {
+                if (seasonNumberSelectedItem == -1 && contentData.seasonNumberList.isNotEmpty()) {
+                    seasonNumberSelectedItem = 0
+                }
+                if (selectedRelatedItem == -1 && contentData.selectedSeasonEpisodes.isNotEmpty()) {
+                    selectedRelatedItem = 0
+                }
+            }
+            else -> {}
         }
     }
 
@@ -297,6 +319,7 @@ fun DetailScreen(
                                     true
                                 },
                                 onItemClick = { item, list, index ->
+                                    selectedRelatedItem = index
                                     onRelatedItemClick.invoke(item)
                                 },
                                 isRelatedContentMetaDataVisible = !uiState.isContentVisible,
@@ -305,7 +328,8 @@ fun DetailScreen(
                                 focusRequesters = focusRequesters,
                                 onLastFocusedIndexChange = { item ->
                                     lastFocusedItem = item
-                                }
+                                },
+                                selectedIndex = selectedRelatedItem
                             )
                         }
                     }
@@ -341,6 +365,7 @@ fun DetailScreen(
                             },
                             isRelatedContentMetaDataVisible = !uiState.isContentVisible,
                             onItemClick = { item, ls, index ->
+                                selectedRelatedItem = index
                                 Log.e("RELATED_SERIES", "on item is $item")
                                 Log.e("RELATED_SERIES", "on item list is ${ls.get(0).relatedList}")
                                 if (item.isRelatedSeries == true) {
@@ -384,9 +409,11 @@ fun DetailScreen(
                                     onLastSelectedIndexChange = { index ->
                                         seasonNumberSelectedItem = index
                                     },
-                                    seasonFocusRequesters = seasonFocusRequesters
+                                    seasonFocusRequesters = seasonFocusRequesters,
+                                    selectedIndex = seasonNumberSelectedItem
                                 )
-                            }
+                            },
+                            selectedIndex = selectedRelatedItem
                         )
                     }
                 }

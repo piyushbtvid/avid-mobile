@@ -26,7 +26,7 @@ import androidx.compose.ui.zIndex
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
-import com.faithForward.media.util.Util.isTvDevice
+import com.faithForward.media.util.rememberIsTvDevice
 
 data class GenreCardDto(
     val genreId: String?,
@@ -52,9 +52,10 @@ fun GenreCard(
     focusState: FocusState,
 ) {
 
+    val isTv = rememberIsTvDevice()
     val scale by animateFloatAsState(
-        targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+        targetValue = when {
+            isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1.13f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
@@ -64,8 +65,8 @@ fun GenreCard(
             .wrapContentWidth()
             .scale(scale)
             .zIndex(
-                when (focusState) {
-                    FocusState.SELECTED, FocusState.FOCUSED -> 1f
+                when {
+                    isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1f
                     else -> 0f
                 }
             ),
@@ -82,9 +83,6 @@ fun GenreCard(
                 imageContentScale = if (genreCardDto.contentType == "Live Channel") ContentScale.Fit else ContentScale.FillBounds
             )
         }
-
-        val isTv = LocalContext.current.isTvDevice()
-
 
         Column(modifier = Modifier.width(if (isTv)135.dp else 102.dp)) {
             genreCardDto.description?.let {

@@ -34,6 +34,7 @@ import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 
 
 data class RelatedContentItemDto(
@@ -56,9 +57,10 @@ fun RelatedContentItem(
     relatedContentItemDto: RelatedContentItemDto,
 ) {
 
+    val isTv = rememberIsTvDevice()
     val scale by animateFloatAsState(
-        targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+        targetValue = when {
+            isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1.13f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
@@ -70,12 +72,16 @@ fun RelatedContentItem(
                 .wrapContentSize()
                 .scale(scale)
                 .zIndex(
-                    when (focusState) {
-                        FocusState.SELECTED, FocusState.FOCUSED -> 1f
+                    when {
+                        isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1f
                         else -> 0f
                     }
                 )
-                .clip(RoundedCornerShape(10.dp)),
+                .clip(RoundedCornerShape(10.dp))
+                .clickable(interactionSource = null, indication = null, onClick = {
+                    android.util.Log.e("RelatedContentItem", "Item clicked: ${relatedContentItemDto.title}")
+                    onItemClick.invoke()
+                }),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
@@ -86,10 +92,7 @@ fun RelatedContentItem(
                 modifier = Modifier
                     .width(190.dp)
                     .height(100.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable(interactionSource = null, indication = null, onClick = {
-                        onItemClick.invoke()
-                    }))
+                    .clip(RoundedCornerShape(10.dp)))
 
             Spacer(modifier = Modifier.height(5.dp))
 

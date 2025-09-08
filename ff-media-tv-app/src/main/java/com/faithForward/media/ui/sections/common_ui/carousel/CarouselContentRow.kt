@@ -32,6 +32,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 import com.faithForward.media.util.Util.isTvDevice
 
 data class CarouselContentRowDto(
@@ -66,6 +67,7 @@ fun CarouselContentRow(
     var likeFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var disLikeFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     val itemFocusRequesters = remember { List(carouselList.size) { FocusRequester() } }
+    val isTv = rememberIsTvDevice()
 
     var lastUpKeyTime by remember { mutableStateOf(0L) }
 
@@ -215,51 +217,69 @@ fun CarouselContentRow(
                 }
                 )
                 .focusable(),
-            addToWatchListModifier = Modifier
-                .onFocusChanged {
-                    if (it.hasFocus) {
-                        addToWatchListFocusedIndex = index
-                    } else {
-                        if (addToWatchListFocusedIndex == index) {
-                            addToWatchListFocusedIndex = -1
+            addToWatchListModifier = if (isTv) {
+                Modifier
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            addToWatchListFocusedIndex = index
+                        } else {
+                            if (addToWatchListFocusedIndex == index) {
+                                addToWatchListFocusedIndex = -1
+                            }
                         }
                     }
-                }
-                .clickable(interactionSource = null, indication = null, onClick = {
-                    onToggleFavorite(carouselItem.slug)
-                }
-                )
-                .focusable(),
-            likeModifier = Modifier
-                .onFocusChanged {
-                    if (it.hasFocus) {
-                        likeFocusedIndex = index
-                    } else {
-                        if (likeFocusedIndex == index) {
-                            likeFocusedIndex = -1
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onToggleFavorite(carouselItem.slug)
+                    })
+                    .focusable()
+            } else {
+                Modifier
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onToggleFavorite(carouselItem.slug)
+                    })
+            },
+            likeModifier = if (isTv) {
+                Modifier
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            likeFocusedIndex = index
+                        } else {
+                            if (likeFocusedIndex == index) {
+                                likeFocusedIndex = -1
+                            }
                         }
                     }
-                }
-                .clickable(interactionSource = null, indication = null, onClick = {
-                    onToggleLike(carouselItem.slug)
-                }
-                )
-                .focusable(),
-            disLikeModifier = Modifier
-                .onFocusChanged {
-                    if (it.hasFocus) {
-                        disLikeFocusedIndex = index
-                    } else {
-                        if (disLikeFocusedIndex == index) {
-                            disLikeFocusedIndex = -1
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onToggleLike(carouselItem.slug)
+                    })
+                    .focusable()
+            } else {
+                Modifier
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onToggleLike(carouselItem.slug)
+                    })
+            },
+            disLikeModifier = if (isTv) {
+                Modifier
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            disLikeFocusedIndex = index
+                        } else {
+                            if (disLikeFocusedIndex == index) {
+                                disLikeFocusedIndex = -1
+                            }
                         }
                     }
-                }
-                .clickable(interactionSource = null, indication = null, onClick = {
-                    onToggleDisLike(carouselItem.slug)
-                }
-                )
-                .focusable(),
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onToggleDisLike(carouselItem.slug)
+                    })
+                    .focusable()
+            } else {
+                Modifier
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        onToggleDisLike(carouselItem.slug)
+                    })
+            },
             addToWatchListUiState = addToWatchListUiState,
             likeUiState = likeUiState,
             dislikeUiState = disLikeUiState,

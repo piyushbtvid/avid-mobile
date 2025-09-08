@@ -32,6 +32,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 
 data class StreamRecommendationsUiItem(
     val image: Int = R.drawable.test_poster,
@@ -121,9 +123,10 @@ fun StreamRecommendationsItem(
     focusState: FocusState,
 ) {
 
+    val isTv = rememberIsTvDevice()
     val scale by animateFloatAsState(
-        targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.13f
+        targetValue = when {
+            isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1.13f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
@@ -133,8 +136,8 @@ fun StreamRecommendationsItem(
             .wrapContentWidth()
             .scale(scale)
             .zIndex(
-                when (focusState) {
-                    FocusState.SELECTED, FocusState.FOCUSED -> 1f
+                when {
+                    isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1f
                     else -> 0f
                 }
             ),
