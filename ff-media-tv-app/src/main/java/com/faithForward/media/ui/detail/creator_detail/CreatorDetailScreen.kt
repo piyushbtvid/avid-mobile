@@ -25,7 +25,7 @@ fun CreatorDetailScreen(
 
     when (creatorDetail) {
         is Resource.Loading, is Resource.Unspecified -> {
-            // Loading UI if needed
+            // Loadinfg UI if needed
             return
         }
 
@@ -42,7 +42,7 @@ fun CreatorDetailScreen(
                 .background(pageBlackBackgroundColor)) {
                 detailData?.let {
                     CreatorDetailPage(
-                        modifier = Modifier.padding(start = 31.dp, top = 20.dp),
+                        modifier = Modifier.padding(top = 20.dp),
                         creatorDetailDto = it.creatorDetailDto,
                         contentDtoList = it.contentList, // <- pass content list here
                         onCreatorContentClick = onCreatorContentClick
