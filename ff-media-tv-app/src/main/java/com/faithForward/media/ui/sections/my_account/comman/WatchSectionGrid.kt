@@ -38,7 +38,7 @@ fun WatchSectionGrid(
         modifier = modifier
             .fillMaxSize(),
         items = watchSectionItemDtoList,
-        columns = CustomGridCells.Fixed(2),
+        columns = CustomGridCells.Adaptive(minSize = 180.dp),
 //        verticalSpacing = 45.dp,
 //        horizontalSpacing = 30.dp,
 //        rowContentPadding = PaddingValues(horizontal = 16.dp),

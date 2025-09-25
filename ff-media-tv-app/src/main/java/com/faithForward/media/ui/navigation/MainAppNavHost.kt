@@ -72,6 +72,7 @@ fun MainAppNavHost(
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
     onBackClickForExit: () -> Unit,
+    onLogoutRequest: () -> Unit,
 ) {
 
 
@@ -684,7 +685,8 @@ fun MainAppNavHost(
                 },
                 onSwitchProfile = {
                     navController.navigate(Routes.AllProfile.route)
-                }
+                },
+                onLogoutRequest = onLogoutRequest
             )
         }
 

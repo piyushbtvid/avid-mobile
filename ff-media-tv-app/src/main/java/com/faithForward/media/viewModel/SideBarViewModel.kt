@@ -60,7 +60,7 @@ class SideBarViewModel @Inject constructor(
                     if (isTv) {
                         "My Account"
                     } else "Me",
-                    R.drawable.baseline_expand_less_24,
+                    null,
                     Routes.MyAccount.route
                 ),
                 if (isTv) SideBarItem(

@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
+import com.faithForward.media.ui.sections.my_account.profile_menu.InitialNameItem
+import com.faithForward.media.ui.sections.my_account.profile_menu.UserInfoItemDto
 
 
 @Composable
@@ -80,6 +82,9 @@ fun BottomNavItemMobile(
                     if (isSelected) Color.Green else Color.Gray
                 )
             )
+        } else {
+            // Account tab: show user initials sized to match icon height
+            InitialNameItem(name = "ME", size = 22.dp, textSize = 10.sp)
         }
         Text(
             text = txt,

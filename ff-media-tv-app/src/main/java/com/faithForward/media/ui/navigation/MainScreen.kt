@@ -48,6 +48,7 @@ fun MainScreen(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val isTv = LocalContext.current.isTvDevice()
 
     val showSidebar = currentRoute in sidebarVisibleRoutes
 
@@ -94,8 +95,22 @@ fun MainScreen(
             sharedPlayerViewModel = playerViewModel,
             loginViewModel = loginViewModel,
             onBackClickForExit = {
-                showExitDialog = true
-            }
+                if (!isTv) {
+                    // Mobile behavior: if not on Home tab, navigate to Home; otherwise show exit dialog
+                    if (currentRoute != Routes.Home.route) {
+                        navController.navigate(Routes.Home.route) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    } else {
+                        showExitDialog = true
+                    }
+                } else {
+                    // TV behavior unchanged: always show exit dialog on back from a root tab
+                    showExitDialog = true
+                }
+            },
+            onLogoutRequest = { showLogoutDialog = true }
         )
         AppNavigationBar(
             navController = navController,

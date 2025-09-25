@@ -134,7 +134,7 @@ fun PosterCard(
                 .fillMaxWidth()
                 .width(cardWidth)
                 .height(cardHeight)
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(if(isTv) 5.dp else 3.dp))
                 .clickable(interactionSource = null, indication = null, onClick = {
                     onItemClick.invoke(posterCardDto)
                 })
