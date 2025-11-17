@@ -104,7 +104,7 @@ class DetailViewModel @Inject constructor(
                 if (cachedCardDetail == null) {
                     _cardDetail.emit(Resource.Success(DetailPageItem.Card(newDetailDto)))
 
-                    if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
+                    if (newData.contentType == "Series" && !newData.seasons.isNullOrEmpty()) {
                         val seasonList = newData.seasons!!.map { it.toSeasonDto() }
                         Log.e(
                             "SERIES_CONTENT",
@@ -164,7 +164,7 @@ class DetailViewModel @Inject constructor(
                     if (oldData?.resumeInfo != newData.resumeInfo || oldData?.progressSeconds != newData.progressSeconds) {
 
                         //For Series
-                        if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
+                        if (newData.contentType == "Series" && !newData.seasons.isNullOrEmpty()) {
                             val seasonList = newData.seasons!!.map { it.toSeasonDto() }
                             val resumeSeasonEpisodes =
                                 buildResumeEpisodes(newData.resumeInfo, seasonList)

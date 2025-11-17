@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="BaseScene" extends="Scene">
+
+  <script type="text/brightscript" uri="pkg:/components/BaseScene/BaseScene.brs" />
+  <script type="text/brightscript" uri="pkg:/components/BaseScene/controllerLoaders.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/sceneUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/Utils/generalUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/constants.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/httpClient.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/source/Factories/controllerFactory.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/focusUtils.brs" />
+
+  <interface>
+    <field id="currentController" type="node" />
+    <field id="loadController" type="assocarray" alwaysNotify="true" onchange="onLoad" />
+    <field id="unloadController" type="boolean" alwaysNotify="true" onchange="onUnLoad" />
+    <field id="claer" type="boolean" alwaysNotify="true" onchange="clearNavigationStack" />
+
+    <field id="currentFocusItem" type="node" />
+    <field id="currentPage" type="node" />
+    <field id="country" type="array" />
+
+    <field id="httpTask" type="node" />
+
+    <field id="homePageItems" type="node" />
+    <field id="profileData" type="node" />
+    <field id="moviesPageItems" type="node" />
+    <field id="seriesPageItems" type="node" />
+    <field id="livePageItems" type="node" />
+    <field id="localContent" type="node" />
+    <field id="sliderContent" type="node" />
+    <field id="homeData" type="node" />
+
+    <field id="loginInfo" type="node" alwaysNotify="true"/>
+    <field id="user_type" type="string" alwaysNotify="true"/>
+    <field id="subscriptionPlanDetail" type="assocArray" alwaysNotify="true"/>
+
+    <field id="exitApp" type="boolean" value="false" />
+    <field id="firstSectionID" type="integer" value="-1" />
+    <field id="leftNavEscape" type="boolean" alwaysNotify="true" />
+    <field id="backNavEscape" type="boolean" alwaysNotify="true" />
+    <field id="upNavEscape" type="boolean" alwaysNotify="true" />
+    <field id="downNavEscape" type="boolean" alwaysNotify="true" />
+    <field id="continueWatchContent" type="array" alwaysNotify="true" />
+    <field id="accountItemSelected" type="integer" alwaysNotify="true" />
+    <field id="homeContinuewatchingItemSelected" type="integer" alwaysNotify="true" />
+    <field id="userConfigData" type="assocArray" alwaysNotify="true" />   
+   
+
+    <field id="deeplinkProccessed" type="boolean" alwaysNotify="true" />
+    <field id="sliderUpEscape" type="boolean" alwaysNotify="true" />
+    <field id="isRokuSubscription" type="boolean" value="false" />
+
+    <function name="stopRefreshTimer"/>
+    <function name="startRefreshTimer"/>
+
+  </interface>
+
+  <children>
+
+    <!-- Controller View -->
+    <Group id="controllerView"> </Group>
+
+    <Group id="topNavContent" visible="false">
+      <Poster id="toplogo" width="120" loadWidth="120" height="120" loadHeight="120"
+        loadDisplayMode="limitSize" translation="[50,20]" visible="false" />
+      <RowList
+        id="topNav"
+        itemComponentName="navigationListTile"
+        itemSize="[2000,60]"
+        showRowLabel="[false]"
+        numRows="1"
+        showRowCounter="[false]"
+        rowItemSize="[[240,60]]"
+        rowItemSpacing="[[2,2]]"
+        rowLabelColor="0xFFFFFFFF"
+        drawFocusFeedback="false"
+        rowFocusAnimationStyle="floatingFocus"
+        vertFocusAnimationStyle="floatingFocus"
+        variableWidthItems="[true]"
+        translation="[350,30]"
+      />
+    </Group>
+    <Poster id="backShadow" width="1920" height="1080" uri="pkg://images/gradientColor.png"
+      visible="false" />
+    <LeftNavMenu id="leftMenu" visible="false"></LeftNavMenu>
+    <LiveTopMenu id="LiveTopMenu" visible="false"></LiveTopMenu>
+    <BrowseSelectTopMenu id="BrowseSelectTopMenu" visible="false"></BrowseSelectTopMenu>
+    <LoadingSpinner id="loadingSpinner" />
+    <Timer id="refereceTokenTimer" repeat="true" duration="900" />
+
+  </children>
+
+</component>

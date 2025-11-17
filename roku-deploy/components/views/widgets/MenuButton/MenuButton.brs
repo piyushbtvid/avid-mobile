@@ -1,0 +1,128 @@
+function init()
+
+  m.top.id = "MenuButton"
+  m.bg = m.top.findNode("bg")
+  m.bg.visible= false
+  m.content = m.top.findNode("content")
+  m.content2 = m.top.findNode("content2")
+  m.icon = m.top.findNode("icon")
+  m.label = m.top.findNode("label")
+  m.focusFeedback = m.top.findNode("focusFeedback")
+  m.underline = m.top.findNode("underline")
+
+  setDefaults()
+
+  m.top.observeField("focusedChild", "onFocusChange")
+  m.top.observeField("label", "onLabelChange")
+  m.icon.observeField("loadStatus", "onIconChange")
+  m.top.observeField("selectButton", "onSelectButton")
+end function
+
+'***** Handlers *****
+
+function onFocusChange()
+
+  if m.parent = invalid
+    m.parent = m.top.getParent()
+    m.parent.observeField("buttonSelected", "onButtonSelected")
+  end if
+
+  if (m.top.hasFocus())
+      m.label.Color = "#E50914"
+      m.icon.blendColor= "#E50914"
+  else
+    m.label.Color = "#ffffff"
+    m.icon.blendColor= "#ffffff"
+  end if
+
+  if m.selected
+    m.underline.visible = true
+  else
+    m.underline.visible = false
+  end if
+
+  if m.top.isKidsMode
+    m.underline.color = "#FFDD29"
+  else
+    m.underline.color = "#E50914"
+  end if
+
+end function
+
+function onKidsModeChange()
+  if m.top.isKidsMode
+    m.underline.color = "#FFDD29"
+  else
+    m.underline.color = "#0082F0"
+  end if
+end function
+
+'***** Helpers *****
+
+'Configures all default values as needed for the image button
+function setDefaults()
+  m.selected = false
+  m.PADDING_X = 20
+  m.PADDING_Y = 12
+  m.ICON_WIDTH = 32
+  m.ITEMS_SPACING = 20
+  m.HEIGHT = 52
+  m.parent = invalid
+
+  m.top.focusedIconUri = "pkg:/images/transparent_image.png"
+  m.top.iconUri = "pkg:/images/transparent_image.png"
+  m.top.focusFootprintBitmapUri = "pkg:/images/transparent_image.png"
+  m.top.focusBitmapUri = "pkg:/images/transparent_image.png"
+
+  m.top.height = m.HEIGHT
+  m.top.id = "NavButton"
+
+  m.icon.loadWidth = m.ICON_WIDTH
+  m.icon.loadHeight = m.ICON_WIDTH
+  ' m.icon.blendColor = "#E50914"
+
+
+
+  m.content.translation = [m.PADDING_X, m.HEIGHT / 2]
+
+  m.label.height = m.HEIGHT
+  m.label.font.size = 25
+
+  m.bg.height = m.HEIGHT
+  m.bg.uri = "pkg:/images/menu_item_bg_$$res$$.9.png"
+   m.bg.blendColor = "#000000"
+end function
+
+function onLabelChange()
+  labelWidth = m.label.boundingRect().width
+  m.label.width = labelWidth
+end function
+
+function onIconChange() as void
+  if m.icon.loadStatus <> "ready" then return
+
+  iconWidth = m.icon.boundingRect().width
+  iconHeight = m.icon.boundingRect().height
+  m.content.translation = [m.PADDING_X, m.HEIGHT / 2]
+  m.label.translation = [m.PADDING_X + iconWidth + m.ITEMS_SPACING, m.PADDING_Y]
+
+  m.WIDTH = m.label.width + iconWidth + m.ITEMS_SPACING + (m.PADDING_X * 2) + 5
+  m.top.minWidth = m.WIDTH
+  m.top.maxWidth = m.WIDTH
+  m.bg.width = m.WIDTH
+  m.underline.width = m.WIDTH - 45
+end function
+
+function onButtonSelected(event) as void
+  index = event.getData()
+  if index = 6 OR m.top.index = 6 then return
+
+  m.selected = index = m.top.index
+
+  onFocusChange()
+end function
+
+function onSelectButton() as void
+  m.selected = m.top.selectButton
+  onFocusChange()
+end function

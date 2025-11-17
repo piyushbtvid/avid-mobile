@@ -78,9 +78,9 @@ fun ContentItem.toRelatedItemDto(): RelatedContentItemDto {
         id = id?.toString() ?: "",
         slug = slug ?: "",
         title = name ?: "",
-        url = video_link,
+        url = videoLink,
         description = description ?: "",
-        contentType = content_type,
+        contentType = contentType,
     )
 }
 

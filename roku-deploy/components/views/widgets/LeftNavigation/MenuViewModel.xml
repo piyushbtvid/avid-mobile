@@ -1,0 +1,8 @@
+<component name="MenuViewModel" extends="ContentNode">
+    <interface>
+        <field id="title" type="string" />
+        <field id="image" type="string" />
+        <field id="expanded" type="boolean" />
+        <field id="isSelected" type="boolean" value="false" alwaysNotify="true" />
+    </interface>
+</component>

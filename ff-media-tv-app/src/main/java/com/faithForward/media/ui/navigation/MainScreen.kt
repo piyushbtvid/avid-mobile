@@ -96,14 +96,24 @@ fun MainScreen(
             loginViewModel = loginViewModel,
             onBackClickForExit = {
                 if (!isTv) {
-                    // Mobile behavior: if not on Home tab, navigate to Home; otherwise show exit dialog
-                    if (currentRoute != Routes.Home.route) {
-                        navController.navigate(Routes.Home.route) {
-                            popUpTo(0) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    } else {
+                    // Mobile: pop back to Home if present; otherwise navigate to Home. Exit if already on Home.
+                    val destRoute = navController.currentDestination?.route
+                    if (destRoute == Routes.Home.route) {
                         showExitDialog = true
+                    } else {
+                        val popped = try {
+                            navController.popBackStack(Routes.Home.route, inclusive = false)
+                        } catch (t: Throwable) {
+                            false
+                        }
+                        if (!popped) {
+                            // Replace current destination with Home to avoid a two-back sequence
+                            navController.navigate(Routes.Home.route) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
                     }
                 } else {
                     // TV behavior unchanged: always show exit dialog on back from a root tab

@@ -1,0 +1,27 @@
+<component name="ProgressBar" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/widgets/ProgressBar/ProgressBar.brs" />
+
+    <interface>
+
+    	<field id="progresColor" type="string" alwaysnotify = "true" alias="progressBar.color" />
+      <field id="color" type="string" alwaysnotify = "true" alias="defaultProgressBar.color" />
+
+    	<field id="width" type="string" alwaysnotify = "true" alias="defaultProgressBar.width" />
+    	<field id="progresWidth" type="string" alwaysnotify = "true" alias="progressBar.width" />
+
+      <field id="videoContent" type="assocarray" alwaysNotify="true"
+        onChange ="onVideoChangePos"/>
+
+      <field id="scrollInt" type="int" alwaysnotify = "true"  onChange ="scrollMarker" />
+
+    </interface>
+
+    <children>
+
+      <Rectangle id="defaultProgressBar" color="#7F8585"  height="6" />
+      <Poster id="markerBall" translation="[0,-15]" uri="pkg:/images/markerball.png"/>
+      <Rectangle id="progressBar" color="#42CEFE" height="6"  />
+
+    </children>
+
+</component>

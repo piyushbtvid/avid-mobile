@@ -1,0 +1,11 @@
+<component name="BaseModel" extends="ContentNode">
+  <script type="text/brightscript" uri="pkg:/source/Utils/generalUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/Utils/arrayUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Models/BaseModel/BaseModel.brs" />
+  <script type="text/brightscript" uri="pkg:/source/constants.brs" />
+
+  <interface>
+    <function name="parseData" />
+  </interface>
+
+</component>

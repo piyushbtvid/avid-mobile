@@ -1,0 +1,24 @@
+<component name="LoadingSpinner" extends="BaseWidget" >
+
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/LoadingSpinner/LoadingSpinner.brs" />
+
+    <interface>
+
+     <field id="startSpinner" type="boolean" alwaysNotify = "true"  onChange="startSpinner"  />
+     <field id="stopSpinner" type="boolean" alwaysNotify = "true" onChange="stopSpinner" />
+
+     <field id="parentFocusItem" type="node" />
+
+   </interface>
+
+  <children>
+
+    <Rectangle id="spinnerBackGround" color="#393D46FF" width="1920" height="1080" translation="[0,0]" visible="false"/>
+
+    <BusySpinner
+     id = "loadingSpinner"
+     visible = "false" />
+
+  </children>
+
+</component>

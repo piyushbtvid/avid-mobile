@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.graphics.android)
     implementation(libs.play.services.ads.identifier)
+    implementation(libs.androidx.foundation)
     kapt(libs.hilt.compiler)
 
     //navigation for compose

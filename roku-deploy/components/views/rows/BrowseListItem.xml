@@ -1,0 +1,28 @@
+<component name="BrowseListItem" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/BrowseListItem.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+    </interface>
+
+    <children>
+
+    <Poster id="focusImage" visible = "false" uri = "pkg://images/navFocus.png" blendColor = "#FF0000" loadDisplayMode ="limitSize" />
+
+    <Group id = "navigationGroup" >
+      <Poster id="backImg" loadDisplayMode ="limitSize" />
+
+      <Label id="itemLabel" horizAlign="center" vertAlign="center" color="#ffffff">
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "27" />
+      </Label>
+    </Group>
+
+    </children>
+</component>

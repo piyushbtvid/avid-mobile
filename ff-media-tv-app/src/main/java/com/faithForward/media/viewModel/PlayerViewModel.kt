@@ -316,7 +316,7 @@ class PlayerViewModel @Inject constructor(
 
                     val cardDetail = response.body() ?: return@launch
 
-                    if (cardDetail.data.content_type == "Series") {
+                    if (cardDetail.data.contentType == "Series") {
                         val seasons = cardDetail.data.seasons
                         val continueWatchingEpisodeSlug = firstItem.slug
 

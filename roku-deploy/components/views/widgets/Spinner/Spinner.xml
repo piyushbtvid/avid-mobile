@@ -1,0 +1,22 @@
+<component name="Spinner" extends="BaseWidget" >
+
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/Spinner/Spinner.brs" />
+
+    <interface>
+
+     <field id="startSpinner" type="boolean" alwaysNotify = "true"  onChange="startSpinner"  />
+     <field id="stopSpinner" type="boolean" alwaysNotify = "true" onChange="stopSpinner" />
+
+     <field id="parentFocusItem" type="node" />
+
+   </interface>
+
+  <children>
+
+    <BusySpinner
+     id = "loadingSpinner"
+     visible = "false" />
+
+  </children>
+
+</component>

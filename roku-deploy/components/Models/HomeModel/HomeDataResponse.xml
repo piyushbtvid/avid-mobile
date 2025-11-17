@@ -1,0 +1,12 @@
+<component name="HomeDataResponse" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/HomeDataResponse.brs" />
+
+  <interface>
+      <field id="status" type="boolean" />
+      <field id="data" type="assocarray" />
+      <field id="msg" type="string" />
+      <field id="response_data" type="assocarray" />
+      <field id="status_code" type="int" />
+  </interface>
+</component>

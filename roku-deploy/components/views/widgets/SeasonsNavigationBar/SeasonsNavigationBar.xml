@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="SeasonsNavigationBar" extends="BaseWidget" initialFocus="seasonNavButtons" >
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/SeasonsNavigationBar/SeasonsNavigationBar.brs" />
+
+   <interface>
+      <!-- Interface elements -->
+      <field id="navItems" type="array"/>
+      <field id="focusedItemIndex" type="integer" alias="seasonNavButtons.focusButton" />
+      <!-- <field id="selectedItemIndex" type="integer" alias="seasonNavButtons.buttonSelected" onChange="onNavItemSelected" /> -->
+      <field id="escape" type="boolean" alias="seasonNavButtons.escapeDown" alwaysNotify="true" />
+      <field id="escapeUp" type="boolean" alias="seasonNavButtons.escapeUp" alwaysNotify="true" />
+      <field id="refresh" type="boolean" alwaysNotify="true" onChange="onNavItemsChange" />
+      <field id="focusedItem" type="integer" value="-1" onChange="onFocusedItemChanged" alwaysNotify="true" />
+      <field id="isKidsMode" type="boolean" value="false"/>
+   </interface>
+
+   <children>
+
+      <Group id="topNavWrapper" >
+
+        <SeasonsButtonGroupHoriz id="seasonNavButtons" translation="[210,29]" layoutDirection="horiz" vertAlignment="center" itemSpacing = "[10]"/>
+
+      </Group>
+
+
+     <Animation id="slideAnimation" duration="0.4" repeat="false" easeFunction="inOutQuad" >
+        <Vector2DFieldInterpolator id = "slideInterpolator" key="[0.0, 0.5, 1.0]"
+          fieldToInterp="seasonNavButtons.translation" />
+      </Animation>
+
+   </children>
+</component>

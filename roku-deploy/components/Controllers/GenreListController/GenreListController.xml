@@ -1,0 +1,39 @@
+<component name="GenreListController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/GenreListController/GenreListController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+  <interface>
+
+  </interface>
+
+  <children>
+
+    <Rectangle id = "backGround" width = "1920" height = "1080" color = "#1B1B1B" />
+
+    <LayoutGroup id = "catHeadLayout" layoutDirection="horiz" itemSpacings="[20]" translation="[87,166]" vertAlignment="center"> 
+      <Poster height="30" width="15" uri="pkg:/images/categoryArrow.png" />
+      <Label id="categoryTitle" horizAlign="left" width="800" height="60" color="#ffffff" >
+          <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="60" />
+      </Label>
+    </LayoutGroup>
+
+    <MarkupGrid
+        id="GenreGridList"
+        itemSize="[269,420]"
+        focusBitmapBlendColor="#B87333"
+        itemComponentName="FeedListWithTitleTile"
+        inheritParentOpacity="false"
+        itemSpacing="[20, 140]"
+        visible = "true"
+        numColumns="5"
+        numRows="500"
+        translation="[195,220]"
+        drawFocusFeedback = "false"
+        vertFocusAnimationStyle="fixedFocus"/>
+
+  </children>
+
+</component>

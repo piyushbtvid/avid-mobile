@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -24,6 +28,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.util.FocusState
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 
 @Composable
 fun SideBarColumn(
@@ -36,25 +43,33 @@ fun SideBarColumn(
     onItemClick: (SideBarItem) -> Unit,
     onFocusChange: (Int) -> Unit,
 ) {
-    val itemFocusRequesters = remember { List(columnItems.size) { FocusRequester() } }
+    val itemFocusRequesters = remember(columnItems) {
+        List(columnItems.size) { FocusRequester() }
+    }
+    val coroutineScope = rememberCoroutineScope()
+    var isComposed by remember { mutableStateOf(true) }
 
     var targetValue = if (focusedIndex == -1) 38.dp else 114.dp
     val animatedWidth by animateDpAsState(
         targetValue = targetValue, animationSpec = tween(300), label = ""
     )
 
+    // Track composition state
+    DisposableEffect(Unit) {
+        isComposed = true
+        onDispose {
+            isComposed = false
+        }
+    }
 
     // Ensure focus is requested when focusedIndex changes
-    LaunchedEffect(focusedIndex, isSideBarFocusable) {
+    LaunchedEffect(focusedIndex, isSideBarFocusable, columnItems.size) {
+        if (!isComposed || !isSideBarFocusable) return@LaunchedEffect
         Log.e("FOCUSED_INDEX", "focused index changed with $focusedIndex and $isSideBarFocusable")
         if (focusedIndex != -1 && isSideBarFocusable) {
-            try {
-                if (focusedIndex < itemFocusRequesters.size) {
-                    Log.e("SIDE_BAR_ITEM", "on side bar item request called")
-                    itemFocusRequesters[focusedIndex].requestFocus()
-                }
-            } catch (ex: Exception) {
-                Log.e("SideBarColumn", "Error requesting focus: ${ex.message}")
+            if (focusedIndex < itemFocusRequesters.size && focusedIndex >= 0) {
+                Log.e("SIDE_BAR_ITEM", "on side bar item request called")
+                itemFocusRequesters[focusedIndex].safeRequestFocus()
             }
         }
     }
@@ -62,12 +77,20 @@ fun SideBarColumn(
     LazyColumn(
         modifier = modifier.onFocusChanged {
             Log.d("onFocusChanged", "${it.hasFocus} ${it.isFocused} ${it.isCaptured}")
-            if (it.hasFocus && isSideBarFocusable) {
-                try {
-                    val targetIndex = selectedPosition.coerceIn(0, itemFocusRequesters.size - 1)
-                    itemFocusRequesters[targetIndex].requestFocus()
-                } catch (ex: Exception) {
-                    Log.e("LOG", "${ex.message}")
+            if (it.hasFocus && isSideBarFocusable && columnItems.isNotEmpty() && isComposed) {
+                coroutineScope.launch {
+                    // Wait a frame to ensure composition is stable
+                    awaitFrame()
+                    if (!isActive || !isComposed || !isSideBarFocusable) return@launch
+                    val visibleLastIndex = if (focusedIndex == -1) {
+                        (columnItems.size - 3).coerceAtLeast(0)
+                    } else {
+                        (columnItems.size - 1).coerceAtLeast(0)
+                    }
+                    val targetIndex = selectedPosition.coerceIn(0, visibleLastIndex)
+                    if (targetIndex >= 0 && targetIndex < itemFocusRequesters.size) {
+                        itemFocusRequesters[targetIndex].safeRequestFocus()
+                    }
                 }
             }
         },
@@ -78,7 +101,7 @@ fun SideBarColumn(
 
             // Skip rendering last 2 items when focusedIndex == -1
             val isLastTwoItem = index >= columnItems.size - 2
-            if (isLastTwoItem && focusedIndex == -1) return@itemsIndexed
+            val shouldHide = isLastTwoItem && focusedIndex == -1
 
             // Add top space before second-last item
             if (index == columnItems.size - 2 && focusedIndex != -1) {
@@ -92,7 +115,13 @@ fun SideBarColumn(
             }
 
             //modifier is being applied to image inside Item
-            SideBarUiItem(modifier = Modifier
+            val baseModifier = if (shouldHide) {
+                Modifier.height(0.dp)
+            } else {
+                Modifier
+            }
+
+            SideBarUiItem(modifier = baseModifier
                 .focusRequester(itemFocusRequesters[index])
                 .onFocusChanged {
                     if (it.hasFocus) {
@@ -102,9 +131,9 @@ fun SideBarColumn(
                         onFocusChange.invoke(-1)
                     }
                 }
-                .focusable(enabled = isSideBarFocusable)
+                .focusable(enabled = isSideBarFocusable && !shouldHide)
                 .focusProperties {
-                    canFocus = isSideBarFocusable
+                    canFocus = isSideBarFocusable && !shouldHide
                 }
                 .clickable(interactionSource = null, indication = null, onClick = {
                     Log.e("SIDE_BAR_ITEM", "on side bar item click called with index $index")
@@ -118,10 +147,32 @@ fun SideBarColumn(
                 focusedSideBarItem = focusedIndex,
                 txt = item.name,
                 img = item.img,
-                focusState = uiState
+                focusState = if (shouldHide) FocusState.UNFOCUSED else uiState
             )
         }
 
+    }
+}
+
+private suspend fun FocusRequester.safeRequestFocus(
+    maxAttempts: Int = 3,
+) {
+    repeat(maxAttempts) { attempt ->
+        try {
+            requestFocus()
+            return
+        } catch (e: IllegalStateException) {
+            // If LayoutNode is not attached, stop trying
+            if (e.message?.contains("LayoutNode") == true && attempt == maxAttempts - 1) {
+                Log.e("SideBarColumn", "Failed to request focus after $maxAttempts attempts: ${e.message}")
+                return
+            }
+            awaitFrame()
+        } catch (e: Exception) {
+            // Catch any other exceptions and stop trying
+            Log.e("SideBarColumn", "Error requesting focus: ${e.message}")
+            return
+        }
     }
 }
 

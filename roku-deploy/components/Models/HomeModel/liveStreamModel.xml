@@ -1,0 +1,6 @@
+<component name="liveStreamModel" extends="BaseModel">
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/liveStreamModel.brs" />
+  <interface>
+      <field id="data" type="assocArray" />
+  </interface>
+</component>

@@ -1,0 +1,24 @@
+<component name="FeedSwimLaneTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/FeedSwimLaneTile.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <!-- <field id="itemHasFocus" type="boolean" onChange="onGetfocus" /> -->
+    </interface>
+
+    <children>
+
+      <Group id="scaledElements">
+        <Rectangle id= "backRect" color="#808080" height="210" width= "380" translation= "[0,2]"/>
+        <Poster id="background"   loadDisplayMode ="limitSize" />
+      </Group>
+
+    </children>
+</component>

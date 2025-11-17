@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="LiveTopMenu" extends="BaseWidget">
+  <script type="text/brightscript" uri="LiveTopMenu.brs" />
+
+  <interface>
+      <field id="content" type="assocArray" alwaysNotify="true" />
+      <field id="itemSelected" type="int" alwaysNotify="true" onChange = "onLiveVideoPlay" />
+      <field id="downTopNavEscape" type="boolean" alwaysNotify = "true" />  
+      <field id="rightNavEscape" type="boolean" alwaysNotify = "true" />
+      <field id="stopVideo" type="boolean" value="false" alwaysNotify="true" />
+   </interface>
+
+  
+  <children>
+    <Poster 
+      id="background" 
+      width="375" 
+      height="54" 
+      uri="pkg://images/liveTopMenuBg.png" 
+      blendColor="#EAE3C9"
+      translation="[770, 70]"/>
+    
+
+    <RowList
+      id="topLiveMenu"
+      itemComponentName="navigationListTile"
+      itemSize="[2000,76]"
+      numRows="1"
+      showRowCounter="[false]"
+      rowItemSize="[[110,76]]"
+      rowItemSpacing="[[2,2]]"
+      drawFocusFeedback = "false"
+      rowFocusAnimationStyle="floatingFocus"
+      variableWidthItems = "[true]"
+      translation="[800,60]"
+    />
+
+    
+    <Group id = "btnGroup" >
+      <ImageButton id="micButton" translation="[1185,60]"/>
+      <ImageButton id="searchButton" translation="[1285,60]"/> 
+    </Group>
+
+
+    <!-- <LayoutGroup id = "btnGroup" layoutDirection="horiz" itemSpacings="[0]" translation="[1215,40]"> -->
+      <ImageButton id="profileButton" translation = "[1810, 80]"/>
+    <!-- </LayoutGroup> -->
+  </children>
+</component>

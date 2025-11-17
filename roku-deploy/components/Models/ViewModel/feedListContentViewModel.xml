@@ -1,0 +1,14 @@
+<component name="feedListContentViewModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="menu_id" type="Integer" />
+      <field id="totalItems" type="Integer" />
+      <field id="type" type="String" />
+      <field id="items" type="array" />
+      <field id="description" type="string" />
+      <field id="row_type" type="string" />
+
+  </interface>
+
+</component>

@@ -33,7 +33,7 @@ sealed class SearchEvent {
 
 
 fun SearchResponse.toSearchContentDto(): SearchContentDto {
-    val searchItemDtoList = data.map {
+    val searchItemDtoList = data.orEmpty().map {
         it.toSearchItemDto()
     }
 
@@ -44,7 +44,7 @@ fun SearchResponse.toSearchContentDto(): SearchContentDto {
 
 
 fun SearchResponse.toSearchUiDto(): SearchUiScreenDto {
-    val searchItemDtoList = data.map {
+    val searchItemDtoList = data.orEmpty().map {
         it.toSearchItemDto()
     }
 
@@ -52,14 +52,15 @@ fun SearchResponse.toSearchUiDto(): SearchUiScreenDto {
 }
 
 fun ContentItem.toSearchItemDto(): SearchItemDto {
+    val durationSeconds = duration?.toIntOrNull()
     return SearchItemDto(
         itemId = id.toString(),
         title = channelName ?: name,
-        contentType = content_type,
+        contentType = contentType,
         contentSlug = slug,
-        image = if (content_type == "Creator") creatorProfileImage else portrait,
+        image = if (contentType == "Creator") creatorProfileImage else portrait,
         creatorName = if (!channelName.isNullOrEmpty()) name else "",
-        duration = formatDurationInReadableFormat(duration),
+        duration = formatDurationInReadableFormat(durationSeconds),
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names
             ?.joinToString(", "),
         imdb = rating

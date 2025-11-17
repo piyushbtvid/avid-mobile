@@ -1,0 +1,15 @@
+<?rokuml version="1.0" encoding="utf-8" ?> 
+
+<!-- a Task handling the playback loop of both content abd ad -->
+<component name="PlayerTask" extends="Task">
+
+<script type="text/brightscript" uri="pkg:/components/Tasks/PlayerTask.brs" />
+
+<interface>
+    <field id="video" type="node" />   
+    <field id="adVideo" type="string" />
+    <field id="backFromAds" type="bool" value="" alwaysNotify="true" />
+    <field id="adPlaying" type="boolean" value="false" alwaysNotify="true"/>
+</interface>   
+
+</component>

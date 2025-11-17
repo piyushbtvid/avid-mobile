@@ -3,8 +3,10 @@ package com.faithForward.network.dto.creator
 import com.google.gson.annotations.SerializedName
 
 data class CreatorsListApiResponse(
+    val status: String?,
+    val message: String?,
     @SerializedName("data")
-    val data: List<UserData>,
+    val data: List<UserData>?,
 )
 
 data class UserData(
@@ -39,5 +41,7 @@ data class UserData(
     val channelDescription: String?,
 
     @SerializedName("channel_subscribers")
-    val channelSubscribers: String, // "100" is a String in JSON, could be Int if API guarantees it
+    val channelSubscribers: String?, // "100" is a String in JSON, could be Int if API guarantees it
+    @SerializedName("content_type")
+    val contentType: String?,
 )

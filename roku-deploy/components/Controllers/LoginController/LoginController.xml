@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="LoginController" extends="BaseController">
+
+    <script type="text/brightscript" uri="pkg:/components/Controllers/LoginController/LoginController.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+    <interface>
+        <field id="email" type="string" />
+        <field id="password" type="string" />
+        <field id="setup" type="boolean" />
+    </interface>
+  <children>
+
+    <Rectangle width="1920" height="1080" color="#141414" />
+    <Poster id = "logo"  uri="pkg://images/login_logo.png" translation="[65,50]"/>
+      <ChannelStore id="store" fakeServer="true" />
+      <Label id="title" width="200" height="81" horizAlign="center" vertAlign="center" color="#B5883B" translation="[850,330]">
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "40" />
+      </Label>
+      
+      <ImageButton id="signUpButton" translation="[1480,80]"/>
+      <Poster id="SigninEmailBg" loadDisplayMode ="scaleToFill" uri= "pkg://images/emailBgUnfocus.png" translation="[566,428]" width="785" height="99"/>
+      <Poster id="SigninEmailBgFocus" loadDisplayMode ="scaleToFill" uri= "pkg://images/emailBgFocus.png" translation="[565,426]" width="785" height="100" visible="false"/>
+      <TextEditBox 
+        id="emailField" 
+        backgroundUri="pkg:/images/emailBg11.png"  
+        hintText="Email" 
+        hintTextColor="#DEDEDE" 
+        textColor="#DEDEDE" 
+        width="779" 
+        height="95" 
+        translation="[591,429]" 
+        clearOnDownKey="false"/>
+
+      <Poster id="SigninPasswordBg" uri= "pkg://images/emailBgUnfocus.png" translation="[566,544]" width="785" height="99"/>
+      <Poster id="SigninPasswordBgFocus" uri= "pkg://images/emailBgFocus.png" translation="[565,542]" width="785" height="100" visible="false"/>
+      <TextEditBox 
+        id="passwordField" 
+        hintText="Password" 
+        hintTextColor="#DEDEDE" 
+        textColor="#DEDEDE" 
+        backgroundUri="pkg:/images/emailBg11.png" 
+        width="779" 
+        height="95" 
+        translation="[591,546]" 
+        clearOnDownKey="false" secureMode="true"/>
+        
+      <ImageButton id="nextButton" translation="[782,663]"/>
+
+
+      <Label id="errorText" color="#FF0000" text="" width="1920" horizAlign="center" vertAlign="center" translation="[20, 800]" >
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "30" />
+      </Label>
+      <StandardKeyboardDialog id="signinKeyboard" visible="false" />
+
+      <Timer id="errorTextTimer" repeat="false" duration="3" />
+      <BusySpinner id="spinner" visible="false" spinInterval="1" uri="pkg:/images/LoadingIndicater.png" translation="[880, 800]" />
+      <Rectangle id="bgautoLogin" width="1920" height="1080" color="#141414" visible="false"/>
+  </children>
+</component>

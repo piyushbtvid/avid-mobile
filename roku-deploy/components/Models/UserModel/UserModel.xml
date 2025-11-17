@@ -1,0 +1,12 @@
+<component name="UserModel" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/UserModel/UserModel.brs" />
+
+  <interface>
+
+        <field id="status" type="string" />
+        <field id="data" type="assocarray" />
+        <field id="msg" type="string" />
+
+    </interface>
+</component>

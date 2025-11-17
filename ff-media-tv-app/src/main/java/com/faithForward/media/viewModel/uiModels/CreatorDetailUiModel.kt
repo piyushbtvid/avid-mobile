@@ -34,11 +34,13 @@ fun CreatorResponse.toCreatorDetailDto(): CreatorDetailDto {
 }
 
 fun ContentItem.toContentDto(): ContentDto {
+    val durationSeconds = duration?.toIntOrNull()
+    val viewsCount = views?.toIntOrNull()
     return ContentDto(
         image = portrait ?: "",
         title = name ?: "",
-        views = "$views Views",
-        duration = formatDurationInReadableFormat(duration),
+        views = viewsCount?.let { "$it Views" } ?: "",
+        duration = formatDurationInReadableFormat(durationSeconds),
         description = description ?: "",
         time = dateUploaded ?: "",
         slug = slug

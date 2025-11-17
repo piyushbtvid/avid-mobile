@@ -1,0 +1,8 @@
+<component name="UserPlanModel" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/UserModel/UserPlanModel.brs" />
+
+  <interface>
+        <field id="response_data" type="assocArray" />
+    </interface>
+</component>

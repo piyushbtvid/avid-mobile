@@ -1,0 +1,12 @@
+<component name="CreatorDataResponseModel" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/CreatorDataResponseModel.brs" />
+
+  <interface>
+      <field id="status" type="boolean" />
+      <field id="data" type="assocArray" />
+      <field id="msg" type="string" />
+      <field id="response_data" type="array" />
+      <field id="status_code" type="int" />
+  </interface>
+</component>

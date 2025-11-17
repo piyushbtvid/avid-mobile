@@ -1,0 +1,88 @@
+<component name="QrCodeScreenController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/QrCodeScreenController/QrCodeScreenController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+  <interface>
+    <field id="exitApp" type="boolean" value="false" />
+  </interface>
+
+  <children>
+        <Rectangle id="background" width="1920" height="1080" color="#000000" /> 
+
+        <Group id = "qrCodeGroup" >
+        <Poster id = "logo"  uri="pkg:/images/login_logo.png" translation = "[65, 50] " />  
+
+        <Label id="title" translation = "[65, 220] "  text="Link your device" width= "900" wrap= "true"  color="#ffffff">
+            <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "35" />
+        </Label>      
+
+        <Label id="subTitle" translation = "[65, 275] "  text="To start watching, follow these simple steps:" width= "900" wrap= "true"  color="#ffffff">
+            <Font role = "font" uri = "pkg:/images/font/Montserrat-Medium.ttf" size = "25" />
+        </Label>     
+        
+        <Poster id = "qr_code_img" loadWidth ="300" loadHeight = "300" width ="300" height="300" translation="[1300, 350]" />
+        <Label vertAlign = "center" horizAlign = "center" text="Scan this QR code with your phone's camera" width= "290" wrap="true" numLines="2" color="#ffffff" translation="[1315, 700]" >
+            <Font role = "font" uri = "pkg:/images/font/Montserrat-Medium.ttf" size = "25" />
+        </Label> 
+         <LayoutGroup id="instructionsGroup" layoutDirection="vert" horizAlignment="left" itemSpacings = "[20]" translation="[65, 350]">
+            <LayoutGroup id = "interactionButtons" layoutDirection="horiz" vertAlignment = "center" itemSpacings="[15]" >
+                <Poster id = "" uri="pkg://images/menuCollapseFocus.png" width ="40" height="40" blendColor="#B87333" >
+                    <Label vertAlign = "center" horizAlign = "center" text="1" width= "40" height="40" color="#ffffff">
+                        <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "25" />
+                    </Label>  
+                </Poster>
+                <MultiStyleLabel width= "900" id = "visit_your_computer"  />
+             </LayoutGroup>
+            <LayoutGroup id = "interactionButtons" layoutDirection="horiz" itemSpacings="[15]" >
+                <Poster id = "" uri="pkg://images/menuCollapseFocus.png" width ="40" height="40" blendColor="#B87333" >
+                    <Label id="subTitle" vertAlign = "center" horizAlign = "center" text="2" width= "40" height="40" color="#ffffff">
+                        <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "25" />
+                    </Label>  
+                </Poster>
+                <Label  text="Sign in with your account or create a new one" vertAlign = "center" height = "40" width= "900"  color="#ffffff">
+                    <Font role = "font" uri = "pkg:/images/font/Montserrat-Medium.ttf" size = "25" />
+                </Label> 
+             </LayoutGroup>
+            <LayoutGroup id = "interactionButtons" layoutDirection="horiz" itemSpacings="[15]" >
+                <Poster id = "" uri="pkg://images/menuCollapseFocus.png" width ="40" height="40" blendColor="#B87333" >
+                    <Label id="subTitle" vertAlign = "center" horizAlign = "center" text="3" width= "40" height="40" color="#ffffff">
+                        <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "25" />
+                    </Label>  
+                </Poster>
+                <Label  text="Enter the code shown below" vertAlign = "center" height = "40" width= "900"  color="#ffffff">
+                    <Font role = "font" uri = "pkg:/images/font/Montserrat-Medium.ttf" size = "25" />
+                </Label> 
+             </LayoutGroup>
+            <LayoutGroup id = "interactionButtons" layoutDirection="horiz" itemSpacings="[15]" >
+                <Poster id = "" uri="pkg://images/menuCollapseFocus.png" width ="40" height="40" blendColor="#B87333" >
+                    <Label id="subTitle" vertAlign = "center" horizAlign = "center" text="4" width= "40" height="40" color="#ffffff">
+                        <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "25" />
+                    </Label>  
+                </Poster>
+                <Label text="Start enjoying unlimited Christian content!" vertAlign = "center" height = "40" width= "900"  color="#ffffff">
+                    <Font role = "font" uri = "pkg:/images/font/Montserrat-Medium.ttf" size = "25" />
+                </Label> 
+             </LayoutGroup>
+          </LayoutGroup>
+
+         <LayoutGroup id="instructionsGroup" layoutDirection="vert" horizAlignment="left" itemSpacings = "[20]" translation="[65, 700]">
+            <Label id="subTitle"  text="Your activation code:" width= "900"  color="#ffffff">
+                <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "25" />
+            </Label> 
+            
+            <Label id="qrCodeText" width= "400"  color="#B87333">
+                <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "40" />
+            </Label>  
+             <MultiStyleLabel width= "900" id = "counterText"  />
+            <ImageButton id="signInBtn" />    
+            <MultiStyleLabel width= "850" id = "helpVisit"  />
+        </LayoutGroup>
+        <Rectangle id="bgautoLogin" width="1920" height="1080" color="#141414" visible="false"/>
+        </Group>
+        <Timer id="statusTimer" repeat="true" duration="10" />
+  </children>
+
+</component>

@@ -17,6 +17,7 @@ import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
+import com.faithForward.network.dto.request.RefreshTokenRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.preferences.UserPrefData
@@ -40,18 +41,6 @@ class NetworkRepository @Inject constructor(
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
         apiServiceInterface.getHomeSectionData(
             token = token, deviceType = deviceType, deviceId = deviceId
-        )
-    }
-
-    suspend fun getCategories() = withContext(Dispatchers.IO) {
-        val userSession = userPreferences.getUserSession()
-        val token =
-            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        val deviceId = userSession?.deviceID ?: ""
-        val deviceType = userSession?.deviceType ?: ""
-        Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
-        apiServiceInterface.getCategories(
-            deviceId = deviceId, deviceType = deviceType, token = token
         )
     }
 
@@ -362,8 +351,12 @@ class NetworkRepository @Inject constructor(
         val deviceId = userSession?.deviceID ?: ""
         val deviceType = userSession?.deviceType ?: ""
 
+        val request = RefreshTokenRequest(refreshToken = refreshToken)
         return apiServiceInterface.refreshToken(
-            deviceId = deviceId, deviceType = deviceType, token = token, refreshToken = refreshToken
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token,
+            request = request
         )
     }
 
@@ -521,8 +514,12 @@ class NetworkRepository @Inject constructor(
         val userSession = userPreferences.getUserSession()
         val token =
             userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
 
         return apiServiceInterface.getContinueWatchingList(
+            deviceId = deviceId,
+            deviceType = deviceType,
             token = token
         )
 

@@ -1,0 +1,39 @@
+<component name="MenuButton" extends="Button">
+
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/MenuButton/MenuButton.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/sceneUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/focusUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/Utils/generalUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/Utils/arrayUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/constants.brs" />
+
+  <interface>
+    <field id="label" type="string" alias="label.text"/>
+    <field id="icon" type="string" alias="icon.uri"/>
+    <field id="index" type="integer" value="-1"/>
+    <field id="isKidsMode" type="boolean" onchange="onKidsModeChange" />
+    <field id="selectButton" type="boolean" value="false" alwaysNotify="true"/>
+  </interface>
+
+  <children>
+    <Poster id="bg"/>
+    <LayoutGroup id="content" layoutDirection="horiz" vertAlignment="center">
+      <Poster id="icon" loadDisplayMode="scaleToFit" loadSync="true"/>
+    </LayoutGroup>
+    <Label id="label" horizAlign="left" >
+    <Font
+    role = "font"
+    uri = "pkg:/images/font/Montserrat-Bold.ttf"
+    size = "30"
+    />
+    </Label>
+    <Rectangle
+      id="underline"
+      height="4"
+      color="#E50914"
+      translation="[25, 60]"
+      visible= "false"
+    />
+  </children>
+
+</component>

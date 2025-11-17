@@ -1,0 +1,37 @@
+<component name="FeedSwimLaneTitleTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/FeedSwimLaneTitleTile.brs" />
+
+
+    <interface>
+      <field id="itemContent" type="node" onChange="onContentChanged" />
+      <!-- <field id="focus" type="boolean" onChange="onFocusPercentChange" /> -->
+      <field id="width" type="float" onChange="updateLayout" />
+      <field id="height" type="float" onChange="updateLayout" />
+      <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+      <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+      <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+      <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+      <field id="rowHasFocus" type="boolean" alwaysNotify="true" />
+    </interface>
+
+    <children>
+
+          <Group id="scaledElements">
+     
+            <Poster id="backCover"  translation="[50, 30]" uri="pkg://images/circle.png" blendColor="#B87333" loadSync="true" />
+            <Poster id="bigPoster" translation="[50, 30]" loadDisplayMode = "limitSize" loadSync="true"/>
+            <Poster id="roundCover"  translation="[50, 30]" uri="pkg://images/round_cover.png" loadSync="true" />
+          </Group>
+
+          <Group id="metadataGroup" translation="[50, 30]"> 
+            <Label id="lblTitle" horizAlign="center" vertAlign="center" color="#EAE3C9" ellipsizeOnBoundary="true" >
+              <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "20" />
+            </Label>
+            <Label id="lblSub" horizAlign="center" vertAlign="center" color="#EAE3C9" ellipsizeOnBoundary="true">
+              <Font role = "font" uri = "pkg:/images/font/Montserrat-Light.ttf" size = "18" />
+            </Label>
+          </Group>
+      
+
+    </children>
+</component>

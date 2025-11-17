@@ -1,0 +1,61 @@
+<component name="searchItemListTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/searchItemListTile.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <!-- <field id="itemHasFocus" type="boolean" onChange="onGetfocus" /> -->
+    </interface>
+
+    <children>
+
+      
+        <LayoutGroup id="contentLayout" layoutDirection="horiz" itemSpacings="[15]" > 
+          <Group id="scaledElements">
+            <Rectangle id= "backRect" color = "#B87333" width="121" height="160"/>
+              <Poster id="poster" loadDisplayMode="limitSize" width="121" height="160" loadWidth="121" loadHeight="160" />
+          </Group>
+
+          <LayoutGroup id="textGroup" layoutDirection="vert" horizAlignment="left" itemSpacings="[15]" >
+
+           <LayoutGroup id="titleLayoutGrp" itemSpacings="[8]" layoutDirection="horiz">
+                <Rectangle id="borderRatingBack" color="#FFFFFF">
+                    <Rectangle id="ratingBack" color="#1B1B1B" />
+                    <Label id="ratingLabel" horizAlign="center" vertAlign="center">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+                    </Label>
+                </Rectangle>
+                <Label id="duration">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+                </Label>
+                <Label id="title">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+                </Label>
+            </LayoutGroup>
+
+              <Label id="genreText" width="495"  horizAlign="left"  color="#FFFFFF">
+                  <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="22" />
+              </Label>
+
+              <!-- <LayoutGroup id="viewLayoutGrp" layoutDirection="horiz" itemSpacings="[18]" >  -->
+                <Label id="viewsLbl" horizAlign="left" color="#FFFFFF">
+                  <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="22" />
+                </Label>
+                <!-- <Label id="monthLbl" horizAlign="left" color="#FFFFFF">
+                  <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="24" />
+                </Label>
+              </LayoutGroup> -->
+
+          </LayoutGroup>
+        </LayoutGroup>
+
+      
+
+    </children>
+</component>

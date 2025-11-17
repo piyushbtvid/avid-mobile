@@ -1,0 +1,29 @@
+<component name="CreatorController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/CreatorController/CreatorController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+  <interface>
+  </interface>
+
+  <children>
+ 
+    <Rectangle id = "backGround" width = "1920" height = "1080" color = "#1B1B1B" />
+    <SliderTiles id="sliderTiles" />
+
+    <MarkupGrid 
+      id = "creatorGrid" 
+      itemComponentName = "FeedSwimLaneTitleTile" 
+      numColumns = "5" 
+      numRows = "500"
+      itemSize="[377,364]"
+      itemSpacing = "[ -30, 80 ]" 
+      drawFocusFeedback = "false"
+      vertFocusAnimationStyle="FixedFocus"
+      translation ="[120,700]"
+      />
+ 
+  </children>
+
+</component>

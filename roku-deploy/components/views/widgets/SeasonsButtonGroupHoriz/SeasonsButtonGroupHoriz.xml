@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="SeasonsButtonGroupHoriz" extends="ButtonGroup">
+
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/SeasonsButtonGroupHoriz/SeasonsButtonGroupHoriz.brs" />
+  <script type="text/brightscript" uri="pkg:/source/Utils/generalUtils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/constants.brs" />
+
+  <interface>
+    <field id="escapeDown" type="boolean" alwaysNotify="true" />
+    <field id="escapeUp" type="boolean" alwaysNotify="true" />
+    <field id="direction" type="string" alwaysNotify="true" />
+    <field id="escapeLeft" type="boolean" alwaysNotify="true" />
+    <field id="escapeRight" type="boolean" alwaysNotify="true" />
+  </interface>
+
+  <children>
+
+   <Timer id ="scrollTimer" repeat="true" duration="0.300"/>
+
+  </children>
+
+</component>

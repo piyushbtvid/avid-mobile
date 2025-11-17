@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="CreateProfileController" extends="BaseController">
+    <script type="text/brightscript" uri="pkg:/components/Controllers/MultipleProfileController/CreateProfileController.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+     <interface>
+        <field id="profiles" type="array" />
+    </interface>
+ <children>
+
+    <Label id="headingTitle" width="1920" horizAlign="center" color="0xFFFFFFFF" translation="[0,100]">
+        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="40" />
+    </Label>
+
+    <RowList 
+        id="profileGrid"
+        itemSize="[1920, 160]"
+        rowItemSize="[[150,150]]"
+        itemSpacing="[20, 20]"
+        rowItemSpacing="[[20,10]]" 
+        numColumns="5"
+        numRows="1"
+        itemComponentName = "ProfileItemTile"
+        drawFocusFeedback="false"
+        rowFocusAnimationStyle="fixedFocusWrap" /> 
+
+
+    <TextEditBox id="nameInput" hintText="Your Name" maxTextLength="20" height="60" />
+    <!-- backgroundUri="pkg:/images/tra.png" -->
+
+    <Keyboard id="nameKeyboard" visible="false" showTextEditBox="false" />
+    <ImageButton id="submitBtn" />
+    <ImageButton id="deleteBtn" />
+
+    <Label id="errorText" color="#FF0000" text="" width="1920" horizAlign="center" vertAlign="center" translation="[20, 990]" >
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "30" />
+    </Label>
+    <Timer id="errorTextTimer" repeat="false" duration="3" />
+
+    </children>
+</component>

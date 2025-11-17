@@ -1,0 +1,86 @@
+<component name="CreatorDetailController" extends="BaseController">
+
+    <script type="text/brightscript" uri="pkg:/components/Controllers/CreatorDetailController/CreatorDetailController.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+  
+   
+    <interface>
+      <!-- <field id="resume" type="int" alwaysNotify="true" onChange="onLoad" /> -->
+    </interface>
+  
+    <children>
+      <Rectangle id = "backGround" width = "1920" height = "1080" color = "#1B1B1B" />
+
+      <Poster id="creator_poster" loadDisplayMode = "limitSize" width="959" height="290" loadWidth = "959" loadHeight = "290" loadSync="true" translation="[62, 161]"/>
+
+        <MaskGroup id="creatorPicMaskGroup">
+            <Poster
+                id="creatorPic"
+                width="171"
+                height="171"
+                loadWidth="171"
+                loadHeight="171"
+                loadDisplayMode="limitSize"
+                loadSync="true" />
+        </MaskGroup>
+
+        <Group id="scaledElementsMac">
+          <ImageButton id="micButton" translation="[830,40]" />
+          <ImageButton id="searchButton" translation="[930,40]" /> 
+        </Group> 
+
+        <LayoutGroup id="header" translation="[275, 461]" itemSpacings="[18]" horizAlignment="left" vertAlignment="top">
+          
+          <Label id="creatorName" text="Jasmine Wright" color="#FFFFFF">
+            <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="60" />
+          </Label>
+
+          <LayoutGroup id = "categoriesLayout" layoutDirection="horiz" itemSpacings="[80]" >
+             <Label id="channel_category" color="#FFFFFF" >
+                <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="22" />
+             </Label>
+             <Label id="channel_subscribers" color="#FFFFFF" >
+                <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="22" />
+             </Label>
+          </LayoutGroup>
+
+          <Label id="channel_name" width="739" color="#FFFFFF" wrap="true" >
+              <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="22" />
+          </Label> 
+              
+          <Label id="channel_description" width="739" color="#FFFFFF" wrap="true" lineSpacing = "-3" >
+              <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="22" />
+          </Label>    
+
+          <LayoutGroup id = "interactionButtons" layoutDirection="horiz" itemSpacings="[20]" >
+            <ImageButton id="subscribeButton" />
+            <ImageButton id="accessButton" />
+          </LayoutGroup>
+
+          <!-- <LayoutGroup id = "interactionButtons" layoutDirection="horiz" itemSpacings="[-20]" >
+            <ImageButton id="addButton" />
+            <ImageButton id="thumbUpButton" />
+            <ImageButton id="thumbDownButton" />
+          </LayoutGroup> -->
+              
+      </LayoutGroup>
+  
+ 
+        <Label id="gridLabel" text="Content" color="#ffffff" translation="[ 1146, 153 ]" >
+          <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="40" />
+        </Label>
+        <MarkupGrid
+          itemComponentName="CreatorDetailTile"
+          id="creatorContentList"
+          translation="[ 1146, 242 ]"
+          numColumns="1"
+          numRows="100"
+          itemSize="[ 700, 160 ]"
+          itemSpacing="[ 0, 18 ]"
+          drawFocusFeedback="true"
+          focusBitmapBlendColor="#B87333"
+          vertFocusAnimationStyle="fixedFocus" /> 
+    </children>
+  </component>

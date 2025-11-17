@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="LeftNavMenu" extends="BaseWidget">
+  <script type="text/brightscript" uri="LeftNavMenu.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+
+  <interface>
+    <field id="navItems" type="array" alwaysNotify="true" onChange = "handleConfigData" />
+    <field id="content" type="assocArray" alwaysNotify="true" />
+    <field id="isExpanded" type="boolean" alwaysNotify="true" value="false" onChange="onExpanded" />
+    <field id="itemSelected" type="int" alwaysNotify="true" onChange="isMenuItemSelected" />
+  </interface>
+
+  <children>
+    <Poster id="backgroundExpand" width="300" height="1080" uri="pkg://images/leftmenu.png" loadWidth="300" height="1080" loadHeight="120"
+        loadDisplayMode="limitSize" visible="false" translation="[30, 0]" />
+
+    <Poster id="backgroundColapse" width="91" height="600" uri="pkg://images/left-menu-collapse.png" visible="true" translation="[30, 34]" />  
+
+    <MarkupList
+      id="navList"
+      translation="[30, 90]"
+      itemComponentName="NavItem"
+      vertFocusAnimationStyle="floatingFocus" 
+      itemSize="[85, 76]"
+      itemSpacing="[30, 2]"
+      numRows="9"
+      drawFocusFeedback="false"
+    />
+
+    <!-- Expand Animation -->
+    <Animation id="expandAnim" duration="0.3" easeFunction="easeinout" repeat="false">
+      <Vector2DFieldInterpolator 
+        id="expandScale" 
+        key="[0.0, 1.0]" 
+        keyValue="[[0.35, 1.0], [1.0, 1.0]]" 
+        fieldToInterp="backgroundExpand.scale" />
+    </Animation>
+
+    <!-- Collapse Animation -->
+    <Animation id="collapseAnim" duration="0.3" easeFunction="easeinout" repeat="false">
+      <Vector2DFieldInterpolator 
+        id="collapseScale" 
+        key="[0.0, 1.0]" 
+        keyValue="[[1.0, 1.0], [0.35, 1.0]]" 
+        fieldToInterp="backgroundExpand.scale" />
+    </Animation>
+
+    <!-- navList itemSize animation (Expand) -->
+    <Animation id="navListExpand" duration="0.3" easeFunction="easeinout" repeat="false">
+      <Vector2DFieldInterpolator 
+        id="expandListSize" 
+        key="[0.0, 1.0]" 
+        keyValue="[[85, 76], [267, 76]]" 
+        fieldToInterp="navList.itemSize" />
+    </Animation>
+
+    <!-- navList itemSize animation (Collapse) -->
+    <Animation id="navListCollapse" duration="0.3" easeFunction="easeinout" repeat="false">
+      <Vector2DFieldInterpolator 
+        id="collapseListSize" 
+        key="[0.0, 1.0]" 
+        keyValue="[[267, 76], [85, 76]]" 
+        fieldToInterp="navList.itemSize" />
+    </Animation>
+
+    <!-- Optional: delay hiding after collapse -->
+    <Timer id="collapseTimer" duration="0.3" control="stop" repeat="false" />
+  </children>
+</component>

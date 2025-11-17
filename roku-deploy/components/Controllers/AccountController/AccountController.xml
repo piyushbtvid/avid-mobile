@@ -1,0 +1,101 @@
+<component name="AccountController" extends="BaseController">
+
+    <script type="text/brightscript"
+        uri="pkg:/components/Controllers/AccountController/AccountController.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+    <interface>
+
+    </interface>
+
+    <children>
+
+        <Rectangle id="background" height="1080" width="1920" color="#000000" />
+
+        <AccountMenu id="accountMenu" visible="true" />
+
+
+        <Label id="MarkUpList_Title" translation="[530,80]" width="500" height="50" color="#ffffff"
+            vertAlign="center" horizAlign="left">
+            <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="30" />
+        </Label>
+
+        <MarkupGrid
+            id="MarkUpList"
+            translation="[500,100]"
+            itemSize="[400,400]"
+            focusBitmapBlendColor="#B87333"
+            itemComponentName="continueCard"
+            inheritParentOpacity="false"
+            itemSpacing="[50, 100]"
+            visible="true"
+            numColumns="3"
+            numRows="50"
+            drawFocusFeedback="false"
+            vertFocusAnimationStyle="fixedFocus"
+        />
+
+
+        <LayoutGroup id="subscription_setting" layoutDirection="vert" translation="[580,180]"
+            itemSpacings="[20]" visible="false">
+            <Label id="headingLabel" text="Subscription Plan" width="800" color="#c5c7c9">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="46" />
+            </Label>
+            <Label id="planLabel" width="500" color="#c5c7c9">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="36" />
+            </Label>
+            <Label id="expiryLabel" width="1250" color="#c5c7c9">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="36" />
+            </Label>
+            <Label id="statusLabel" width="1250" color="#c5c7c9">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="36" />
+            </Label>
+
+        </LayoutGroup>
+
+        <LayoutGroup id="account_setting" layoutDirection="vert" translation="[580,180]" itemSpacings="[20,70,70]"
+            visible="false">
+            <Label id="contactLabel" text="Contact Us:" width="500" color="#c5c7c9">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="68" />
+            </Label>
+            <Label id="contactInfoLabel"
+                text="For any queries, please contact us at ashishm@tvidservices.com." width="1250"
+                color="#c5c7c9">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="36" />
+            </Label>
+            <LayoutGroup layoutDirection="vert" itemSpacings="[0,30,0,30,0,30]">
+                <Label id="TermsOfUse" text="Terms of Use" width="1250" color="#c5c7c9">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="36" />
+                </Label>
+                <Label text="https://www.tvidservices.com/terms-of-use" width="1250" color="#B87333">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="32" />
+                </Label>
+                <Label id="PrivacyPolicy" text="Privacy Policy" width="1250" color="#c5c7c9">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="36" />
+                </Label>
+                <Label text="https://www.tvidservices.com/privacy-policy" width="1250"
+                    color="#B87333">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="32" />
+                </Label>
+                <Label id="CookiePolicy" text="Cookie Policy" width="1250" color="#c5c7c9">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="36" />
+                </Label>
+                <Label id="CookiePolicy" text="https://www.tvidservices.com/cookie-policy"
+                    width="1250" color="#B87333">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="32" />
+                </Label>
+            </LayoutGroup>
+
+            <ImageButton id="switchProfile" />
+        </LayoutGroup>
+
+        <Label id="dataEmptyTitle" vertAlign="center" height="1080" color="#ffffff" visible="false">
+            <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="35" />
+        </Label>
+        <ImageButton id="subscriptionAndBrowseBtn" visible="false" />
+
+    </children>
+
+</component>

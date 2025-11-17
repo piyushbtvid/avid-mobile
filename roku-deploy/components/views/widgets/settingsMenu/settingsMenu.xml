@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="settingsMenu" extends="BaseWidget" initialFocus="navButtons" >
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/settingsMenu/settingsMenu.brs" />
+
+   <interface>
+      <!-- Interface elements -->
+      <field id="navItems" type="array"/>
+      <field id="focusedItemIndex" type="integer" alias="navButtons.focusButton" />
+      <!-- <field id="selectedItemIndex" type="integer" alias="navButtons.buttonSelected" onChange="onNavItemSelected" /> -->
+      <field id="escape" type="boolean" alias="navButtons.escapeUp" alwaysNotify="true" />
+      <field id="escapeRight" type="boolean" alias="navButtons.escapeRight" alwaysNotify="true" />
+      <field id="refresh" type="boolean" alwaysNotify="true" onChange="onNavItemsChange" />
+      <field id="focusedItem" type="integer" value="-1" onChange="onFocusedItemChanged" alwaysNotify="true" />
+      <field id="isKidsMode" type="boolean" value="false"/>
+   </interface>
+
+   <children>
+
+      <Group id="topNavWrapper" >
+
+        <ButtonGroupVert id="navButtons" translation="[720,100]" vertAlignment="center"/>
+
+      </Group>
+
+
+     <Animation id="slideAnimation" duration="0.4" repeat="false" easeFunction="inOutQuad" >
+        <Vector2DFieldInterpolator id = "slideInterpolator" key="[0.0, 0.5, 1.0]"
+          fieldToInterp="topNavWrapper.translation" />
+      </Animation>
+
+   </children>
+</component>

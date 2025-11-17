@@ -1,0 +1,58 @@
+<component name="PlayerControlView" extends="BaseWidget" >
+
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/Player/PlayerControlView.brs" />
+
+    <interface>
+      <field id="selectecVideoRowIndex" type="array" alwaysnotify="true" />
+      <field id="content" type="node" onChange="onContentChange"  alwaysnotify="true" />
+      <field id="videoContent" type="assocarray" alwaysNotify="true" onChange ="onVideoChangePos"/>
+      <field id="videoSelectedContent" type="node" alwaysNotify="true"/>
+      <field id="videoPlayer" type="node" alwaysnotify="true" />
+    </interface>
+
+  <children>
+
+    <Group  id="playerContainer"  >
+    <Poster  uri ="pkg:/images/detail_gradient.png" width="1920" height="1080" translation="[0,0]" />
+
+    <Label id="videoTitle" width="1200"  vertAlign="top" horizAlign ="right" color="#ffffff" translation="[600,50]" />
+    <LayoutGroup translation="[ 100, 470 ]" layoutDirection="vert" itemSpacings ="[10]">
+      <!-- <Label id="videoTitle" width="1200"  vertAlign="top" horizAlign ="left" color="#ffffff" /> -->
+      <ProgressBar id = "progressBar" width ="1650"  />
+      <Label id="durationTextBottom" width="500"  color="#ffffff" />
+    </LayoutGroup>
+
+    <Poster uri="pkg:/images/circle_red.png" id ="liveIcon" translation="[ 170,590]" width = "20" height ="20" />
+
+    <ImageButton id="btnPlayPause" translation="[ 900,580]"  />
+    <!-- <PlayNextView translation="[ 1400,580 ]" id ="playNextView" /> -->
+
+    <RowList
+      id="feedsList"
+      itemComponentName="FeedListWithTitleTile"
+      focusXOffset="[90]"
+      rowLabelOffset="[[115,15]]"
+      itemSize="[1920,320]"
+      showRowLabel="[true]"
+      rowItemSpacing="[[40,40]]"
+      itemSpacing="[0, 40]"
+      numRows="1"
+      visible ="true"
+      showRowCounter="[true]"
+      rowItemSize="[[382,212]]"
+      rowLabelColor="0xFFFFFFFF"
+      vertFocusAnimationStyle="fixedFocus"
+      rowFocusAnimationStyle= "fixedFocus"
+      drawFocusFeedback="true"
+      translation="[0,700]"
+    />
+
+  </Group>
+
+    <Timer id="hideListTimer" repeat="true" duration="4"   />
+
+    <Timer id ="scrollTimer" repeat="true" duration="1"/>
+
+  </children>
+
+</component>

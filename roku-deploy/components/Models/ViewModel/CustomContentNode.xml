@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--********** Copyright 2016 Roku Corp.  All Rights Reserved. **********-->
+
+<!--
+    main node which handles home screen children
+    -->
+<component name="CustomContentNode" extends="ContentNode">
+    <interface>
+        <field id="contentType" type="string"/>
+        <field id="contentTitle" type="string"/>
+        <field id="contentTitle2" type="string"/>
+
+        <field id="contentId" type="string"/>
+        <field id="productData" type="assocArray"/>
+        <field id="searchProductData" type="assocArray"/>
+
+
+        <field id="contentPrice" type="string"/>
+        <field id="thumbnailImage" type="string"/>
+        <field id="placeHolderImage" type="string"/>
+
+        <field id="shortDesc" type="string"/>
+        <field id="streamURL" type="string"/>
+        <field id="categoryURL" type="string"/>
+        <field id="categoryTarget" type="string"/>
+        <field id="rowCategory" type="string"/>
+
+
+        <field id="isFavorite" type="bool"/>
+
+        <field id="isSelected" type="bool"/>
+        <field id="isRecommended" type="bool" value="false" alwaysNotify="true"/>
+
+        <field id="purchaseType" type="string"/>
+
+
+        <field id="planTitle" type="string"/>
+        <field id="planPrice" type="string"/>
+        <field id="planDescription" type="string"/>
+        <field id="isLoginCard" type="bool"/>
+        <field id="isContinueWatchingCard" type="bool" value="false" alwaysNotify="true"/>
+        <field id="contentProgress" type="integer"/>
+        <field id="plansTerms1" type="string"/>
+        <field id="plansTerms2" type="string"/>
+        <field id="plansTerms3" type="string"/>
+
+    </interface>
+</component>

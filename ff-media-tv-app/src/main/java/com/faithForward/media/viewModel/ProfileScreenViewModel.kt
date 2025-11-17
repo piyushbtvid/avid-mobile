@@ -98,7 +98,7 @@ class ProfileScreenViewModel @Inject constructor(
             try {
                 val response = networkRepository.getAllProfiles()
                 if (response.isSuccessful) {
-                    val data = response.body()?.data
+                    val data = response.body()?.profiles
                     val userProfileList = data?.map {
                         it.toUserProfileUiItem()
                     }
@@ -124,7 +124,7 @@ class ProfileScreenViewModel @Inject constructor(
                 val response = networkRepository.getAllAvatars()
 
                 if (response.isSuccessful) {
-                    val data = response.body()?.data
+                    val data = response.body()?.avatars
                     val avatarList = data?.map {
                         it.toAvatarUiItem()
                     }

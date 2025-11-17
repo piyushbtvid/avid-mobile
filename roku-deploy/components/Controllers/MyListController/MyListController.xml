@@ -1,0 +1,45 @@
+<component name="MyListController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/MyListController/MyListController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+  <interface>
+
+  </interface>
+
+  <children>
+
+  <Rectangle id = "backGround" width = "1920" height = "1080" color = "#1B1B1B" />
+
+    <SliderTiles id="sliderTiles" />
+
+      <Label id="dataEmptyTitle" text="No Data Available" horizAlign="center" vertAlign="center" width="1920" height="1080" color="#ffffff" visible="false">
+        <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+      </Label>
+
+    <RowList
+      id="myList"
+      itemComponentName="FeedListTile"
+      focusXOffset="[5]"
+      rowLabelOffset="[[0,-30]]"
+      itemSize="[1920,500]"
+      showRowLabel="[true]"
+      itemSpacing="[20, 10]"
+      rowItemSpacing="[[20,10]]"
+      numRows="60"
+      showRowCounter="[false]"
+      rowItemSize="[[269,420]]"
+      rowLabelColor="#EAE3C9"
+      drawFocusFeedback = "false"
+      focusBitmapBlendColor ="#B87333"
+      rowFocusAnimationStyle="floatingFocus"
+      vertFocusAnimationStyle="fixedFocus"
+      translation="[137,740]"
+    />
+
+
+  </children>
+
+</component>

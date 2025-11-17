@@ -1,0 +1,13 @@
+<component name="FeedListViewModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="name" type="String" />
+      <field id="detailedCarousel" type="boolean" />
+      <field id="rowId" type="String" />
+      <field id="logo" type="String" />
+      <field id="type" type="String" />
+
+  </interface>
+
+</component>

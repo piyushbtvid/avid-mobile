@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="BannerInfo" extends="Group">
+
+
+    <script type="text/brightscript" uri="pkg:/components/views/widgets/HeroContent/BannerInfo.brs" />
+
+      <interface>
+      <field id="bannerContent" type="node" onChange="onContentChanged" />
+      </interface>
+
+  <children>
+
+
+
+
+      <LayoutGroup translation="[50,250]" layoutDirection="Vert" itemSpacings ="[30]">
+
+       <Label
+          id="timimg"
+          translation="[106,120]"
+          width="1100"
+          maxLines="1"
+          wrap="true"
+          lineSpacing="0"
+          color="#ffffff"
+       >
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "20" />
+       </Label>
+        <Label id="description"  translation="[106,120]" width= "800" horizAlign="left" lineSpacing="1" maxLines="4" wrap= "true">
+
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "20" />
+        </Label>
+      </LayoutGroup>
+
+       <Label id="Title" horizAlign="right"  vertAlign="center" lineSpacing="0.5" width= "1920" wrap= "true" translation="[0,73]">
+         <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "60" />
+      </Label>
+
+
+  </children>
+</component>
