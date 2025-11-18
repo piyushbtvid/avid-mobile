@@ -578,4 +578,6 @@ class NetworkRepository @Inject constructor(
             token = token,
         )
     }
+
+    suspend fun getConfigData() = apiServiceInterface.getConfigData()
 }

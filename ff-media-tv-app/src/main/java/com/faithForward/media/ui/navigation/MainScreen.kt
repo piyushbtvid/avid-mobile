@@ -21,11 +21,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
+import com.faithForward.media.viewModel.ConfigViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
@@ -38,6 +40,7 @@ fun MainScreen(
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    configViewModel: ConfigViewModel = hiltViewModel(),
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
@@ -56,6 +59,7 @@ fun MainScreen(
 
     // Collect one-time event safely for logout success
     LaunchedEffect(Unit) {
+        Log.e("CONFIG_DATA", "config data in mainscreen is ${configViewModel.getConfigData()}")
         sideBarViewModel.logoutEvent.collect {
             Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
             showLogoutDialog = false
@@ -109,7 +113,8 @@ fun MainScreen(
                 animationSpec = tween(durationMillis = 300)
             )
         ) {
-            SideBar(columnList = sideBarItems,
+            SideBar(
+                columnList = sideBarItems,
                 modifier = Modifier.align(Alignment.TopStart),
                 isSideBarFocusable = sideBarState.isSideBarFocusable,
                 sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,

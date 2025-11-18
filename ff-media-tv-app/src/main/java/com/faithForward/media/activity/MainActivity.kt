@@ -45,6 +45,7 @@ import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
 import com.faithForward.media.ui.theme.FfmediaTheme
 import com.faithForward.media.ui.theme.unFocusMainColor
+import com.faithForward.media.viewModel.ConfigViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
@@ -64,10 +65,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val configViewModel: ConfigViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     sharedPlayerViewModel = viewModel()
+
+                    // Collect config loading state
+                    val isConfigLoaded by configViewModel.isConfigLoaded.collectAsStateWithLifecycle()
+                    val isConfigLoading by configViewModel.isLoading.collectAsStateWithLifecycle()
+
+                    // Collect login buffer state
                     val isLoading = loginViewModel.isBuffer.collectAsStateWithLifecycle().value
+
+                    // Combined loading state: wait for both config and login initialization
+                    val isAppReady = isConfigLoaded && !isLoading
+
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
@@ -88,16 +100,18 @@ class MainActivity : ComponentActivity() {
                             )
                             loginViewModel.updateUserSubscriptionDetails()
                         }
+                        Log.e("CONFIG_DATA","config data in mainacitivty is ${configViewModel.getConfigData()}")
                     }
 
                     // Use CrossFade to animate between loading and MainScreen
+                    // Wait for both config loading and login initialization to complete
                     Crossfade(
-                        targetState = isLoading,
+                        targetState = isAppReady,
                         modifier = Modifier.padding(innerPadding),
                         animationSpec = tween(durationMillis = 100), label = ""
-                    ) { loading ->
+                    ) { appReady ->
                         when {
-                            loading -> {
+                            !appReady -> {
                                 SplashScreen()
                             }
 
