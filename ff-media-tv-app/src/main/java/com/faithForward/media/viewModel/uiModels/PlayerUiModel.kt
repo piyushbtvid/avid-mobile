@@ -20,7 +20,8 @@ fun PosterCardDto.toVideoPlayerDto(): VideoPlayerDto {
         seriesSlug = seriesSlug ?: "",
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
-        image = landScapeImg
+        image = landScapeImg,
+        access = access
     )
 }
 
@@ -37,7 +38,8 @@ fun VideoPlayerDto.toPosterCardDto(): PosterCardDto {
         posterImageSrc = image,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
-        landScapeImg = image
+        landScapeImg = image,
+        access = access
     )
 }
 
@@ -51,7 +53,8 @@ fun PosterCardDto.toRelatedItemDto(): RelatedContentItemDto {
         description = description,
         contentType = contentType,
         seasonNumber = seasonNumber,
-        episodeNumber = episodeNumber
+        episodeNumber = episodeNumber,
+        access = access
     )
 }
 
@@ -67,7 +70,8 @@ fun RelatedContentItemDto.toPosterCardDto(): PosterCardDto {
         contentType = contentType,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
-        landScapeImg = image
+        landScapeImg = image,
+        access = access
     )
 }
 
@@ -81,6 +85,7 @@ fun ContentItem.toRelatedItemDto(): RelatedContentItemDto {
         url = video_link,
         description = description ?: "",
         contentType = content_type,
+        access = access
     )
 }
 
@@ -100,10 +105,11 @@ data class PlayerState(
     val videoPlayingIndex: Int? = 0,
     val currentTitle: String? = null,
     val isUniversalTopBarVisible: Boolean = false,
+    val isTrailerPlaying: Boolean = false,
 )
 
 data class SharedPlayerViewModelState(
-    val isControlsVisible: Boolean = true,
+    val isControlsVisible: Boolean = false,
 )
 
 sealed class PlayerEvent {

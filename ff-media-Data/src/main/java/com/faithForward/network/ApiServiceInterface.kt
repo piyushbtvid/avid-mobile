@@ -23,10 +23,12 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
+import com.faithForward.network.dto.subscription.SubscriptionResponse
 import com.faithForward.util.Constants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -289,5 +291,21 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
         @Path("profile_id") profileId: Int,
     ): Response<ProfileCommonResponse>
+
+    @POST(Constants.SET_PURCHASE)
+    suspend fun setPurchase(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Body purchaseRequest: PurchaseRequest,
+    ): Response<LoginResponse>
+
+
+    @GET(Constants.USER_SUBSCRIPTION_DETAIL)
+    suspend fun getUserSubscriptionDetail(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+    ): Response<SubscriptionResponse>
 
 }

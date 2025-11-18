@@ -29,8 +29,8 @@ android {
         applicationId = "com.faithForward.media"
         minSdk = 21
         targetSdk = 35
-        versionCode = 9
-        versionName = "3.6"
+        versionCode = 10
+        versionName = "3.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -103,6 +103,7 @@ dependencies {
     implementation("androidx.media3:media3-common:$media3")
     implementation("androidx.media3:media3-exoplayer-dash:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
+    implementation ("androidx.media3:media3-exoplayer-ima:$media3") // for ads
 
     // implementation(libs.kotlinx.coroutines.android)
 
@@ -132,5 +133,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.leanback:leanback:1.2.0")
+
+    implementation ("com.amazon.device:amazon-appstore-sdk:+")
 
 }

@@ -74,7 +74,9 @@ fun CardDetail.toDetailDto(): DetailDto {
         contentType = data.content_type,
         progress = data.progressSeconds,
         itemTrailer = data.trailer?.playLink,
-        relatedList = relatedList)
+        relatedList = relatedList,
+        access = data.access
+    )
 }
 
 
@@ -94,7 +96,8 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         contentType = contentType,
         progress = progress,
         relatedList = relatedList,
-        landScapeImg = landScape ?: ""
+        landScapeImg = landScape ?: "",
+        access = access
     )
 }
 
@@ -132,7 +135,8 @@ fun Episode.toPosterDto(): PosterCardDto {
         videoHlsUrl = video_link,
         slug = slug,
         contentType = content_type,
-        landScapeImg = landscape
+        landScapeImg = landscape,
+        access = access
     )
 }
 

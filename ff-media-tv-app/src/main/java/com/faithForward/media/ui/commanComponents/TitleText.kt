@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -23,6 +24,7 @@ fun TitleText(
     text: String,
     textSize: Int = 15,
     fontFamily: FontFamily? = null,
+    textAlign: TextAlign? = null,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontWeight: FontWeight = FontWeight.Normal,
     lineHeight: Int = 15,
@@ -36,6 +38,7 @@ fun TitleText(
         color = color,
         fontFamily = fontFamily,
         maxLines = maxLine,
+        textAlign = textAlign,
         letterSpacing = letterSpacing,
         lineHeight = lineHeight.sp,
         overflow = TextOverflow.Ellipsis,

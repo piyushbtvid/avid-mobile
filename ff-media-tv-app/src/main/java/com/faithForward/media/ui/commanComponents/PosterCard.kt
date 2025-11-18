@@ -64,6 +64,7 @@ data class PosterCardDto(
     val seasonNumber: Int? = null,
     val uploadYear: String? = null,
     val relatedList: List<PosterCardDto>? = null,
+    var access: String? = null
 )
 
 @Composable
