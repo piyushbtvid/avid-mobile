@@ -4,6 +4,8 @@ import android.app.Application
 import com.faithForward.repository.IapRepository
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
+import org.conscrypt.Conscrypt
+import java.security.Security
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -14,5 +16,6 @@ class App : Application() {
         super.onCreate()
         AndroidThreeTen.init(this) // <-- Required!
         iapRepository
+        Security.insertProviderAt(Conscrypt.newProvider(), 1)
     }
 }

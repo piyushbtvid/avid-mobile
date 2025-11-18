@@ -136,4 +136,7 @@ dependencies {
 
     implementation ("com.amazon.device:amazon-appstore-sdk:+")
 
+    //tsl library
+    implementation("org.conscrypt:conscrypt-android:2.5.2")
+
 }
