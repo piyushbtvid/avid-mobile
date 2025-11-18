@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.android.awaitFrame
 import com.faithForward.media.ui.commanComponents.CategoryCompose
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
 import com.faithForward.media.ui.commanComponents.TitleText

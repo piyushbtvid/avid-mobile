@@ -104,6 +104,7 @@ fun MainAppNavHost(
         }
 
         composable(route = Routes.AllProfile.route) { navBackStackEntry ->
+            Log.e("MainAppNavHost", "AllProfile called")
 
             val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
 
@@ -119,6 +120,7 @@ fun MainAppNavHost(
                     navController.navigate(Routes.Home.route)
                 }
             )
+//            navController.navigate(Routes.Home.route)
         }
 
         composable(route = Routes.CreateProfile.route) { navBackStackEntry ->
@@ -178,6 +180,7 @@ fun MainAppNavHost(
 
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
+            Log.e("MainAppNavHost", "Home route called")
             // Scope the ViewModel to the navigation destination
             val homeViewModel: HomeViewModel = hiltViewModel(navBackStackEntry)
             HomePage(modifier = modifier,

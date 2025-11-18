@@ -104,7 +104,7 @@ class ProfileScreenViewModel @Inject constructor(
                     }
                     _allProfiles.emit(Resource.Success(userProfileList))
                 } else {
-                    Log.e("ALL_PROFILE", "all profiles response error is ${response.message()}")
+                    Log.e("ALL_PROFILE", "all profiles response error is ${response.isSuccessful} ${response.message()}")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
