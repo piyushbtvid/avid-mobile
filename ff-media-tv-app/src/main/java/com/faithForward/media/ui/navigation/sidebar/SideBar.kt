@@ -187,7 +187,7 @@ fun SideBarPreview() {
             onSideBarItemClick = {
 
             },
-            sideBarFocusedIndex = 1,
+            sideBarFocusedIndex = -1,
             sideBarSelectedPosition = 1,
             isSideBarFocusable = true,
             onSideBarSelectedPositionChange = {

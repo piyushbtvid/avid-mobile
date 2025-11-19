@@ -60,17 +60,20 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
         // Hide user items only if BOTH are disabled
         val shouldShowUserItems = isLoginEnabled || isQrLoginEnabled
 
-        val items = mutableListOf<SideBarItem>(
-            SideBarItem("Search", R.drawable.search_ic, Routes.Search.route),
-            SideBarItem("Home", R.drawable.home_ic, Routes.Home.route),
-            SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),
-            SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route),
-            SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
-        )
+        val items = mutableListOf<SideBarItem>()
 
-        // Only add user-specific items if login is enabled
+        items.add(SideBarItem("Search", R.drawable.search_ic, Routes.Search.route))
+        items.add(SideBarItem("Home", R.drawable.home_ic, Routes.Home.route))
+
         if (shouldShowUserItems) {
             items.add(SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route))
+        }
+
+        items.add(SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route))
+        items.add(SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route))
+        items.add(SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route))
+
+        if (shouldShowUserItems) {
             items.add(
                 SideBarItem(
                     "My Account",
