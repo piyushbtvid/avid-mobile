@@ -31,6 +31,7 @@ import com.faithForward.media.viewModel.ConfigViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.preferences.ConfigManager
 
 @Composable
 fun MainScreen(
@@ -59,12 +60,15 @@ fun MainScreen(
 
     // Collect one-time event safely for logout success
     LaunchedEffect(Unit) {
-        Log.e("CONFIG_DATA", "config data in mainscreen is ${configViewModel.getConfigData()}")
         sideBarViewModel.logoutEvent.collect {
             Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
             showLogoutDialog = false
             loginViewModel.cancelRefreshJob()
-            navController.navigate(Routes.LoginQr.route) {
+            val configData = ConfigManager.getConfigData()
+            val isQrLoginEnabled = configData?.enable_qrlogin == true
+            val destination = if (isQrLoginEnabled) Routes.LoginQr.route else Routes.Login.route
+
+            navController.navigate(destination) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }

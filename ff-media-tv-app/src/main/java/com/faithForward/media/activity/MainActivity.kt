@@ -51,6 +51,7 @@ import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
+import com.faithForward.preferences.ConfigManager
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -74,10 +75,22 @@ class MainActivity : ComponentActivity() {
                     val isConfigLoaded by configViewModel.isConfigLoaded.collectAsStateWithLifecycle()
                     val isConfigLoading by configViewModel.isLoading.collectAsStateWithLifecycle()
 
-                    // Collect login buffer state
-                    val isLoading = loginViewModel.isBuffer.collectAsStateWithLifecycle().value
+                    // Get config data to check login/qrlogin flags
+                    val configData = ConfigManager.getConfigData()
+                    val isLoginEnabled = configData?.enable_login == true
+                    val isQrLoginEnabled = configData?.enable_qrlogin == true
+                    // Skip login only if BOTH are false
+                    val shouldSkipLogin = !isLoginEnabled && !isQrLoginEnabled
 
-                    // Combined loading state: wait for both config and login initialization
+                    // Collect login buffer state (only if login is enabled)
+                    val isLoading = if (shouldSkipLogin) {
+                        // If login is disabled, we don't need to wait for login initialization
+                        false
+                    } else {
+                        loginViewModel.isBuffer.collectAsStateWithLifecycle().value
+                    }
+
+                    // Combined loading state: wait for config, and login initialization only if login is enabled
                     val isAppReady = isConfigLoaded && !isLoading
 
                     val navController = rememberNavController()
@@ -86,21 +99,37 @@ class MainActivity : ComponentActivity() {
                     isControlsVisible =
                         sharedPlayerViewModel.state.collectAsStateWithLifecycle().value.isControlsVisible
 
-                    val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
+                    val isLoggedIn = if (shouldSkipLogin) {
+                        // If login is disabled, treat as not logged in (but we'll navigate to Home anyway)
+                        false
+                    } else {
+                        loginViewModel.isLoggedIn.collectAsStateWithLifecycle().value
+                    }
 
-                    LaunchedEffect(isLoggedIn) {
-                        Log.e(
-                            "CHECK_USER_SUBSCRIPTION",
-                            "is Logged in launch effect called with $isLoggedIn"
-                        )
-                        if (isLoggedIn) {
+                    // Rebuild sidebar items when config is loaded
+                    LaunchedEffect(isConfigLoaded) {
+                        if (isConfigLoaded) {
+                            sideBarViewModel.rebuildSideBarItems()
+                        }
+                    }
+
+                    // Only run login-related logic if login is enabled
+                    LaunchedEffect(isLoggedIn, shouldSkipLogin) {
+                        if (!shouldSkipLogin) {
                             Log.e(
                                 "CHECK_USER_SUBSCRIPTION",
-                                "is Logged is True in  launch effect So calling load User Subscription data from MainActivity"
+                                "is Logged in launch effect called with $isLoggedIn"
                             )
-                            loginViewModel.updateUserSubscriptionDetails()
+                            if (isLoggedIn) {
+                                Log.e(
+                                    "CHECK_USER_SUBSCRIPTION",
+                                    "is Logged is True in  launch effect So calling load User Subscription data from MainActivity"
+                                )
+                                loginViewModel.updateUserSubscriptionDetails()
+                            }
                         }
-                        Log.e("CONFIG_DATA","config data in mainacitivty is ${configViewModel.getConfigData()}")
+                        Log.e("CONFIG_DATA", "config data in mainactivity is ${configViewModel.getConfigData()}")
+                        Log.e("LOGIN_CONFIG", "isLoginEnabled: $isLoginEnabled, isQrLoginEnabled: $isQrLoginEnabled, shouldSkipLogin: $shouldSkipLogin")
                     }
 
                     // Use CrossFade to animate between loading and MainScreen
@@ -123,7 +152,13 @@ class MainActivity : ComponentActivity() {
                                     playerViewModel = sharedPlayerViewModel,
                                     navController = navController,
                                     startRoute = when {
+                                        // If both login methods are disabled, go directly to Home
+                                        shouldSkipLogin -> Routes.Home.route
+                                        // If logged in, go to AllProfile
                                         isLoggedIn -> Routes.AllProfile.route
+                                        // If QR login is disabled, start with Login screen
+                                        !isQrLoginEnabled -> Routes.Login.route
+                                        // Otherwise, start with LoginQr screen
                                         else -> Routes.LoginQr.route
                                     }
                                 )

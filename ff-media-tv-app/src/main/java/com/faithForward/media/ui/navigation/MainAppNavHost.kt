@@ -56,6 +56,7 @@ import com.faithForward.media.viewModel.SubscriptionViewModel
 import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
+import com.faithForward.preferences.ConfigManager
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -91,6 +92,9 @@ fun MainAppNavHost(
 
         composable(route = Routes.LoginQr.route) { backStack ->
             val qrLoginViewModel: QrLoginViewModel = hiltViewModel(backStack)
+            val configData = ConfigManager.getConfigData()
+            val isLoginEnabled = configData?.enable_login == true
+
             LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
@@ -99,7 +103,10 @@ fun MainAppNavHost(
                     popUpTo(0) { inclusive = true }
                 }
             }, onLoginPageOpenClick = {
-                navController.navigate(Routes.Login.route)
+                // Only navigate to Login screen if enable_login is true
+                if (isLoginEnabled) {
+                    navController.navigate(Routes.Login.route)
+                }
             })
         }
 
@@ -200,7 +207,7 @@ fun MainAppNavHost(
                         val filteredList = list.filterNot { it.id == item.id }
 
                         val json = Json.encodeToString(filteredList)
-                     //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -275,7 +282,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                       // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -311,7 +318,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                     //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -339,7 +346,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                       // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -369,7 +376,7 @@ fun MainAppNavHost(
                 if (!item.slug.isNullOrEmpty()) {
                     val filteredList = list.filterNot { it.slug == item.slug }
                     val json = Json.encodeToString(filteredList)
-                  //  val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    //  val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
             }, onSearchClick = {

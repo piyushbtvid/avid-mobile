@@ -27,6 +27,7 @@ import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.util.Util
 import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.uiModels.QrLoginEvent
+import com.faithForward.preferences.ConfigManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -118,9 +119,13 @@ fun LoginQrScreen(
                     }
 
                     if (dto.url != null && dto.code != null && state.timeLeftSeconds > 0) {
+                        val configData = ConfigManager.getConfigData()
+                        val isLoginEnabled = configData?.enable_login == true
+
                         ActivationCode(url = dto.url,
                             code = dto.code,
                             expireTime = formatTimeLeft(state.timeLeftSeconds),
+                            isLoginButtonEnabled = isLoginEnabled,
                             onLoginPageOpenClick = {
                                 loginQrLoginViewModel.onEvent(QrLoginEvent.StopPolling)
                                 onLoginPageOpenClick.invoke()

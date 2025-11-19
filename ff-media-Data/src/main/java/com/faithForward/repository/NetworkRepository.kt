@@ -22,6 +22,7 @@ import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.network.dto.subscription.SubscriptionResponse
+import com.faithForward.preferences.ConfigManager
 import com.faithForward.preferences.UserPrefData
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -36,8 +37,16 @@ class NetworkRepository @Inject constructor(
 
     suspend fun getHomeSectionData() = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
+        val configData = ConfigManager.getConfigData()
+        val shouldSendToken = configData?.let {
+            it.enable_login || it.enable_qrlogin
+        } ?: false
         val token =
-            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+            if (shouldSendToken) {
+                userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+            } else {
+                ""
+            }
         val deviceId = userSession?.deviceID ?: ""
         val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
