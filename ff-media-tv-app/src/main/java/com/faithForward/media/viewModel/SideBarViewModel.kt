@@ -69,7 +69,11 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
             items.add(SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route))
         }
 
-        items.add(SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route))
+        // Only add Creators item if enable_creator is true
+        if (configData?.enable_creator == true) {
+            items.add(SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route))
+        }
+
         items.add(SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route))
         items.add(SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route))
 
