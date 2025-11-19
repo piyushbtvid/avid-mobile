@@ -135,7 +135,8 @@ class LoginViewModel @Inject constructor(
                     Log.e("CHECK_LOGIN", "Error: $combinedErrorMessage")
 
                     _loginState.update {
-                        it.copy(isLoading = false,
+                        it.copy(
+                            isLoading = false,
                             errorMessage = combinedErrorMessage.ifBlank { "User not found" })
                     }
                 }
@@ -273,7 +274,7 @@ class LoginViewModel @Inject constructor(
     }
 
 
-     fun updateUserSubscriptionDetails() {
+    fun updateUserSubscriptionDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = networkRepository.getUserSubscriptionDetail()
@@ -283,18 +284,19 @@ class LoginViewModel @Inject constructor(
                         "check user subscription resonse when sucess is ${response.body()}"
                     )
                     val userUpdatedData = response.body()
-                    if (userUpdatedData?.data != null) {
+                    if (userUpdatedData?.data?.user != null) {
                         Log.e(
                             "CHECK_USER_SUBSCRIPTION",
                             "check user subscription User New Data is not null so updating user Subscription locally"
                         )
-                        val isUserDataSaved = networkRepository.updateUserInfo(userUpdatedData.data)
-                        if(isUserDataSaved){
+                        val isUserDataSaved =
+                            networkRepository.updateUserInfo(userUpdatedData.data.user!!)
+                        if (isUserDataSaved) {
                             Log.e(
                                 "CHECK_USER_SUBSCRIPTION",
                                 "check user subscription User New Data is Saved Sucess in Local"
                             )
-                        }else{
+                        } else {
                             Log.e(
                                 "CHECK_USER_SUBSCRIPTION",
                                 "check user subscription User New Data is Not Saved Sucess in Local"

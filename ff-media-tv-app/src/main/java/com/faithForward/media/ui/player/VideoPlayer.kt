@@ -64,6 +64,7 @@ import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
+import com.faithForward.preferences.ConfigManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -137,18 +138,28 @@ fun VideoPlayer(
     val scope = rememberCoroutineScope()
     val dialogThresholdMs = 20_000L
 
+    // Check if ads are enabled from config
+    val configData = ConfigManager.getConfigData()
+    val isAdsEnabled = configData?.enable_ads == true
 
-
-    val adsLoader = remember {
-        ImaAdsLoader.Builder(context).build()
+    // Only create ads loader if ads are enabled
+    val adsLoader = remember(isAdsEnabled) {
+        if (isAdsEnabled) {
+            ImaAdsLoader.Builder(context).build()
+        } else {
+            null
+        }
     }
 
-    val exoPlayer = remember {
+    val exoPlayer = remember(isAdsEnabled, adsLoader) {
 
-        val mediaSourceFactory =
+        val mediaSourceFactory = if (isAdsEnabled && adsLoader != null) {
             DefaultMediaSourceFactory(DefaultDataSource.Factory(context)).setLocalAdInsertionComponents(
                 { adsLoader },
                 { null })
+        } else {
+            DefaultMediaSourceFactory(DefaultDataSource.Factory(context))
+        }
 
         ExoPlayer.Builder(context).setSeekForwardIncrementMs(10_000L)
             .setMediaSourceFactory(mediaSourceFactory)
@@ -180,21 +191,21 @@ fun VideoPlayer(
                                 playerViewModel.handleEvent(PlayerEvent.UpdatePlayerBuffering(true))
 
                             }
-                                Player.STATE_READY -> {
-                                    playerViewModel.handleEvent(
-                                        PlayerEvent.UpdatePlayerBuffering(
-                                            false
-                                        )
+                            Player.STATE_READY -> {
+                                playerViewModel.handleEvent(
+                                    PlayerEvent.UpdatePlayerBuffering(
+                                        false
                                     )
-                                    playWhenReady = true
-                                    val currentTime = System.currentTimeMillis()
-                                    if (currentTime - lastUpdateTime >= 10000) {
-                                        val currentItemIndex = currentMediaItemIndex
-                                        lastUpdateTime = currentTime
-
-                                    }
+                                )
+                                playWhenReady = true
+                                val currentTime = System.currentTimeMillis()
+                                if (currentTime - lastUpdateTime >= 10000) {
+                                    val currentItemIndex = currentMediaItemIndex
+                                    lastUpdateTime = currentTime
 
                                 }
+
+                            }
 
 
                             Player.STATE_ENDED -> {
@@ -237,21 +248,21 @@ fun VideoPlayer(
                         }
                     }
 
-                @SuppressLint("SwitchIntDef")
-                override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                    Log.e(
-                        "MEDIA_ITEM_TRANSITION",
-                        "on media item transition called with ${playerScreenState.currentPosition} and $currentPosition and duartion ${playerScreenState.duration} and $duration  and reason $reason"
-                    )
+                    @SuppressLint("SwitchIntDef")
+                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                        Log.e(
+                            "MEDIA_ITEM_TRANSITION",
+                            "on media item transition called with ${playerScreenState.currentPosition} and $currentPosition and duartion ${playerScreenState.duration} and $duration  and reason $reason"
+                        )
 
-                    val previousIndex = currentMediaItemIndex - 1
+                        val previousIndex = currentMediaItemIndex - 1
 
-                    when (reason) {
-                        Player.MEDIA_ITEM_TRANSITION_REASON_AUTO -> {
-                            Log.e("Transition", "Auto: video finished, next started")
-                            if (previousIndex >= 0 && previousIndex < videoPlayerItem.size) {
-                                val isValidEndState =
-                                    playerScreenState.duration != C.TIME_UNSET && playerScreenState.duration > 0
+                        when (reason) {
+                            Player.MEDIA_ITEM_TRANSITION_REASON_AUTO -> {
+                                Log.e("Transition", "Auto: video finished, next started")
+                                if (previousIndex >= 0 && previousIndex < videoPlayerItem.size) {
+                                    val isValidEndState =
+                                        playerScreenState.duration != C.TIME_UNSET && playerScreenState.duration > 0
 
 
                                     if (isValidEndState) {
@@ -446,13 +457,17 @@ fun VideoPlayer(
     LaunchedEffect(videoPlayerItem) {
         if (videoPlayerItem.isNotEmpty()) {
 
-            adsLoader.setPlayer(exoPlayer)
+            // Only set player on ads loader if ads are enabled
+            if (isAdsEnabled && adsLoader != null) {
+                adsLoader.setPlayer(exoPlayer)
+            }
 
             val mediaItems = videoPlayerItem.map { item ->
                 val builder = MediaItem.Builder()
                     .setUri(item.url)
 
-                if (!playerScreenState.isTrailerPlaying) {
+                // Only set ads configuration if ads are enabled and it's not a trailer
+                if (isAdsEnabled && !playerScreenState.isTrailerPlaying) {
                     builder.setAdsConfiguration(
                         MediaItem.AdsConfiguration.Builder(
                             Uri.parse(
@@ -613,9 +628,12 @@ fun VideoPlayer(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             Log.e("EXO_PLAYER_LIFE_CYCL", "on dispose called ")
-            adsLoader.setPlayer(null)
+            // Only cleanup ads loader if ads are enabled
+            if (isAdsEnabled && adsLoader != null) {
+                adsLoader.setPlayer(null)
+                adsLoader.release()
+            }
             exoPlayer.release()
-            adsLoader.release()
         }
     }
 

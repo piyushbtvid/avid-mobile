@@ -134,6 +134,10 @@ fun DetailScreen(
                     resumeNowTxt = resumeTxt.value,
                     modifier = Modifier.fillMaxSize(),
                     onWatchNowClick = {
+                        Log.e(
+                            "ON_WATCH_NOW_CLICK",
+                            "ON watch now click with ${detailPageItem.detailDto.toPosterCardDto()}"
+                        )
                         if (detailPageItem.detailDto.isSeries == true) {
                             Log.e("RESUME_INFO", "on watch Now click in deatil for series ")
                             if (relatedContentData is RelatedContentData.SeriesSeasons) {
