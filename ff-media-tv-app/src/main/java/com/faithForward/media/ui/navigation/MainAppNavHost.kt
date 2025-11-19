@@ -57,6 +57,9 @@ import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
 import com.faithForward.preferences.ConfigManager
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -187,8 +190,7 @@ fun MainAppNavHost(
         composable(route = Routes.Home.route) { navBackStackEntry ->
             // Scope the ViewModel to the navigation destination
             val homeViewModel: HomeViewModel = hiltViewModel(navBackStackEntry)
-            HomePage(
-                modifier = modifier,
+            HomePage(modifier = modifier,
                 homeViewModel = homeViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onDataLoadedSuccess = onDataLoadedSuccess,
@@ -249,8 +251,7 @@ fun MainAppNavHost(
 
         composable(route = Routes.Creator.route) {
             val creatorViewModel: CreatorViewModel = hiltViewModel()
-            CreatorScreen(
-                creatorViewModel = creatorViewModel,
+            CreatorScreen(creatorViewModel = creatorViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -278,8 +279,7 @@ fun MainAppNavHost(
             arguments = listOf(navArgument("contentType") { type = NavType.StringType })
         ) { navBackStackEntry ->
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
-            MoviesPage(
-                contentViewModel = contentViewModel,
+            MoviesPage(contentViewModel = contentViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onItemClick = { item, list ->
                     if (!item.slug.isNullOrEmpty()) {
@@ -311,8 +311,7 @@ fun MainAppNavHost(
             arguments = listOf(navArgument("contentType") { type = NavType.StringType })
         ) { navBackStackEntry ->
             val contentViewModel: ContentViewModel = hiltViewModel(navBackStackEntry)
-            SeriesPage(
-                contentViewModel = contentViewModel,
+            SeriesPage(contentViewModel = contentViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -340,8 +339,7 @@ fun MainAppNavHost(
         }
         composable(route = Routes.MyList.route) {
             val myListViewModel: MyListViewModel = hiltViewModel()
-            MyListPage(
-                contentViewModel = myListViewModel,
+            MyListPage(contentViewModel = myListViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -403,14 +401,17 @@ fun MainAppNavHost(
 
             val slug = backStackEntry.arguments?.getString("itemId")
 
-            DetailScreen(
-                detailViewModel = detailViewModel,
+            DetailScreen(detailViewModel = detailViewModel,
                 slug = slug,
                 onWatchNowClick = { item, posterItemList, index ->
-                    Log.e("ON_WATCH_NOW_CLICK", "item in appNavHost onWatchNowCLick is $item")
+                    Log.e("SERIES_RELATED", "item is $item")
                     Log.e(
-                        "ON_WATCH_NOW_CLICK",
-                        "item related in appNavHost onWatchNowCLick is ${item?.relatedList}"
+                        "SERIES_RELATED",
+                        "item List  Related list  when click in detail NavHost from series episode is ${
+                            posterItemList?.get(
+                                0
+                            )?.relatedList?.get(0)?.relatedList
+                        }"
                     )
                     if (item != null) {
                         val itemWithProgressZero = item.copy(progress = 0)
@@ -648,21 +649,16 @@ fun MainAppNavHost(
 
             var canPlay by remember { mutableStateOf<Boolean?>(null) }
 
-            Log.e("ON_WATCH_NOW_CLICK", "item List in appNavHost Player  is $playerList")
-            Log.e("ON_WATCH_NOW_CLICK", "first item in appNavHost Player  is $firstItem")
-            Log.e("ON_WATCH_NOW_CLICK", "User Type item in appNavHost Player  is $userType")
+            val context = LocalContext.current
 
             LaunchedEffect(firstItem, userType) {
                 if (firstItem != null && userType != null) {
                     checkVideoPlayback(
                         poster = firstItem,
                         userType = userType!!,
-                        onStartPlay = {
-                            Log.e("ON_CHECK_VIDEO_SUB","on Start Play in checkVideoPlayback")
-                            canPlay = true
-                        },
+                        context = context,
+                        onStartPlay = { canPlay = true },
                         onRequireSubscription = {
-                            Log.e("ON_CHECK_VIDEO_SUB", "onRequire sub in checkVideoPlayback")
                             canPlay = false
                             val route = Routes.Subscription.createRoute(
                                 playerDtoList = playerList,
@@ -781,8 +777,7 @@ fun MainAppNavHost(
 
             val creatorDetailViewModel = hiltViewModel<CreatorDetailViewModel>()
 
-            CreatorDetailScreen(
-                creatorDetailViewModel = creatorDetailViewModel,
+            CreatorDetailScreen(creatorDetailViewModel = creatorDetailViewModel,
                 onCreatorContentClick = { item ->
                     if (item.slug != null) {
                         navController.navigate(Routes.Detail.createRoute(item.slug))
@@ -795,8 +790,7 @@ fun MainAppNavHost(
             route = Routes.Search.route
         ) { backStackEntry ->
             val searchViewModel: SearchViewModel = hiltViewModel(backStackEntry)
-            SearchScreenUi(
-                searchViewModel = searchViewModel,
+            SearchScreenUi(searchViewModel = searchViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -817,8 +811,7 @@ fun MainAppNavHost(
             route = Routes.MyAccount.route
         ) { backStackEntry ->
             val myAccountViewModel: MyAccountViewModel = hiltViewModel(backStackEntry)
-            MyAccountScreen(
-                myAccountViewModel = myAccountViewModel,
+            MyAccountScreen(myAccountViewModel = myAccountViewModel,
                 sideBarViewModel = sideBarViewModel,
                 onBackClick = {
                     onBackClickForExit.invoke()
@@ -923,7 +916,7 @@ fun MainAppNavHost(
                         isPlayTrailer = isPlayTrailer,
                         initialIndex = initialIndex
                     )
-                    navController.navigate(route) {
+                    navController.navigate(route){
                         popUpTo(Routes.Subscription.route) { inclusive = true }
                     }
                 }
@@ -939,6 +932,7 @@ fun MainAppNavHost(
 fun checkVideoPlayback(
     poster: PosterCardDto,
     userType: String,
+    context: Context,
     onStartPlay: () -> Unit,
     onRequireSubscription: () -> Unit,
 ) {
@@ -949,8 +943,23 @@ fun checkVideoPlayback(
             println("Play allowed")
             onStartPlay()
         } else {
-            println("Need subscription")
-            onRequireSubscription()
+            // Check if subscription is enabled and user has token
+            val configData = ConfigManager.getConfigData()
+            val isSubscriptionEnabled = configData?.enable_subscription == true
+
+            // Check if user token exists (user is logged in)
+            val sharedPreferences: SharedPreferences =
+                context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            val userToken = sharedPreferences.getString("token", null)
+            val hasUserToken = !userToken.isNullOrEmpty()
+
+            if (isSubscriptionEnabled && hasUserToken) {
+                println("Need subscription")
+                onRequireSubscription()
+            } else {
+                println("Play allowed (subscription disabled or no user token)")
+                onStartPlay()
+            }
         }
     } else {
         println("Free content")
