@@ -10,6 +10,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,18 +66,22 @@ fun AppNavigationBar(
                 )
             }
         } else {
-            if (showSidebar){
-                BottomNavBar(
-                    modifier = Modifier.align(Alignment.BottomCenter), // ✅ inside
-                    navItems = sideBarItems,
-                    selectedPosition = sideBarState.sideBarSelectedPosition,
-                    onSelectedPositionChange = { index ->
-                        sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(index))
-                    },
-                    onItemClick = { item ->
-                        handleNavItemClick(item, navController, sideBarViewModel, onLogoutRequest)
-                    }
-                )
+            // Use key to force fresh composition when sidebar becomes visible
+            // This prevents LayoutNode attachment issues during navigation
+            if (showSidebar) {
+                key(showSidebar) {
+                    BottomNavBar(
+                        modifier = Modifier.align(Alignment.BottomCenter), // ✅ inside
+                        navItems = sideBarItems,
+                        selectedPosition = sideBarState.sideBarSelectedPosition,
+                        onSelectedPositionChange = { index ->
+                            sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(index))
+                        },
+                        onItemClick = { item ->
+                            handleNavItemClick(item, navController, sideBarViewModel, onLogoutRequest)
+                        }
+                    )
+                }
             }
         }
     }

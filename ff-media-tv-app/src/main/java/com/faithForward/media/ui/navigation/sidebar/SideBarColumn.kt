@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.util.FocusState
 import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 
@@ -47,18 +48,33 @@ fun SideBarColumn(
         List(columnItems.size) { FocusRequester() }
     }
     val coroutineScope = rememberCoroutineScope()
-    var isComposed by remember { mutableStateOf(true) }
+    var isComposed by remember { mutableStateOf(false) }
+    var canAnimate by remember { mutableStateOf(false) }
 
     var targetValue = if (focusedIndex == -1) 38.dp else 114.dp
+    // Use immediate value until animation is safe, then animate
+    val safeTargetValue = if (canAnimate) targetValue else targetValue
     val animatedWidth by animateDpAsState(
-        targetValue = targetValue, animationSpec = tween(300), label = ""
+        targetValue = safeTargetValue, 
+        animationSpec = if (canAnimate) tween(300) else tween(0), 
+        label = ""
     )
 
-    // Track composition state
-    DisposableEffect(Unit) {
+    // Track composition state and delay animation start
+    LaunchedEffect(Unit) {
+        // Wait for frames to ensure LayoutNode is attached
+        kotlinx.coroutines.android.awaitFrame()
+        kotlinx.coroutines.android.awaitFrame()
         isComposed = true
+        // Additional small delay before allowing animation
+        kotlinx.coroutines.delay(50)
+        canAnimate = true
+    }
+    
+    DisposableEffect(Unit) {
         onDispose {
             isComposed = false
+            canAnimate = false
         }
     }
 

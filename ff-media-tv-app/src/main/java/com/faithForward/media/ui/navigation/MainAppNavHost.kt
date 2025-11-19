@@ -8,8 +8,12 @@ import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.delay
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -74,8 +78,6 @@ fun MainAppNavHost(
     onBackClickForExit: () -> Unit,
     onLogoutRequest: () -> Unit,
 ) {
-
-
     NavHost(
         navController = navController, startDestination = startRoute
     ) {
@@ -104,9 +106,34 @@ fun MainAppNavHost(
         }
 
         composable(route = Routes.AllProfile.route) { navBackStackEntry ->
-            Log.e("MainAppNavHost", "AllProfile called")
+            Log.e("MainAppNavHost", "AllProfile called nav")
 
             val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+            val uiEvent by viewModel.uiEvent.collectAsStateWithLifecycle(null)
+
+            // Handle navigation in LaunchedEffect to ensure proper Compose lifecycle
+            LaunchedEffect(uiEvent) {
+                uiEvent?.let { event ->
+                    Log.e("MainAppNavHost", "AllProfile uiEvent received, navigating to Home")
+                    // Wait for frames to ensure current composition and measurement complete
+                    repeat(2) {
+                        kotlinx.coroutines.android.awaitFrame()
+                    }
+                    // Small delay to ensure AllProfile screen starts disposing
+                    kotlinx.coroutines.delay(50)
+                    try {
+                        navController.navigate(Routes.Home.route) {
+                            popUpTo(Routes.AllProfile.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                        Log.e("MainAppNavHost", "AllProfile after navController.navigate(Routes.Home.route)")
+                        // Reset the event after navigation
+                        viewModel.resetUiEvent()
+                    } catch (e: Exception) {
+                        Log.e("MainAppNavHost", "Error navigating to Home: ${e.message}", e)
+                    }
+                }
+            }
 
             AllProfileScreen(
                 profileScreenViewModel = viewModel,
@@ -117,7 +144,8 @@ fun MainAppNavHost(
                     navController.navigate(Routes.EditProfile.route)
                 },
                 onSetProfileSuccess = {
-                    navController.navigate(Routes.Home.route)
+                    // Navigation is now handled by LaunchedEffect above
+                    // This callback can remain for other purposes if needed
                 }
             )
 //            navController.navigate(Routes.Home.route)

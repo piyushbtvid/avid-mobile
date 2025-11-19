@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.faithForward.media.ui.navigation.bar.AppNavigationBar
@@ -50,7 +51,25 @@ fun MainScreen(
     val currentRoute = navBackStackEntry?.destination?.route
     val isTv = LocalContext.current.isTvDevice()
 
-    val showSidebar = currentRoute in sidebarVisibleRoutes
+    // Delay showing sidebar when navigating from AllProfile to Home to prevent LayoutNode attachment issues
+    // On mobile, need longer delay due to different rendering behavior
+    var shouldShowSidebar by remember { mutableStateOf(false) }
+    val routeInSidebarList = currentRoute in sidebarVisibleRoutes
+    
+    LaunchedEffect(currentRoute) {
+        if (routeInSidebarList) {
+            // Longer delay on mobile to ensure navigation transition and composition complete
+            // Mobile needs more time due to different rendering pipeline
+            if (isTv){
+                shouldShowSidebar = true
+            }
+        } else {
+            // Hide immediately when route changes away from sidebar routes
+            shouldShowSidebar = false
+        }
+    }
+    
+    val showSidebar = shouldShowSidebar && routeInSidebarList
 
     var showExitDialog by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
