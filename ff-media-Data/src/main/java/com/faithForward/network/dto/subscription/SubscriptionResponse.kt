@@ -10,8 +10,14 @@ data class SubscriptionResponse(
 
 data class SubscriptionData(
     @SerializedName("user") val user: User?,
-    @SerializedName("subscription") val subscription: Any?,
+    @SerializedName("subscription") val subscription: Subscription?,
     @SerializedName("all_subscriptions") val allSubscriptions: List<Any>?,
     @SerializedName("subscription_count") val subscriptionCount: Int,
     @SerializedName("has_active_subscription") val hasActiveSubscription: Boolean,
+)
+
+data class Subscription(
+    val title: String?,
+    val expirationDate: String?,
+    val status: String?,
 )

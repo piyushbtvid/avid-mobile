@@ -24,7 +24,7 @@ import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
 
 enum class ProfileMenuItemType {
-    CONTINUE_WATCHING, MY_LIST, SETTING
+    CONTINUE_WATCHING, MY_LIST, SETTING , SUBSCRIPTION
 }
 
 data class ProfileMenuItemDto(
