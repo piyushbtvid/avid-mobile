@@ -366,7 +366,7 @@ fun LoginScreen(
             )
     ) {
         Image(
-            painter = painterResource(R.drawable.tvid_logo_ic),
+            painter = painterResource(R.drawable.tvid_logo_new_ic),
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
                 .padding(top = 30.dp, start = 37.5.dp)
