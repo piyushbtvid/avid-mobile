@@ -21,14 +21,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
+import com.faithForward.media.viewModel.ConfigViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.preferences.ConfigManager
 
 @Composable
 fun MainScreen(
@@ -38,6 +41,7 @@ fun MainScreen(
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    configViewModel: ConfigViewModel = hiltViewModel(),
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
@@ -60,7 +64,11 @@ fun MainScreen(
             Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
             showLogoutDialog = false
             loginViewModel.cancelRefreshJob()
-            navController.navigate(Routes.LoginQr.route) {
+            val configData = ConfigManager.getConfigData()
+            val isQrLoginEnabled = configData?.enable_qrlogin == true
+            val destination = if (isQrLoginEnabled) Routes.LoginQr.route else Routes.Login.route
+
+            navController.navigate(destination) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
@@ -109,7 +117,8 @@ fun MainScreen(
                 animationSpec = tween(durationMillis = 300)
             )
         ) {
-            SideBar(columnList = sideBarItems,
+            SideBar(
+                columnList = sideBarItems,
                 modifier = Modifier.align(Alignment.TopStart),
                 isSideBarFocusable = sideBarState.isSideBarFocusable,
                 sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,

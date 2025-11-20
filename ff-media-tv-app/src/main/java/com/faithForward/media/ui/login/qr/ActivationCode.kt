@@ -36,6 +36,7 @@ fun ActivationCode(
     code: String,
     url: String,
     expireTime: String,
+    isLoginButtonEnabled: Boolean = true,
     onLoginPageOpenClick: () -> Unit,
 ) {
 
@@ -68,7 +69,6 @@ fun ActivationCode(
             time = expireTime
         )
 
-
         SubscribeButton(
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -80,7 +80,9 @@ fun ActivationCode(
             rounded = 8,
             buttonText = "Sign in directly on this device",
             onCategoryItemClick = {
-                onLoginPageOpenClick.invoke()
+                if (isLoginButtonEnabled) {
+                    onLoginPageOpenClick.invoke()
+                }
             },
             icon = R.drawable.baseline_exit_to_app_24
         )
@@ -180,6 +182,7 @@ private fun ActivationCodePreview() {
         code = "8VR7H",
         url = "http://107.180.208.127:3000/activate",
         expireTime = "15:30",
+        isLoginButtonEnabled = true,
         onLoginPageOpenClick = {
 
         }

@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
+import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.util.FocusState
 
 @Composable
@@ -75,13 +76,21 @@ fun SideBarColumn(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         itemsIndexed(columnItems) { index, item ->
+            // Check if user items (MyList, MyAccount, Logout) exist in the list
+            val hasUserItems = columnItems.any {
+                it.tag == Routes.MyList.route ||
+                        it.tag == Routes.MyAccount.route ||
+                        it.tag == "log_out"
+            }
 
-            // Skip rendering last 2 items when focusedIndex == -1
+            // Skip rendering last 2 items when focusedIndex == -1 ONLY if user items exist
+            // This prevents hiding Series and Movies when login is disabled
             val isLastTwoItem = index >= columnItems.size - 2
-            if (isLastTwoItem && focusedIndex == -1) return@itemsIndexed
+            if (isLastTwoItem && focusedIndex == -1 && hasUserItems) return@itemsIndexed
 
-            // Add top space before second-last item
-            if (index == columnItems.size - 2 && focusedIndex != -1) {
+            // Add top space before second-last item ONLY if user items exist
+            // This prevents gap between Creators and Series when login is disabled
+            if (index == columnItems.size - 2 && focusedIndex != -1 && hasUserItems) {
                 Spacer(modifier = Modifier.height(75.dp))
             }
 

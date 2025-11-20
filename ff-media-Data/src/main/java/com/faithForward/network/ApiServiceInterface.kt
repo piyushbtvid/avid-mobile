@@ -2,6 +2,7 @@ package com.faithForward.network
 
 import com.faithForward.network.dto.CategoryDetailResponse
 import com.faithForward.network.dto.CategoryResponse
+import com.faithForward.network.dto.ConfigResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.common.ApiMessageResponse
@@ -307,5 +308,8 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
     ): Response<SubscriptionResponse>
+
+    @GET(Constants.CONFIG_DATA_END_POINT)
+    suspend fun getConfigData(): Response<ConfigResponse>
 
 }
