@@ -21,10 +21,10 @@ data class LoginData(
 data class User(
     val name: String?,
     val email: String?,
-    val user_type: String?,
+    @SerializedName("user_type") val user_type: String?,
     val role: String?,
-    val plans: List<Plan>?=null,
-    val profile: Profile?=null
+    val plans: List<Plan>? = null,
+    val profile: Profile? = null
 )
 
 data class Plan(

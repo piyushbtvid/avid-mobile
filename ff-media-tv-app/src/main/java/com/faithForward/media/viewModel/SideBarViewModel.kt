@@ -11,6 +11,7 @@ import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
 import com.faithForward.media.ui.navigation.sidebar.SideBarState
+import com.faithForward.preferences.ConfigManager
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -36,23 +37,59 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
 
 
     init {
-        sideBarItems.addAll(
-            listOf(
-                SideBarItem("Search", R.drawable.search_ic, Routes.Search.route),
-                SideBarItem("Home", R.drawable.home_ic, Routes.Home.route),
-                SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route),
-                SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),
-                SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route),
-                SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
-//                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
+        buildSideBarItems()
+    }
+
+    /**
+     * Rebuild sidebar items based on current config.
+     * Call this after config is loaded to ensure items are built correctly.
+     */
+    fun rebuildSideBarItems() {
+        buildSideBarItems()
+    }
+
+    /**
+     * Build sidebar items based on config.
+     * If login/qrlogin is disabled, exclude MyList, MyAccount, and Logout items.
+     */
+    private fun buildSideBarItems() {
+        val configData = ConfigManager.getConfigData()
+        val isLoginEnabled = configData?.enable_login == true
+        val isQrLoginEnabled = configData?.enable_qrlogin == true
+        // Show user items if at least one login method is enabled
+        // Hide user items only if BOTH are disabled
+        val shouldShowUserItems = isLoginEnabled || isQrLoginEnabled
+
+        val items = mutableListOf<SideBarItem>()
+
+        items.add(SideBarItem("Search", R.drawable.search_ic, Routes.Search.route))
+        items.add(SideBarItem("Home", R.drawable.home_ic, Routes.Home.route))
+
+        if (shouldShowUserItems) {
+            items.add(SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route))
+        }
+
+        // Only add Creators item if enable_creator is true
+        if (configData?.enable_creator == true) {
+            items.add(SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route))
+        }
+
+        items.add(SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route))
+        items.add(SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route))
+
+        if (shouldShowUserItems) {
+            items.add(
                 SideBarItem(
                     "My Account",
                     R.drawable.baseline_expand_less_24,
                     Routes.MyAccount.route
-                ),
-                SideBarItem("Log Out", R.drawable.baseline_expand_less_24, "log_out"),
+                )
             )
-        )
+            items.add(SideBarItem("Log Out", R.drawable.baseline_expand_less_24, "log_out"))
+        }
+
+        sideBarItems.clear()
+        sideBarItems.addAll(items)
     }
 
     fun onEvent(event: SideBarEvent) {

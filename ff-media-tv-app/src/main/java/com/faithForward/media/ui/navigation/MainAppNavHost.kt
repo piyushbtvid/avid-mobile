@@ -56,6 +56,10 @@ import com.faithForward.media.viewModel.SubscriptionViewModel
 import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
+import com.faithForward.preferences.ConfigManager
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -91,6 +95,9 @@ fun MainAppNavHost(
 
         composable(route = Routes.LoginQr.route) { backStack ->
             val qrLoginViewModel: QrLoginViewModel = hiltViewModel(backStack)
+            val configData = ConfigManager.getConfigData()
+            val isLoginEnabled = configData?.enable_login == true
+
             LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
@@ -99,7 +106,10 @@ fun MainAppNavHost(
                     popUpTo(0) { inclusive = true }
                 }
             }, onLoginPageOpenClick = {
-                navController.navigate(Routes.Login.route)
+                // Only navigate to Login screen if enable_login is true
+                if (isLoginEnabled) {
+                    navController.navigate(Routes.Login.route)
+                }
             })
         }
 
@@ -200,7 +210,7 @@ fun MainAppNavHost(
                         val filteredList = list.filterNot { it.id == item.id }
 
                         val json = Json.encodeToString(filteredList)
-                     //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -275,7 +285,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                       // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -311,7 +321,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                     //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -339,7 +349,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                       // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -369,7 +379,7 @@ fun MainAppNavHost(
                 if (!item.slug.isNullOrEmpty()) {
                     val filteredList = list.filterNot { it.slug == item.slug }
                     val json = Json.encodeToString(filteredList)
-                  //  val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    //  val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
             }, onSearchClick = {
@@ -639,11 +649,14 @@ fun MainAppNavHost(
 
             var canPlay by remember { mutableStateOf<Boolean?>(null) }
 
+            val context = LocalContext.current
+
             LaunchedEffect(firstItem, userType) {
                 if (firstItem != null && userType != null) {
                     checkVideoPlayback(
                         poster = firstItem,
                         userType = userType!!,
+                        context = context,
                         onStartPlay = { canPlay = true },
                         onRequireSubscription = {
                             canPlay = false
@@ -919,6 +932,7 @@ fun MainAppNavHost(
 fun checkVideoPlayback(
     poster: PosterCardDto,
     userType: String,
+    context: Context,
     onStartPlay: () -> Unit,
     onRequireSubscription: () -> Unit,
 ) {
@@ -929,8 +943,23 @@ fun checkVideoPlayback(
             println("Play allowed")
             onStartPlay()
         } else {
-            println("Need subscription")
-            onRequireSubscription()
+            // Check if subscription is enabled and user has token
+            val configData = ConfigManager.getConfigData()
+            val isSubscriptionEnabled = configData?.enable_subscription == true
+
+            // Check if user token exists (user is logged in)
+            val sharedPreferences: SharedPreferences =
+                context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            val userToken = sharedPreferences.getString("token", null)
+            val hasUserToken = !userToken.isNullOrEmpty()
+
+            if (isSubscriptionEnabled && hasUserToken) {
+                println("Need subscription")
+                onRequireSubscription()
+            } else {
+                println("Play allowed (subscription disabled or no user token)")
+                onStartPlay()
+            }
         }
     } else {
         println("Free content")
