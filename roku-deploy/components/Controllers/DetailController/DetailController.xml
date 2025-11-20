@@ -1,0 +1,106 @@
+<component name="DetailController" extends="BaseController">
+
+    <script type="text/brightscript" uri="pkg:/components/Controllers/DetailController/DetailController.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+    <script type="text/brightscript" uri="pkg:/components/views/rows/myListWithLikeData.brs" />
+
+    <interface>
+    </interface>
+
+    <children>
+
+        <poster id="backGroundImage" loadDisplayMode="scaleToZoom" width="1920" height="1080" opacity="0.3" />
+        <Poster id="gradientImage" width="1920" height="1080" uri="pkg://images/gradientColor.png" visible="true" />
+
+        <Group id="moviesDetail">
+            <LayoutGroup id="contentLayout" layoutDirection="vert" translation="[70, 50]">
+
+                <MultiStyleLabel width="1000" text="" id="multiStylelbl" translation="[65, 60]" wrap="true" />
+                <Label id="title" horizAlign="left" vertAlign="left" width="850" color="#ffffff">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="60" />
+                </Label>
+
+                <Label id="lblDescription" width="578" horizAlign="left" lineSpacing="1" maxLines="3" wrap="true" color="#ffffff">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="20" />
+                </Label>
+
+                <LayoutGroup id="interactionButtons" layoutDirection="horiz" itemSpacings="[-20]">
+                    <ImageButton id="addButton" />
+                    <ImageButton id="thumbUpButton" />
+                    <ImageButton id="thumbDownButton" />
+                </LayoutGroup>
+
+                <LayoutGroup id="btnLayOut" layoutDirection="horiz" itemSpacings="[10]">
+                    <ImageButton id="playButton" />
+                </LayoutGroup>
+
+            </LayoutGroup>
+
+            <Group id="scaledElementsMac">
+                <ImageButton id="micButton" translation="[1630,40]" />
+                <ImageButton id="searchButton" translation="[1730,40]" />
+            </Group>
+
+        </Group>
+
+        <Group id="relatedFocusDetail" visible="false">
+            <LayoutGroup id="contentLayout" layoutDirection="vert" itemSpacings="[20]"
+                translation="[65, 610]">
+                <MultiStyleLabel width="1000" text="" id="multiStyleRelatedlbl" translation="[65, 700]" wrap="true" />
+
+                <Label id="relatedTitle" translation="[65, 750] " width="900" wrap="true" color="#ffffff">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="30" />
+                </Label>
+
+                <Label id="relatedDescription" width="878" horizAlign="left" lineSpacing="1" maxLines="3" wrap="true" color="#ffffff">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25" />
+                </Label>
+
+            </LayoutGroup>
+        </Group>
+
+        <Label id="seasonTitle" visible="false" text="Seasons:" translation="[80, 568] " width="180" wrap="false" color="#ffffff">
+            <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+        </Label>
+
+        <RowList id="seasonRowList"
+            visible="false"
+            focusBitmapUri="pkg:/images/"
+            translation="[255,560]"
+            itemComponentName="SeasonListTile"
+            itemSize="[1800, 60]"
+            numRows="1"
+            rowItemSize="[[50,50]]"
+            itemSpacing="[ 0, 0 ]"
+            rowItemSpacing="[[10,0],[10,0]]"
+            showRowLabel="[false]"
+            showRowCounter="[false]"
+            rowLabelColor="#ffffff"
+            focusBitmapBlendColor="#B87333"
+            variableWidthItems="[true]"
+            rowFocusAnimationStyle="floatingFocus"
+        />
+
+        <RowList
+            id="detailsRowList"
+            visible="false"
+            translation="[70,570]"
+            itemComponentName="FeedListTile"
+            itemSize="[1920, 500]"
+            numRows="8"
+            rowItemSize="[[269,420]]"
+            itemSpacing="[ 0, 30 ]"
+            rowItemSpacing="[[20,10]]"
+            focusXOffset="[5]"
+            rowLabelOffset="[[0,-30]]"
+            showRowLabel="[true]"
+            drawFocusFeedback="false"
+            showRowCounter="[false]"
+            rowLabelColor="#ffffff"
+            focusBitmapBlendColor="#B87333"
+            rowFocusAnimationStyle="floatingFocus" />
+
+    </children>
+</component>

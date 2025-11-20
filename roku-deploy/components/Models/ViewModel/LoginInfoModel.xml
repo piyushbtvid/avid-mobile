@@ -1,0 +1,9 @@
+<component name="LoginInfoModel" extends="ContentNode">
+
+  <interface>
+      <field id="isLogin" type="boolean" />
+      <field id="isPremiumUser" type="boolean" />
+      <field id="isRokuPremiumUser" type="boolean" />
+  </interface>
+
+</component>

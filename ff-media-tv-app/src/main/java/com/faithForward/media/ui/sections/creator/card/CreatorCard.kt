@@ -32,6 +32,7 @@ import coil3.request.crossfade
 import com.faithForward.media.ui.theme.focusedTextColor
 import com.faithForward.media.ui.theme.unFocusMainColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.util.Util.isTvDevice
 
 
 data class CreatorCardDto(
@@ -83,7 +84,7 @@ fun CreatorCard(
             contentDescription = "Poster Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(136.dp)
+                .size(if (LocalContext.current.isTvDevice())136.dp else 100.dp)
                 .scale(scale)
                 .graphicsLayer {
                     scaleX = scale

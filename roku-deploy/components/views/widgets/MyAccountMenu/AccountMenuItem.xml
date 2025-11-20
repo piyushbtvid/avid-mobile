@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="AccountMenuItem" extends="Group">
+    <script type="text/brightscript" uri="AccountMenuItem.brs" />
+
+    <interface>
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="itemContent" type="node" onChange="itemContentChanged" />
+        <field id="itemHasFocus" type="boolean" onChange="focusDidChange" alwaysNotify="true" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="focusDidChange" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="focusDidChange" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="focusDidChange" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="focusDidChange" alwaysNotify="true" />
+    </interface>
+
+    <children>
+
+        <Rectangle id="backRect" width="350" height="100" color="#B87333" translation="[0,0]" />
+        <Rectangle id="frontRect" width="350" height="100" color="#1e1e1e" translation="[10,0]" />
+
+        <LayoutGroup id="itemGroup" layoutDirection="horiz" vertAlignment="custom" translation="[20,0]" itemSpacings="[20]">
+            <Poster id="itemPoster" width="35" height="35" loadDisplayMode="scaleToFit"  translation="[0,30]" />
+            <Label id="itemTitle" width="350" wrap="true" height="100" vertAlign="center" maxlines="2" color="#ffffff" lineSpacing="0.5">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="25" />
+            </Label>
+        </LayoutGroup>
+
+    </children>
+</component> 

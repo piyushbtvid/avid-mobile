@@ -1,0 +1,10 @@
+<component name="SeriesDataResponse" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/SeriesDataResponse.brs" />
+
+  <interface>
+      <field id="status" type="string" />
+      <field id="data" type="array" />
+      <field id="msg" type="string" />
+  </interface>
+</component>

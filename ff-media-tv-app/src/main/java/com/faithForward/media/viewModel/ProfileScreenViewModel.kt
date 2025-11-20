@@ -98,13 +98,13 @@ class ProfileScreenViewModel @Inject constructor(
             try {
                 val response = networkRepository.getAllProfiles()
                 if (response.isSuccessful) {
-                    val data = response.body()?.data
+                    val data = response.body()?.profiles
                     val userProfileList = data?.map {
                         it.toUserProfileUiItem()
                     }
                     _allProfiles.emit(Resource.Success(userProfileList))
                 } else {
-                    Log.e("ALL_PROFILE", "all profiles response error is ${response.message()}")
+                    Log.e("ALL_PROFILE", "all profiles response error is ${response.isSuccessful} ${response.message()}")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -124,7 +124,7 @@ class ProfileScreenViewModel @Inject constructor(
                 val response = networkRepository.getAllAvatars()
 
                 if (response.isSuccessful) {
-                    val data = response.body()?.data
+                    val data = response.body()?.avatars
                     val avatarList = data?.map {
                         it.toAvatarUiItem()
                     }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.sections.common_ui.carousel.CarouselContentRow
@@ -31,6 +32,7 @@ import com.faithForward.media.ui.sections.creator.list.CreatorCardGrid
 import com.faithForward.media.ui.theme.cardShadowColor
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.util.Util.isTvDevice
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.HomePageItem
 
@@ -73,9 +75,9 @@ fun HomeContentSections(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 63.dp),
+                .padding(start = if (LocalContext.current.isTvDevice()) 60.dp else 0.dp),
             state = listState,
-            contentPadding = PaddingValues(bottom = 20.dp)
+            contentPadding = PaddingValues(bottom = if (LocalContext.current.isTvDevice()) 20.dp else 60.dp)
         ) {
             itemsIndexed(homePageItems) { rowIndex, homePageItem ->
                 val shouldFocusOnFirstItem = rowIndex == 0
@@ -112,7 +114,8 @@ fun HomeContentSections(
                         onCategoryItemClick = onCategoryItemClick
                     )
 
-                    is HomePageItem.PosterRow -> ContentRow(posterRowDto = homePageItem.dto,
+                    is HomePageItem.PosterRow -> ContentRow(
+                        posterRowDto = homePageItem.dto,
                         shouldFocusOnFirstItem = shouldFocusOnFirstItem,
                         onItemClick = onItemClick,
                         rowIndex = rowIndex,
@@ -144,7 +147,7 @@ fun HomeContentSections(
                 }
             }
         }
-        if (sideBarState.sideBarFocusedIndex != -1) {
+        if (sideBarState.sideBarFocusedIndex != -1 && LocalContext.current.isTvDevice()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -166,16 +169,19 @@ fun HomeContentSections(
 
     // Scroll to the last focused item for the correct row
     // Scroll to the last focused item for the correct row
-    LaunchedEffect(Unit) {
-        try {
-            val (rowIndex, itemIndex) = lastFocusedItem
-            // Skip scrolling for CreatorCardGrid since it manages its own LazyRow states
-            if (homePageItems.getOrNull(rowIndex) !is HomePageItem.CreatorGrid) {
-                rowListStates[rowIndex]?.scrollToItem(itemIndex)
+
+    if (LocalContext.current.isTvDevice()) {
+        LaunchedEffect(Unit) {
+            try {
+                val (rowIndex, itemIndex) = lastFocusedItem
+                // Skip scrolling for CreatorCardGrid since it manages its own LazyRow states
+                if (homePageItems.getOrNull(rowIndex) !is HomePageItem.CreatorGrid) {
+                    rowListStates[rowIndex]?.scrollToItem(itemIndex)
+                }
+                focusRequesters[lastFocusedItem]?.requestFocus()
+            } catch (_: Exception) {
+                // Handle any errors (e.g., index out of bounds)
             }
-            focusRequesters[lastFocusedItem]?.requestFocus()
-        } catch (_: Exception) {
-            // Handle any errors (e.g., index out of bounds)
         }
     }
 }

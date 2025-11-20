@@ -1,0 +1,119 @@
+<component name="NextEpisodeUI" extends="BaseWidget">
+
+
+    <interface>
+        <field id="timeDuration" type="integer" value="20" />
+        <field id="isPlayNowPress" type="bool" value="false" alwayNotify="true"/>
+        <field id="isCancelPress" type="bool" value="false" alwayNotify="true"/>
+        <!-- <function name="updateTimer" /> -->
+        <function name="setUpNextEpisodeUI" />
+    </interface>
+
+    <script type="text/brightscript" uri="pkg:/components/views/widgets/Player/NextEpisodeUI.brs" />
+    
+
+    <children>
+        <Group id="nextUIGroup">  
+            <Rectangle id="bottomOverlayRect" visible="true"
+                width="1920"
+                height="330"
+                color="#000000"
+                translation="[0,750]">
+
+                <Label id="upNext"
+                    width="130"
+                    height="30"
+                    text="Up Next"
+                    horizAlign="left"
+                    color="#ffffff"
+                    vertAlign="center"
+                    translation="[50,50]">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25" />
+                </Label>
+
+                <Poster
+                    id="countdownCircle"
+                    uri="pkg:/images/border_a.png"
+                    width="50"
+                    height="50"
+                    loadwidth="50"
+                    loadheight="50"
+                    translation="[170,35]">
+
+                    <Label id="countdownLabel"
+                        width="50"
+                        height="50"
+                        text="20"
+                        horizAlign="center"
+                        vertAlign="center"
+                        color="#ffffff">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25" />
+                    </Label>
+                </Poster>
+
+                <Label id="TimerMessage"
+                    width="500"
+                    height="30"
+                    text="Playing next content in 20 seconds"
+                    horizAlign="left"
+                    color="#ffffff"
+                    vertAlign="center"
+                    translation="[250,50]">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="20" />
+                </Label>
+
+                <Poster
+                    id="nextPoster"
+                    uri="pkg:/images/demo.jpeg"
+                    loadDisplayMode = "limitSize"
+                    width="250"
+                    height="140"
+                    loadwidth="250"
+                    loadheight="140"
+                    translation="[50,130]"
+                />
+                
+                <Label id="NextEpisodeTitle"
+                    width="500"
+                    height="30"
+                    text="The Mystry Unfolds"
+                    horizAlign="left"
+                    vertAlign="center"
+                    translation="[320,140]">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25" />
+                </Label>
+
+                <Label id="NextEpisodeMetaData"
+                    width="500"
+                    height="30"
+                    text="Season 2, Episode 8"
+                    horizAlign="left"
+                    vertAlign="center"
+                    translation="[320,180]">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="20" />
+                </Label>
+
+                <Label id="NextEpisodeDescription"
+                    width="800"
+                    height="70"
+                    wrap = "true"
+                    maxLines="2"
+                    lineSpacing="-3"
+                    text="Jon drags Garfield to brother Doc's farm for the weekend, having promised to help out with chores. Hypnosis performed by a scientist has remarkable effects on Garfield, until Jon's car alarm starts triggering them on and off and the cat realizes what happened to him"
+                    horizAlign="left"
+                    vertAlign="center"
+                    translation="[320,220]">
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="20" />
+                </Label>
+
+                <LayoutGroup id="btnListLayout" layoutDirection="horiz" itemSpacings="[25]" translation="[1300,130]">
+                    <ImageButton id="cancelButton" />
+                    <ImageButton id="playNowButton" />
+                </LayoutGroup>
+
+                <Timer id ="episodeTimer"  duration = "1" repeat = "true"/>
+            </Rectangle>
+
+        </Group>
+    </children>
+</component>

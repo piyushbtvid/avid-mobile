@@ -1,0 +1,8 @@
+<component name="ProfileModel" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/UserModel/ProfileModel.brs" />
+
+  <interface>
+        <field id="response_data" type="array" />
+    </interface>
+</component>

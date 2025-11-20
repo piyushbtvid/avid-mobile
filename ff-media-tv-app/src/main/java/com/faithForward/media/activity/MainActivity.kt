@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,19 +41,25 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.faithForward.media.R
 import com.faithForward.media.activity.splash.SplashScreen
+import com.faithForward.media.ui.epg.ChannelWithProgramsUiModel
+import com.faithForward.media.ui.epg.Epg
+import com.faithForward.media.ui.epg.EpgUiModel
+import com.faithForward.media.ui.epg.channel.ChannelUiModel
+import com.faithForward.media.ui.epg.program.ProgramUiModel
+import com.faithForward.media.ui.epg.util.generateSampleEpgUiModel
 import com.faithForward.media.ui.navigation.MainScreen
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
 import com.faithForward.media.ui.theme.FfmediaTheme
+import com.faithForward.media.ui.theme.focusedMainColor
+import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.ui.theme.unFocusMainColor
-import com.faithForward.media.viewModel.ConfigViewModel
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerPlayingState
 import com.faithForward.media.viewModel.uiModels.SharedPlayerEvent
-import com.faithForward.preferences.ConfigManager
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -66,81 +74,38 @@ class MainActivity : ComponentActivity() {
         setContent {
             FfmediaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val configViewModel: ConfigViewModel = hiltViewModel()
                     val loginViewModel: LoginViewModel = hiltViewModel()
                     val sideBarViewModel: SideBarViewModel = hiltViewModel()
                     sharedPlayerViewModel = viewModel()
-
-                    // Collect config loading state
-                    val isConfigLoaded by configViewModel.isConfigLoaded.collectAsStateWithLifecycle()
-                    val isConfigLoading by configViewModel.isLoading.collectAsStateWithLifecycle()
-
-                    // Get config data to check login/qrlogin flags
-                    val configData = ConfigManager.getConfigData()
-                    val isLoginEnabled = configData?.enable_login == true
-                    val isQrLoginEnabled = configData?.enable_qrlogin == true
-                    // Skip login only if BOTH are false
-                    val shouldSkipLogin = !isLoginEnabled && !isQrLoginEnabled
-
-                    // Collect login buffer state (only if login is enabled)
-                    val isLoading = if (shouldSkipLogin) {
-                        // If login is disabled, we don't need to wait for login initialization
-                        false
-                    } else {
-                        loginViewModel.isBuffer.collectAsStateWithLifecycle().value
-                    }
-
-                    // Combined loading state: wait for config, and login initialization only if login is enabled
-                    val isAppReady = isConfigLoaded && !isLoading
-
+                    val isLoading = loginViewModel.isBuffer.collectAsStateWithLifecycle().value
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     currentRoute = navBackStackEntry?.destination?.route
                     isControlsVisible =
                         sharedPlayerViewModel.state.collectAsStateWithLifecycle().value.isControlsVisible
 
-                    val isLoggedIn = if (shouldSkipLogin) {
-                        // If login is disabled, treat as not logged in (but we'll navigate to Home anyway)
-                        false
-                    } else {
-                        loginViewModel.isLoggedIn.collectAsStateWithLifecycle().value
-                    }
+                    val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-                    // Rebuild sidebar items when config is loaded
-                    LaunchedEffect(isConfigLoaded) {
-                        if (isConfigLoaded) {
-                            sideBarViewModel.rebuildSideBarItems()
-                        }
-                    }
-
-                    // Only run login-related logic if login is enabled
-                    LaunchedEffect(isLoggedIn, shouldSkipLogin) {
-                        if (!shouldSkipLogin) {
-                            Log.e(
-                                "CHECK_USER_SUBSCRIPTION",
-                                "is Logged in launch effect called with $isLoggedIn"
-                            )
-                            if (isLoggedIn) {
-                                Log.e(
-                                    "CHECK_USER_SUBSCRIPTION",
-                                    "is Logged is True in  launch effect So calling load User Subscription data from MainActivity"
-                                )
-                                loginViewModel.updateUserSubscriptionDetails()
-                            }
-                        }
-                        Log.e("CONFIG_DATA", "config data in mainactivity is ${configViewModel.getConfigData()}")
-                        Log.e("LOGIN_CONFIG", "isLoginEnabled: $isLoginEnabled, isQrLoginEnabled: $isQrLoginEnabled, shouldSkipLogin: $shouldSkipLogin")
+                    LaunchedEffect(isLoading) {
+                        Log.e("LOADING", "is loading change in main is $isLoading")
                     }
 
                     // Use CrossFade to animate between loading and MainScreen
-                    // Wait for both config loading and login initialization to complete
                     Crossfade(
-                        targetState = isAppReady,
+                        targetState = isLoading,
                         modifier = Modifier.padding(innerPadding),
                         animationSpec = tween(durationMillis = 100), label = ""
-                    ) { appReady ->
+                    ) { loading ->
                         when {
-                            !appReady -> {
+                            loading -> {
+//                                Box(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .background(pageBlackBackgroundColor),
+//                                    contentAlignment = Alignment.Center
+//                                ) {
+//                                    CircularProgressIndicator(color = focusedMainColor)
+//                                }
                                 SplashScreen()
                             }
 
@@ -152,13 +117,7 @@ class MainActivity : ComponentActivity() {
                                     playerViewModel = sharedPlayerViewModel,
                                     navController = navController,
                                     startRoute = when {
-                                        // If both login methods are disabled, go directly to Home
-                                        shouldSkipLogin -> Routes.Home.route
-                                        // If logged in, go to AllProfile
                                         isLoggedIn -> Routes.AllProfile.route
-                                        // If QR login is disabled, start with Login screen
-                                        !isQrLoginEnabled -> Routes.Login.route
-                                        // Otherwise, start with LoginQr screen
                                         else -> Routes.LoginQr.route
                                     }
                                 )
@@ -166,11 +125,9 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-
                 }
             }
         }
-
     }
 
     override fun onUserInteraction() {
@@ -237,6 +194,7 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
+
 }
 
 

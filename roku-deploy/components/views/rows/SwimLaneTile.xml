@@ -1,0 +1,41 @@
+<component name="SwimLaneTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/SwimLaneTile.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+    </interface>
+
+    <children>
+
+      <Group id="scaledElements">
+
+          <!-- Poster Details -->
+          <Rectangle
+              color="#808080"
+              height="213"
+              width= "380"/>
+
+          <Poster id="background"   loadDisplayMode ="limitSize" />
+
+
+
+      </Group>
+
+      <!-- TODO: Metadata -->
+      <Group id="metadataGroup">
+        <Label id="lblTitle" color="0xFFFFFFFF" ellipsizeOnBoundary="true" width= "400" horizAlign = "left" >
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Regular.ttf" size = "25" />
+        </Label>
+      </Group>
+
+
+
+    </children>
+</component>

@@ -1,0 +1,23 @@
+<component name="programModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="id" type="integer" />
+      <field id="channel_id" type="integer" />
+      <field id="schedule_date" type="String" />
+      <field id="video_id" type="String" />
+      <!-- <field id="title" type="String" /> -->
+      <field id="start_time" type="String" />
+      <field id="end_time" type="String" />
+      <!-- <field id="playDuration" type="String" /> -->
+      <field id="video" type="assocArray" />
+      <!-- <field id="playStart" type="integer" /> -->
+      <field id="url" type="string" />
+      <field id="HDPosterUrl" type="string" />
+      <field id="NumEpisodes" type="string" />
+      <field id="TitleSeason" type="string" />
+      <field id="Description" type="string" />
+
+  </interface>
+
+</component>

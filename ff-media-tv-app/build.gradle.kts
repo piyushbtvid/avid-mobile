@@ -29,8 +29,8 @@ android {
         applicationId = "com.faithForward.media"
         minSdk = 21
         targetSdk = 35
-        versionCode = 10
-        versionName = "3.7"
+        versionCode = 9
+        versionName = "3.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.graphics.android)
     implementation(libs.play.services.ads.identifier)
+    implementation(libs.androidx.foundation)
     kapt(libs.hilt.compiler)
 
     //navigation for compose
@@ -103,16 +104,19 @@ dependencies {
     implementation("androidx.media3:media3-common:$media3")
     implementation("androidx.media3:media3-exoplayer-dash:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
-    implementation ("androidx.media3:media3-exoplayer-ima:$media3") // for ads
 
     // implementation(libs.kotlinx.coroutines.android)
 
     //kotlin ktx viewmodel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
+
     //viewmodel with hilt
     implementation("androidx.hilt:hilt-work:1.2.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+// WorkManager (required to avoid PendingIntent crash on Android 12+)
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     //retrofit
     implementation(libs.retrofit)
@@ -133,10 +137,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.leanback:leanback:1.2.0")
-
-    implementation ("com.amazon.device:amazon-appstore-sdk:+")
-
-    //tsl library
-    implementation("org.conscrypt:conscrypt-android:2.5.2")
 
 }

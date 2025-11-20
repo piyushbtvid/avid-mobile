@@ -1,9 +1,11 @@
 package com.faithForward.media.viewModel
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faithForward.media.R
@@ -11,19 +13,22 @@ import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.navigation.sidebar.SideBarItem
 import com.faithForward.media.ui.navigation.sidebar.SideBarState
-import com.faithForward.preferences.ConfigManager
+import com.faithForward.media.util.Util.isTvDevice
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SideBarViewModel @Inject constructor(val networkRepository: NetworkRepository) : ViewModel() {
+class SideBarViewModel @Inject constructor(
+    private val application: Application,
+    val networkRepository: NetworkRepository,
+) : AndroidViewModel(application) {
 
     var sideBarItems = mutableStateListOf<SideBarItem>()
         private set
@@ -37,59 +42,34 @@ class SideBarViewModel @Inject constructor(val networkRepository: NetworkReposit
 
 
     init {
-        buildSideBarItems()
-    }
-
-    /**
-     * Rebuild sidebar items based on current config.
-     * Call this after config is loaded to ensure items are built correctly.
-     */
-    fun rebuildSideBarItems() {
-        buildSideBarItems()
-    }
-
-    /**
-     * Build sidebar items based on config.
-     * If login/qrlogin is disabled, exclude MyList, MyAccount, and Logout items.
-     */
-    private fun buildSideBarItems() {
-        val configData = ConfigManager.getConfigData()
-        val isLoginEnabled = configData?.enable_login == true
-        val isQrLoginEnabled = configData?.enable_qrlogin == true
-        // Show user items if at least one login method is enabled
-        // Hide user items only if BOTH are disabled
-        val shouldShowUserItems = isLoginEnabled || isQrLoginEnabled
-
-        val items = mutableListOf<SideBarItem>()
-
-        items.add(SideBarItem("Search", R.drawable.search_ic, Routes.Search.route))
-        items.add(SideBarItem("Home", R.drawable.home_ic, Routes.Home.route))
-
-        if (shouldShowUserItems) {
-            items.add(SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route))
-        }
-
-        // Only add Creators item if enable_creator is true
-        if (configData?.enable_creator == true) {
-            items.add(SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route))
-        }
-
-        items.add(SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route))
-        items.add(SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route))
-
-        if (shouldShowUserItems) {
-            items.add(
+        val isTv = application.applicationContext.isTvDevice()
+        sideBarItems.addAll(
+            listOfNotNull(
+                if (isTv) SideBarItem(
+                    "Search",
+                    R.drawable.search_ic,
+                    Routes.Search.route
+                ) else null,
+                SideBarItem("Home", R.drawable.home_ic, Routes.Home.route),
+                SideBarItem("MyList", R.drawable.plus_ic, Routes.MyList.route),
+                SideBarItem("Creators", R.drawable.group_person_ic, Routes.Creator.route),
+                SideBarItem("Series", R.drawable.screen_ic, Routes.Series.route),
+                SideBarItem("Movies", R.drawable.film_ic, Routes.Movies.route),
+//                SideBarItem("Tithe", R.drawable.fi_rs_hand_holding_heart, "tithe"),
                 SideBarItem(
-                    "My Account",
-                    R.drawable.baseline_expand_less_24,
+                    if (isTv) {
+                        "My Account"
+                    } else "Me",
+                    null,
                     Routes.MyAccount.route
-                )
+                ),
+                if (isTv) SideBarItem(
+                    "Log Out",
+                    R.drawable.baseline_expand_less_24,
+                    "log_out"
+                ) else null,
             )
-            items.add(SideBarItem("Log Out", R.drawable.baseline_expand_less_24, "log_out"))
-        }
-
-        sideBarItems.clear()
-        sideBarItems.addAll(items)
+        )
     }
 
     fun onEvent(event: SideBarEvent) {

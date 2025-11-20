@@ -1,51 +1,77 @@
 package com.faithForward.media.util
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+sealed class CustomGridCells {
+    data class Fixed(val count: Int) : CustomGridCells()
+    data class Adaptive(val minSize: Dp) : CustomGridCells()
+}
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <T> CustomLazyGrid(
     modifier: Modifier = Modifier,
     items: List<T>,
-    columns: Int,
+    columns: CustomGridCells,
     verticalSpacing: Dp = 16.dp,
     horizontalSpacing: Dp = 16.dp,
     rowModifier: Modifier = Modifier,
     columnContentPadding: PaddingValues = PaddingValues(vertical = 30.dp),
-    rowContentPadding: PaddingValues = PaddingValues(horizontal = 50.dp),
+    rowContentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     itemContent: @Composable (index: Int, item: T) -> Unit
 ) {
-    // Split items into rows based on fixed column count
-    val rows = remember(items, columns) { items.chunked(columns) }
+    var containerWidth by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
 
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(verticalSpacing),
-        contentPadding = columnContentPadding
+    Box(
+        modifier = modifier.onGloballyPositioned { coords ->
+            containerWidth = coords.size.width
+        }
     ) {
-        rows.forEachIndexed { rowIndex, rowItems ->
-            item(key = rowIndex) {
-                LazyRow(
-                    modifier = rowModifier.fillMaxWidth(),
-                    contentPadding = rowContentPadding,
-                    horizontalArrangement = Arrangement.spacedBy(horizontalSpacing)
-                ) {
-                    itemsIndexed(rowItems) { colIndex, item ->
-                        val globalIndex = rowIndex * columns + colIndex
-                        itemContent(globalIndex, item)
+        if (containerWidth > 0) {
+            val columnCount = when (columns) {
+                is CustomGridCells.Fixed -> columns.count
+                is CustomGridCells.Adaptive -> {
+                    with(density) {
+                        val minPx = columns.minSize.roundToPx()
+                        (containerWidth / minPx).coerceAtLeast(1)
+                    }
+                }
+            }
+
+            val rows = items.chunked(columnCount)
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(verticalSpacing),
+                contentPadding = columnContentPadding
+            ) {
+                rows.forEachIndexed { rowIndex, rowItems ->
+                    item(key = rowIndex) {
+                        LazyRow(
+                            modifier = rowModifier.fillMaxWidth(),
+                            contentPadding = rowContentPadding,
+                            horizontalArrangement = Arrangement.spacedBy(horizontalSpacing)
+                        ) {
+                            itemsIndexed(rowItems) { colIndex, item ->
+                                val globalIndex = rowIndex * columnCount + colIndex
+                                itemContent(globalIndex, item)
+                            }
+                        }
                     }
                 }
             }

@@ -1,0 +1,46 @@
+<component name="SliderTiles" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/SliderTiles.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+    <script type="text/brightscript" uri="pkg:/components/views/rows/myListWithLikeData.brs" />
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+    </interface>
+
+    <children>
+
+      <Group id="scaledElements" translation="[130,0]">
+        <Poster id="background"  loadDisplayMode ="limitSize" width="1772" height="716" opacity="0.5"/>
+      </Group>
+
+      <Rectangle id= "backRect" color = "#00000099"/>
+
+      <Group id="scaledElementsMac" visible="false">
+        <ImageButton id="micButton" translation="[830,40]" />
+        <ImageButton id="searchButton" translation="[930,40]" /> 
+      </Group> 
+
+      <layoutGroup id="metaDataLayout" layoutDirection = "vert" itemSpacings = "[20]"> 
+        <Label id="lblDesription" color="#ffffff" width = "578" maxLines = "6" wrap = "true" lineSpacing = "-1">
+          <Font role = "font" uri = "pkg:/images/font/Montserrat-Medium.ttf" size = "25" />
+        </Label>
+      </layoutGroup>
+
+      <Group id="scaledElementsBtn" translation="[135,0]" visible="false">
+        <LayoutGroup id = "interactionButtons" layoutDirection="horiz" itemSpacings="[-20]" >
+          <ImageButton id="addButton" />
+          <ImageButton id="thumbUpButton" />
+          <ImageButton id="thumbDownButton" />
+        </LayoutGroup>
+      </Group>
+
+      <Label id="lblTitle"  horizAlign="right"  vertAlign="right" width= "550" wrap= "true" translation="[1250,50]" maxLines = "3" wrap = "true" lineSpacing = "-1">
+         <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "60" />
+      </Label>
+
+      <ImageButton id="watchButton" translation = "[180,540]" visible="false"/>
+
+    </children>
+</component>

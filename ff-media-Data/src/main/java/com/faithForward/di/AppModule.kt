@@ -1,10 +1,8 @@
 package com.faithForward.di
 
 import android.content.Context
-import com.faithForward.amzon_pay.AmazonIapRepository
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.preferences.UserPreferences
-import com.faithForward.repository.IapRepository
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Constants
 import com.faithForward.util.LenientGsonTypeAdapterFactory
@@ -23,12 +21,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
-
-    @Provides
-    @Singleton
-    fun provideIapRepository(
-        @ApplicationContext context: Context
-    ): IapRepository = AmazonIapRepository(context)
 
 
     @Provides

@@ -35,10 +35,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.faithForward.media.R
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.commanComponents.RoundedIconButton
@@ -47,9 +49,12 @@ import com.faithForward.media.ui.theme.pageBlackBackgroundColor
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
+import com.faithForward.media.util.CustomGridCells
 import com.faithForward.media.util.CustomLazyGrid
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.Util.isTvDevice
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
+import kotlinx.coroutines.delay
 
 
 data class GenreGridDto(
@@ -63,6 +68,7 @@ fun GenreCardGrid(
     modifier: Modifier = Modifier,
     onItemClick: (PosterCardDto) -> Unit,
     onSearchClick: () -> Unit,
+    onBackClick: () -> Unit = {},
     genreGridDto: GenreGridDto,
 ) {
     // Create a list of FocusRequesters, one for each grid item
@@ -75,88 +81,91 @@ fun GenreCardGrid(
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberLazyGridState()
 
+    val context = LocalContext.current
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(pageBlackBackgroundColor)
-            .padding(start = 41.dp),
+            .padding(start = if (context.isTvDevice()) 41.dp else 5.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RoundedIconButton(
+            if (LocalContext.current.isTvDevice()) {
+                Row(
                     modifier = Modifier
-                        .onFocusChanged {
-                            isMicFocused = it.hasFocus
-                            if (it.hasFocus) lastFocusedIndex = -1
-                        }
-                        .focusable()
-                        .then(
-                            if (isMicFocused) {
-                                Modifier
-                                    .shadow(
-                                        color = Color.White.copy(alpha = .11f),
-                                        borderRadius = 40.dp,
-                                        blurRadius = 7.dp,
-                                        spread = 5.dp,
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = textFocusedMainColor,
-                                        shape = RoundedCornerShape(40.dp)
-                                    )
-                            } else Modifier
-                        ),
-                    imageId = R.drawable.microphone_ic,
-                    iconHeight = 15,
-                    boxSize = 43,
-                    iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RoundedIconButton(
+                        modifier = Modifier
+                            .onFocusChanged {
+                                isMicFocused = it.hasFocus
+                                if (it.hasFocus) lastFocusedIndex = -1
+                            }
+                            .focusable()
+                            .then(
+                                if (isMicFocused) {
+                                    Modifier
+                                        .shadow(
+                                            color = Color.White.copy(alpha = .11f),
+                                            borderRadius = 40.dp,
+                                            blurRadius = 7.dp,
+                                            spread = 5.dp,
+                                        )
+                                        .border(
+                                            width = 1.dp,
+                                            color = textFocusedMainColor,
+                                            shape = RoundedCornerShape(40.dp)
+                                        )
+                                } else Modifier
+                            ),
+                        imageId = R.drawable.microphone_ic,
+                        iconHeight = 15,
+                        boxSize = 43,
+                        iconWidth = 15,
+                        backgroundColor = Color.White.copy(alpha = .75f)
+                    )
 
-                Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                RoundedIconButton(
-                    modifier = Modifier
-                        .onFocusChanged {
-                            isSearchFocused = it.hasFocus
-                            if (it.hasFocus) lastFocusedIndex = -1
-                        }
-                        .clickable(interactionSource = null, indication = null, onClick = {
-                            Log.e("SEARCH_IC", "on search click")
-                            onSearchClick.invoke()
-                        }
-                        )
-                        .focusable()
-                        .then(
-                            if (isSearchFocused) {
-                                Modifier
-                                    .shadow(
-                                        color = Color.White.copy(alpha = .11f),
-                                        borderRadius = 40.dp,
-                                        blurRadius = 7.dp,
-                                        spread = 5.dp,
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = textFocusedMainColor,
-                                        shape = RoundedCornerShape(40.dp)
-                                    )
-                            } else Modifier
-                        ),
-                    imageId = R.drawable.search_ic,
-                    iconHeight = 15,
-                    boxSize = 43,
-                    iconWidth = 15,
-                    backgroundColor = Color.White.copy(alpha = .75f)
-                )
+                    RoundedIconButton(
+                        modifier = Modifier
+                            .onFocusChanged {
+                                isSearchFocused = it.hasFocus
+                                if (it.hasFocus) lastFocusedIndex = -1
+                            }
+                            .clickable(interactionSource = null, indication = null, onClick = {
+                                Log.e("SEARCH_IC", "on search click")
+                                onSearchClick.invoke()
+                            }
+                            )
+                            .focusable()
+                            .then(
+                                if (isSearchFocused) {
+                                    Modifier
+                                        .shadow(
+                                            color = Color.White.copy(alpha = .11f),
+                                            borderRadius = 40.dp,
+                                            blurRadius = 7.dp,
+                                            spread = 5.dp,
+                                        )
+                                        .border(
+                                            width = 1.dp,
+                                            color = textFocusedMainColor,
+                                            shape = RoundedCornerShape(40.dp)
+                                        )
+                                } else Modifier
+                            ),
+                        imageId = R.drawable.search_ic,
+                        iconHeight = 15,
+                        boxSize = 43,
+                        iconWidth = 15,
+                        backgroundColor = Color.White.copy(alpha = .75f)
+                    )
+                }
             }
             Column(
                 modifier = Modifier.padding(top = 20.dp)
@@ -166,8 +175,13 @@ fun GenreCardGrid(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.back_ic),
-                        contentDescription = null,
-                        modifier = Modifier.size(15.dp)
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(8.dp)
+                            .clickable(interactionSource = null, indication = null) {
+                                onBackClick()
+                            }
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     TitleText(
@@ -181,7 +195,7 @@ fun GenreCardGrid(
                     modifier = Modifier
                         .fillMaxSize(),
                     items = genreGridDto.genreCardList,
-                    columns = 5,
+                    columns = CustomGridCells.Adaptive(minSize =120.dp ),
 //                    verticalSpacing = 40.dp,
 //                    horizontalSpacing = 25.dp,
                 ) { index, genreCardItem ->
@@ -209,16 +223,19 @@ fun GenreCardGrid(
         }
     }
 
-    // Restore focus to the last focused item when returning to the screen
-    LaunchedEffect(Unit) {
-        try {
-            if (lastFocusedIndex >= 0 && lastFocusedIndex < focusRequesters.size) {
-                focusRequesters[lastFocusedIndex].requestFocus()
-            } else if (focusRequesters.isNotEmpty()) {
-                focusRequesters[0].requestFocus() // Fallback to first item if no last focused
+    if (LocalContext.current.isTvDevice()) {
+        // Restore focus to the last focused item when returning to the screen
+        LaunchedEffect(Unit) {
+            try {
+                if (lastFocusedIndex >= 0 && lastFocusedIndex < focusRequesters.size) {
+                    focusRequesters[lastFocusedIndex].requestFocus()
+                } else if (focusRequesters.isNotEmpty()) {
+                    delay(300)
+                    focusRequesters[0].requestFocus() // Fallback to first item if no last focused
+                }
+            } catch (ex: Exception) {
+                Log.e("GenreCardGrid", "Error requesting focus: ${ex.message}")
             }
-        } catch (ex: Exception) {
-            Log.e("GenreCardGrid", "Error requesting focus: ${ex.message}")
         }
     }
 }
@@ -316,6 +333,9 @@ private fun GenreGridPreview() {
 
         },
         onSearchClick = {
+
+        },
+        onBackClick = {
 
         }
     )

@@ -1,0 +1,23 @@
+<component name="LiveTvController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/LiveTvController/LiveTvController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+
+  <interface>
+    <field id="channels" type="node" />
+    <field id="currentChannel" type="integer" value="0" />
+    <field id="downNavEscape" type="boolean" alwaysNotify = "true" />
+  </interface>
+  
+  <children>
+
+    <Video id="liveVideo" width="1920" height="1080" enableTrickPlay="false" enableUI="false" />
+
+    <Group id= "liveDataGrp">
+    </Group>  
+    <Timer id ="epgTimer" repeat="true" duration="10"/>
+  </children>
+</component>

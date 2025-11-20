@@ -1,0 +1,15 @@
+<component name="ProfileViewModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="profile_id" type="int" />
+      <field id="title" type="String" />
+      <field id="image" type="String" />
+      <field id="image_id" type="String" />
+      <field id="is_default" type="integer" />
+      <field id="child_profile" type="integer" />
+      <field id="isEnabled" type="boolean" />
+
+  </interface>
+
+</component>

@@ -27,14 +27,3 @@
     public static *** w(...);
     public static *** e(...);
 }
-
-
-# Keep all Amazon IAP SDK classes
--keep class com.amazon.** { *; }
--dontwarn com.amazon.**
-# Keep interfaces and their implementations
--keep interface com.amazon.a.a.k.b { *; }
--keep class com.amazon.a.a.k.c.** { *; }
--keep class com.amazon.device.iap.** { *; }
-# Prevent obfuscation of classes that may be used via reflection
--keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod

@@ -1,0 +1,69 @@
+<component name="SearchController" extends="BaseController">
+  <script type="text/brightscript" uri="pkg:/components/Controllers/SearchController/SearchController.brs"/>
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+  <interface>
+    <field id="searchText" type="string" />
+  </interface>
+
+  <children>
+    <Rectangle id="backGround" width="1920" height="1080" color="#1B1B1B" />
+
+    <LayoutGroup id="searchBoxLayout" layoutDirection="horiz" itemSpacings="[25]" translation="[137, 80]">
+      <Poster id="searchIcon" uri="pkg:/images/menu-search.png" width="58" height="58" blendColor="#B87333" />
+      <TextEditBox 
+          id="searchBox" 
+          height="58" 
+          width="636" 
+          backgroundUri="pkg:/images/sign_bx_bg.png"
+          clearOnDownKey="false"
+          hintText="Type your search..."
+          />
+    </LayoutGroup>
+
+    <MarkupGrid
+      id="TopSearchList"
+      itemComponentName="SearchKeywordItem"			
+      itemSize="[46, 44]"	
+      numColumns="29"
+      numRows="1"
+      translation="[145, 168]"
+      drawFocusFeedback="false" 
+     />
+
+    <Label id="recentSearchLbl" width="300" text = "Recent Searches" translation="[145, 280]">
+      <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+    </Label>
+    <MarkupList
+      id="recentSearchList"
+      translation="[145, 320]"
+      itemComponentName="recentSearchListTile"
+      vertFocusAnimationStyle="floatingFocus" 
+      itemSize="[400, 76]"
+      itemSpacing="[0, 2]"
+      numRows="9"
+      drawFocusFeedback="false"
+    />
+ 
+    <MarkupGrid
+        id="searchList"
+        itemComponentName="searchItemListTile"
+        translation="[570,280]"
+        numColumns="1"
+        numRows="10"
+        itemSize="[ 800, 160 ]"
+        itemSpacing="[ 25, 40 ]"
+        drawFocusFeedback="true"
+        focusBitmapBlendColor ="#B87333"
+        horizFocusAnimationStyle="floatingFocus"
+        vertFocusAnimationStyle="fixedFocus"
+    />
+    <Label id="searchNotFoundLbl" width="300" text = "Search Result Not Found" width="1920" height="1080" horizAlign="center" vertAlign="center">
+      <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+    </Label>
+
+    <Timer id ="searchTimer" repeat="false" duration="0.5"/>
+  </children>
+</component>

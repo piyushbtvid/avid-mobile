@@ -104,7 +104,7 @@ class DetailViewModel @Inject constructor(
                 if (cachedCardDetail == null) {
                     _cardDetail.emit(Resource.Success(DetailPageItem.Card(newDetailDto)))
 
-                    if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
+                    if (newData.contentType == "Series" && !newData.seasons.isNullOrEmpty()) {
                         val seasonList = newData.seasons!!.map { it.toSeasonDto() }
                         Log.e(
                             "SERIES_CONTENT",
@@ -161,10 +161,10 @@ class DetailViewModel @Inject constructor(
                 else if (cachedCardDetail != cardDetail) {
                     // Only update resume-related UI
                     //comparing only resume related data like progress seconds changed or not etc
-                    if (oldData?.resumeInfo != newData.resumeInfo || oldData?.progressSeconds != newData.progressSeconds || oldData?.access != newData.access) {
+                    if (oldData?.resumeInfo != newData.resumeInfo || oldData?.progressSeconds != newData.progressSeconds) {
 
                         //For Series
-                        if (newData.content_type == "Series" && !newData.seasons.isNullOrEmpty()) {
+                        if (newData.contentType == "Series" && !newData.seasons.isNullOrEmpty()) {
                             val seasonList = newData.seasons!!.map { it.toSeasonDto() }
                             val resumeSeasonEpisodes =
                                 buildResumeEpisodes(newData.resumeInfo, seasonList)
@@ -173,8 +173,6 @@ class DetailViewModel @Inject constructor(
                                 progressSeconds = newData.resumeInfo?.progress_seconds?.toInt(),
                                 resumeInfo = newData.resumeInfo
                             )
-
-                            updateAccessType(newData.access)
 
                             (_relatedContentData.value as? RelatedContentData.SeriesSeasons)?.let { current ->
                                 _relatedContentData.emit(
@@ -189,7 +187,6 @@ class DetailViewModel @Inject constructor(
                         else {
                             updateResumeUI(progressSeconds = newData.progressSeconds?.toInt())
                             updateMovieProgress(progressSeconds = newData.progressSeconds)
-                            updateAccessType(newData.access)
                         }
                     }
                     cachedCardDetail = cardDetail
@@ -279,22 +276,6 @@ class DetailViewModel @Inject constructor(
                 _cardDetail.value = Resource.Success(DetailPageItem.Card(detailDto = updatedDto))
             }
         }
-    }
-
-    private fun updateAccessType(accessType: String?) {
-        if (accessType == null) return
-
-        val currentValue = _cardDetail.value
-        if (currentValue is Resource.Success && currentValue.data is DetailPageItem.Card) {
-            val currentCard = currentValue.data as DetailPageItem.Card
-            val updatedDto = currentCard.detailDto.copy(access = accessType)
-
-            // Only emit if progress has changed
-            if (currentCard.detailDto.access != accessType) {
-                _cardDetail.value = Resource.Success(DetailPageItem.Card(detailDto = updatedDto))
-            }
-        }
-
     }
 
 

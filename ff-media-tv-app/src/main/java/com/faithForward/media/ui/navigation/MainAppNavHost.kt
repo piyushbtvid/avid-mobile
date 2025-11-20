@@ -1,15 +1,19 @@
 package com.faithForward.media.ui.navigation
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.util.Log
+import android.view.View
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.delay
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -30,13 +34,13 @@ import com.faithForward.media.ui.sections.myList.MyListPage
 import com.faithForward.media.ui.sections.my_account.MyAccountScreen
 import com.faithForward.media.ui.sections.search.SearchScreenUi
 import com.faithForward.media.ui.sections.series.SeriesPage
-import com.faithForward.media.ui.subscription.SubscriptionScreen
 import com.faithForward.media.ui.universal_page.UniversalTopBarMainPage
 import com.faithForward.media.ui.universal_page.live.LiveMainPage
 import com.faithForward.media.ui.user_profile.AllProfileScreen
 import com.faithForward.media.ui.user_profile.create_profile.CreateProfileScreen
 import com.faithForward.media.ui.user_profile.edit_profile.EditProfileScreen
 import com.faithForward.media.ui.user_profile.edit_profile.UpdateProfileScreen
+import com.faithForward.media.util.Util.findActivity
 import com.faithForward.media.viewModel.ContentViewModel
 import com.faithForward.media.viewModel.CreatorDetailViewModel
 import com.faithForward.media.viewModel.CreatorViewModel
@@ -52,14 +56,9 @@ import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
-import com.faithForward.media.viewModel.SubscriptionViewModel
 import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
-import com.faithForward.preferences.ConfigManager
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.compose.ui.platform.LocalContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -77,9 +76,8 @@ fun MainAppNavHost(
     changeSideBarSelectedPosition: (Int) -> Unit,
     onDataLoadedSuccess: () -> Unit,
     onBackClickForExit: () -> Unit,
+    onLogoutRequest: () -> Unit,
 ) {
-
-
     NavHost(
         navController = navController, startDestination = startRoute
     ) {
@@ -95,9 +93,6 @@ fun MainAppNavHost(
 
         composable(route = Routes.LoginQr.route) { backStack ->
             val qrLoginViewModel: QrLoginViewModel = hiltViewModel(backStack)
-            val configData = ConfigManager.getConfigData()
-            val isLoginEnabled = configData?.enable_login == true
-
             LoginQrScreen(loginQrLoginViewModel = qrLoginViewModel, onLoggedIn = {
                 Log.e("GOING_TO_HOME", "going to home from qr onLogin click")
                 Log.e("IS_lOGIN_QR", "onlogin called in NavHost")
@@ -106,16 +101,39 @@ fun MainAppNavHost(
                     popUpTo(0) { inclusive = true }
                 }
             }, onLoginPageOpenClick = {
-                // Only navigate to Login screen if enable_login is true
-                if (isLoginEnabled) {
-                    navController.navigate(Routes.Login.route)
-                }
+                navController.navigate(Routes.Login.route)
             })
         }
 
         composable(route = Routes.AllProfile.route) { navBackStackEntry ->
+            Log.e("MainAppNavHost", "AllProfile called nav")
 
             val viewModel: ProfileScreenViewModel = hiltViewModel(navBackStackEntry)
+            val uiEvent by viewModel.uiEvent.collectAsStateWithLifecycle(null)
+
+            // Handle navigation in LaunchedEffect to ensure proper Compose lifecycle
+            LaunchedEffect(uiEvent) {
+                uiEvent?.let { event ->
+                    Log.e("MainAppNavHost", "AllProfile uiEvent received, navigating to Home")
+                    // Wait for frames to ensure current composition and measurement complete
+                    repeat(2) {
+                        kotlinx.coroutines.android.awaitFrame()
+                    }
+                    // Small delay to ensure AllProfile screen starts disposing
+                    kotlinx.coroutines.delay(50)
+                    try {
+                        navController.navigate(Routes.Home.route) {
+                            popUpTo(Routes.AllProfile.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                        Log.e("MainAppNavHost", "AllProfile after navController.navigate(Routes.Home.route)")
+                        // Reset the event after navigation
+                        viewModel.resetUiEvent()
+                    } catch (e: Exception) {
+                        Log.e("MainAppNavHost", "Error navigating to Home: ${e.message}", e)
+                    }
+                }
+            }
 
             AllProfileScreen(
                 profileScreenViewModel = viewModel,
@@ -126,9 +144,11 @@ fun MainAppNavHost(
                     navController.navigate(Routes.EditProfile.route)
                 },
                 onSetProfileSuccess = {
-                    navController.navigate(Routes.Home.route)
+                    // Navigation is now handled by LaunchedEffect above
+                    // This callback can remain for other purposes if needed
                 }
             )
+//            navController.navigate(Routes.Home.route)
         }
 
         composable(route = Routes.CreateProfile.route) { navBackStackEntry ->
@@ -188,6 +208,7 @@ fun MainAppNavHost(
 
 
         composable(route = Routes.Home.route) { navBackStackEntry ->
+            Log.e("MainAppNavHost", "Home route called")
             // Scope the ViewModel to the navigation destination
             val homeViewModel: HomeViewModel = hiltViewModel(navBackStackEntry)
             HomePage(modifier = modifier,
@@ -210,7 +231,7 @@ fun MainAppNavHost(
                         val filteredList = list.filterNot { it.id == item.id }
 
                         val json = Json.encodeToString(filteredList)
-                        //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -285,7 +306,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                        // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -321,7 +342,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                        //   val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -349,7 +370,7 @@ fun MainAppNavHost(
                     if (!item.slug.isNullOrEmpty()) {
                         val filteredList = list.filterNot { it.slug == item.slug }
                         val json = Json.encodeToString(filteredList)
-                        // val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                        val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail.createRoute(item.slug))
                     }
                 },
@@ -379,7 +400,7 @@ fun MainAppNavHost(
                 if (!item.slug.isNullOrEmpty()) {
                     val filteredList = list.filterNot { it.slug == item.slug }
                     val json = Json.encodeToString(filteredList)
-                    //  val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    val encodedList = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate(Routes.Detail.createRoute(item.slug))
                 }
             }, onSearchClick = {
@@ -388,6 +409,8 @@ fun MainAppNavHost(
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
+            }, onBackClick = {
+                navController.popBackStack()
             }
 
             )
@@ -476,141 +499,10 @@ fun MainAppNavHost(
         }
 
 
-//        composable(
-//            route = Routes.PlayerScreen.route,
-//            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
-//                navArgument("isContinueWatching") {
-//                    type = NavType.BoolType
-//                    defaultValue = false
-//                },
-//                navArgument("isFromMyAccount") {
-//                    type = NavType.BoolType
-//                    defaultValue = false
-//                },
-//                navArgument("isPlayTrailer") {
-//                    type = NavType.BoolType
-//                    defaultValue = false
-//                },
-//                navArgument("initialIndex") {
-//                    type = NavType.IntType
-//                    defaultValue = 0
-//                })
-//        ) { backStackEntry ->
-//
-//            val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
-//
-//            val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
-//            val isContinueWatching =
-//                backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
-//
-//            val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
-//            val isPlayTrailer = backStackEntry.arguments?.getBoolean("isPlayTrailer") ?: false
-//
-//
-//            val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
-//
-//            val playerList = encodedJson?.let {
-//                Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
-//            } ?: emptyList()
-//
-//
-//            playerList?.let {
-//                LaunchedEffect(playerList) {
-//                    playerList.let {
-//                        playerViewModel.handleEvent(
-//                            PlayerEvent.UpdateOrLoadPlayerData(
-//                                itemList = it,
-//                                isFromContinueWatching = isContinueWatching,
-//                                isTrailer = isPlayTrailer,
-//                                index = initialIndex
-//                            )
-//                        )
-//                    }
-//                }
-//            }
-//
-//            PlayerScreen(playerViewModel = playerViewModel,
-//                sharedPlayerViewModel = sharedPlayerViewModel,
-//                isFromContinueWatching = isContinueWatching,
-//                initialIndex = initialIndex,
-//                onStreamFromTopBarClick = {
-//                    navController.navigate(Routes.Universal.route)
-//                },
-//                onLiveClick = {
-//                    navController.navigate(Routes.Live.route)
-//                },
-//                onVideoEnded = {
-//                    if (isContinueWatching && !isFromMyAccount) {
-//                        // Get the current item's slug from playerDtoList
-//                        val currentItem = playerList?.getOrNull(0)
-//                        if (currentItem?.slug != null) {
-//                            // Navigate to Detail screen
-//                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
-//                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
-//                                    // Ensure Home screen remains in the back stack
-//                                    popUpTo(Routes.Home.route) { inclusive = false }
-//                                }
-//                            } else {
-//                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
-//                                    // Ensure Home screen remains in the back stack
-//                                    popUpTo(Routes.Home.route) { inclusive = false }
-//                                }
-//                            }
-//                        } else {
-//                            // Fallback to default back navigation if slug is unavailable
-//                            navController.popBackStack()
-//                        }
-//                    } else if (isFromMyAccount && isContinueWatching) {
-//                        // Get the current item's slug from playerDtoList
-//                        val currentItem = playerList?.getOrNull(0)
-//                        if (currentItem?.slug != null) {
-//                            // Navigate to Detail screen
-//                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
-//                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
-//                                    // Ensure Home screen remains in the back stack
-//                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
-//                                }
-//                            } else {
-//                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
-//                                    // Ensure Home screen remains in the back stack
-//                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
-//                                }
-//                            }
-//                        } else {
-//                            // Fallback to default back navigation if slug is unavailable
-//                            navController.popBackStack()
-//                        }
-//                    } else {
-//                        // Default back navigation (to Detail or Home)
-//                        navController.popBackStack()
-//                    }
-//                },
-//                onEpisodePlayNowClick = { list, index ->
-//                    val posterCardList = list.map { it.toPosterCardDto() }
-//                    val route =
-//                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
-//                    navController.navigate(route) {
-//                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
-//                        launchSingleTop = true
-//                    }
-//                },
-//                onRelatedItemClick = { item, list, index ->
-//                    val posterCardList =
-//                        list?.map { it.toPosterCardDto() } ?: listOf(item!!.toPosterCardDto())
-//                    val route =
-//                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
-//                    navController.navigate(route) {
-//                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
-//                        launchSingleTop = true
-//                    }
-//                })
-//        }
-
 
         composable(
             route = Routes.PlayerScreen.route,
-            arguments = listOf(
-                navArgument("playerDtoList") { type = NavType.StringType },
+            arguments = listOf(navArgument("playerDtoList") { type = NavType.StringType },
                 navArgument("isContinueWatching") {
                     type = NavType.BoolType
                     defaultValue = false
@@ -626,148 +518,138 @@ fun MainAppNavHost(
                 navArgument("initialIndex") {
                     type = NavType.IntType
                     defaultValue = 0
-                }
-            )
+                })
         ) { backStackEntry ->
+
+            val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
 
             val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
             val isContinueWatching =
                 backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
+
             val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
             val isPlayTrailer = backStackEntry.arguments?.getBoolean("isPlayTrailer") ?: false
+
+            // Fix: Use getInt instead of getString
             val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
 
             val playerList = encodedJson?.let {
                 Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
             } ?: emptyList()
 
-
-            val playerViewModel: PlayerViewModel = hiltViewModel(backStackEntry)
-
-            val firstItem = playerList.getOrNull(initialIndex)
-            val userType by playerViewModel.userType.collectAsState()
-
-            var canPlay by remember { mutableStateOf<Boolean?>(null) }
-
-            val context = LocalContext.current
-
-            LaunchedEffect(firstItem, userType) {
-                if (firstItem != null && userType != null) {
-                    checkVideoPlayback(
-                        poster = firstItem,
-                        userType = userType!!,
-                        context = context,
-                        onStartPlay = { canPlay = true },
-                        onRequireSubscription = {
-                            canPlay = false
-                            val route = Routes.Subscription.createRoute(
-                                playerDtoList = playerList,
-                                isContinueWatching = isContinueWatching,
-                                initialIndex = initialIndex,
-                                isPlayTrailer = isPlayTrailer,
-                                isFromMyAccount = isFromMyAccount
-                            )
-                            navController.navigate(route) {
-                                popUpTo(Routes.PlayerScreen.route) { inclusive = true }
-                            }
-                        }
-                    )
-                }
+            LaunchedEffect(isFromMyAccount) {
+                Log.e("MY_ACCOUNT", "is from my account $isFromMyAccount and $isContinueWatching")
             }
+            val activity = LocalContext.current.findActivity()
+            // Force landscape when entering PlayerScreen
+            DisposableEffect(Unit) {
+                activity?.let {
+                    // Save original flags
+                    val originalFlags = it.window.decorView.systemUiVisibility
 
-            // inside composable scope, decide what to render
-            if (canPlay == true) {
-                LaunchedEffect(playerList) {
+                    // Switch to landscape + fullscreen
+                    it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    it.window.decorView.systemUiVisibility =
+                        (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+
+                    onDispose {
+                        // Restore portrait + original flags
+                        it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                        it.window.decorView.systemUiVisibility = originalFlags
+                    }
+                }!!
+            }
+            LaunchedEffect(playerList) {
+                playerList.let {
                     playerViewModel.handleEvent(
                         PlayerEvent.UpdateOrLoadPlayerData(
-                            itemList = playerList,
+                            itemList = it,
                             isFromContinueWatching = isContinueWatching,
                             isTrailer = isPlayTrailer,
                             index = initialIndex
                         )
                     )
                 }
+            }
 
-                PlayerScreen(
-                    playerViewModel = playerViewModel,
-                    sharedPlayerViewModel = sharedPlayerViewModel,
-                    isFromContinueWatching = isContinueWatching,
-                    initialIndex = initialIndex,
-                    onStreamFromTopBarClick = {
-                        navController.navigate(Routes.Universal.route)
-                    },
-                    onLiveClick = {
-                        navController.navigate(Routes.Live.route)
-                    },
-                    onVideoEnded = {
-                        if (isContinueWatching && !isFromMyAccount) {
-                            // Get the current item's slug from playerDtoList
-                            val currentItem = playerList?.getOrNull(0)
-                            if (currentItem?.slug != null) {
-                                // Navigate to Detail screen
-                                if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
-                                    navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
-                                        // Ensure Home screen remains in the back stack
-                                        popUpTo(Routes.Home.route) { inclusive = false }
-                                    }
-                                } else {
-                                    navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
-                                        // Ensure Home screen remains in the back stack
-                                        popUpTo(Routes.Home.route) { inclusive = false }
-                                    }
+            PlayerScreen(playerViewModel = playerViewModel,
+                sharedPlayerViewModel = sharedPlayerViewModel,
+                isFromContinueWatching = isContinueWatching,
+                initialIndex = initialIndex,
+                onStreamFromTopBarClick = {
+                    navController.navigate(Routes.Universal.route)
+                },
+                onLiveClick = {
+                    navController.navigate(Routes.Live.route)
+                },
+                onVideoEnded = {
+                    if (isContinueWatching && !isFromMyAccount) {
+                        // Get the current item's slug from playerDtoList
+                        val currentItem = playerList?.getOrNull(0)
+                        if (currentItem?.slug != null) {
+                            // Navigate to Detail screen
+                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.Home.route) { inclusive = false }
                                 }
                             } else {
-                                // Fallback to default back navigation if slug is unavailable
-                                navController.popBackStack()
-                            }
-                        } else if (isFromMyAccount && isContinueWatching) {
-                            // Get the current item's slug from playerDtoList
-                            val currentItem = playerList?.getOrNull(0)
-                            if (currentItem?.slug != null) {
-                                // Navigate to Detail screen
-                                if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
-                                    navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
-                                        // Ensure Home screen remains in the back stack
-                                        popUpTo(Routes.MyAccount.route) { inclusive = false }
-                                    }
-                                } else {
-                                    navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
-                                        // Ensure Home screen remains in the back stack
-                                        popUpTo(Routes.MyAccount.route) { inclusive = false }
-                                    }
+                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.Home.route) { inclusive = false }
                                 }
-                            } else {
-                                // Fallback to default back navigation if slug is unavailable
-                                navController.popBackStack()
                             }
                         } else {
-                            // Default back navigation (to Detail or Home)
+                            // Fallback to default back navigation if slug is unavailable
                             navController.popBackStack()
                         }
-                    },
-                    onEpisodePlayNowClick = { list, index ->
-                        val posterCardList = list.map { it.toPosterCardDto() }
-                        val route =
-                            Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
-                        navController.navigate(route) {
-                            popUpTo(Routes.PlayerScreen.route) { inclusive = true }
-                            launchSingleTop = true
+                    } else if (isFromMyAccount && isContinueWatching) {
+                        // Get the current item's slug from playerDtoList
+                        val currentItem = playerList?.getOrNull(0)
+                        if (currentItem?.slug != null) {
+                            // Navigate to Detail screen
+                            if (currentItem.contentType == "Series" || currentItem.contentType == "Episode" && currentItem.seriesSlug != null) {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.seriesSlug!!)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
+                                }
+                            } else {
+                                navController.navigate(Routes.Detail.createRoute(currentItem.slug)) {
+                                    // Ensure Home screen remains in the back stack
+                                    popUpTo(Routes.MyAccount.route) { inclusive = false }
+                                }
+                            }
+                        } else {
+                            // Fallback to default back navigation if slug is unavailable
+                            navController.popBackStack()
                         }
-                    },
-                    onRelatedItemClick = { item, list, index ->
-                        val posterCardList =
-                            list?.map { it.toPosterCardDto() } ?: listOf(item!!.toPosterCardDto())
-                        val route =
-                            Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
-                        navController.navigate(route) {
-                            popUpTo(Routes.PlayerScreen.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
+                    } else {
+                        // Default back navigation (to Detail or Home)
+                        navController.popBackStack()
                     }
-                )
-            }
+                },
+                onEpisodePlayNowClick = { list, index ->
+                    val posterCardList = list.map { it.toPosterCardDto() }
+                    val route =
+                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
+                    navController.navigate(route) {
+                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onRelatedItemClick = { item, list, index ->
+                    val posterCardList =
+                        list?.map { it.toPosterCardDto() } ?: listOf(item!!.toPosterCardDto())
+                    val route =
+                        Routes.PlayerScreen.createRoute(posterCardList, initialIndex = index!!)
+                    navController.navigate(route) {
+                        popUpTo(Routes.PlayerScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                })
         }
-
 
 
         composable(
@@ -834,7 +716,8 @@ fun MainAppNavHost(
                 },
                 onSwitchProfile = {
                     navController.navigate(Routes.AllProfile.route)
-                }
+                },
+                onLogoutRequest = onLogoutRequest
             )
         }
 
@@ -861,108 +744,7 @@ fun MainAppNavHost(
             )
         }
 
-        composable(
-            route = Routes.Subscription.route,
-            arguments = listOf(
-                navArgument("playerDtoList") { type = NavType.StringType },
-                navArgument("isContinueWatching") {
-                    type = NavType.BoolType
-                    defaultValue = false
-                },
-                navArgument("isFromMyAccount") {
-                    type = NavType.BoolType
-                    defaultValue = false
-                },
-                navArgument("isPlayTrailer") {
-                    type = NavType.BoolType
-                    defaultValue = false
-                },
-                navArgument("initialIndex") {
-                    type = NavType.IntType
-                    defaultValue = 0
-                }
-            )
-        ) { backStackEntry ->
-            val subscriptionViewModel = hiltViewModel<SubscriptionViewModel>(backStackEntry)
-
-            val encodedJson = backStackEntry.arguments?.getString("playerDtoList")
-            val isContinueWatching =
-                backStackEntry.arguments?.getBoolean("isContinueWatching") ?: false
-            val isFromMyAccount = backStackEntry.arguments?.getBoolean("isFromMyAccount") ?: false
-            val isPlayTrailer = backStackEntry.arguments?.getBoolean("isPlayTrailer") ?: false
-            val initialIndex = backStackEntry.arguments?.getInt("initialIndex") ?: 0
-
-            val playerList = encodedJson?.let {
-                Json.decodeFromString<List<PosterCardDto>>(Uri.decode(it))
-            } ?: emptyList()
-
-            LaunchedEffect(Unit) {
-                Log.e(
-                    "SUBSCRIPTION_SCREEN",
-                    "data in subscrioption is $isContinueWatching  and $isFromMyAccount  and $isPlayTrailer  and $initialIndex  and final the list $playerList"
-                )
-            }
-
-            SubscriptionScreen(
-                subscriptionViewModel = subscriptionViewModel,
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onNavigateToPlayer = {
-                    val route = Routes.PlayerScreen.createRoute(
-                        playerDtoList = playerList,
-                        isContinueWatching = isContinueWatching,
-                        isFromMyAccount = isFromMyAccount,
-                        isPlayTrailer = isPlayTrailer,
-                        initialIndex = initialIndex
-                    )
-                    navController.navigate(route){
-                        popUpTo(Routes.Subscription.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-
     }
 
 
-}
-
-
-fun checkVideoPlayback(
-    poster: PosterCardDto,
-    userType: String,
-    context: Context,
-    onStartPlay: () -> Unit,
-    onRequireSubscription: () -> Unit,
-) {
-    Log.e("USER_TYPE", "user type in checkVideo is $userType")
-    Log.e("USER_TYPE", "item acess type is ${poster.access}")
-    if (poster.access == "Paid") {
-        if (userType == "Premium") {
-            println("Play allowed")
-            onStartPlay()
-        } else {
-            // Check if subscription is enabled and user has token
-            val configData = ConfigManager.getConfigData()
-            val isSubscriptionEnabled = configData?.enable_subscription == true
-
-            // Check if user token exists (user is logged in)
-            val sharedPreferences: SharedPreferences =
-                context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-            val userToken = sharedPreferences.getString("token", null)
-            val hasUserToken = !userToken.isNullOrEmpty()
-
-            if (isSubscriptionEnabled && hasUserToken) {
-                println("Need subscription")
-                onRequireSubscription()
-            } else {
-                println("Play allowed (subscription disabled or no user token)")
-                onStartPlay()
-            }
-        }
-    } else {
-        println("Free content")
-        onStartPlay()
-    }
 }

@@ -1,0 +1,56 @@
+<component name="HomeController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/HomeController/HomeController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+  <interface>
+  </interface>
+
+  <children>
+
+  <Rectangle id = "backGround" width = "1920" height = "1080" color = "#1B1B1B" />
+  <!-- <Poster id="backgroundImg" width="1920" height="1080" uri="pkg://images/guidebackground.png" /> -->
+
+  <SliderTiles id="sliderTiles" />
+
+  <RowList
+    id="genreList"
+    itemComponentName="ButtonListItem"
+    itemSize="[1920,80]"
+    showRowLabel="[false]"
+    itemSpacing="[0, 20]"
+    rowItemSpacing="[[10,0]]"
+    numRows="1"
+    showRowCounter="[false]"
+    rowItemSize="[[369,65]]"
+    variableWidthItems = "[true]"
+    drawFocusFeedback = "false"
+    rowFocusAnimationStyle="fixedFocus"
+    translation="[140, 735]"
+  />
+
+  <RowList
+    id="feedList"
+    itemComponentName="FeedListTile"
+    focusXOffset="[5]"
+    rowLabelOffset="[[0,-30]]"
+    itemSize="[1920,500]"
+    showRowLabel="[true]"
+    itemSpacing="[20, 10]" 
+    rowItemSpacing="[[20,10]]" 
+    numRows="60"
+    showRowCounter="[false]"
+    rowItemSize="[[269,420]]" 
+    rowLabelColor="#EAE3C9"
+    drawFocusFeedback="false" 
+    focusBitmapBlendColor="#B87333"
+    rowFocusAnimationStyle="floatingFocus" 
+    vertFocusAnimationStyle="fixedFocus" 
+    translation="[140,820]"
+/>
+
+  </children>
+
+</component>

@@ -1,0 +1,9 @@
+<component name="CategoryContentResponse" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/CategoryContentResponse.brs" />
+
+  <interface>
+      <field id="status" type="string" />
+      <field id="data" type="assocArray" />
+  </interface>
+</component>

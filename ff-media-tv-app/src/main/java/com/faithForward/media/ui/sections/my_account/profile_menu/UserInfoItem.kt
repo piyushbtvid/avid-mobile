@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.faithForward.media.ui.commanComponents.TitleText
@@ -77,12 +78,14 @@ fun UserInfoItem(
 fun InitialNameItem(
     modifier: Modifier = Modifier,
     name: String,
+    size: Dp = 40.dp,
+    textSize: androidx.compose.ui.unit.TextUnit = 14.sp,
 ) {
 
 
     Box(
         modifier = Modifier
-            .size(40.dp)
+            .size(size)
             .clip(
                 shape = RoundedCornerShape(30.dp)
             )
@@ -92,7 +95,7 @@ fun InitialNameItem(
 
         Text(
             text = name,
-            fontSize = 14.sp,
+            fontSize = textSize,
             color = focusedMainColor
         )
 

@@ -1,0 +1,8 @@
+<component name="SeasonTabViewItemModel" extends="ContentNode">
+
+  <interface>
+      <field id="name" type="string"  />
+      <field id="seasonNumber" type="string"  />
+      <field id="episodes" type="array"  />
+  </interface>
+</component>

@@ -1,0 +1,27 @@
+<component name="navigationListTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/navigationListTile.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <!-- <field id="itemHasFocus" type="boolean" onChange="onGetfocus" /> -->
+    </interface>
+
+    <children>
+
+
+    <Group id = "navigationGroup" >
+      <Poster id="backFocus" uri="pkg://images/topMenuFocus.png" visible="false"/>
+      <Label id="itemLabel" horizAlign="center" vertAlign="center" >
+        <Font role = "font" uri = "pkg:/images/font/Montserrat-Bold.ttf" size = "20" />
+      </Label>
+    </Group>
+
+    </children>
+</component>

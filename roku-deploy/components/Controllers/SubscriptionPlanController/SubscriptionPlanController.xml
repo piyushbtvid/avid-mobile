@@ -1,0 +1,43 @@
+<component name="SubscriptionPlanController" extends="BaseController">
+
+    <script type="text/brightscript" uri="pkg:/components/Controllers/SubscriptionPlanController/SubscriptionPlanController.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+    <interface>
+
+    </interface>
+
+    <children>
+
+        <Label id="premiumTitle" horizAlign="center" vertAlign="center" text="Choose your premium plan" width="1920" translation="[0,100]">
+            <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="60"/>
+        </Label>
+        <Label id="premiumSubTitle" horizAlign="center" vertAlign="center" wrap="true" numLines="2" lineSpacing="-1"
+            text="Unlock unlimited entertainment with premium features, exclusive content, and ad-free streaming"
+        >
+            <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25"/>
+        </Label>
+
+
+
+    <RowList 
+        id="premiumGrid"
+        itemSize="[1920, 500]"
+        rowItemSize="[[400,500]]"
+        itemSpacing="[20, 20]"
+        rowItemSpacing="[[20,10]]" 
+        numColumns="5"
+        numRows="1"
+        itemComponentName = "PremiumTile"
+        drawFocusFeedback="true"
+        focusBitmapBlendColor="#B87333"
+        rowFocusAnimationStyle="fixedFocusWrap" /> 
+
+
+    <ChannelStore id="store"/>
+
+    </children>
+
+</component>

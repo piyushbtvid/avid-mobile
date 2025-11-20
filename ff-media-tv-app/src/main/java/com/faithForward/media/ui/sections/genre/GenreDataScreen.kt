@@ -16,6 +16,7 @@ fun GenreDataScreen(
     modifier: Modifier = Modifier,
     onItemClick: (PosterCardDto, List<PosterCardDto>) -> Unit,
     onSearchClick: () -> Unit,
+    onBackClick: () -> Unit = {},
     viewModel: GenreViewModel,
 ) {
 
@@ -40,7 +41,8 @@ fun GenreDataScreen(
                 }
                 onItemClick.invoke(item, newPosterCardDtoList)
             },
-            onSearchClick = onSearchClick
+            onSearchClick = onSearchClick,
+            onBackClick = onBackClick
         )
     }
 

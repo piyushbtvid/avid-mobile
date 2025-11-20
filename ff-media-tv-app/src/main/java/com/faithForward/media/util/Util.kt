@@ -1,6 +1,8 @@
 package com.faithForward.media.util
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.provider.Settings
 import android.util.Log
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
@@ -9,6 +11,21 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException
 import java.io.IOException
 
 object Util {
+    fun Context.isTvDevice(): Boolean {
+        return packageManager.hasSystemFeature("android.software.leanback")
+    }
+
+
+    fun Context.findActivity(): Activity? {
+        var context = this
+        while (context is ContextWrapper) {
+            if (context is Activity) return context
+            context = context.baseContext
+        }
+        return null
+    }
+
+
 
     suspend fun getId(context: Context): String {
         return try {

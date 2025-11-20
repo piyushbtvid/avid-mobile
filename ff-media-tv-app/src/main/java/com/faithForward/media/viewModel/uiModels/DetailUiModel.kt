@@ -48,7 +48,7 @@ fun CardDetail.toDetailDto(): DetailDto {
 
     val resolvedVideoLink = when {
         !firstEpisodeVideoLink.isNullOrEmpty() -> firstEpisodeVideoLink
-        data.seasons.isNullOrEmpty() -> data.video_link
+        data.seasons.isNullOrEmpty() -> data.videoLink
         else -> "" // seasons present but no valid episodes
     }
 
@@ -63,20 +63,18 @@ fun CardDetail.toDetailDto(): DetailDto {
         description = data.description,
         releaseDate = data.dateUploaded,
         genre = data.genres?.mapNotNull { it.name }?.joinToString(", "),
-        duration = data.duration?.let { formatDuration(it.toLong()) } ?: "",
+        duration = data.duration?.toLongOrNull()?.let { formatDuration(it) } ?: "",
         imdbRating = data.rating,
         videoLink = resolvedVideoLink,
         slug = data.slug,
-        isFavourite = data.myList,
+        isFavourite = data.myList?.let { it.equals("true", ignoreCase = true) || it == "1" } ?: false,
         isLiked = data.likeDislike == "like",
         isDisliked = data.likeDislike == "dislike",
-        isSeries = data.content_type == "Series" || data.content_type == "Episode",
-        contentType = data.content_type,
+        isSeries = data.contentType == "Series" || data.contentType == "Episode",
+        contentType = data.contentType,
         progress = data.progressSeconds,
         itemTrailer = data.trailer?.playLink,
-        relatedList = relatedList,
-        access = data.access
-    )
+        relatedList = relatedList)
 }
 
 
@@ -96,8 +94,7 @@ fun DetailDto.toPosterCardDto(): PosterCardDto {
         contentType = contentType,
         progress = progress,
         relatedList = relatedList,
-        landScapeImg = landScape ?: "",
-        access = access
+        landScapeImg = landScape ?: ""
     )
 }
 
@@ -127,7 +124,7 @@ fun Episode.toPosterDto(): PosterCardDto {
         description = description,
         genre = genres.mapNotNull { it.name }  // safely extract non-null names
             .joinToString(", "),
-        duration = duration?.let { formatDuration(it.toLong()) } ?: "",
+        duration = formatDuration(duration.toLong()),
         imdbRating = rating,
         releaseDate = dateUploaded,
         episodeNumber = episode_number,
@@ -135,8 +132,7 @@ fun Episode.toPosterDto(): PosterCardDto {
         videoHlsUrl = video_link,
         slug = slug,
         contentType = content_type,
-        landScapeImg = landscape,
-        access = access
+        landScapeImg = landscape
     )
 }
 

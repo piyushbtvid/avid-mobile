@@ -1,0 +1,33 @@
+<component name="TransactionModel" extends="BaseModel">
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/TransactionModel.brs" />
+  <interface>
+      <field id="errorCode" type="string" />
+      <field id="errorDetails" type="string" />
+      <field id="errorMessage" type="string" />
+      <field id="status" type="string" />
+      <field id="OriginalTransactionId" type="string" />
+      <field id="amount" type="float" />
+      <field id="cancelled" type="boolean" />
+      <field id="cancelledTransactionIds" type="string" />
+      <field id="channelId" type="integer" />
+      <field id="channelName" type="string" />
+      <field id="couponCode" type="string" />
+      <field id="currency" type="string" />
+      <field id="expirationDate" type="string" />
+      <field id="isEntitled" type="boolean" />
+      <field id="originalPurchaseDate" type="string" />
+      <field id="partnerReferenceId" type="string" />
+      <field id="productId" type="string" />
+      <field id="productName" type="string" />
+      <field id="purchaseChannel" type="string" />
+      <field id="purchaseContext" type="string" />
+      <field id="purchaseDate" type="string" />
+      <field id="purchaseStatus" type="string" />
+      <field id="purchaseType" type="string" />
+      <field id="quantity" type="integer" />
+      <field id="rokuCustomerId" type="string" />
+      <field id="tax" type="float" />
+      <field id="total" type="float" />
+      <field id="transactionId" type="string" />
+  </interface>
+</component>

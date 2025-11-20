@@ -1,0 +1,77 @@
+<component name="PremiumTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/PremiumTile.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <!-- <field id="itemHasFocus" type="boolean" onChange="onGetfocus" /> -->
+    </interface>
+
+    <children>
+
+      <Group id="scaledElements" >
+
+          <Rectangle  color = "0x1a1f33" width="400" height="500">
+
+            <Label id="molthlyPlan" text="Monthly Plan" width="400" horizAlign="center" translation="[0, 30]" color="#ffffff">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="27"/>
+            </Label>
+
+            <Label id="price" text="$9.99 /month" width="400" horizAlign="center" translation="[0, 80]" color="#d1adf7">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25"/>
+            </Label>
+
+            <Label horizAlign="center" vertAlign="center" text="Perfect for trying out premium features" width="400" translation="[0,120]">
+                <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="18"/>
+            </Label>
+
+            <LayoutGroup translation="[30, 170]" layoutDirection="vert" itemSpacings="[15]">
+                <LayoutGroup layoutDirection="horiz" itemSpacings="[10, 0]" >
+                    <Poster loadDisplayMode ="scaleToFill" uri="pkg:/images/right-icon.png" width="30" height="30" blendColor="#138d6b"/>
+                    <Label text="Ad-free streaming" color="0xCCCCCC">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="22"/>
+                    </Label>
+                </LayoutGroup>
+
+                <LayoutGroup layoutDirection="horiz" itemSpacings="[10, 0]" >
+                    <Poster loadDisplayMode ="limitSize" uri="pkg:/images/right-icon.png" width="30" height="30" blendColor="#138d6b"/>
+                    <Label text="4K Ultra HD" color="0xCCCCCC">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="22"/>
+                    </Label>
+                </LayoutGroup>
+
+                <LayoutGroup layoutDirection="horiz" itemSpacings="[10, 0]" >
+                    <Poster uri="pkg:/images/right-icon.png" width="30" height="30" blendColor="#138d6b"/>
+                    <Label text="Download for offline viewing" color="0xCCCCCC">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="22"/>
+                    </Label>
+                </LayoutGroup>
+
+                <LayoutGroup layoutDirection="horiz" itemSpacings="[10, 0]" >
+                    <Poster uri="pkg:/images/right-icon.png" width="30" height="30" blendColor="#138d6b"/>
+                    <Label text="Stream on 4 devices" color="0xCCCCCC">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="22"/>
+                    </Label>
+                </LayoutGroup>
+
+                <LayoutGroup layoutDirection="horiz" itemSpacings="[10, 0]" >
+                    <Poster uri="pkg:/images/right-icon.png" width="30" height="30" blendColor="#138d6b"/>
+                    <Label text="Cancel anytime" color="0xCCCCCC">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="22"/>
+                    </Label>
+                </LayoutGroup>
+            </LayoutGroup>
+
+            <ImageButton id="chooseMonthlyBtn" />
+            </Rectangle>
+
+      </Group>
+
+    </children>
+</component>

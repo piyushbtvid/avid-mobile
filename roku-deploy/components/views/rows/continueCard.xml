@@ -1,0 +1,46 @@
+<component name="continueCard" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/continueCard.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <!-- <field id="itemHasFocus" type="boolean" onChange="onGetfocus" /> -->
+    </interface>
+
+    <children>
+
+        <Group id="scaledElements">
+
+            <Poster id="cardImage" translation="[30, 50]" />
+
+            <Rectangle id="frontRect" color="#18181b" translation="[30, 300]" width="402" height="205">
+
+                <LayoutGroup id="metadataGroup" translation="[20, 10]" itemSpacings="[20,15]" layoutDirection="vert" >
+                    
+                    <Label id="lblTitle" color="#EAE3C9" ellipsizeOnBoundary="true" width="267" horizAlign="left">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Bold.ttf" size="25" />
+                    </Label>
+
+                    <Label id="description" color="#EAE3C9" ellipsizeOnBoundary="true" width="380" wrap="true" numLines="2" horizAlign="left" lineSpacing = "-3">
+                        <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="20" />
+                    </Label>  
+                </LayoutGroup>
+
+                <Label id="leftDuration" color="#EAE3C9" ellipsizeOnBoundary="true" width="200" horizAlign="left" translation="[20, 130]" visible ="false"> 
+                    <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="25" />
+                </Label>
+
+                <Poster id="playIcon" translation="[340, 130]" width="40" height="40" uri="pkg:/images/c1.png" visible="false"/>
+
+            </Rectangle>
+
+            <Rectangle id="progressBar" visible="true" height="5" translation="[30,200]" color="#FF0000" />
+        </Group>
+    </children>
+</component>

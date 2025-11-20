@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.CategoryCompose
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
@@ -47,6 +48,8 @@ fun Setting(
     modifier: Modifier = Modifier,
     settingItemDto: SettingDto,
     onSwitchProfile: () -> Unit,
+    expandToFullHeight: Boolean = true,
+    centerSwitchProfile: Boolean = false,
 ) {
 
     var isSwitchFocused by rememberSaveable { mutableStateOf(false) }
@@ -62,7 +65,7 @@ fun Setting(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = if (expandToFullHeight) Modifier.fillMaxSize() else modifier.wrapContentSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
@@ -110,6 +113,7 @@ fun Setting(
 //            )
 
             CategoryCompose(modifier = Modifier
+                .fillMaxWidth(if (centerSwitchProfile) 1f else 0f)
                 .focusRequester(switchFocusRequester)
                 .onFocusChanged {
                     isSwitchFocused = it.hasFocus
@@ -218,4 +222,21 @@ fun Preferences(
     }
 
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview_Setting() {
+    Setting(
+        settingItemDto = SettingDto(
+            email = "user@example.com",
+            passwordTxt = "Last changed 2 months ago",
+            phoneNumber = "+1234567890",
+            language = "English",
+            autoPlay = "Play next episode automatically",
+            notification = "Get notified about new releases",
+            subtitles = "Show subtitles by default"
+        ),
+        onSwitchProfile = {}
+    )
 }

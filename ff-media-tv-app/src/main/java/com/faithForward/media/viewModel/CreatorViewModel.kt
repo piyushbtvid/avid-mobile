@@ -57,7 +57,7 @@ class CreatorViewModel
 
                 // Process category data
                 val creatorRow = if (creatorsData.isSuccessful) {
-                    creatorsData.body()?.data?.toCreatorCardDtoList()
+                    creatorsData.body()?.data?.toCreatorCardDtoList().orEmpty()
                 } else {
                     listOf()
                 }

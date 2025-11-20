@@ -1,0 +1,10 @@
+<component name="SeasonViewModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="name" type="String" />
+      <field id="seasonList" type="array" />
+
+  </interface>
+
+</component>

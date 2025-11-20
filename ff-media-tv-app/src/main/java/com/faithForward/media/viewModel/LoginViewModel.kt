@@ -38,6 +38,14 @@ class LoginViewModel @Inject constructor(
 
     private var refreshJob: Job? = null
 
+    private companion object {
+        // Minimum wait before next refresh check to avoid tight loops
+        const val MIN_DELAY_MS: Long = 30_000 // 30 seconds
+        // Maximum wait to keep periodic checks even if server sets a very distant expiry
+        const val MAX_DELAY_MS: Long = 12 * 60 * 60 * 1000 // 12 hours
+        // Refresh window threshold
+        const val REFRESH_THRESHOLD_SEC: Long = 3600 // 1 hour
+    }
 
     init {
         //doing is logged in and refresh token in this method on start of the app
@@ -135,8 +143,7 @@ class LoginViewModel @Inject constructor(
                     Log.e("CHECK_LOGIN", "Error: $combinedErrorMessage")
 
                     _loginState.update {
-                        it.copy(
-                            isLoading = false,
+                        it.copy(isLoading = false,
                             errorMessage = combinedErrorMessage.ifBlank { "User not found" })
                     }
                 }
@@ -169,7 +176,7 @@ class LoginViewModel @Inject constructor(
                 val currentTime = System.currentTimeMillis() / 1000 // in seconds
                 val timeLeft = expireTime - currentTime
                 // refreshing token for one time only for first time (if refresh not get success then will send isLogged as false)
-                if (timeLeft <= 3600) {
+                if (timeLeft <= REFRESH_THRESHOLD_SEC) {
                     val handleRefresh = handleRefresh(refreshToken!!)
                     // means refresh api is giving error (mostly refresh token expire error)
                     if (!handleRefresh) {
@@ -198,7 +205,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun checkRefreshToken() {
-        // Canceling any existing job
+        // Cancel any existing job
         cancelRefreshJob()
 
         refreshJob = viewModelScope.launch(Dispatchers.IO) {
@@ -213,15 +220,18 @@ class LoginViewModel @Inject constructor(
                     val currentTime = System.currentTimeMillis() / 1000 // in seconds
                     val timeLeft = expireTime - currentTime
 
-                    if (timeLeft <= 3600) {
+                    if (timeLeft <= REFRESH_THRESHOLD_SEC) {
                         // Immediate refresh
                         refreshToken?.let {
                             Log.e("REFRESH_TOKEN", "Refreshing now — time left: $timeLeft sec")
                             handleRefresh(it)
                         }
+                        // Always wait a minimum interval before the next loop iteration to avoid rapid retries
+                        delay(MIN_DELAY_MS)
                     } else {
-                        val delayTime = (timeLeft - 3600) * 1000L // milliseconds
-                        Log.e("REFRESH_TOKEN", "Delaying refresh for $delayTime ms")
+                        val rawDelayMs = (timeLeft - REFRESH_THRESHOLD_SEC) * 1000L
+                        val delayTime = rawDelayMs.coerceIn(MIN_DELAY_MS, MAX_DELAY_MS)
+                        Log.e("REFRESH_TOKEN", "Delaying refresh for $delayTime ms (raw=$rawDelayMs)")
                         delay(delayTime)
 
                         refreshToken?.let {
@@ -232,7 +242,8 @@ class LoginViewModel @Inject constructor(
                 } catch (ex: Exception) {
                     Log.e("REFRESH_TOKEN", "Exception in checkRefreshToken: ${ex.message}")
                     ex.printStackTrace()
-                    break // break the loop to avoid infinite failures
+                    // Wait a minimum interval before retrying to avoid tight failure loops
+                    delay(MIN_DELAY_MS)
                 }
             }
 
@@ -273,47 +284,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
-    fun updateUserSubscriptionDetails() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = networkRepository.getUserSubscriptionDetail()
-                if (response.isSuccessful) {
-                    Log.e(
-                        "CHECK_USER_SUBSCRIPTION",
-                        "check user subscription resonse when sucess is ${response.body()}"
-                    )
-                    val userUpdatedData = response.body()
-                    if (userUpdatedData?.data?.user != null) {
-                        Log.e(
-                            "CHECK_USER_SUBSCRIPTION",
-                            "check user subscription User New Data is not null so updating user Subscription locally"
-                        )
-                        val isUserDataSaved =
-                            networkRepository.updateUserInfo(userUpdatedData.data.user!!)
-                        if (isUserDataSaved) {
-                            Log.e(
-                                "CHECK_USER_SUBSCRIPTION",
-                                "check user subscription User New Data is Saved Sucess in Local"
-                            )
-                        } else {
-                            Log.e(
-                                "CHECK_USER_SUBSCRIPTION",
-                                "check user subscription User New Data is Not Saved Sucess in Local"
-                            )
-                        }
-                    }
-                } else {
-                    Log.e(
-                        "CHECK_USER_SUBSCRIPTION",
-                        "check user subscription resonse when error is ${response.message()}"
-                    )
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
 
     override fun onCleared() {
         super.onCleared()

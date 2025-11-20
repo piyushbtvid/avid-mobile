@@ -1,0 +1,21 @@
+<component name="HeroContent" extends="BaseWidget" >
+
+  <script type="text/brightscript" uri="pkg:/components/views/widgets/HeroContent/HeroContent.brs" />
+
+  <interface>
+
+    <field id="content" type="node" onChange="onContentChange" />
+  </interface>
+
+  <children>
+    <Rectangle color="#000000" width="1920" height="1080"/>
+    <FadingBackground id="heroBackgroundImage"
+       width="1250" height="703"  translation="[800,0]"
+       />
+    <Poster height ="1080" width ="1920" uri = "pkg:/images/bg_black_spotlight.png" />
+    <BannerInfo  id="bannerDetails"  />
+
+
+  </children>
+
+</component>

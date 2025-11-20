@@ -55,7 +55,7 @@ data class MyAccountUiState(
 
 fun ContentItem.toWatchSectionItem(): WatchSectionItemDto {
     val progress = progressSeconds ?: 0L
-    val totalDuration = duration?.toLong() ?: 0L
+    val totalDuration = duration?.toLongOrNull() ?: 0L
     val remaining = (totalDuration - progress).coerceAtLeast(0L)
 
 
@@ -74,7 +74,7 @@ fun ContentItem.toWatchSectionItem(): WatchSectionItemDto {
         }
     }
     return WatchSectionItemDto(
-        contentType = content_type ?: "",
+        contentType = contentType ?: "",
         id = id.toString(),
         contentSlug = slug ?: "",
         title = name ?: "",

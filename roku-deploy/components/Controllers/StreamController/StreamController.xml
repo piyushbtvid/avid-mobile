@@ -1,0 +1,39 @@
+<component name="StreamController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/StreamController/StreamController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+
+  <interface>
+    <field id="channels" type="node" />
+    <field id="currentChannel" type="integer" value="0" />
+    <field id="downNavEscape" type="boolean" alwaysNotify = "true" />
+  </interface>
+  
+  <children>
+    
+    <Video id="liveVideo" width="1920" height="1080" enableTrickPlay="false" enableUI="false" />
+
+    <Group id= "liveDataGrp">
+      <Poster uri="pkg:/images/gradientColor.png" height ="1080" width="1920" loadSync="true" />
+      <Label id="streamTitle" horizAlign="left" width="800" color="#EAE3C9" translation="[130,190]">
+        <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="30" />
+      </Label>
+     <MarkupGrid
+        id="channelList"
+        itemSize="[269,420]"
+        focusBitmapBlendColor="#B87333"
+        itemComponentName="FeedListTile"
+        inheritParentOpacity="false"
+        itemSpacing="[20, 30]"
+        numColumns="6"
+        numRows="500"
+        drawFocusFeedback = "false"
+        vertFocusAnimationStyle="fixedFocus"
+        translation="[130,220]"/>
+    </Group>  
+    <Timer id ="epgTimer" repeat="true" duration="10"/>
+  </children>
+</component>

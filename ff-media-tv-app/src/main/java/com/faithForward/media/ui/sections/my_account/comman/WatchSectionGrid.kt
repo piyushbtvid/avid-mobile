@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.util.CustomGridCells
 import com.faithForward.media.util.CustomLazyGrid
 import com.faithForward.media.util.FocusState
 
@@ -37,7 +38,7 @@ fun WatchSectionGrid(
         modifier = modifier
             .fillMaxSize(),
         items = watchSectionItemDtoList,
-        columns = 3,
+        columns = CustomGridCells.Adaptive(minSize = 180.dp),
 //        verticalSpacing = 45.dp,
 //        horizontalSpacing = 30.dp,
 //        rowContentPadding = PaddingValues(horizontal = 16.dp),

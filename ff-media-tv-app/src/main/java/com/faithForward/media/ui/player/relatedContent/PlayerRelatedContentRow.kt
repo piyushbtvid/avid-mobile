@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.TitleText
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 
 data class PlayerRelatedContentRowDto(
     val title: String,
@@ -56,6 +57,7 @@ fun PlayerRelatedContentRow(
     playerRelatedContentRowDto: PlayerRelatedContentRowDto,
 ) {
 
+    val isTv = rememberIsTvDevice()
     var contentRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     val itemFocusRequesters =
         remember { List(playerRelatedContentRowDto.rowList.size) { FocusRequester() } }
@@ -83,42 +85,40 @@ fun PlayerRelatedContentRow(
                         else -> FocusState.UNFOCUSED
                     }
 
-                    RelatedContentItem(modifier = Modifier
-                        .focusRequester(itemFocusRequesters[index])
-                        .onFocusChanged {
-                            if (it.hasFocus) {
-//                                onItemFocused(Pair(rowIndex, index))
-                                contentRowFocusedIndex = index
-                                //  onChangeContentRowFocusedIndex.invoke(index)
-                                //  playListItemFocusedIndex = index
-                                //onBackgroundChange.invoke(playlistItem.landscape ?: "")
-                            } else {
-                                if (contentRowFocusedIndex == index) {
-                                    contentRowFocusedIndex = -1
-                                    //  onChangeContentRowFocusedIndex.invoke(index)
-                                    // playListItemFocusedIndex = -1
+                    RelatedContentItem(modifier = if (isTv) {
+                        Modifier
+                            .focusRequester(itemFocusRequesters[index])
+                            .onFocusChanged {
+                                if (it.hasFocus) {
+                                    contentRowFocusedIndex = index
+                                } else {
+                                    if (contentRowFocusedIndex == index) {
+                                        contentRowFocusedIndex = -1
+                                    }
                                 }
                             }
-                        }
-                        .onKeyEvent { keyEvent ->
-                            if (keyEvent.type == KeyEventType.KeyDown &&
-                                (keyEvent.key == Key.DirectionUp || keyEvent.key == Key.DirectionDown)
-                            ) {
-
-                                Log.e("ON_UP", "on up in related row item")
-                                onUp.invoke()
-                            } else if (index == 0 && keyEvent.key == Key.DirectionLeft) {
-                                true
-                            } else if (index == rowList.size - 1 && keyEvent.key == Key.DirectionRight)
-                                true
-                            else {
-                                false
+                            .onKeyEvent { keyEvent ->
+                                if (keyEvent.type == KeyEventType.KeyDown &&
+                                    (keyEvent.key == Key.DirectionUp || keyEvent.key == Key.DirectionDown)
+                                ) {
+                                    Log.e("ON_UP", "on up in related row item")
+                                    onUp.invoke()
+                                } else if (index == 0 && keyEvent.key == Key.DirectionLeft) {
+                                    true
+                                } else if (index == rowList.size - 1 && keyEvent.key == Key.DirectionRight)
+                                    true
+                                else {
+                                    false
+                                }
                             }
-                        }
-                        .focusable(),
+                            .focusable()
+                    } else {
+                        Modifier // No focus handling on mobile
+                    },
                         focusState = uiState,
                         relatedContentItemDto = item,
                         onItemClick = {
+                            android.util.Log.e("PlayerRelatedContentRow", "Item clicked: ${item.title}, contentType: ${item.contentType}")
                             if (item.contentType == "Series" || item.contentType == "Episode") {
                                 onItemClick.invoke(null, rowList, index)
                             } else {
@@ -134,11 +134,13 @@ fun PlayerRelatedContentRow(
         }
 
         LaunchedEffect(Unit) {
-            try {
-                Log.e("PLAYER_RELATED", "player related content request focus called")
-                itemFocusRequesters[0].requestFocus()
-            } catch (ex: Exception) {
-                Log.e("nnn", "${ex.message}")
+            if (isTv) {
+                try {
+                    Log.e("PLAYER_RELATED", "player related content request focus called")
+                    itemFocusRequesters[0].requestFocus()
+                } catch (ex: Exception) {
+                    Log.e("nnn", "${ex.message}")
+                }
             }
         }
 

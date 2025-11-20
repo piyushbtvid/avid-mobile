@@ -1,0 +1,31 @@
+<component name="cardItemComponent" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/cardItemComponent.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+    </interface>
+
+    <children>
+
+      <Group id="scaledElements">
+
+        <Rectangle
+              id= "backRect"
+              color = "#3c3c3c"/>
+
+          <Poster id="background"   loadDisplayMode ="limitSize" />
+
+          <Rectangle id = "totalDurationBar" visible = "false" height = "8" translation = "[0,234]" color = "#FFFFFF99" />
+          <Rectangle id = "progressBar" visible = "false" height = "8" translation = "[0,234]" color = "#FF0000" />
+
+      </Group>
+
+    </children>
+</component>

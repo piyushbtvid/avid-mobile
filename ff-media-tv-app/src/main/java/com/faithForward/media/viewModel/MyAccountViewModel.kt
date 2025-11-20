@@ -69,8 +69,7 @@ class MyAccountViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            continueWatchSections = newSection,
-                            myListWatchSections = null
+                            continueWatchSections = newSection
                         )
                     }
                 } else {
@@ -93,11 +92,16 @@ class MyAccountViewModel @Inject constructor(
 
                     val dataList = myListResponse.body()?.data
 
-                    val watchSectionList = dataList?.flatMap { section ->
-                        section.content.map { result ->
-                            result.toWatchSectionItem()
+                    val watchSectionList = dataList
+                        ?.flatMap { section ->
+                            section.content
+                                ?.filterNotNull()
+                                ?.map { result -> result.toWatchSectionItem() }
+                                ?: emptyList()
                         }
-                    }
+                        ?: emptyList()
+
+                    Log.e("MY_ACCOUNT", "MyList items loaded: ${watchSectionList.size}")
 
                     val newSection = WatchSectionUiModel(
                         title = "My List",
@@ -106,8 +110,7 @@ class MyAccountViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            myListWatchSections = newSection,
-                            continueWatchSections = null
+                            myListWatchSections = newSection
                         )
                     }
 

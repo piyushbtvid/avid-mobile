@@ -1,0 +1,57 @@
+<component name="GuideController" extends="BaseController">
+
+  <script type="text/brightscript" uri="pkg:/components/Controllers/GuideController/GuideController.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/TVService.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Services/APIProvider.brs" />
+  <script type="text/brightscript" uri="pkg:/components/Utils/LocalStorage.brs" />
+
+
+  <interface>
+    <field id="channels" type="node" />
+    <field id="currentChannel" type="integer" value="0" />
+  </interface>
+  
+  <children>
+    <Rectangle id = "background" width="1920" height="1080" color="#1B1B1B"/>
+    <Poster id="upArrow" uri="pkg:/images/uparrow.png" loadSync="true" />
+
+      <LayoutGroup id="timeIndicators" layoutDirection="vert" translation="[135,170]" horizAlignment= "left" itemSpacings= "[20]">
+        <Label id="title" width="600"  color="#FFFFFF" >
+          <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="40"/>
+        </Label>
+        <Label id="description" width="600" lineSpacing = "-1" wrap="true" numLines="4" color="#FFFFFF" >
+          <Font role="font" uri="pkg:/images/font/Montserrat-Regular.ttf" size="20"/>
+        </Label>
+      </LayoutGroup>
+
+        <RowList
+          id="categoryList"
+          itemComponentName="ButtonListItem"
+          itemSize="[1920,80]"
+          showRowLabel="[false]"
+          itemSpacing="[0, 20]"
+          rowItemSpacing="[[10,0]]"
+          numRows="1"
+          showRowCounter="[false]"
+          rowItemSize="[[369,65]]"
+          variableWidthItems = "[true]"
+          drawFocusFeedback = "false"
+          rowFocusAnimationStyle="fixedFocus"
+          translation="[135, 590]"
+        />
+
+     <TimeGrid 
+        id="channelList" 
+        translation="[135, 740]" 
+        channelInfoComponentName="TimeGridChannelItemComponent" 
+        vertFocusAnimationStyle="fixedFocus"
+        numRows="10"
+        itemSize="[1820, 150]"
+        itemSpacing="[10, 10]"
+        visible="false"
+      />
+
+      <Video id="liveVideo" width="735" height="413" translation= "[1100, 156]" visible="false"/>
+    
+  </children>
+</component>

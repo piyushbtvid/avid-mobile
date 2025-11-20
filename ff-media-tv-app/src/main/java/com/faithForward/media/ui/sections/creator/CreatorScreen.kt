@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,9 +31,9 @@ fun CreatorScreen(
 ) {
 
 
-//    LaunchedEffect(Unit) {
-//        creatorViewModel.fetchCreatorData(1)
-//    }
+    LaunchedEffect(Unit) {
+        creatorViewModel.fetchCreatorData(1)
+    }
 
     val creatorPageItemsResource by creatorViewModel.creatorPageData.collectAsStateWithLifecycle()
 

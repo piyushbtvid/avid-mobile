@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,8 @@ import com.faithForward.media.ui.theme.selectedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.titleTextStyle
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
+import com.faithForward.media.util.Util.isTvDevice
 
 @Composable
 fun ContentMetaBlock(
@@ -56,6 +59,8 @@ fun ContentMetaBlock(
     dislikeUiState: FocusState = FocusState.UNDEFINED,
     contentRowTint: Color = Color.White,
 ) {
+    val isTv = rememberIsTvDevice()
+    
     LaunchedEffect(addToWatchListUiState) {
         Log.e(
             "UTIL",
@@ -101,7 +106,7 @@ fun ContentMetaBlock(
                         .width(400.dp),
                     text = title,
                     textStyle = titleTextStyle,
-                    maxLines = 1,
+                    maxLines = if (LocalContext.current.isTvDevice()) 2 else 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(9.dp))
@@ -131,8 +136,11 @@ fun ContentMetaBlock(
                             painter = painterResource(if (isFavourite) R.drawable.subtract else R.drawable.vector),
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(
-                                if (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) textFocusedMainColor
-                                else contentRowTint
+                                when {
+                                    isFavourite -> selectedMainColor
+                                    isTv && (addToWatchListUiState == FocusState.FOCUSED || addToWatchListUiState == FocusState.SELECTED) -> textFocusedMainColor
+                                    else -> contentRowTint
+                                }
                             )
                         )
                     }
@@ -143,7 +151,7 @@ fun ContentMetaBlock(
                         colorFilter = ColorFilter.tint(
                             when {
                                 isLiked -> selectedMainColor
-                                likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED -> textFocusedMainColor
+                                isTv && (likeUiState == FocusState.FOCUSED || likeUiState == FocusState.SELECTED) -> textFocusedMainColor
                                 else -> contentRowTint
                             }
                         )
@@ -155,7 +163,7 @@ fun ContentMetaBlock(
                         colorFilter = ColorFilter.tint(
                             when {
                                 isUnLiked -> selectedMainColor
-                                dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED -> textFocusedMainColor
+                                isTv && (dislikeUiState == FocusState.FOCUSED || dislikeUiState == FocusState.SELECTED) -> textFocusedMainColor
                                 else -> contentRowTint
                             }
                         )

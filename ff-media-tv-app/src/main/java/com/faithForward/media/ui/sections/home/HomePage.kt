@@ -20,6 +20,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.faithForward.media.util.Util.isTvDevice
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.navigation.Routes
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
@@ -61,7 +62,10 @@ fun HomePage(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 Log.e("SIDE_BAR", "home page compose on resume is called")
-                changeSideBarSelectedPosition.invoke(1)
+                // For TV devices, Home is at index 1 (after Search)
+                // For mobile devices, Home is at index 0 (Search is removed)
+                val homeIndex = if (context.isTvDevice()) 1 else 0
+                changeSideBarSelectedPosition.invoke(homeIndex)
             }
         }
 
@@ -124,7 +128,10 @@ fun HomePage(
                 "ON_BACK",
                 "on back in home called with side Bar focused index ${sideBarState.sideBarFocusedIndex}"
             )
-            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(1))
+            // For TV devices, Home is at index 1 (after Search)
+            // For mobile devices, Home is at index 0 (Search is removed)
+            val homeIndex = if (context.isTvDevice()) 1 else 0
+            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(homeIndex))
         }
     }
 

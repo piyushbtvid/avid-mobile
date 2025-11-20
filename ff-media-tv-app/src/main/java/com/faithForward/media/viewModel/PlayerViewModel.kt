@@ -41,12 +41,6 @@ class PlayerViewModel @Inject constructor(
     private var relatedAutoDismissJob: Job? = null
     private var topBarAutoDismissJob: Job? = null
 
-    private val _userType = MutableStateFlow<String?>(null)
-    val userType: StateFlow<String?> = _userType
-
-    init {
-        getCurrentUserInfo()
-    }
 
     fun handleEvent(event: PlayerEvent) {
         when (event) {
@@ -237,7 +231,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = emptyList()
                                 ),
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = true
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 } else if (hasUrl && hasRelated && isMovie && itemList.size <= 1) {
                     val relatedContentItemDtoList =
@@ -253,7 +247,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentItemDtoList
                                 ),
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = false
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
 
                 }
@@ -275,7 +269,7 @@ class PlayerViewModel @Inject constructor(
                                     rowList = relatedContentItemDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = false
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 }
                 // For movies from related Movie
@@ -312,7 +306,7 @@ class PlayerViewModel @Inject constructor(
                                     title = "Next Up...", rowList = relatedContentRowDtoList
                                 )
                             )
-                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title , isTrailerPlaying = false
+                        ), isLoading = false, videoPlayingIndex = index, currentTitle = title
                     )
                 }
                 //is from continue watching and is a Series episode
@@ -322,7 +316,7 @@ class PlayerViewModel @Inject constructor(
 
                     val cardDetail = response.body() ?: return@launch
 
-                    if (cardDetail.data.content_type == "Series") {
+                    if (cardDetail.data.contentType == "Series") {
                         val seasons = cardDetail.data.seasons
                         val continueWatchingEpisodeSlug = firstItem.slug
 
@@ -396,8 +390,7 @@ class PlayerViewModel @Inject constructor(
                                 ),
                                 isLoading = false,
                                 videoPlayingIndex = resumeIndex,
-                                currentTitle = title,
-                                isTrailerPlaying = false
+                                currentTitle = title
                             )
                         }
                     }
@@ -453,10 +446,6 @@ class PlayerViewModel @Inject constructor(
                     Log.e("CONTINUE_WATCHING", "response success with exception ${ex.message}")
                 }
             }
-        } else {
-            if (shouldNaviagte) {
-                handleEvent(PlayerEvent.OnContinueWatchingUpdate)
-            }
         }
     }
 
@@ -480,16 +469,6 @@ class PlayerViewModel @Inject constructor(
                 it.copy(
                     isUniversalTopBarVisible = false,
                 )
-            }
-        }
-    }
-
-    private fun getCurrentUserInfo() {
-        viewModelScope.launch {
-            val response = networkRepository.getCurrentSession()
-            response?.season?.user?.user_type?.let {
-                Log.e("USER_TYPE", "user type in PlayerViewModel checkVideo is $it")
-                _userType.value = it
             }
         }
     }

@@ -1,0 +1,12 @@
+<component name="PlayNextViewModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="title" type="String" />
+      <field id="videoTitle" type="String" />
+      <field id="duration" type="String" />
+      <field id="uri" type="String" />
+
+  </interface>
+
+</component>

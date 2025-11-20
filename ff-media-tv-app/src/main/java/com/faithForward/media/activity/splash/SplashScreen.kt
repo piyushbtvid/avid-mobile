@@ -15,7 +15,7 @@ fun SplashScreen(modifier: Modifier = Modifier) {
     Box(modifier = Modifier.fillMaxSize()) {
 
         Image(
-            painter = painterResource(R.drawable.new_splash_img),
+            painter = painterResource(R.drawable.splash_background_img),
             contentDescription = "splash screen"
         )
 

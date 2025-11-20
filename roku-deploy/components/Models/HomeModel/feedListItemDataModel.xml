@@ -1,0 +1,45 @@
+<component name="feedListItemDataModel" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/feedListItemDataModel.brs" />
+
+  <interface>
+      <field id="type" type="String" />
+      <field id="episode_no" type="int" />
+      <field id="access" type="String" />
+      <field id="content_type" type="String" />
+      <field id="id" type="Integer" />
+      <field id="row_type" type="string" />
+      <field id="title" type="string" />
+      <field id="slug" type="string" />
+      <field id="series_slug" type="string" />
+      <field id="description" type="string" />
+      <field id="thumbnail_image" type="string" />
+      <field id="poster_image" type="string" />
+      <field id="rating" type="string" />
+      <field id="order_index" type="string" />
+      <field id="release_date" type="integer" />
+      <field id="duration" type="string" />
+      <field id="video_type" type="string" />
+      <field id="video_link" type="string" />
+      <field id="seasonid" type="string" />
+      <field id="download_enable" type="string" />
+      <field id="genre" type="array" />
+      <field id="subtitle_on_off" type="integer" />
+      <field id="subtitle_language1" type="string" />
+      <field id="subtitle_url1" type="string" />
+      <field id="subtitle_language2" type="string" />
+      <field id="subtitle_url2" type="string" />
+      <field id="views" type="string" />
+      <field id="progress_seconds" type="integer" />
+      <field id="creator" type="assocArray" />
+      <field id="dateUploaded" type="string" />  
+      <field id="uploadedYear" type="string" />
+      <field id="searchText" type="string" /> 	
+	    <field id="spaceIcon" type="string" /> 
+      <field id="channel_name" type="string" />
+      <field id="profileImg" type="string" />
+      <field id="channel_subscribers" type="string" />
+      
+      <!-- <field id="seasons" type="array" /> -->
+  </interface>
+</component>

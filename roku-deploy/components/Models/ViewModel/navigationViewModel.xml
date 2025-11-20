@@ -1,0 +1,13 @@
+<component name="navigationViewModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="title" type="String" />
+      <field id="sectionId" type="String" />
+      <field id="icon" type="String" />
+      <field id="type" type="String" />
+      <field id="mediaInfo" type="assocArray" />
+
+  </interface>
+
+</component>

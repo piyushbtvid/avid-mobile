@@ -9,7 +9,6 @@ import com.faithForward.media.ui.sections.common_ui.category.CategoryRowDto
 import com.faithForward.media.ui.sections.common_ui.content.PosterRowDto
 import com.faithForward.media.ui.sections.creator.card.CreatorCardDto
 import com.faithForward.media.util.formatDuration
-import com.faithForward.network.dto.CategoryResponse
 import com.faithForward.network.dto.ContentItem
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
@@ -24,13 +23,6 @@ sealed interface HomePageItem {
     data class CreatorGrid(val dto: List<CreatorCardDto>) : HomePageItem
 }
 
-
-fun CategoryResponse.toCategoryRow(): HomePageItem.CategoryRow {
-    val categoryDtos = data.map {
-        CategoryComposeDto(it.name, id = it.id.toString())
-    }
-    return HomePageItem.CategoryRow(dto = CategoryRowDto(categoryDtos))
-}
 
 fun List<UserData>.toCreatorCardDtoList(): List<CreatorCardDto> {
     return this.map { user ->
@@ -53,11 +45,21 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     var carouselAdded = false
     var carouselSectionIndex: Int? = null
 
-    val category = sections?.genres?.mapIndexed { index, genre ->
-        CategoryComposeDto(genre.name ?: "", id = genre.id.toString() ?: "")
-    }
-    if (category != null) {
-        homePageItems.add(HomePageItem.CategoryRow(CategoryRowDto(category)))
+    val pillCategories = sections?.pillCategories?.mapNotNull { category ->
+        category.name?.takeIf { it.isNotBlank() }?.let {
+            CategoryComposeDto(it, id = category.id?.toString().orEmpty())
+        }
+    }?.takeIf { it.isNotEmpty() }
+
+    val genreCategories = sections?.genres?.mapNotNull { genre ->
+        genre.name?.takeIf { it.isNotBlank() }?.let {
+            CategoryComposeDto(it, id = genre.id?.toString().orEmpty())
+        }
+    }?.takeIf { it.isNotEmpty() }
+
+    val categoryRowItems = pillCategories ?: genreCategories
+    if (categoryRowItems != null) {
+        homePageItems.add(HomePageItem.CategoryRow(CategoryRowDto(categoryRowItems)))
     }
     // Find the first section with a non-null/non-empty first item for carousel
     sections?.sections?.forEachIndexed { index, section ->
@@ -189,7 +191,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
     val myList = MyFavList.myFavList
     val disLikeList = MyFavList.disLikedList
 
-    Log.e("CAROUSEL_CONTENT", "content type in Carsouel is $content_type")
+    Log.e("CAROUSEL_CONTENT", "content type in Carsouel is $contentType")
 
 // check based on .content (flattening the nested list)
     val isFavourite = myList?.flatMap { it.content }?.any {
@@ -216,7 +218,7 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
         isLiked = isLiked,
         isDisliked = isDisliked,
         isFavourite = isFavourite,
-        contentType = content_type,
+        contentType = contentType,
         seriesSlug = seriesSlug
     )
 
@@ -226,23 +228,22 @@ fun ContentItem.toCarouselItemDto(): CarouselItemDto {
 fun ContentItem.toPosterCardDto(): PosterCardDto =
     PosterCardDto(
         posterImageSrc = portrait ?: landscape ?: "",
-        id = id.toString() ?: "",
+        id = id?.toString().orEmpty(),
         title = name ?: "",
         description = description ?: "",
         genre = genres?.mapNotNull { it.name }  // safely extract non-null names
             ?.joinToString(", "),
         seasons = seasons?.size,
-        duration = duration?.let { formatDuration(it.toLong()) } ?: "",
+        duration = duration?.toLongOrNull()?.let { formatDuration(it) } ?: "",
         imdbRating = rating,
         releaseDate = dateUploaded,
-        videoHlsUrl = video_link,
+        videoHlsUrl = videoLink,
         slug = slug,
         seriesSlug = seriesSlug,
         progress = progressSeconds,
-        contentType = content_type,
+        contentType = contentType,
         uploadYear = uploadedYear,
-        landScapeImg = landscape ?: "",
-        access = access
+        landScapeImg = landscape ?: ""
     )
 
 fun CreatorCardDto.toCarouselItemDto(): CarouselItemDto {

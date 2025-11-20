@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.R
 import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.textFocusedMainColor
+import com.faithForward.media.util.Util.isTvDevice
 
 @Composable
 fun TopMenu(modifier: Modifier = Modifier) {
@@ -27,69 +29,71 @@ fun TopMenu(modifier: Modifier = Modifier) {
     var isMicFocused by rememberSaveable { mutableStateOf(false) }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
 
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RoundedIconButton(
-            modifier = Modifier
-                .onFocusChanged {
-                    isMicFocused = it.hasFocus
-                }
-                .then(
-                    if (isMicFocused) {
-                        Modifier
-                            .shadow(
-                                color = Color.White.copy(alpha = .11f),
-                                borderRadius = 40.dp,
-                                blurRadius = 7.dp,
-                                spread = 5.dp,
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = textFocusedMainColor,
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                    } else Modifier
-                ),
-            imageId = R.drawable.microphone_ic,
-            iconHeight = 15,
-            boxSize = 43,
-            iconWidth = 15,
-            backgroundColor = Color.White.copy(alpha = .75f)
-        )
+    if (LocalContext.current.isTvDevice()) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RoundedIconButton(
+                modifier = Modifier
+                    .onFocusChanged {
+                        isMicFocused = it.hasFocus
+                    }
+                    .then(
+                        if (isMicFocused) {
+                            Modifier
+                                .shadow(
+                                    color = Color.White.copy(alpha = .11f),
+                                    borderRadius = 40.dp,
+                                    blurRadius = 7.dp,
+                                    spread = 5.dp,
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = textFocusedMainColor,
+                                    shape = RoundedCornerShape(40.dp)
+                                )
+                        } else Modifier
+                    ),
+                imageId = R.drawable.microphone_ic,
+                iconHeight = 15,
+                boxSize = 43,
+                iconWidth = 15,
+                backgroundColor = Color.White.copy(alpha = .75f)
+            )
 
-        Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-        RoundedIconButton(
-            modifier = Modifier
-                .onFocusChanged {
-                    isSearchFocused = it.hasFocus
-                }
-                .then(
-                    if (isSearchFocused) {
-                        Modifier
-                            .shadow(
-                                color = Color.White.copy(alpha = .11f),
-                                borderRadius = 40.dp,
-                                blurRadius = 7.dp,
-                                spread = 5.dp,
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = textFocusedMainColor,
-                                shape = RoundedCornerShape(40.dp)
-                            )
-                    } else Modifier
-                ),
-            imageId = R.drawable.search_ic,
-            iconHeight = 15,
-            boxSize = 43,
-            iconWidth = 15,
-            backgroundColor = Color.White.copy(alpha = .75f)
-        )
+            RoundedIconButton(
+                modifier = Modifier
+                    .onFocusChanged {
+                        isSearchFocused = it.hasFocus
+                    }
+                    .then(
+                        if (isSearchFocused) {
+                            Modifier
+                                .shadow(
+                                    color = Color.White.copy(alpha = .11f),
+                                    borderRadius = 40.dp,
+                                    blurRadius = 7.dp,
+                                    spread = 5.dp,
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = textFocusedMainColor,
+                                    shape = RoundedCornerShape(40.dp)
+                                )
+                        } else Modifier
+                    ),
+                imageId = R.drawable.search_ic,
+                iconHeight = 15,
+                boxSize = 43,
+                iconWidth = 15,
+                backgroundColor = Color.White.copy(alpha = .75f)
+            )
 
+        }
     }
 }
 

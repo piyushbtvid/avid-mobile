@@ -40,6 +40,7 @@ import com.faithForward.media.util.extensions.shadow
 import com.faithForward.media.ui.theme.posterCardShadowColor
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -64,7 +65,6 @@ data class PosterCardDto(
     val seasonNumber: Int? = null,
     val uploadYear: String? = null,
     val relatedList: List<PosterCardDto>? = null,
-    var access: String? = null
 )
 
 @Composable
@@ -78,16 +78,21 @@ fun PosterCard(
     @DrawableRes placeholderRes: Int = R.drawable.test_poster, // Your drawable
 ) {
 
+    val isTv = rememberIsTvDevice()
     val scale by animateFloatAsState(
-        targetValue = when (focusState) {
-            FocusState.SELECTED, FocusState.FOCUSED -> 1.12f
+        targetValue = when {
+            isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1.12f
             else -> 1f
         }, animationSpec = tween(300), label = ""
     )
+    
+    // Define dimensions once to avoid repetition
+    val cardWidth = if (isTv) 135.dp else 102.dp
+    val cardHeight = if (isTv) 210.dp else 160.dp
 
     // changed card shadow to transprent due to black background
     val posterModifier =
-        if (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED) {
+        if (isTv && (focusState == FocusState.FOCUSED || focusState == FocusState.SELECTED)) {
             modifier.shadow(
                 color = Color.Transparent,  //cardShadowColor
                 borderRadius = 23.dp,
@@ -103,15 +108,15 @@ fun PosterCard(
 
 
     Column(modifier = posterModifier
-        .width(135.dp)
+        .width(cardWidth)
         .graphicsLayer {
             scaleX = scale
             scaleY = scale
             transformOrigin = TransformOrigin(0f, 0.5f) // X-center, Y-top
         }
         .zIndex(
-            when (focusState) {
-                FocusState.SELECTED, FocusState.FOCUSED -> 1f
+            when {
+                isTv && (focusState == FocusState.SELECTED || focusState == FocusState.FOCUSED) -> 1f
                 else -> 0f
             }
         ), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -127,8 +132,9 @@ fun PosterCard(
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(210.dp)
-                .clip(RoundedCornerShape(5.dp))
+                .width(cardWidth)
+                .height(cardHeight)
+                .clip(RoundedCornerShape(if(isTv) 5.dp else 3.dp))
                 .clickable(interactionSource = null, indication = null, onClick = {
                     onItemClick.invoke(posterCardDto)
                 })
@@ -138,8 +144,7 @@ fun PosterCard(
         if (showContent) {
             Column(
                 modifier = Modifier
-                    .width(135.dp)
-                    .padding(top = 10.dp)
+                    .width(cardWidth)
             ) {
                 TitleText(
                     text = posterCardDto.title,

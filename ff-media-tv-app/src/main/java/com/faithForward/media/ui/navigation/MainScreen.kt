@@ -21,17 +21,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.faithForward.media.ui.navigation.bar.AppNavigationBar
+import com.faithForward.media.ui.navigation.bottombar.BottomNavBar
 import com.faithForward.media.ui.navigation.sidebar.SideBar
 import com.faithForward.media.ui.navigation.sidebar.SideBarEvent
 import com.faithForward.media.ui.theme.pageBlackBackgroundColor
-import com.faithForward.media.viewModel.ConfigViewModel
+import com.faithForward.media.util.Util.isTvDevice
 import com.faithForward.media.viewModel.LoginViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
-import com.faithForward.preferences.ConfigManager
 
 @Composable
 fun MainScreen(
@@ -41,15 +43,33 @@ fun MainScreen(
     startRoute: String,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    configViewModel: ConfigViewModel = hiltViewModel(),
 ) {
     val sideBarItems = sideBarViewModel.sideBarItems
     val sideBarState by sideBarViewModel.sideBarState
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val isTv = LocalContext.current.isTvDevice()
 
-    val showSidebar = currentRoute in sidebarVisibleRoutes
+    // Delay showing sidebar when navigating from AllProfile to Home to prevent LayoutNode attachment issues
+    // On mobile, need longer delay due to different rendering behavior
+    var shouldShowSidebar by remember { mutableStateOf(false) }
+    val routeInSidebarList = currentRoute in sidebarVisibleRoutes
+    
+    LaunchedEffect(currentRoute) {
+        if (routeInSidebarList) {
+            // Longer delay on mobile to ensure navigation transition and composition complete
+            // Mobile needs more time due to different rendering pipeline
+            if (isTv){
+                shouldShowSidebar = true
+            }
+        } else {
+            // Hide immediately when route changes away from sidebar routes
+            shouldShowSidebar = false
+        }
+    }
+    
+    val showSidebar = shouldShowSidebar && routeInSidebarList
 
     var showExitDialog by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -64,11 +84,7 @@ fun MainScreen(
             Log.e("LOGOUT_COLLECT", "on logout event recived in main screen ")
             showLogoutDialog = false
             loginViewModel.cancelRefreshJob()
-            val configData = ConfigManager.getConfigData()
-            val isQrLoginEnabled = configData?.enable_qrlogin == true
-            val destination = if (isQrLoginEnabled) Routes.LoginQr.route else Routes.Login.route
-
-            navController.navigate(destination) {
+            navController.navigate(Routes.LoginQr.route) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
@@ -98,101 +114,41 @@ fun MainScreen(
             sharedPlayerViewModel = playerViewModel,
             loginViewModel = loginViewModel,
             onBackClickForExit = {
-                showExitDialog = true
-            }
-        )
-
-        AnimatedVisibility(
-            visible = showSidebar, enter = slideInHorizontally(
-                initialOffsetX = { -it }, animationSpec = tween(
-                    durationMillis = 1500, easing = FastOutSlowInEasing
-                )
-            ) + fadeIn(
-                animationSpec = tween(durationMillis = 300)
-            ), exit = slideOutHorizontally(
-                targetOffsetX = { -it }, animationSpec = tween(
-                    durationMillis = 1000, easing = FastOutSlowInEasing
-                )
-            ) + fadeOut(
-                animationSpec = tween(durationMillis = 300)
-            )
-        ) {
-            SideBar(
-                columnList = sideBarItems,
-                modifier = Modifier.align(Alignment.TopStart),
-                isSideBarFocusable = sideBarState.isSideBarFocusable,
-                sideBarSelectedPosition = sideBarState.sideBarSelectedPosition,
-                sideBarFocusedIndex = sideBarState.sideBarFocusedIndex,
-                onSideBarItemClick = { item ->
-                    Log.e("SIDE_BAR", "side bar item is $item")
-                    when (item.tag) {
-                        Routes.Creator.route -> {
-                            navController.navigate(Routes.Creator.route) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
+                if (!isTv) {
+                    // Mobile: pop back to Home if present; otherwise navigate to Home. Exit if already on Home.
+                    val destRoute = navController.currentDestination?.route
+                    if (destRoute == Routes.Home.route) {
+                        showExitDialog = true
+                    } else {
+                        val popped = try {
+                            navController.popBackStack(Routes.Home.route, inclusive = false)
+                        } catch (t: Throwable) {
+                            false
                         }
-
-                        Routes.Home.route -> {
+                        if (!popped) {
+                            // Replace current destination with Home to avoid a two-back sequence
                             navController.navigate(Routes.Home.route) {
-                                popUpTo(Routes.Home.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-
-                        Routes.Movies.route -> {
-                            navController.navigate(Routes.Movies.createRoute("movies")) {
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
+                                restoreState = true
                             }
-                        }
-
-                        Routes.MyList.route -> {
-                            navController.navigate(Routes.MyList.route) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-
-                        Routes.Series.route -> {
-                            navController.navigate(Routes.Series.createRoute("series")) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-
-                        Routes.Search.route -> {
-                            navController.navigate(Routes.Search.route) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-
-                        Routes.MyAccount.route -> {
-                            Log.e("SIDE_BAR_ITEM", "on side bar my account ")
-
-                            //making side bar unFocusable when opening my Account due to side bar being opened when my account is opened
-
-                            sideBarViewModel.onEvent(SideBarEvent.ChangeFocusState(false))
-                            navController.navigate(Routes.MyAccount.route) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-
-                        "log_out" -> {
-                            showLogoutDialog = true
                         }
                     }
-                },
-                onSideBarSelectedPositionChange = { index ->
-                    sideBarViewModel.onEvent(SideBarEvent.ChangeSelectedIndex(index))
-                },
-                onSideBarFocusedIndexChange = { index ->
-                    sideBarViewModel.onEvent(SideBarEvent.ChangeFocusedIndex(index))
-                })
-        }
-
+                } else {
+                    // TV behavior unchanged: always show exit dialog on back from a root tab
+                    showExitDialog = true
+                }
+            },
+            onLogoutRequest = { showLogoutDialog = true }
+        )
+        AppNavigationBar(
+            navController = navController,
+            sideBarViewModel = sideBarViewModel,
+            sideBarItems = sideBarItems,
+            sideBarState = sideBarState,
+            onLogoutRequest = { showLogoutDialog = true },
+            showSidebar = showSidebar
+        )
         ExitDialog(
             showDialog = showExitDialog,
             onDismiss = {

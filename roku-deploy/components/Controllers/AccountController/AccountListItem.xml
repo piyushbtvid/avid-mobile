@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component name="AccountsListItem" extends="ContentNode">
+
+  <children>
+    <ContentNode title="   Continue Watching" id="continueWatching" />
+    <ContentNode title="   Favourites" id="favourites" />
+    <ContentNode title="   Account" id="account" />
+    <ContentNode title="   About us" id="about" />
+    <ContentNode title="   Terms of use" id="termsOfUse" />
+    <ContentNode title="   Privacy Policy" id="privacyPolicy" />
+    <ContentNode title="   FAQ" id="faq" />
+    <ContentNode title="   Contact us" id="contactUs" />
+  </children>
+
+</component>

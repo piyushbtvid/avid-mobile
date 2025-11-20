@@ -1,0 +1,30 @@
+<component name="FeedListTile" extends="BaseWidget">
+    <script type="text/brightscript" uri="pkg:/components/views/rows/FeedListTile.brs" />
+
+
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChanged" />
+        <field id="width" type="float" onChange="updateLayout" />
+        <field id="height" type="float" onChange="updateLayout" />
+        <field id="rowFocusPercent" type="float" value="-1" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="focusPercent" type="float" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="rowListHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <field id="gridHasFocus" type="boolean" onChange="onFocusChanged" alwaysNotify="true" />
+        <!-- <field id="itemHasFocus" type="boolean" onChange="onGetfocus" /> -->
+    </interface>
+
+    <children>
+
+      <Group id="scaledElements">
+
+        <Rectangle id= "backRect" color = "#B87333" translation ="[0, 50]"/>
+
+          <Poster id="background" loadDisplayMode = "limitSize" translation ="[0, 50]"/>
+
+          <Rectangle id = "totalDurationBar" visible = "false" height = "7" translation = "[0,208]" color = "#FFFFFF99" />
+          <Rectangle id = "progressBar" visible = "false" height = "7" translation = "[0,208]" color = "#FF0000" />
+
+      </Group>
+
+    </children>
+</component>

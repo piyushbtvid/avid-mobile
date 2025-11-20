@@ -7,8 +7,14 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -28,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.faithForward.media.util.Util.isTvDevice
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -41,6 +48,7 @@ import com.faithForward.media.ui.theme.detailNowUnFocusTextStyle
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.rememberIsTvDevice
 
 data class DetailDto(
     val id: String? = null,
@@ -64,9 +72,9 @@ data class DetailDto(
     val progress: Long? = null,
     val relatedList: List<PosterCardDto>? = null,
     val itemTrailer: String? = null,
-    var access: String? = null
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
@@ -88,6 +96,7 @@ fun DetailContent(
     onToggleLike: () -> Unit,
     onToggleDisLike: () -> Unit,
 ) {
+    val isTv = rememberIsTvDevice()
     var addToWatchListUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var likeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
     var dislikeUiState by remember { mutableStateOf(FocusState.UNFOCUSED) }
@@ -100,98 +109,216 @@ fun DetailContent(
         targetValue = if (isContentVisible) 1f else 0f, animationSpec = tween(durationMillis = 500)
     )
 
-    val addToWatchListModifier = Modifier
-        .onFocusChanged {
-            addToWatchListUiState = when {
-                it.isFocused -> FocusState.FOCUSED
-                it.hasFocus -> FocusState.FOCUSED
-                else -> FocusState.UNFOCUSED
+    val addToWatchListModifier = if (isTv) {
+        Modifier
+            .onFocusChanged {
+                addToWatchListUiState = when {
+                    it.isFocused -> FocusState.FOCUSED
+                    it.hasFocus -> FocusState.FOCUSED
+                    else -> FocusState.UNFOCUSED
+                }
             }
-        }
-        .clickable(interactionSource = null, indication = null, onClick = {
-            onToggleFavorite()
-        })
-        .focusable()
+            .clickable(interactionSource = null, indication = null, onClick = {
+                onToggleFavorite()
+            })
+            .focusable()
+    } else {
+        Modifier
+            .clickable(interactionSource = null, indication = null, onClick = {
+                onToggleFavorite()
+            })
+    }
 
-    val likeModifier = Modifier
-        .onFocusChanged {
-            likeUiState = when {
-                it.isFocused -> FocusState.FOCUSED
-                it.hasFocus -> FocusState.SELECTED
-                else -> FocusState.UNFOCUSED
+    val likeModifier = if (isTv) {
+        Modifier
+            .onFocusChanged {
+                likeUiState = when {
+                    it.isFocused -> FocusState.FOCUSED
+                    it.hasFocus -> FocusState.SELECTED
+                    else -> FocusState.UNFOCUSED
+                }
             }
-        }
-        .clickable(interactionSource = null, indication = null, onClick = {
-            onToggleLike()
-        })
-        .focusable()
+            .clickable(interactionSource = null, indication = null, onClick = {
+                onToggleLike()
+            })
+            .focusable()
+    } else {
+        Modifier
+            .clickable(interactionSource = null, indication = null, onClick = {
+                onToggleLike()
+            })
+    }
 
-    val disLikeModifier = Modifier
-        .onFocusChanged {
-            dislikeUiState = when {
-                it.isFocused -> FocusState.FOCUSED
-                it.hasFocus -> FocusState.SELECTED
-                else -> FocusState.UNFOCUSED
+    val disLikeModifier = if (isTv) {
+        Modifier
+            .onFocusChanged {
+                dislikeUiState = when {
+                    it.isFocused -> FocusState.FOCUSED
+                    it.hasFocus -> FocusState.SELECTED
+                    else -> FocusState.UNFOCUSED
+                }
             }
-        }
-        .clickable(interactionSource = null, indication = null, onClick = {
-            onToggleDisLike()
-        })
-        .focusable()
+            .clickable(interactionSource = null, indication = null, onClick = {
+                onToggleDisLike()
+            })
+            .focusable()
+    } else {
+        Modifier
+            .clickable(interactionSource = null, indication = null, onClick = {
+                onToggleDisLike()
+            })
+    }
 
     with(detailDto) {
-        Box(
-            modifier = modifier.fillMaxSize()
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(imgSrc).crossfade(true)
-                    .build(),
-                contentDescription = "detail Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+        if (isTv) {
+            // TV Layout - Keep existing layout
+            Box(
+                modifier = modifier.fillMaxSize()
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(imgSrc).crossfade(true)
+                        .build(),
+                    contentDescription = "detail Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
 
-            DetailGradient(
-                modifier = Modifier.fillMaxSize()
-            )
+                DetailGradient(
+                    modifier = Modifier.fillMaxSize()
+                )
 
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .alpha(targetAlpha)
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ContentMetaBlock(
+                        modifier = Modifier
+                            .padding(start = 20.dp, top = 20.dp)
+                            .wrapContentHeight(),
+                        description = description,
+                        releaseDate = releaseDate,
+                        genre = genre,
+                        seasons = seasons,
+                        duration = duration,
+                        subscribers = subscribers,
+                        imdbRating = imdbRating,
+                        title = title,
+                        textColor = whiteMain,
+                        buttonModifier = Modifier,
+                        isFavourite = isFavourite ?: false,
+                        isLiked = isLiked ?: false,
+                        isUnLiked = isDisliked ?: false,
+                        addToWatchListModifier = addToWatchListModifier,
+                        likeModifier = likeModifier,
+                        disLikeModifier = disLikeModifier,
+                        addToWatchListUiState = addToWatchListUiState,
+                        likeUiState = likeUiState,
+                        dislikeUiState = dislikeUiState,
+                    )
+                    FlowRow(
+                        modifier = Modifier.padding(start = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // Watch Now Button
+                        CategoryCompose(modifier = Modifier
+                            .focusRequester(playNowBtnFocusRequester)
+                            .onFocusChanged {
+                                isPlayFocused = it.hasFocus
+                                onWatchNowFocusChange.invoke(it.hasFocus)
+                            }
+                            .focusable(),
+                            categoryComposeDto = CategoryComposeDto(btnText = "Watch Now", id = ""),
+                            backgroundFocusedColor = focusedMainColor,
+                            textFocusedStyle = detailNowTextStyle,
+                            backgroundUnFocusedColor = blackColor,
+                            textUnFocusedStyle = detailNowUnFocusTextStyle,
+                            onCategoryItemClick = { id ->
+                                onWatchNowClick.invoke(id)
+                            },
+                            focusState = if (isPlayFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                        )
+
+                        // Resume Now Button
+                        if (isResumeVisible) {
+                            CategoryCompose(modifier = Modifier
+                                .focusRequester(resumeBtnFocusRequester)
+                                .onFocusChanged {
+                                    isResumeFocused = it.hasFocus
+                                    onResumeNowFocusChange.invoke(it.hasFocus)
+                                }
+                                .focusable(),
+                                categoryComposeDto = CategoryComposeDto(
+                                    btnText = resumeNowTxt,
+                                    id = ""
+                                ),
+                                backgroundFocusedColor = focusedMainColor,
+                                textFocusedStyle = detailNowTextStyle,
+                                backgroundUnFocusedColor = blackColor,
+                                textUnFocusedStyle = detailNowUnFocusTextStyle,
+                                onCategoryItemClick = { id ->
+                                    onResumeNowCLick.invoke()
+                                },
+                                focusState = if (isResumeFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                            )
+                        }
+
+                        if (isPlayTrailerButtonShow) {
+                            // Play Trailer
+                            CategoryCompose(modifier = Modifier
+                                .focusRequester(playTrailerFocusRequester)
+                                .onFocusChanged {
+                                    isPlayTrailerFocused = it.hasFocus
+                                    onPlayTrailerFocusChange.invoke(it.hasFocus)
+                                }
+                                .focusable(),
+                                categoryComposeDto = CategoryComposeDto(
+                                    btnText = "Play Trailer",
+                                    id = ""
+                                ),
+                                backgroundFocusedColor = focusedMainColor,
+                                textFocusedStyle = detailNowTextStyle,
+                                backgroundUnFocusedColor = blackColor,
+                                textUnFocusedStyle = detailNowUnFocusTextStyle,
+                                onCategoryItemClick = { id ->
+                                    onPlayTrailer.invoke()
+                                },
+                                focusState = if (isPlayTrailerFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            // Mobile Layout - New vertical layout
             Column(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
+                modifier = modifier
+                    .fillMaxSize()
                     .alpha(targetAlpha)
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 100.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ContentMetaBlock(
+                // 1. Top Image with 16:9 aspect ratio
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(imgSrc).crossfade(true)
+                        .build(),
+                    contentDescription = "detail Image",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .padding(start = 20.dp, top = 20.dp)
-                        .wrapContentHeight(),
-                    description = description,
-                    releaseDate = releaseDate,
-                    genre = genre,
-                    seasons = seasons,
-                    duration = duration,
-                    subscribers = subscribers,
-                    imdbRating = imdbRating,
-                    title = title,
-                    textColor = whiteMain,
-                    buttonModifier = Modifier,
-                    isFavourite = isFavourite ?: false,
-                    isLiked = isLiked ?: false,
-                    isUnLiked = isDisliked ?: false,
-                    addToWatchListModifier = addToWatchListModifier,
-                    likeModifier = likeModifier,
-                    disLikeModifier = disLikeModifier,
-                    addToWatchListUiState = addToWatchListUiState,
-                    likeUiState = likeUiState,
-                    dislikeUiState = dislikeUiState,
+                        .fillMaxWidth()
+                        .aspectRatio(16f / 9f)
                 )
-                Row(
-                    modifier = Modifier.padding(start = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+
+                // 2. Action Buttons (Watch Now, Resume, Play Trailer)
+                FlowRow(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    //PLayNow Button
+                    // Watch Now Button
                     CategoryCompose(modifier = Modifier
                         .focusRequester(playNowBtnFocusRequester)
                         .onFocusChanged {
@@ -210,7 +337,7 @@ fun DetailContent(
                         focusState = if (isPlayFocused) FocusState.FOCUSED else FocusState.UNFOCUSED
                     )
 
-                    //Resume Now Button
+                    // Resume Now Button
                     if (isResumeVisible) {
                         CategoryCompose(modifier = Modifier
                             .focusRequester(resumeBtnFocusRequester)
@@ -235,7 +362,7 @@ fun DetailContent(
                     }
 
                     if (isPlayTrailerButtonShow) {
-                        //Play Trailer
+                        // Play Trailer
                         CategoryCompose(modifier = Modifier
                             .focusRequester(playTrailerFocusRequester)
                             .onFocusChanged {
@@ -259,7 +386,45 @@ fun DetailContent(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
 
+                // 4. Title and Content Info
+                ContentMetaBlock(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .wrapContentHeight(),
+                    description = description,
+                    releaseDate = releaseDate,
+                    genre = genre,
+                    seasons = seasons,
+                    duration = duration,
+                    subscribers = subscribers,
+                    imdbRating = imdbRating,
+                    title = title,
+                    textColor = blackColor, // Use black text for mobile
+                    buttonModifier = Modifier,
+                    isFavourite = isFavourite ?: false,
+                    isLiked = isLiked ?: false,
+                    isUnLiked = isDisliked ?: false,
+                    addToWatchListModifier = addToWatchListModifier,
+                    likeModifier = likeModifier,
+                    disLikeModifier = disLikeModifier,
+                    addToWatchListUiState = addToWatchListUiState,
+                    likeUiState = likeUiState,
+                    dislikeUiState = dislikeUiState,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 5. Related Content (if available)
+                relatedList?.let { related ->
+                    if (related.isNotEmpty()) {
+                        // Add related content section here
+                        // This would typically be another component for showing related items
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(80.dp)) // Bottom padding
             }
         }
     }

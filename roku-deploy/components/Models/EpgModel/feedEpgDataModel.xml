@@ -1,0 +1,22 @@
+<component name="feedEpgDataModel" extends="BaseModel">
+
+  <script type="text/brightscript" uri="pkg:/components/Models/HomeModel/feedListItemDataModel.brs" />
+
+  <interface>
+      <field id="type" type="String" />
+      <field id="id" type="Integer" />
+      <field id="title" type="string" />
+      <field id="slug" type="string" />
+      <field id="description" type="string" />
+      <field id="icon" type="string" />
+      <field id="release_date" type="integer" />
+      <field id="duration" type="string" />
+      <field id="video_type" type="string" />
+      <field id="video_url" type="string" /> 
+      <field id="isChannel" type="boolean" /> 
+      <field id="timeSlot" type="string" />
+      <field id="isSelected" type="boolean" />
+      
+      <!-- <field id="seasons" type="array" /> -->
+  </interface>
+</component>

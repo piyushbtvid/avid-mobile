@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -26,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.PosterCardDto
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.detail.related.RelatedContentInfoBlock
+import com.faithForward.media.ui.detail.related.RelatedContentRow
 import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
 
@@ -48,6 +51,7 @@ fun RelatedContent(
     onLastFocusedIndexChange: (Int) -> Unit,
     isRelatedContentMetaDataVisible: Boolean = false,
     seasonsNumberRow: (@Composable () -> Unit)? = null,
+    selectedIndex: Int = -1,
 ) {
     var relatedRowFocusedIndex by rememberSaveable { mutableIntStateOf(-1) }
     var currentFocusedItem by remember { mutableStateOf<PosterCardDto?>(null) }
@@ -77,7 +81,8 @@ fun RelatedContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             TitleText(text = relatedContentRowDto.heading,
                 color = if (isRelatedTextFocused) focusedMainColor else whiteMain,
@@ -104,7 +109,8 @@ fun RelatedContent(
             lazyListState = listState,
             onItemFocused = { newFocus ->
                 onLastFocusedIndexChange.invoke(newFocus)
-            })
+            },
+            selectedIndex = selectedIndex)
 
         RelatedContentInfoBlock(
             modifier = Modifier

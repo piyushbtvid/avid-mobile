@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +41,7 @@ import com.faithForward.media.ui.theme.selectedMainColor
 import com.faithForward.media.ui.theme.textFocusedMainColor
 import com.faithForward.media.ui.theme.titleTextStyle
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.Util.isTvDevice
 
 data class CarouselItemDto(
     val id: String? = null,
@@ -141,19 +143,19 @@ fun CarouselItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(358.dp),
+                .height(if (LocalContext.current.isTvDevice()) 358.dp else 280.dp),
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(imgSrc) // fallback if blank
                     .placeholder(placeholderRes).error(placeholderRes).crossfade(true).build(),
                 contentDescription = "banner Image",
-                contentScale = ContentScale.FillBounds,
+                contentScale = if (LocalContext.current.isTvDevice()) ContentScale.FillBounds else ContentScale.Crop,
                 modifier = Modifier
                     .matchParentSize()
 //                    .offset(y = (-183).dp)
                     .clip(
                         RoundedCornerShape(
-                            bottomStart = 10.dp
+                            bottomStart = if (LocalContext.current.isTvDevice())10.dp else 0.dp
                         )
                     ),
                 alignment = Alignment.TopCenter
@@ -163,51 +165,98 @@ fun CarouselItem(
                     .matchParentSize()
                     .clip(
                         RoundedCornerShape(
-                            bottomStart = 10.dp
-                        )
+                            bottomStart = if (LocalContext.current.isTvDevice())10.dp else 0.dp                        )
                     )
                     .background(
                         color = detailGradientStartColor.copy(alpha = 0.48f)
                     )
 
             )
-            ContentMetaBlock(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 20.dp, top = 20.dp)
-                    .align(alignment = Alignment.TopStart),
-                description = description,
-                releaseDate = releaseDate,
-                genre = genre,
-                seasons = seasons,
-                duration = duration,
-                subscribers = subscribers,
-                imdbRating = imdbRating,
-                title = null,
-                buttonModifier = modifier,
-                addToWatchListModifier = addToWatchListModifier,
-                likeModifier = likeModifier,
-                disLikeModifier = disLikeModifier,
-                addToWatchListUiState = addToWatchListUiState,
-                likeUiState = likeUiState,
-                dislikeUiState = dislikeUiState,
-                isLiked = isLiked ?: false,
-                isUnLiked = isDisliked ?: false,
-                isFavourite = isFavourite ?: false,
-                isCreator = isCreator
-            )
-
-            title?.let {
-                ContentDescription(
+            if (LocalContext.current.isTvDevice()) {
+                // TV layout: title on top-right, metadata on top-left
+                ContentMetaBlock(
                     modifier = Modifier
-                        .widthIn(max = 400.dp)
-                        .padding(top = 15.dp, end = if (isCreator) 80.dp else 50.dp)
-                        .align(Alignment.TopEnd),
-                    text = title,
-                    textStyle = titleTextStyle,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                        .fillMaxSize()
+                        .padding(start = 20.dp, top = 20.dp)
+                        .align(alignment = Alignment.TopStart),
+                    description = description,
+                    releaseDate = releaseDate,
+                    genre = genre,
+                    seasons = seasons,
+                    duration = duration,
+                    subscribers = subscribers,
+                    imdbRating = imdbRating,
+                    title = null,
+                    buttonModifier = modifier,
+                    addToWatchListModifier = addToWatchListModifier,
+                    likeModifier = likeModifier,
+                    disLikeModifier = disLikeModifier,
+                    addToWatchListUiState = addToWatchListUiState,
+                    likeUiState = likeUiState,
+                    dislikeUiState = dislikeUiState,
+                    isLiked = isLiked ?: false,
+                    isUnLiked = isDisliked ?: false,
+                    isFavourite = isFavourite ?: false,
+                    isCreator = isCreator
                 )
+
+                title?.let {
+                    ContentDescription(
+                        modifier = Modifier
+                            .widthIn(max = 400.dp)
+                            .padding(top = 15.dp, end = if (isCreator) 80.dp else 50.dp)
+                            .align(Alignment.TopEnd),
+                        text = title,
+                        textStyle = titleTextStyle,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            } else {
+                // Non-TV layout: title at top, then metadata below
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                        .align(alignment = Alignment.TopStart)
+                ) {
+                    // Title at the top
+                    title?.let {
+                        ContentDescription(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 15.dp),
+                            text = title,
+                            textStyle = titleTextStyle,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    
+                    // Metadata and other content below
+                    ContentMetaBlock(
+                        modifier = Modifier.fillMaxWidth(),
+                        description = description,
+                        releaseDate = releaseDate,
+                        genre = genre,
+                        seasons = seasons,
+                        duration = duration,
+                        subscribers = subscribers,
+                        imdbRating = imdbRating,
+                        title = null,
+                        buttonModifier = modifier,
+                        addToWatchListModifier = addToWatchListModifier,
+                        likeModifier = likeModifier,
+                        disLikeModifier = disLikeModifier,
+                        addToWatchListUiState = addToWatchListUiState,
+                        likeUiState = likeUiState,
+                        dislikeUiState = dislikeUiState,
+                        isLiked = isLiked ?: false,
+                        isUnLiked = isDisliked ?: false,
+                        isFavourite = isFavourite ?: false,
+                        isCreator = isCreator
+                    )
+                }
             }
 
             RoundedIconButton(
@@ -220,7 +269,7 @@ fun CarouselItem(
                 backgroundColor = playButtonBackgroundColor.copy(alpha = 0.45f),
             )
 
-            if (!isCreator) {
+            if (!isCreator && LocalContext.current.isTvDevice()) {
                 Row(
                     modifier = Modifier
                         .align(alignment = Alignment.TopCenter)

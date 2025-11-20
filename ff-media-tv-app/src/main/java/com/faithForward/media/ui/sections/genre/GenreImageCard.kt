@@ -30,6 +30,7 @@ import coil3.request.crossfade
 import com.faithForward.media.R
 import com.faithForward.media.ui.theme.gray
 import com.faithForward.media.util.FocusState
+import com.faithForward.media.util.Util.isTvDevice
 
 data class GenreImageCardDto(
     val posterImageSrc: String,
@@ -56,11 +57,12 @@ fun GenreImageCard(
 
 
 
+    val isTv = LocalContext.current.isTvDevice()
 
     Box(
         modifier = modifier
-            .width(135.dp)
-            .height(210.dp)
+            .width(if (isTv)135.dp else 102.dp)
+            .height(if (isTv) 210.dp else 160.dp)
             .clip(RoundedCornerShape(5.dp))
             .background(gray) // fills the transparent area, keeps rounded shape
             .clickable(

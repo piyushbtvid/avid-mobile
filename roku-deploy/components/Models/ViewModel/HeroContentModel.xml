@@ -1,0 +1,12 @@
+<component name="HeroContentModel" extends="ContentNode">
+
+  <interface>
+
+      <field id="title" type="String" />
+      <field id="description" type="String" />
+      <field id="thumbnail" type="String" />
+      <field id="showContent" type="boolean" />
+
+  </interface>
+
+</component>
