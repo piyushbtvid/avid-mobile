@@ -151,7 +151,6 @@ fun MyAccountScreen(
             ProfileMenuItemType.SETTING -> {
                 myAccountUiState.value.settingDto?.let {
                     Setting(
-                        modifier = Modifier.padding(start = 16.dp),
                         settingItemDto = it,
                         onSwitchProfile = onSwitchProfile
                     )

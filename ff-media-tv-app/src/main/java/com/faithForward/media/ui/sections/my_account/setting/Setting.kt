@@ -3,11 +3,11 @@ package com.faithForward.media.ui.sections.my_account.setting
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,59 +62,56 @@ fun Setting(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(start = 50.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         with(settingItemDto) {
 
             AccountSection(
-                email = email,
-                passwordTxt = passwordTxt,
-                phoneNumber = phoneNumber,
+                email = "https://www.tvidservices.com/terms-of-use",
+                passwordTxt = "https://www.tvidservices.com/privacy-policy",
+                phoneNumber = "https://www.tvidservices.com/cookie-policy",
             )
 
-            Divider(
-                color = whiteMain.copy(
-                    alpha = 0.5f
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(2.dp)
-            )
-
-
-            Preferences(
-                language = language,
-                autoPlay = autoPlay,
-                notification = notification,
-                subtitles = subtitles,
-            )
-
-
-            Divider(
-                color = whiteMain.copy(
-                    alpha = 0.5f
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(2.dp)
-            )
-
-//            TitleText(
-//                text = "Subscription",
-//                textSize = 17,
-//                lineHeight = 17,
-//                color = whiteMain,
-//                fontWeight = FontWeight.ExtraBold
+//            Divider(
+//                color = whiteMain.copy(
+//                    alpha = 0.5f
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(2.dp)
+//            )
+//
+//
+//            Preferences(
+//                language = language,
+//                autoPlay = autoPlay,
+//                notification = notification,
+//                subtitles = subtitles,
+//            )
+//
+//
+//            Divider(
+//                color = whiteMain.copy(
+//                    alpha = 0.5f
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(2.dp)
 //            )
 
-            CategoryCompose(modifier = Modifier
-                .focusRequester(switchFocusRequester)
-                .onFocusChanged {
-                    isSwitchFocused = it.hasFocus
-                }
-                .focusable(),
+
+            CategoryCompose(
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .focusRequester(switchFocusRequester)
+                    .onFocusChanged {
+                        isSwitchFocused = it.hasFocus
+                    }
+                    .focusable(),
                 categoryComposeDto = CategoryComposeDto(btnText = "Switch Profile", id = ""),
                 backgroundFocusedColor = focusedMainColor,
                 textFocusedStyle = detailNowTextStyle,
@@ -141,31 +138,45 @@ fun AccountSection(
 ) {
 
     Column(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier
+            .wrapContentSize()
+            .padding(top = 40.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         TitleText(
-            text = "Account",
-            textSize = 17,
-            lineHeight = 17,
+            text = "Contact Us:",
+            textSize = 19,
+            lineHeight = 19,
             color = whiteMain,
             fontWeight = FontWeight.ExtraBold
         )
 
+
+        TitleText(
+            text = "For any queries, please contact us at ashishm@tvidservices.com.",
+            textSize = 15,
+            lineHeight = 15,
+            color = whiteMain,
+            fontWeight = FontWeight.ExtraBold
+        )
+
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         TextWithTitle(
             displayText = email,
-            titleText = "Email:"
+            titleText = "Terms of Use"
         )
 
         TextWithTitle(
             displayText = passwordTxt,
-            titleText = "Password:"
+            titleText = "Privacy Policy"
         )
 
         TextWithTitle(
             displayText = phoneNumber,
-            titleText = "Phone Number"
+            titleText = "Cookie Policy"
         )
 
     }
