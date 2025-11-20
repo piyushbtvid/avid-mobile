@@ -50,7 +50,7 @@ sealed class Routes(val route: String) {
     }
 
     data object Detail : Routes("DETAIL_SCREEN/{itemId}") {
-        fun createRoute(itemId: String) = "DETAIL_SCREEN/$itemId"
+        fun createRoute(itemId: String) = "DETAIL_SCREEN/${Uri.encode(itemId)}"
     }
 
     data object CREATOR_DETAIL : Routes("CREATOR_DETAIL_SCREEN/{creatorId}") {
