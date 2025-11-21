@@ -3,9 +3,11 @@ package com.faithForward.media.ui.sections.my_account.setting
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
@@ -21,7 +23,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.CategoryCompose
 import com.faithForward.media.ui.commanComponents.CategoryComposeDto
@@ -86,13 +87,32 @@ fun Setting(
                     .height(2.dp)
             )
 
-
-            Preferences(
-                language = language,
-                autoPlay = autoPlay,
-                notification = notification,
-                subtitles = subtitles,
-            )
+//            Divider(
+//                color = whiteMain.copy(
+//                    alpha = 0.5f
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(2.dp)
+//            )
+//
+//
+//            Preferences(
+//                language = language,
+//                autoPlay = autoPlay,
+//                notification = notification,
+//                subtitles = subtitles,
+//            )
+//
+//
+//            Divider(
+//                color = whiteMain.copy(
+//                    alpha = 0.5f
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(2.dp)
+//            )
 
 
             Divider(
@@ -145,31 +165,45 @@ fun AccountSection(
 ) {
 
     Column(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier
+            .wrapContentSize()
+            .padding(top = 40.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         TitleText(
-            text = "Account",
-            textSize = 17,
-            lineHeight = 17,
+            text = "Contact Us:",
+            textSize = 19,
+            lineHeight = 19,
             color = whiteMain,
             fontWeight = FontWeight.ExtraBold
         )
 
+
+        TitleText(
+            text = "For any queries, please contact us at ashishm@tvidservices.com.",
+            textSize = 15,
+            lineHeight = 15,
+            color = whiteMain,
+            fontWeight = FontWeight.ExtraBold
+        )
+
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         TextWithTitle(
             displayText = email,
-            titleText = "Email:"
+            titleText = "Terms of Use"
         )
 
         TextWithTitle(
             displayText = passwordTxt,
-            titleText = "Password:"
+            titleText = "Privacy Policy"
         )
 
         TextWithTitle(
             displayText = phoneNumber,
-            titleText = "Phone Number"
+            titleText = "Cookie Policy"
         )
 
     }
@@ -222,21 +256,4 @@ fun Preferences(
     }
 
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Preview_Setting() {
-    Setting(
-        settingItemDto = SettingDto(
-            email = "user@example.com",
-            passwordTxt = "Last changed 2 months ago",
-            phoneNumber = "+1234567890",
-            language = "English",
-            autoPlay = "Play next episode automatically",
-            notification = "Get notified about new releases",
-            subtitles = "Show subtitles by default"
-        ),
-        onSwitchProfile = {}
-    )
 }

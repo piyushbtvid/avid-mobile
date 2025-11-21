@@ -31,6 +31,7 @@ import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenu
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
 import com.faithForward.media.ui.sections.my_account.profile_menu.UserInfoItemDto
 import com.faithForward.media.ui.sections.my_account.setting.Setting
+import com.faithForward.media.ui.sections.my_account.subscription.SubscriptionPlan
 import com.faithForward.media.viewModel.MyAccountViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
 import com.faithForward.media.viewModel.uiModels.MyAccountEvent
@@ -141,6 +142,9 @@ fun MyAccountScreen(
 
                         }
 
+                        ProfileMenuItemType.SUBSCRIPTION -> {
+                            myAccountViewModel.onEvent(MyAccountEvent.GetSubscription)
+                        }
                     }
                 })
 
@@ -179,6 +183,13 @@ fun MyAccountScreen(
                             onSwitchProfile = onSwitchProfile
                         )
                     }
+                }
+
+                ProfileMenuItemType.SUBSCRIPTION -> {
+                    SubscriptionPlan(
+                        subscription = myAccountUiState.value.subscription,
+                        isLoadingSubscription = myAccountUiState.value.isLoadingSubscription
+                    )
                 }
             }
 
@@ -244,6 +255,4 @@ fun MyAccountScreen(
             }
         }
     }
-
-
 }

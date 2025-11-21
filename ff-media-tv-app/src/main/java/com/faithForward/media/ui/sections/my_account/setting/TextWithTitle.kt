@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.faithForward.media.ui.commanComponents.TitleText
+import com.faithForward.media.ui.theme.focusedMainColor
 import com.faithForward.media.ui.theme.whiteMain
 
 @Composable
@@ -19,7 +20,7 @@ fun TextWithTitle(
 
     Column(
         modifier = modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         TitleText(
@@ -34,9 +35,7 @@ fun TextWithTitle(
             text = displayText,
             textSize = 11,
             lineHeight = 11,
-            color = whiteMain.copy(
-                alpha = 0.7f
-            ),
+            color = focusedMainColor,
             fontWeight = FontWeight.Normal
         )
 

@@ -8,6 +8,7 @@ import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuIte
 import com.faithForward.media.ui.sections.my_account.profile_menu.ProfileMenuItemType
 import com.faithForward.media.ui.sections.my_account.setting.SettingDto
 import com.faithForward.network.dto.ContentItem
+import com.faithForward.network.dto.subscription.Subscription
 
 val profileMenuItemDtoList = listOf(
     ProfileMenuItemDto(
@@ -19,7 +20,13 @@ val profileMenuItemDtoList = listOf(
         name = "My List",
         icon = R.drawable.add_new,
         menuType = ProfileMenuItemType.MY_LIST
-    ), ProfileMenuItemDto(
+    ),
+    ProfileMenuItemDto(
+        name = "Subscription",
+        icon = R.drawable.menu_settings,
+        menuType = ProfileMenuItemType.SUBSCRIPTION
+    ),
+    ProfileMenuItemDto(
         name = "Settings",
         icon = R.drawable.menu_settings,
         menuType = ProfileMenuItemType.SETTING
@@ -40,6 +47,7 @@ sealed class MyAccountEvent {
     data object GetContinueWatching : MyAccountEvent()
     data object GetMyList : MyAccountEvent()
     data object GetCurrentUser : MyAccountEvent()
+    data object GetSubscription : MyAccountEvent()
 }
 
 data class MyAccountUiState(
@@ -49,13 +57,15 @@ data class MyAccountUiState(
     val settingDto: SettingDto? = settingItemDto,
     val currentUserEmail: String = "",
     val currentUserName: String = "",
-    val initialName : String = ""
+    val initialName: String = "",
+    val subscription: Subscription? = null,
+    val isLoadingSubscription: Boolean = false,
 )
 
 
 fun ContentItem.toWatchSectionItem(): WatchSectionItemDto {
     val progress = progressSeconds ?: 0L
-    val totalDuration = duration?.toLongOrNull() ?: 0L
+    val totalDuration = duration?.toLong() ?: 0L
     val remaining = (totalDuration - progress).coerceAtLeast(0L)
 
 

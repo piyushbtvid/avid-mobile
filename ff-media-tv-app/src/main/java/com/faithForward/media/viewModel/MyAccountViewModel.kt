@@ -7,6 +7,7 @@ import com.faithForward.media.ui.sections.my_account.WatchSectionUiModel
 import com.faithForward.media.viewModel.uiModels.MyAccountEvent
 import com.faithForward.media.viewModel.uiModels.MyAccountUiState
 import com.faithForward.media.viewModel.uiModels.toWatchSectionItem
+import com.faithForward.network.dto.subscription.Subscription
 import com.faithForward.repository.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,10 @@ class MyAccountViewModel @Inject constructor(
                 getCurrentUserInfo()
             }
 
+            is MyAccountEvent.GetSubscription -> {
+                getUserSubscriptionPlan()
+            }
+
         }
 
     }
@@ -69,7 +74,8 @@ class MyAccountViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            continueWatchSections = newSection
+                            continueWatchSections = newSection,
+                            myListWatchSections = null
                         )
                     }
                 } else {
@@ -92,16 +98,11 @@ class MyAccountViewModel @Inject constructor(
 
                     val dataList = myListResponse.body()?.data
 
-                    val watchSectionList = dataList
-                        ?.flatMap { section ->
-                            section.content
-                                ?.filterNotNull()
-                                ?.map { result -> result.toWatchSectionItem() }
-                                ?: emptyList()
+                    val watchSectionList = dataList?.flatMap { section ->
+                        section.content.map { result ->
+                            result.toWatchSectionItem()
                         }
-                        ?: emptyList()
-
-                    Log.e("MY_ACCOUNT", "MyList items loaded: ${watchSectionList.size}")
+                    }
 
                     val newSection = WatchSectionUiModel(
                         title = "My List",
@@ -110,7 +111,8 @@ class MyAccountViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            myListWatchSections = newSection
+                            myListWatchSections = newSection,
+                            continueWatchSections = null
                         )
                     }
 
@@ -147,6 +149,45 @@ class MyAccountViewModel @Inject constructor(
             ?.split("\\s+".toRegex()) // Split by whitespace
             ?.mapNotNull { it.firstOrNull()?.uppercaseChar() }
             ?.joinToString("") ?: ""
+    }
+
+
+    private fun getUserSubscriptionPlan() {
+        _uiState.update {
+            it.copy(isLoadingSubscription = true)
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = networkRepository.getUserSubscriptionDetail()
+                if (response.isSuccessful) {
+                    val subscription = response.body()?.data?.subscription
+                    Log.e(
+                        "GET_SUBSCRIPTION_PLAN",
+                        "subscription plan response is $subscription"
+                    )
+                    _uiState.update {
+                        it.copy(
+                            subscription = subscription,
+                            isLoadingSubscription = false
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "GET_SUBSCRIPTION_PLAN",
+                        "subscription plan failed with ${response.message()}"
+                    )
+                    _uiState.update {
+                        it.copy(isLoadingSubscription = false)
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e("GET_SUBSCRIPTION_PLAN", "exception getting subscription plan: ${ex.message}")
+                _uiState.update {
+                    it.copy(isLoadingSubscription = false)
+                }
+            }
+        }
     }
 
 

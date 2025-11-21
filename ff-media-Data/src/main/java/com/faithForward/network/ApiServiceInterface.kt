@@ -14,6 +14,7 @@ import com.faithForward.network.dto.epg.EpgResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.login.SignupResponse
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.myList.MyListResponse
 import com.faithForward.network.dto.profile.AllAvatarListResponse
@@ -24,6 +25,7 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.SignupRequest
 import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
@@ -92,6 +94,13 @@ interface ApiServiceInterface {
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
     ): Response<LoginResponse>
+
+    @POST(Constants.SIGNUP_END_POINT)
+    suspend fun signupUser(
+        @Body signupRequest: SignupRequest,
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+    ): Response<SignupResponse>
 
     @GET(Constants.GIVEN_SECTION_END_POINT)
     suspend fun getGivenSectionData(

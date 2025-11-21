@@ -62,7 +62,7 @@ fun WatchableGridSection(
     ) {
 
         TitleText(
-            modifier = Modifier.padding(start = 10.dp),
+            modifier = Modifier.padding(start = 50.dp),
             text = watchSectionUiModel.title,
             color = whiteMain,
             textSize = 18,

@@ -14,6 +14,7 @@ object Constants {
     const val CREATOR_DETAIL_END_POINT = "client/v1/creators/{id}"
     const val CREATOR_CONTENT_LIST_END_POINT = "client/v1/creators/{id}/content"
     const val LOGIN_END_POINT = "client/v1/subscribers/login"
+    const val SIGNUP_END_POINT = "client/v1/subscribers/register"
     const val SINGLE_SERIES_DETAIL_API = "client/v1/series/{id}"
     const val MY_LIST_END_POINT = "client/v1/my-list/{slug}"
     const val LIKE_DISLIKE_END_POINT = "client/v1/like-dislike/{slug}"
@@ -39,13 +40,3 @@ object Constants {
 
     const val CONFIG_DATA_END_POINT = "v1/config"
 }
-
-
-
-
-
-
-
-
-
-

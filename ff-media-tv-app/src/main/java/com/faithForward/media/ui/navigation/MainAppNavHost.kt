@@ -25,6 +25,7 @@ import com.faithForward.media.ui.detail.DetailScreen
 import com.faithForward.media.ui.detail.creator_detail.CreatorDetailScreen
 import com.faithForward.media.ui.login.LoginScreen
 import com.faithForward.media.ui.login.qr.LoginQrScreen
+import com.faithForward.media.ui.signup.SignupScreen
 import com.faithForward.media.ui.player.PlayerScreen
 import com.faithForward.media.ui.sections.creator.CreatorScreen
 import com.faithForward.media.ui.sections.genre.GenreDataScreen
@@ -56,6 +57,7 @@ import com.faithForward.media.viewModel.QrLoginViewModel
 import com.faithForward.media.viewModel.SearchViewModel
 import com.faithForward.media.viewModel.SharedPlayerViewModel
 import com.faithForward.media.viewModel.SideBarViewModel
+import com.faithForward.media.viewModel.SignupViewModel
 import com.faithForward.media.viewModel.UniversalViewModel
 import com.faithForward.media.viewModel.uiModels.PlayerEvent
 import com.faithForward.media.viewModel.uiModels.toPosterCardDto
@@ -84,6 +86,19 @@ fun MainAppNavHost(
         composable(route = Routes.Login.route) {
             LoginScreen(loginViewModel = loginViewModel, onLogin = {
                 Log.e("GOING_TO_HOME", "going to home from Login screen ")
+                loginViewModel.checkRefreshToken()
+                navController.navigate(Routes.AllProfile.route) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }, onNavigateToSignup = {
+                navController.navigate(Routes.Signup.route)
+            })
+        }
+
+        composable(route = Routes.Signup.route) { backStack ->
+            val signupViewModel: SignupViewModel = hiltViewModel(backStack)
+            SignupScreen(signupViewModel = signupViewModel, onSignup = {
+                Log.e("GOING_TO_HOME", "going to home from Signup screen ")
                 loginViewModel.checkRefreshToken()
                 navController.navigate(Routes.AllProfile.route) {
                     popUpTo(0) { inclusive = true }
