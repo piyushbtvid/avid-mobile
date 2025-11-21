@@ -3,7 +3,7 @@
 
 
     <style name="Theme.Ffmedia" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background_img</item>
+        <item name="android:windowBackground">@drawable/new_splash_img</item>
     </style>
 
 </resources>

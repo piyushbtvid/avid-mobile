@@ -60,7 +60,7 @@ fun ContentMetaBlock(
     contentRowTint: Color = Color.White,
 ) {
     val isTv = rememberIsTvDevice()
-    
+
     LaunchedEffect(addToWatchListUiState) {
         Log.e(
             "UTIL",
@@ -74,7 +74,8 @@ fun ContentMetaBlock(
         Column(
             modifier = Modifier
         ) {
-            val metaList = listOfNotNull(releaseDate?.takeIf { it.isNotBlank() },
+            val metaList = listOfNotNull(
+                releaseDate?.takeIf { it.isNotBlank() },
                 genre?.takeIf { it.isNotBlank() },
                 seasons?.let { "$it Season${if (it > 1) "s" else ""}" }?.takeIf { it.isNotBlank() },
                 duration?.takeIf { it.isNotBlank() },
@@ -106,7 +107,7 @@ fun ContentMetaBlock(
                         .width(400.dp),
                     text = title,
                     textStyle = titleTextStyle,
-                    maxLines = if (LocalContext.current.isTvDevice()) 1 else 1,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(9.dp))
