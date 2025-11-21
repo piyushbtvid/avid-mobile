@@ -315,6 +315,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel,
     onLogin: () -> Unit,
+    onNavigateToSignup: () -> Unit = {},
 ) {
     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsStateWithLifecycle()
@@ -323,10 +324,12 @@ fun LoginScreen(
 
     val passwordFocusRequester = remember { FocusRequester() }
     val buttonFocusRequester = remember { FocusRequester() }
+    val signupButtonFocusRequester = remember { FocusRequester() }
     val emailFocusRequester = remember { FocusRequester() }
     var isEmailFocused by rememberSaveable { mutableStateOf(false) }
     var isPasswordFocused by rememberSaveable { mutableStateOf(false) }
     var isButtonFocused by rememberSaveable { mutableStateOf(false) }
+    var isSignupButtonFocused by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(loginState) {
@@ -363,7 +366,7 @@ fun LoginScreen(
             )
     ) {
         Image(
-            painter = painterResource(R.drawable.tvid_logo_ic),
+            painter = painterResource(R.drawable.tvid_logo_new_ic),
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
                 .padding(top = 30.dp, start = 37.5.dp)
@@ -371,6 +374,34 @@ fun LoginScreen(
                 .height(51.dp),
             contentDescription = "App Logo"
         )
+
+        Button(
+            onClick = {
+                onNavigateToSignup.invoke()
+            },
+            modifier = Modifier
+                .align(alignment = Alignment.TopEnd)
+                .padding(top = 30.dp, end = 37.5.dp)
+                .width(178.5.dp)
+                .height(48.dp)
+                .focusRequester(signupButtonFocusRequester)
+                .onFocusChanged {
+                    isSignupButtonFocused = it.hasFocus
+                }
+                .focusable(),
+            shape = RoundedCornerShape(24.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isSignupButtonFocused) sideBarFocusedBackgroundColor
+                else Color.White.copy(alpha = 0.33f)
+            )
+        ) {
+            Text(
+                text = "Sign Up",
+                color = sideBarFocusedTextColor,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Light
+            )
+        }
 
         Column(
             modifier = Modifier

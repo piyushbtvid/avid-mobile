@@ -14,6 +14,7 @@ sealed class Routes(val route: String) {
     data object Search : Routes("SEARCH_SCREEN")
     data object Login : Routes("LOGIN_SCREEN")
     data object LoginQr : Routes("LOGIN_QR_SCREEN")
+    data object Signup : Routes("SIGNUP_SCREEN")
     data object MyAccount : Routes("MY_ACCOUNT_SCREEN")
     data object Universal : Routes("UNIVERSAL_SCREEN")
     data object Live : Routes("LIVE_PAGE")
@@ -49,7 +50,7 @@ sealed class Routes(val route: String) {
     }
 
     data object Detail : Routes("DETAIL_SCREEN/{itemId}") {
-        fun createRoute(itemId: String) = "DETAIL_SCREEN/$itemId"
+        fun createRoute(itemId: String) = "DETAIL_SCREEN/${Uri.encode(itemId)}"
     }
 
     data object CREATOR_DETAIL : Routes("CREATOR_DETAIL_SCREEN/{creatorId}") {

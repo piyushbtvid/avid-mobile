@@ -7,6 +7,7 @@ import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.login.SignupResponse
 import com.faithForward.network.dto.login.User
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.profile.AllAvatarListResponse
@@ -17,6 +18,7 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.SignupRequest
 import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
 import com.faithForward.network.dto.search.SearchResponse
@@ -90,6 +92,23 @@ class NetworkRepository @Inject constructor(
         )
         return apiServiceInterface.loginUser(
             loginRequest = loginRequest, deviceId = deviceId, deviceType = deviceType
+        )
+    }
+
+    suspend fun signupUser(
+        name: String,
+        email: String,
+        password: String,
+        deviceType: String,
+        deviceId: String,
+    ): Response<SignupResponse> {
+        val signupRequest = SignupRequest(
+            name = name,
+            email = email,
+            password = password
+        )
+        return apiServiceInterface.signupUser(
+            signupRequest = signupRequest, deviceId = deviceId, deviceType = deviceType
         )
     }
 
