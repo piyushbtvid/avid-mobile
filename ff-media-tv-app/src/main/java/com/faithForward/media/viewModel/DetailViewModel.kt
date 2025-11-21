@@ -106,10 +106,10 @@ class DetailViewModel @Inject constructor(
 
                     if (newData.contentType == "Series" && !newData.seasons.isNullOrEmpty()) {
                         val seasonList = newData.seasons!!.map { it.toSeasonDto() }
-                        Log.e(
-                            "SERIES_CONTENT",
-                            "SERIES CONTENT type is ${seasonList.get(0).episodesContentDto.get(0).contentType}"
-                        )
+//                        Log.e(
+//                            "SERIES_CONTENT",
+//                            "SERIES CONTENT type is ${seasonList.get(0).episodesContentDto.get(0).contentType}"
+//                        )
                         val relatedMovieList = newData.relatedContent?.map {
                             it.toPosterCardDto().copy(isRelatedSeries = true)
                         } ?: emptyList()

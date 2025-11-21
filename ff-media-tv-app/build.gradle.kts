@@ -122,7 +122,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("androidx.leanback:leanback:1.2.0")
+   // implementation("androidx.leanback:leanback:1.2.0")
     implementation ("com.amazon.device:amazon-appstore-sdk:+")
     //tsl library
     implementation("org.conscrypt:conscrypt-android:2.5.2")

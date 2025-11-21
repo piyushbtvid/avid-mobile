@@ -47,7 +47,7 @@ fun AppNavigationBar(
                     targetOffsetX = { -it },
                     animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
                 ) + fadeOut(animationSpec = tween(durationMillis = 300)),
-                modifier = Modifier.align(Alignment.CenterStart) // ✅ inside
+                modifier = Modifier.align(Alignment.TopStart) // ✅ inside
             ) {
                 SideBar(
                     columnList = sideBarItems,

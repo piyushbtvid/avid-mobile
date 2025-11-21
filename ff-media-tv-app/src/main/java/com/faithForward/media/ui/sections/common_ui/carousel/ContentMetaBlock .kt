@@ -106,7 +106,7 @@ fun ContentMetaBlock(
                         .width(400.dp),
                     text = title,
                     textStyle = titleTextStyle,
-                    maxLines = if (LocalContext.current.isTvDevice()) 2 else 1,
+                    maxLines = if (LocalContext.current.isTvDevice()) 1 else 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(9.dp))
