@@ -45,7 +45,7 @@ fun HomeSectionApiResponse.toHomePageItems(): List<HomePageItem> {
     var carouselAdded = false
     var carouselSectionIndex: Int? = null
 
-    val pillCategories = sections?.pillCategories?.mapNotNull { category ->
+    val pillCategories = sections?.genres?.mapNotNull { category ->
         category.name?.takeIf { it.isNotBlank() }?.let {
             CategoryComposeDto(it, id = category.id?.toString().orEmpty())
         }
