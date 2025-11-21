@@ -1,8 +1,10 @@
 package com.faithForward.di
 
 import android.content.Context
+import com.faithForward.amzon_pay.AmazonIapRepository
 import com.faithForward.network.ApiServiceInterface
 import com.faithForward.preferences.UserPreferences
+import com.faithForward.repository.IapRepository
 import com.faithForward.repository.NetworkRepository
 import com.faithForward.util.Constants
 import com.faithForward.util.LenientGsonTypeAdapterFactory
@@ -81,5 +83,11 @@ class AppModule {
     fun provideUserPreferences(
         @ApplicationContext context: Context,
     ): UserPreferences = UserPreferences(context)
+
+    @Provides
+    @Singleton
+    fun provideIapRepository(
+        amazonIapRepository: AmazonIapRepository
+    ): IapRepository = amazonIapRepository
 
 }

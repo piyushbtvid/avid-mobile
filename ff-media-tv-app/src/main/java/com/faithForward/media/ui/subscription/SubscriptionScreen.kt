@@ -137,7 +137,7 @@ fun SubscriptionScreen(
                     textSize = 13,
                     lineHeight = 13,
                     maxLine = 2,
-                    textAlign = TextAlign.Center,
+//                    textAlign = TextAlign.Center,
                     color = whiteMain.copy(alpha = 0.7f),
                     fontWeight = FontWeight.W400,
                 )

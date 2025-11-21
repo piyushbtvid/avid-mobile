@@ -7,6 +7,7 @@ import com.faithForward.network.dto.common.CommanListResponse
 import com.faithForward.network.dto.genre.GenreResponse
 import com.faithForward.network.dto.login.ActivationCodeResponse
 import com.faithForward.network.dto.login.LoginResponse
+import com.faithForward.network.dto.login.User
 import com.faithForward.network.dto.login.refresh_token.RefreshTokenResponse
 import com.faithForward.network.dto.profile.AllAvatarListResponse
 import com.faithForward.network.dto.profile.AllProfileResponse
@@ -16,10 +17,12 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
-import com.faithForward.network.dto.request.RefreshTokenRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
+import com.faithForward.network.dto.subscription.SubscriptionResponse
+import com.faithForward.preferences.ConfigManager
 import com.faithForward.preferences.UserPrefData
 import com.faithForward.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -34,13 +37,33 @@ class NetworkRepository @Inject constructor(
 
     suspend fun getHomeSectionData() = withContext(Dispatchers.IO) {
         val userSession = userPreferences.getUserSession()
+        val configData = ConfigManager.getConfigData()
+        val shouldSendToken = configData?.let {
+            it.enable_login || it.enable_qrlogin
+        } ?: false
         val token =
-            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+            if (shouldSendToken) {
+                userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+            } else {
+                ""
+            }
         val deviceId = userSession?.deviceID ?: ""
         val deviceType = userSession?.deviceType ?: ""
         Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
         apiServiceInterface.getHomeSectionData(
             token = token, deviceType = deviceType, deviceId = deviceId
+        )
+    }
+
+    suspend fun getCategories() = withContext(Dispatchers.IO) {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+        Log.e("HOME_DATA", "TOKEN IN REPO IS $token")
+        apiServiceInterface.getCategories(
+            deviceId = deviceId, deviceType = deviceType, token = token
         )
     }
 
@@ -351,12 +374,8 @@ class NetworkRepository @Inject constructor(
         val deviceId = userSession?.deviceID ?: ""
         val deviceType = userSession?.deviceType ?: ""
 
-        val request = RefreshTokenRequest(refreshToken = refreshToken)
         return apiServiceInterface.refreshToken(
-            deviceId = deviceId,
-            deviceType = deviceType,
-            token = token,
-            request = request
+            deviceId = deviceId, deviceType = deviceType, token = token, refreshToken = refreshToken
         )
     }
 
@@ -480,6 +499,28 @@ class NetworkRepository @Inject constructor(
         )
     }
 
+    suspend fun setPurchase(
+        receipt_id: String,
+        product_id: String,
+    ): Response<LoginResponse> {
+
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        return apiServiceInterface.setPurchase(
+            deviceId = deviceId,
+            token = token,
+            deviceType = deviceType,
+            purchaseRequest = PurchaseRequest(
+                receipt_id = receipt_id,
+                product_id = product_id
+            )
+        )
+    }
+
 
     suspend fun getAllAvatars(): Response<AllAvatarListResponse> {
         val userSession = userPreferences.getUserSession()
@@ -510,20 +551,42 @@ class NetworkRepository @Inject constructor(
         )
     }
 
+    suspend fun updateUserInfo(user: User): Boolean {
+
+        return userPreferences.updateUserInfo(
+            name = user.name,
+            email = user.email,
+            userType = user.user_type,
+            role = user.role,
+        )
+    }
+
     suspend fun getContinueWatchingList(): Response<CommanListResponse> {
         val userSession = userPreferences.getUserSession()
         val token =
             userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
-        val deviceId = userSession?.deviceID ?: ""
-        val deviceType = userSession?.deviceType ?: ""
 
         return apiServiceInterface.getContinueWatchingList(
-            deviceId = deviceId,
-            deviceType = deviceType,
             token = token
         )
 
     }
 
     suspend fun getEpgData() = apiServiceInterface.getEpgData()
+
+    suspend fun getUserSubscriptionDetail(): Response<SubscriptionResponse> {
+        val userSession = userPreferences.getUserSession()
+        val token =
+            userSession?.season?.token?.takeIf { it.isNotEmpty() }?.let { "Bearer $it" } ?: ""
+        val deviceId = userSession?.deviceID ?: ""
+        val deviceType = userSession?.deviceType ?: ""
+
+        return apiServiceInterface.getUserSubscriptionDetail(
+            deviceId = deviceId,
+            deviceType = deviceType,
+            token = token,
+        )
+    }
+
+    suspend fun getConfigData() = apiServiceInterface.getConfigData()
 }

@@ -7,11 +7,9 @@ plugins {
     kotlin("plugin.serialization") version "1.9.0"
     id("kotlin-parcelize")
 }
-
 android {
     namespace = "com.faithForward.media"
     compileSdk = 35
-
     signingConfigs {
         create("release") {
             keyAlias = "ff-media-keyStore"
@@ -20,21 +18,17 @@ android {
             storePassword = "12345678"
         }
     }
-
     lint {
         disable.add("NullSafeMutableLiveData")
     }
-
     defaultConfig {
         applicationId = "com.faithForward.media"
         minSdk = 21
         targetSdk = 35
-        versionCode = 9
-        versionName = "3.6"
-
+        versionCode = 10
+        versionName = "3.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
@@ -64,10 +58,14 @@ android {
     buildFeatures {
         compose = true
     }
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.work:work-runtime:2.9.0")
+            force("androidx.work:work-runtime-ktx:2.9.0")
+        }
+    }
 }
-
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -76,27 +74,21 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
     //coil
     implementation(libs.coil.compose)
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
     //constraintlayout
     implementation(libs.androidx.constraintlayout.compose)
-
     // Dependency injection
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.graphics.android)
     implementation(libs.play.services.ads.identifier)
-    implementation(libs.androidx.foundation)
     kapt(libs.hilt.compiler)
-
     //navigation for compose
     implementation("androidx.navigation:navigation-compose:2.9.0")
-
     // data module
     implementation(project(":ff-media-Data"))
     implementation(project(":library"))
-
     //media
     val media3 = "1.4.1"
     implementation("androidx.media3:media3-exoplayer:$media3")
@@ -104,30 +96,25 @@ dependencies {
     implementation("androidx.media3:media3-common:$media3")
     implementation("androidx.media3:media3-exoplayer-dash:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
-
+    implementation ("androidx.media3:media3-exoplayer-ima:$media3") // for ads
     // implementation(libs.kotlinx.coroutines.android)
-
     //kotlin ktx viewmodel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
-
     //viewmodel with hilt
-    implementation("androidx.hilt:hilt-work:1.2.0")
+    implementation("androidx.hilt:hilt-work:1.2.0") {
+        exclude(group = "androidx.work", module = "work-runtime")
+        exclude(group = "androidx.work", module = "work-runtime-ktx")
+    }
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-// WorkManager (required to avoid PendingIntent crash on Android 12+)
+    // WorkManager - explicit version for Android S+ compatibility (must be 2.8.0+)
     implementation("androidx.work:work-runtime-ktx:2.9.0")
-
+    implementation("androidx.work:work-runtime:2.9.0")
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-
     //material
     implementation("androidx.compose.material:material:1.8.2")
-
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -135,7 +122,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
     implementation("androidx.leanback:leanback:1.2.0")
-
+    implementation ("com.amazon.device:amazon-appstore-sdk:+")
+    //tsl library
+    implementation("org.conscrypt:conscrypt-android:2.5.2")
 }

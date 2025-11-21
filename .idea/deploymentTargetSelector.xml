@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="ff-media-tv-app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-11-18T10:19:12.458696100Z">
+        <DropdownSelection timestamp="2025-11-21T07:12:36.572065Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.168.1.35:5555;connection=e8b5093f" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/macbookpro/.android/avd/Pixel_6.avd" />
             </handle>
           </Target>
         </DropdownSelection>

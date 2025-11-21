@@ -1,48 +1,51 @@
 package com.faithForward.util
 
 object Constants {
-    const val BASE_URL = "https://dev.api.ffmedia.tvidservices.com/api/"
-    const val DEFAULT_PAGE_LIMIT = 1000
+    //const val BASE_URL = "http://107.180.208.127:8000/api/"
 
-    const val CONFIG_END_POINT = "config"
+    const val BASE_URL = "https://dev.api.ffmedia.tvidservices.com/api/"
+    const val CATEGORY_END_POINT = "http://107.180.208.127/api/get-category"
+    const val CATEGORY_DETAIL_END_POINT = "category/{id}"
     const val HOME_SECTION_END_POINT = "client/v1/home"
-    const val MOVIES_END_POINT = "client/v1/movies"
-    const val SERIES_END_POINT = "client/v1/series"
     const val GIVEN_SECTION_END_POINT = "client/v1/{id}"
     const val GIVEN_ITEM_DETAIL_END_POINT = "client/v1/content/{slug}"
     const val SINGLE_GENRE_DETAIL_END_POINT = "client/v1/genres/{id}"
-    const val CREATOR_LIST_END_POINT = "client/v1/creators/list"
+    const val CREATOR_END_POINT = "client/v1/creators/list"
     const val CREATOR_DETAIL_END_POINT = "client/v1/creators/{id}"
     const val CREATOR_CONTENT_LIST_END_POINT = "client/v1/creators/{id}/content"
     const val LOGIN_END_POINT = "client/v1/subscribers/login"
-    const val REGISTER_END_POINT = "client/v1/subscribers/register"
-    const val PROFILE_END_POINT = "client/v1/subscribers/profile"
-    const val CURRENT_PROFILE_END_POINT = "client/v1/subscribers/me"
-    const val SUBSCRIPTION_DETAIL_END_POINT = "client/v1/subscribers/subscription/"
-    const val MOVIE_PURCHASE_END_POINT = "client/v1/purchase"
     const val SINGLE_SERIES_DETAIL_API = "client/v1/series/{id}"
-    const val MY_LIST_COLLECTION_END_POINT = "client/v1/my-list"
-    const val MY_LIST_ITEM_END_POINT = "client/v1/my-list/{slug}"
+    const val MY_LIST_END_POINT = "client/v1/my-list/{slug}"
     const val LIKE_DISLIKE_END_POINT = "client/v1/like-dislike/{slug}"
     const val LIKED_LIST_END_POINT = "client/v1/liked"
-    const val DISLIKED_LIST_END_POINT = "client/v1/disliked"
+    const val DIS_lIKED_LIST_END_POINT = "client/v1/disliked"
     const val SAVE_CONTINUE_WATCHING_END_POINT = "client/v1/continue-watching"
-    const val CONTINUE_WATCHING_LIST_END_POINT = "client/v1/continue-watching"
-    const val ACTIVE_CHANNELS_WITH_SCHEDULES_END_POINT = "active-channels-with-schedules"
-    const val LIVE_CHANNELS_END_POINT = "client/v1/live-channels"
     const val SEARCH_END_POINT = "client/v1/search"
     const val RECENT_SEARCH_END_POINT = "client/v1/recent-search"
     const val GENERATE_ACTIVATION_CODE_END_POINT = "client/v1/activation-code/generate"
     const val LOGIN_STATUS_CHECK_END_POINT = "client/v1/activation-code/status"
     const val LOGOUT_END_POINT = "client/v1/subscribers/logout"
     const val REFRESH_TOKEN_POINT = "client/v1/refresh-token"
+    const val CONTINUE_WATCHING_LIST_END_POINT = "client/v1/continue-watching"
     const val GET_EPG_DATA = "https://api.airy.tv/api/v2.1.7/channels?device=roku"
     const val GET_ALL_PROFILES_END_POINT = "client/v1/subscribers/profiles"
-    const val SINGLE_PROFILE_END_POINT = "client/v1/subscribers/profiles/{id}"
     const val CREATE_PROFILE_END_POINT = "client/v1/subscribers/profiles/create"
+    const val GET_ALL_AVATARS = "client/v1/avatars"
+    const val DELETE_PROFILE = "client/v1/subscribers/profiles/{id}"
     const val UPDATE_PROFILE = "client/v1/subscribers/profiles/{profile_id}"
     const val SET_PROFILE = "client/v1/subscribers/profiles/set/{profile_id}"
-    const val GET_ALL_AVATARS = "client/v1/avatars"
-    const val V1_CONFIG_END_POINT = "v1/config"
-    const val V1_ADS_END_POINT = "v1/ads"
+    const val SET_PURCHASE = "client/v1/purchase"
+    const val USER_SUBSCRIPTION_DETAIL = "client/v1/subscribers/subscription"
+
+    const val CONFIG_DATA_END_POINT = "v1/config"
 }
+
+
+
+
+
+
+
+
+
+

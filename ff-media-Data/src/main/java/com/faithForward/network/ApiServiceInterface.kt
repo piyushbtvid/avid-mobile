@@ -1,5 +1,8 @@
 package com.faithForward.network
 
+import com.faithForward.network.dto.CategoryDetailResponse
+import com.faithForward.network.dto.CategoryResponse
+import com.faithForward.network.dto.ConfigResponse
 import com.faithForward.network.dto.HomeSectionApiResponse
 import com.faithForward.network.dto.SectionContentResponse
 import com.faithForward.network.dto.common.ApiMessageResponse
@@ -21,11 +24,12 @@ import com.faithForward.network.dto.request.CreateProfileRequest
 import com.faithForward.network.dto.request.DeviceIdRequest
 import com.faithForward.network.dto.request.LikeRequest
 import com.faithForward.network.dto.request.LoginRequest
+import com.faithForward.network.dto.request.PurchaseRequest
 import com.faithForward.network.dto.request.RecentSearchRequest
-import com.faithForward.network.dto.request.RefreshTokenRequest
 import com.faithForward.network.dto.search.SearchResponse
 import com.faithForward.network.dto.search.recent_search.RecentSearchResponse
 import com.faithForward.network.dto.series.SingleSeriesDetailResponse
+import com.faithForward.network.dto.subscription.SubscriptionResponse
 import com.faithForward.util.Constants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -45,12 +49,25 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<HomeSectionApiResponse>
 
-    @GET(Constants.CREATOR_LIST_END_POINT)
+    @GET(Constants.CATEGORY_END_POINT)
+    suspend fun getCategories(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+    ): Response<CategoryResponse>
+
+    @GET(Constants.CATEGORY_END_POINT)
+    suspend fun getGivenCategoryDetail(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Path("id") id: Int,
+    ): Response<CategoryDetailResponse>
+
+    @GET(Constants.CREATOR_END_POINT)
     suspend fun getCreatorsList(
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
     ): Response<CreatorsListApiResponse>
 
     @GET(Constants.CREATOR_DETAIL_END_POINT)
@@ -67,23 +84,6 @@ interface ApiServiceInterface {
         @Header("X-Device-Type") deviceType: String,
         @Path("id") id: Int,
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
-    ): Response<SectionContentResponse>
-
-    @GET(Constants.MOVIES_END_POINT)
-    suspend fun getMoviesContent(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
-    ): Response<SectionContentResponse>
-
-    @GET(Constants.SERIES_END_POINT)
-    suspend fun getSeriesContent(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
-        @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
     ): Response<SectionContentResponse>
 
     @POST(Constants.LOGIN_END_POINT)
@@ -116,7 +116,6 @@ interface ApiServiceInterface {
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Path("id") id: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
     ): Response<GenreResponse>
 
 
@@ -138,7 +137,7 @@ interface ApiServiceInterface {
         @Path("id") id: String,
     ): Response<SingleSeriesDetailResponse>
 
-    @POST(Constants.MY_LIST_ITEM_END_POINT)
+    @POST(Constants.MY_LIST_END_POINT)
     suspend fun addToMyList(
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
@@ -146,7 +145,7 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<ApiMessageResponse>
 
-    @DELETE(Constants.MY_LIST_ITEM_END_POINT)
+    @DELETE(Constants.MY_LIST_END_POINT)
     suspend fun removeFromMyList(
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
@@ -168,15 +167,13 @@ interface ApiServiceInterface {
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
     ): Response<MyListResponse>
 
-    @GET(Constants.DISLIKED_LIST_END_POINT)
+    @GET(Constants.DIS_lIKED_LIST_END_POINT)
     suspend fun getDisLikedList(
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
     ): Response<MyListResponse>
 
     @POST(Constants.SAVE_CONTINUE_WATCHING_END_POINT)
@@ -222,7 +219,7 @@ interface ApiServiceInterface {
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
-        @Body request: RefreshTokenRequest,
+        @Query("refresh_token") refreshToken: String,
     ): Response<RefreshTokenResponse>
 
     @GET(Constants.RECENT_SEARCH_END_POINT)
@@ -242,10 +239,7 @@ interface ApiServiceInterface {
 
     @GET(Constants.CONTINUE_WATCHING_LIST_END_POINT)
     suspend fun getContinueWatchingList(
-        @Header("X-Device-Id") deviceId: String,
-        @Header("X-Device-Type") deviceType: String,
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = Constants.DEFAULT_PAGE_LIMIT,
     ): Response<CommanListResponse>
 
 
@@ -273,7 +267,7 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
     ): Response<AllAvatarListResponse>
 
-    @DELETE(Constants.SINGLE_PROFILE_END_POINT)
+    @DELETE(Constants.DELETE_PROFILE)
     suspend fun deleteProfile(
         @Header("X-Device-Id") deviceId: String,
         @Header("X-Device-Type") deviceType: String,
@@ -298,5 +292,24 @@ interface ApiServiceInterface {
         @Header("Authorization") token: String,
         @Path("profile_id") profileId: Int,
     ): Response<ProfileCommonResponse>
+
+    @POST(Constants.SET_PURCHASE)
+    suspend fun setPurchase(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+        @Body purchaseRequest: PurchaseRequest,
+    ): Response<LoginResponse>
+
+
+    @GET(Constants.USER_SUBSCRIPTION_DETAIL)
+    suspend fun getUserSubscriptionDetail(
+        @Header("X-Device-Id") deviceId: String,
+        @Header("X-Device-Type") deviceType: String,
+        @Header("Authorization") token: String,
+    ): Response<SubscriptionResponse>
+
+    @GET(Constants.CONFIG_DATA_END_POINT)
+    suspend fun getConfigData(): Response<ConfigResponse>
 
 }
