@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,19 +72,11 @@ fun Setting(
         with(settingItemDto) {
 
             AccountSection(
-                email = email,
-                passwordTxt = passwordTxt,
-                phoneNumber = phoneNumber,
+                email = "https://www.tvidservices.com/terms-of-use",
+                passwordTxt = "https://www.tvidservices.com/privacy-policy",
+                phoneNumber = "https://www.tvidservices.com/cookie-policy",
             )
 
-            Divider(
-                color = whiteMain.copy(
-                    alpha = 0.5f
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(2.dp)
-            )
 
 //            Divider(
 //                color = whiteMain.copy(
@@ -115,14 +106,14 @@ fun Setting(
 //            )
 
 
-            Divider(
-                color = whiteMain.copy(
-                    alpha = 0.5f
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(2.dp)
-            )
+//            Divider(
+//                color = whiteMain.copy(
+//                    alpha = 0.5f
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(2.dp)
+//            )
 
 //            TitleText(
 //                text = "Subscription",
@@ -132,13 +123,19 @@ fun Setting(
 //                fontWeight = FontWeight.ExtraBold
 //            )
 
-            CategoryCompose(modifier = Modifier
-                .fillMaxWidth(if (centerSwitchProfile) 1f else 0f)
-                .focusRequester(switchFocusRequester)
-                .onFocusChanged {
-                    isSwitchFocused = it.hasFocus
-                }
-                .focusable(),
+            Spacer(modifier = Modifier.height(20.dp))
+
+            CategoryCompose(
+                modifier = if (centerSwitchProfile) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier.wrapContentSize()
+            }
+                    .focusRequester(switchFocusRequester)
+                    .onFocusChanged {
+                        isSwitchFocused = it.hasFocus
+                    }
+                    .focusable(),
                 categoryComposeDto = CategoryComposeDto(btnText = "Switch Profile", id = ""),
                 backgroundFocusedColor = focusedMainColor,
                 textFocusedStyle = detailNowTextStyle,
